@@ -13,4 +13,6 @@ struct Base
 	float speed_;		//移動速度
 
 	bool isAlive_;		//生存判定(true=生存/false=死んでいる！！！)
+
+	int hp_;			//HP
 };

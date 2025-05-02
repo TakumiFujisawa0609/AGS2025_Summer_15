@@ -12,6 +12,7 @@ UnitBase::UnitBase()
 	unit_.radius_ = 0.0f;
 	unit_.speed_ = 0.0f;
 
+	unit_.hp_ = 0;
 }
 
 UnitBase::~UnitBase()

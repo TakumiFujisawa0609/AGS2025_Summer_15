@@ -32,6 +32,8 @@ public:
 	//半径
 	const float GetRadius(void)const { return unit_.radius_; }
 
+	const int GetHp(void)const { return unit_.hp_; }
+
 	const Base& GetUnit(void)const { return unit_; }
 
 	//セッター
