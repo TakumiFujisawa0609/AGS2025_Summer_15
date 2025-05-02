@@ -1,5 +1,5 @@
-#include<DxLib.h>
 #include "Player.h"
+#include"../../Manager/InputManager.h"
 
 Player::Player()
 {
@@ -16,15 +16,17 @@ bool Player::SystemInit()
 
 void Player::GameInit()
 {
-	player.alive = true;
-	player.pos = { 64.0f,200.0f,0.0f };
-	player.size = { SIZE_X,SIZE_Y,0.0f };
-	player.radius = RADIUS;
-	player.hp = HP_MAX;
+	player_.isAlive_ = true;
+	player_.pos_ = { 64.0f,200.0f, };
+	player_.size_ = { SIZE_X,SIZE_Y, };
+	player_.radius_ = RADIUS;
+	player_.hp_ = HP_MAX;
 }
 
 void Player::Update()
 {
+
+
 }
 
 void Player::Draw()
