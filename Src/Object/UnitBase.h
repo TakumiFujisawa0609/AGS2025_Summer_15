@@ -1,6 +1,7 @@
 #pragma once
 #include<DxLib.h>
 #include"../Common/Vector2.h"
+#include"Common/Base.h"
 
 class UnitBase
 {
@@ -24,28 +25,22 @@ public:
 	//---------------------------------------
 	//座標
 		//位置
-	const Vector2F& GetPos(void)const { return pos_; }
+	const Vector2F& GetPos(void)const { return unit_.pos_; }
 
-	const Vector2F& GetSize(void)const { return size_; }
+	const Vector2F& GetSize(void)const { return unit_.size_; }
 
 	//半径
-	const float GetRadius(void)const { return radius_; }
+	const float GetRadius(void)const { return unit_.radius_; }
+
+	const Base& GetUnit(void)const { return unit_; }
 
 	//セッター
 	//----------------------
 
 	//位置
-	void SetPos(const Vector2F& _pos) { pos_ = _pos; }
+	void SetPos(const Vector2F& _pos) { unit_.pos_ = _pos; }
 
 protected:
 
-		Vector2F pos_;		//座標
-		float radius_;		//半径
-		Vector2F size_;		//大きさ
-
-		int modelId_;		//ハンドル番号
-
-		float speed_;		//移動速度
-
-
+	Base unit_;
 };

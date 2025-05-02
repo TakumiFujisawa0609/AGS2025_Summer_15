@@ -5,12 +5,12 @@
 
 UnitBase::UnitBase()
 {
-	modelId_ = -1;
-	pos_ = { 0.0f,0.0f };
-	size_ = { 0.0f,0.f };
+	unit_.modelId_ = -1;
+	unit_.pos_ = { 0.0f,0.0f };
+	unit_.size_ = { 0.0f,0.f };
 
-	radius_ = 0.0f;
-	speed_ = 0.0f;
+	unit_.radius_ = 0.0f;
+	unit_.speed_ = 0.0f;
 
 }
 
