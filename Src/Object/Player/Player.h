@@ -1,5 +1,5 @@
 #pragma once
-#include"../../main.h"
+#include"../Common/Base.h"
 
 class Player
 {
@@ -18,9 +18,15 @@ public:
 	void Draw();
 	bool Release();
 
-	Unit GetPlayer(void) { return player; }
+
+	//ゲッター関数
+	Base GetPlayer(void) { return player_; }
+	
+	//セッター関数
+	void SetAliveOff(void) { player_.isAlive_ = false; }
+
 private:
-	Unit player;
+	Base player_;
 
 };
 
