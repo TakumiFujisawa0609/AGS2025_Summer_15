@@ -28,7 +28,7 @@ SceneManager& SceneManager::GetInstance(void)
 void SceneManager::Init(void)
 {
 
-	sceneId_ = SCENE_ID::TITLE;
+	sceneId_ = SCENE_ID::GAME;
 	waitSceneId_ = SCENE_ID::NONE;
 	cntl_ = CNTL::NONE;
 
