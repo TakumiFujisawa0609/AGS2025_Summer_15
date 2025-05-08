@@ -8,6 +8,7 @@ public:
 	static constexpr int SIZE_Y = 96;
 	static constexpr float RADIUS = 64.0f;
 	static constexpr int HP_MAX = 100;
+	static constexpr float MOVE_POW = 10.0f;
 
 	Player();
 	~Player();
@@ -26,7 +27,13 @@ public:
 	void SetAliveOff(void) { player_.isAlive_ = false; }
 
 private:
+	//ç\ë¢ëÃ
 	Base player_;
+
+	//ìÆçÏ
+	void Move();
+
+
 
 };
 

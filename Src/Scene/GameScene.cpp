@@ -2,6 +2,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/Camera.h"
+#include"../Object/Player/Player.h"
 
 #include "GameScene.h"
 
@@ -15,6 +16,8 @@ GameScene::~GameScene(void)
 
 void GameScene::Init(void)
 {
+	player_ = new Player();
+	player_->GameInit();
 
 	// カメラモード：定点カメラ
 	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);
@@ -23,6 +26,8 @@ void GameScene::Init(void)
 
 void GameScene::Update(void)
 {
+	player_->Update();
+
 	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
@@ -35,6 +40,7 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
+	player_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 
@@ -44,4 +50,7 @@ void GameScene::Draw(void)
 
 void GameScene::Release(void)
 {
+	player_->Release();
+	delete player_;
+	player_ = nullptr;
 }
