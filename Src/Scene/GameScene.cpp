@@ -3,7 +3,7 @@
 #include "../Manager/InputManager.h"
 #include "../Manager/Camera.h"
 #include"../Object/Player/Player.h"
-
+#include"../Application.h"
 #include "GameScene.h"
 
 GameScene::GameScene(void)
@@ -37,6 +37,18 @@ void GameScene::Update(void)
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
 	}
 
+
+
+	if (player_->GetPlayer().disppos_.x > Application::SCREEN_SIZE_X / 7 * 4) {
+		if (ins.IsNew(KEY_INPUT_D)) {
+			Camera::GetInstance().Follow(Camera::dir::X, player_->GetPlayer().speed_);
+		}
+	}
+	if (player_->GetPlayer().disppos_.x < Application::SCREEN_SIZE_X / 7 * 3) {
+		if (ins.IsNew(KEY_INPUT_A)) {
+			Camera::GetInstance().Follow(Camera::dir::X, -(player_->GetPlayer().speed_));
+		}
+	}
 
 }
 

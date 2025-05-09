@@ -72,15 +72,15 @@ private:
 	//重力
 	float gravity_;
 
-	bool isJump_;		//true=ジャンプ中/false=非ジャンプ
+	bool isJump_;				//true=ジャンプ中/false=非ジャンプ
 	bool firstJumpFlg_;			//一回目のジャンプ(true=ジャンプ可能/false=ジャンプしたかったなぁ)
 	bool secondJumpFlg_;		//二段ジャンプ(true=ジャンプ可能/false=ジャンプしたかったなぁ)
 	bool thirdJumpFlg_;
-	float jumpPower_;		//ジャンプパワー
-	float verticalAcceleration_;			//縦方向の加速度
-	int inputJumpKeyCounter_;		//ジャンプの入力時間カウンター
+	float jumpPower_;			//ジャンプパワー
+	float verticalAcceleration_;//縦方向の加速度
+	int inputJumpKeyCounter_;	//ジャンプの入力時間カウンター
 
-	//int playerDir_		;//プレイヤーが向いている方向
+	//int playerDir_;			//プレイヤーが向いている方向
 	AsoUtility::DIRECTION playerDir_;
 
 	int evasionCounter_;		//回避時間カウンター
@@ -88,6 +88,8 @@ private:
 	bool isEvasion_;			//回避フラグ(true=回避中/false=非回避中)
 	bool isEvasionCoolDown_;	//回避クールダウンフラグ(true=クールダウン中/false=非クールダウン中)
 	bool isEvasionInbincible_;	//回避時無敵フラグ(true=無敵/false=無敵じゃないよ)
+
+	void ChangeDispPos(void);
 };
 
 

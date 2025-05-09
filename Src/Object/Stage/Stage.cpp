@@ -38,17 +38,12 @@ void Stage::Init()
 
 	Load();
 	LoadMapData();
-	mapDispStPos.x = mapDispStPos.y = 0;
 
 }
 
 //更新処理
 void Stage::Update()
 {
-	Camera& camera = Camera::GetInstance();
-
-	mapDispStPos.x = camera.GetPos().x;
-	mapDispStPos.y = camera.GetPos().y;
 
 }
 //描画処理
@@ -59,10 +54,12 @@ void Stage::Draw()
 	//マップチップ画像を表示
 	for (int yy = 0; yy < STAGE_NUM_Y; yy++) {
 		for (int xx = 0; xx < STAGE_NUM_X; xx++) {
+
 			int chip = mapDataArray[yy][xx];
-			int dx = STAGE_CHIP_SIZE * xx;
-			dx -= mapDispStPos.x;
-			int dy = STAGE_CHIP_SIZE * yy - mapDispStPos.y;
+
+			int dx = STAGE_CHIP_SIZE * xx - Camera::GetInstance().GetPos().x;
+			int dy = STAGE_CHIP_SIZE * yy - Camera::GetInstance().GetPos().y;
+
 			DrawGraph(dx, dy, stageArrayId[chip], true);
 		}
 	}

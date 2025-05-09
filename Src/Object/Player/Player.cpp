@@ -52,11 +52,13 @@ void Player::Update()
 	ProcessEvasion();
 
 	CollisionStage();
+
+	ChangeDispPos();
 }
 
 void Player::Draw()
 {
-	DrawCircle(player_.pos_.x, player_.pos_.y,10, GetColor(255,0,0), true);
+	DrawCircle(player_.disppos_.x, player_.disppos_.y, 10, GetColor(255, 0, 0), true);
 
 	DrawFormatString(0, 64, 0xffffff, "プレイヤー座標(%.2f,%.2f)", player_.pos_.x, player_.pos_.y);
 	DrawFormatString(0, 80, 0xffffff, "プレイヤーの向き%d", playerDir_);
@@ -216,5 +218,11 @@ void Player::CollisionStage(void)
 
 	}
 
+}
+
+void Player::ChangeDispPos(void)
+{
+	player_.disppos_.x = player_.pos_.x - Camera::GetInstance().GetPos().x;
+	player_.disppos_.y = player_.pos_.y - Camera::GetInstance().GetPos().y;
 }
 

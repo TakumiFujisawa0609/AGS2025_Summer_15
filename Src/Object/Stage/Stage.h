@@ -28,7 +28,6 @@ private:
 
 	bool LoadMapData(void);
 
-	VECTOR mapDispStPos;
 
 	int stageArrayId[STAGE_CHIP_ALL] ;	//ステージのマップチップのハンドル番号
 	int mapDataArray[STAGE_NUM_Y][STAGE_NUM_X];
