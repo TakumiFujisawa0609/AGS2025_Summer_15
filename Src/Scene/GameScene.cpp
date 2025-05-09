@@ -19,6 +19,9 @@ void GameScene::Init(void)
 	player_ = new Player();
 	player_->GameInit();
 
+	stage_ = new Stage();
+	stage_->Init();
+
 	// カメラモード：定点カメラ
 	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);
 
@@ -40,6 +43,7 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
+	stage_->Draw();
 	player_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
@@ -50,6 +54,10 @@ void GameScene::Draw(void)
 
 void GameScene::Release(void)
 {
+	stage_->Release();
+	delete stage_;
+	stage_ = nullptr;
+
 	player_->Release();
 	delete player_;
 	player_ = nullptr;

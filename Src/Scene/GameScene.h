@@ -1,8 +1,10 @@
 #pragma once
 #include<memory>
 #include "SceneBase.h"
+#include"../Object/Stage/Stage.h"
 
 class Player;
+class Stage;
 
 class GameScene :
     public SceneBase
@@ -22,5 +24,6 @@ public:
 private:
 	//プレイヤークラスのインスタンス
 	Player* player_;
+	Stage* stage_;
 };
 
