@@ -27,7 +27,8 @@ void Player::GameInit()
 	verticalAcceleration_ = 0;
 	jumpPower_ = 0;
 	isJump_ = false;
-	isJumpKey_ = false;
+	firstJumpFlg_ = true;
+	secondJumpFlg_ = true;
 	inputJumpKeyCounter_ = 0;
 	gravity_ = GRAVITY;
 }
@@ -73,21 +74,40 @@ void Player::UpdatePositionY(void)
 
 void Player::ProcessJump(void)
 {
+	//ジャンプ判定
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)) {
-		isJump_ = true;
-		isJumpKey_ = true;
+		isJump_ = true;		
 	}
-
+	//一回目のジャンプ
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_J) 
 		&&inputJumpKeyCounter_<INPUT_JUMPKEY_FRAME
-		&& isJumpKey_) {
+		&&firstJumpFlg_) {
 		inputJumpKeyCounter_++;
 		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
 
 		Jump();
 	}
+	//二段ジャンプ
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)
+		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
+		&& secondJumpFlg_) {
+		inputJumpKeyCounter_++;
+		jumpPower_=jumpPower_+ (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
+
+		Jump();
+	}
+
+	//ジャンプキーを話したらカウンターをリセット
+	//二段ジャンプに遷移
 	if (InputManager::GetInstance().IsTrgUp(KEY_INPUT_J)) {
-		inputJumpKeyCounter_ = INPUT_JUMPKEY_FRAME;
+		inputJumpKeyCounter_ = 0;
+		if (!firstJumpFlg_) {
+			secondJumpFlg_ = false;
+		}
+		else {
+			firstJumpFlg_ = false;
+			jumpPower_ = 0;
+		}
 	}
 }
 
@@ -108,14 +128,17 @@ void Player::Gravity(void)
 
 void Player::CollisionStage(void)
 {
+	//空中にいるなら重力を加える
 	if (player_.pos_.y <= 500) {
 		Gravity();
 	}
+	//地面に接地
 	else {
 		player_.pos_.y = 500;
 		verticalAcceleration_ = 0;
 		isJump_ = false;
-		isJumpKey_ = false;
+		firstJumpFlg_ = true;
+		secondJumpFlg_ = true;
 		jumpPower_ = 0;
 		inputJumpKeyCounter_ = 0;
 
