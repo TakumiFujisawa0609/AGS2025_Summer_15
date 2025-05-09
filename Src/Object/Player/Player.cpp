@@ -38,6 +38,7 @@ void Player::GameInit()
 
 	isEvasion_ = false;
 	isEvasionCoolDown_ = false;
+	isEvasionInbincible_ = false;
 	evasionCounter_ = 0;
 	evasionCoolDown_ = 0;
 }
@@ -98,14 +99,20 @@ void Player::ProcessEvasion(void)
 	//‰ñ”ğ
 	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_S)
 		&&!isEvasionCoolDown_) {
-		Evasion();
 		isEvasion_ = true;
 		isEvasionCoolDown_ = true;
+		isEvasionInbincible_ = true;
 	}
 	//‰ñ”ğ‚Ì–³“GŠÔ
 	if (isEvasion_) {
 		evasionCounter_++;
+		Evasion();
+		//–³“Gˆ—
 		if (evasionCounter_ >= EVASION_INVINCIBLE) {
+			isEvasionInbincible_ = false;
+		}
+		//‰ñ”ğˆ—
+		if (evasionCounter_ >= EVASION_TIME) {
 			evasionCounter_ = 0;
 			isEvasion_ = false;			//–³“GŠÔ‚ÌI—¹
 		}

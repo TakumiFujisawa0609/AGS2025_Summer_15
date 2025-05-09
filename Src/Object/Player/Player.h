@@ -18,9 +18,10 @@ public:
 
 	static constexpr float GRAVITY = 0.98f;			//重力
 
-	static constexpr float EVASION_LENGTH = 50.0f;		//回避距離
-	static constexpr int EVASION_INVINCIBLE = 30;		//回避無敵時間
-	static constexpr int EVASION_COOLDOWN = 180;		//回避クールタイム
+	static constexpr float EVASION_LENGTH = 10.0f;		//回避距離
+	static constexpr int EVASION_TIME = 10;				//回避時間
+	static constexpr int EVASION_INVINCIBLE = 5;		//回避無敵時間
+	static constexpr int EVASION_COOLDOWN = 60;		//回避クールタイム
 
 	Player();
 	~Player();
@@ -34,6 +35,8 @@ public:
 
 	//ゲッター関数
 	Base GetPlayer(void) { return player_; }
+	bool IsEvasion(void) { return isEvasion_; }
+	bool IsInvincible(void) { return isEvasionInbincible_; }
 	
 	//セッター関数
 	void SetAliveOff(void) { player_.isAlive_ = false; }
@@ -84,6 +87,7 @@ private:
 	int evasionCoolDown_;		//回避クールダウンカウンター
 	bool isEvasion_;			//回避フラグ(true=回避中/false=非回避中)
 	bool isEvasionCoolDown_;	//回避クールダウンフラグ(true=クールダウン中/false=非クールダウン中)
+	bool isEvasionInbincible_;	//回避時無敵フラグ(true=無敵/false=無敵じゃないよ)
 };
 
 
