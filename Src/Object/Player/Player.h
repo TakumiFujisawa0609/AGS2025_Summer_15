@@ -12,10 +12,10 @@ public:
 
 	static constexpr float MOVE_POW = 10.0f;		//移動量
 
-	static constexpr float MAX_JUMP_POWER = -20.0f;	//最大ジャンプ力
+	static constexpr float MAX_JUMP_POWER = -12.0f;	//最大ジャンプ力
 	static constexpr int INPUT_JUMPKEY_FRAME = 6;	//ジャンプ入力受付フレーム数
 
-	static constexpr float GRAVITY = 0.8f;			//重力
+	static constexpr float GRAVITY = 0.98f;			//重力
 
 	Player();
 	~Player();
@@ -59,6 +59,7 @@ private:
 
 	bool firstJumpFlg_;			//一回目のジャンプ(true=ジャンプ可能/false=ジャンプしたかったなぁ)
 	bool secondJumpFlg_;		//二段ジャンプ(true=ジャンプ可能/false=ジャンプしたかったなぁ)
+	bool thirdJumpFlg_;
 
 	float jumpPower_;		//ジャンプパワー
 

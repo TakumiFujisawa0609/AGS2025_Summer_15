@@ -29,6 +29,7 @@ void Player::GameInit()
 	isJump_ = false;
 	firstJumpFlg_ = true;
 	secondJumpFlg_ = true;
+	thirdJumpFlg_ = true;
 	inputJumpKeyCounter_ = 0;
 	gravity_ = GRAVITY;
 }
@@ -96,13 +97,24 @@ void Player::ProcessJump(void)
 
 		Jump();
 	}
+	//三弾ジャンプ
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)
+		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
+		&& thirdJumpFlg_) {
+		inputJumpKeyCounter_++;
+		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
+		Jump();
 
-	//ジャンプキーを話したらカウンターをリセット
-	//二段ジャンプに遷移
+	}
+
+	//ジャンプキーを離したらカウンターをリセット
 	if (InputManager::GetInstance().IsTrgUp(KEY_INPUT_J)) {
 		inputJumpKeyCounter_ = 0;
-		if (!firstJumpFlg_) {
+		if (!secondJumpFlg_) {
+			thirdJumpFlg_ = false;
+		}else if (!firstJumpFlg_) {
 			secondJumpFlg_ = false;
+			jumpPower_ = 0;
 		}
 		else {
 			firstJumpFlg_ = false;
@@ -139,6 +151,7 @@ void Player::CollisionStage(void)
 		isJump_ = false;
 		firstJumpFlg_ = true;
 		secondJumpFlg_ = true;
+		thirdJumpFlg_ = true;
 		jumpPower_ = 0;
 		inputJumpKeyCounter_ = 0;
 
