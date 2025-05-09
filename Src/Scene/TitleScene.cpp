@@ -20,9 +20,6 @@ TitleScene::~TitleScene(void)
 void TitleScene::Init(void)
 {
 
-	// カメラモード：定点カメラ
-	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FIXED_POINT);
-
 	// タイトルロゴ
 	imgTitleLogo_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::START_LOGO).handleId_;
 

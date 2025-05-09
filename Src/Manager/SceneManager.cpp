@@ -101,8 +101,7 @@ void SceneManager::Update(void)
 		scene_->Update();
 	}
 
-	// カメラ更新
-	Camera::GetInstance().Update();
+
 
 }
 
@@ -116,6 +115,8 @@ void SceneManager::Draw(void)
 	// 画面を初期化
 	ClearDrawScreen();
 
+	// カメラ更新
+	Camera::GetInstance().Set();
 
 	// 描画
 	scene_->Draw();
@@ -132,8 +133,6 @@ void SceneManager::Destroy(void)
 	delete scene_;
 
 	delete fader_;
-
-	Camera::GetInstance().Relese();
 
 	delete instance_;
 

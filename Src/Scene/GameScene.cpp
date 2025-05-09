@@ -22,9 +22,7 @@ void GameScene::Init(void)
 	stage_ = new Stage();
 	stage_->Init();
 
-	// カメラモード：定点カメラ
-	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FOLLOW);
-
+	Camera::GetInstance().Init();
 }
 
 void GameScene::Update(void)
@@ -49,7 +47,6 @@ void GameScene::Draw(void)
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 
-	Camera::GetInstance().DrawDebug();
 	
 }
 

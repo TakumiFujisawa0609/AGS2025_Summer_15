@@ -1,64 +1,36 @@
 #pragma once
 
-#include<DxLib.h>
 
 class Camera
 {
+private:
+	Camera();
+	~Camera();
 public:
+	static void CreateInstance(void) { if (instance == nullptr)instance = new Camera(); instance->Init(); }
+	static Camera& GetInstance(void) { return *instance; }
+	static void DeleteInstance(void) { if (instance != nullptr)delete instance; instance = nullptr; }
 
-	static constexpr float MOVE_SPEED = 10.0f;
+	void Init();
+	void Set();
 
-	//カメラモード
-	enum class MODE
-	{
-		NONE,
-		FIXED_POINT,	//定点カメラ
-		FREE,			//フリーモード
-		TO_FOLLOW,		//追従に変更まで
-		FOLLOW,			//追従モード
-		FOLLOW_SPRING,	//ばね付き追従モード
-		SHAKE			//カメラ揺らし
+	enum dir {
+		X,
+		Y,
+		Z,
 	};
 
-	static void CreateInstance(void);
-	static Camera& GetInstance(void);
+	VECTOR GetPos(void) { return cameraPos; }
 
-	bool Init(void);
-	void Update(void);
-	void Relese(void);
+	void Follow(dir xyz, float move);
 
-	void DrawDebug(void);
-
-	//カメラモードの変更
-	void ChangeMode(MODE mode);
-
-	void SetTargetPos(const VECTOR pPos);
-	void SetMapSize(const VECTOR mapsize);
-	const VECTOR GetPos(void)const;
-
-	void SwapModeFree2Follow(void);
+	void SHAKE(void) { shakecounter_ = SHAKE_COUNTER_SET; }
 
 private:
+	static Camera* instance;
+	VECTOR cameraPos;
 
-	static Camera* instance_;
-
-	//カメラモード
-	MODE mode_;
-
-	VECTOR pos_;
-	VECTOR localCenterPos_;
-	VECTOR targetPos_;
-	VECTOR mapSize_;
-
-	void MoveCameraFree(void);
-	void MoveCameraFollow(void);
-	void MoveCameraToFollow(void);
-
-
-	Camera(void);	//コンストラクタ
-	~Camera(void);	//デストラクタ
-
-
+	static constexpr int SHAKE_COUNTER_SET = 30;
+	int shakecounter_;
 };
-
 
