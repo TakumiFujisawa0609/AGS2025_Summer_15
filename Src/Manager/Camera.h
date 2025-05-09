@@ -6,7 +6,7 @@ class Camera
 {
 public:
 
-	static constexpr float MOVE_SPEED = 3.0f;
+	static constexpr float MOVE_SPEED = 10.0f;
 
 	//ƒJƒƒ‰ƒ‚[ƒh
 	enum class MODE
