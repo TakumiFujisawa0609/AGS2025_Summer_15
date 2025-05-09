@@ -30,6 +30,7 @@ void GameScene::Init(void)
 void GameScene::Update(void)
 {
 	player_->Update();
+	stage_->Update();
 
 	// ƒV[ƒ“‘JˆÚ
 	InputManager& ins = InputManager::GetInstance();

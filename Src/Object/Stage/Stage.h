@@ -23,6 +23,7 @@ public:
 	void Draw(void);
 	bool Release(void);
 
+
 private:
 
 	bool LoadMapData(void);

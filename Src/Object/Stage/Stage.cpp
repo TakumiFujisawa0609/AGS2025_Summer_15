@@ -7,6 +7,7 @@
 
 #include"../../Utility/AsoUtility.h"
 #include"../../Application.h"
+#include"../../Manager/Camera.h"
 
 Stage::Stage()
 {
@@ -32,18 +33,24 @@ bool Stage::Load(void)
 //初期化処理
 void Stage::Init()
 {
+	Camera::CreateInstance();
+	Camera& camera = Camera::GetInstance();
+
 	Load();
 	LoadMapData();
 	mapDispStPos.x = mapDispStPos.y = 0;
+
 }
 
 //更新処理
 void Stage::Update()
 {
-	// ステージの更新処理
-	// ここにステージの更新コードを追加
-}
+	Camera& camera = Camera::GetInstance();
 
+	mapDispStPos.x = camera.GetPos().x;
+	mapDispStPos.y = camera.GetPos().y;
+
+}
 //描画処理
 void Stage::Draw()
 {
@@ -65,7 +72,7 @@ void Stage::Draw()
 bool Stage::Release()
 {
 	for (int ii = STAGE_CHIP_ALL; ii > 0; ii--) {
-		if (DeleteGraph(stageArrayId[ii - 1] == -1))return false;
+		if (DeleteGraph(stageArrayId[ii - 1]) == -1)return false;
 	}
 
 	return true;
