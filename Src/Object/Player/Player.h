@@ -1,5 +1,6 @@
 #pragma once
 #include"../Common/Base.h"
+#include"../../Utility/AsoUtility.h"
 
 class Player
 {
@@ -36,6 +37,9 @@ public:
 private:
 	//構造体
 	Base player_;
+
+	//プレイヤーが向いている方向
+	int playerDir;
 
 	//動作
 	void Move();

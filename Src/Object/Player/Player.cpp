@@ -24,6 +24,7 @@ void Player::GameInit()
 	player_.radius_ = RADIUS;
 	player_.hp_ = HP_MAX;
 	player_.speed_ = MOVE_POW;
+
 	verticalAcceleration_ = 0;
 	jumpPower_ = 0;
 	isJump_ = false;
@@ -32,6 +33,8 @@ void Player::GameInit()
 	thirdJumpFlg_ = true;
 	inputJumpKeyCounter_ = 0;
 	gravity_ = GRAVITY;
+
+	playerDir = static_cast<int>(AsoUtility::DIRECTION::E_DIR_RIGHT);
 }
 
 void Player::Update()
@@ -48,6 +51,7 @@ void Player::Draw()
 	DrawCircle(player_.pos_.x, player_.pos_.y,10, GetColor(255,0,0), true);
 
 	DrawFormatString(0, 64, 0xffffff, "プレイヤー座標(%.2f,%.2f)", player_.pos_.x, player_.pos_.y);
+	DrawFormatString(0, 80, 0xffffff, "プレイヤーの向き%d", playerDir);
 }
 
 bool Player::Release()
@@ -61,9 +65,11 @@ void Player::Move()
 
 	if (InpMng.IsNew(KEY_INPUT_D)) {
 		player_.pos_.x += player_.speed_;
+		playerDir =static_cast<int>( AsoUtility::DIRECTION::E_DIR_RIGHT);
 	}
 	if (InpMng.IsNew(KEY_INPUT_A)) {
 		player_.pos_.x -= player_.speed_;
+		playerDir = static_cast<int>(AsoUtility::DIRECTION::E_DIR_LEFT);
 	}
 }
 
