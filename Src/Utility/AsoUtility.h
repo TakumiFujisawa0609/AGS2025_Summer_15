@@ -118,5 +118,15 @@ public:
 	static void DrawLineXYZ(const VECTOR& pos, const MATRIX& rot, float len = 50.0f);
 	static void DrawLineXYZ(const VECTOR& pos, const Quaternion& rot, float len = 50.0f);
 
+	//•ûŒü
+	enum class DIRECTION {
+		E_DIR_UP,
+		E_DIR_RIGHT,
+		E_DIR_DOWN,
+		E_DIR_LEFT,
+
+		E_DIR_MAX,
+	};
+
 };
 
