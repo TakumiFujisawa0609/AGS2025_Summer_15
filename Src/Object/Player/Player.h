@@ -18,6 +18,10 @@ public:
 
 	static constexpr float GRAVITY = 0.98f;			//重力
 
+	static constexpr float EVASION_LENGTH = 50.0f;		//回避距離
+	static constexpr int EVASION_INVINCIBLE = 30;		//回避無敵時間
+	static constexpr int EVASION_COOLDOWN = 180;		//回避クールタイム
+
 	Player();
 	~Player();
 
@@ -38,17 +42,17 @@ private:
 	//構造体
 	Base player_;
 
-	//プレイヤーが向いている方向
-	int playerDir;
-
 	//動作
-	void Move();
+	void Move(void);
+
+	//回避
+	void Evasion(void);
+
+	//回避発動処理
+	void ProcessEvasion(void);
 
 	//重力
 	void Gravity(void);
-
-	//重力
-	float gravity_;
 
 	//Y座標の変更
 	void UpdatePositionY(void);
@@ -59,19 +63,27 @@ private:
 	//ジャンプ発動処理
 	void ProcessJump(void);
 
-	bool isJump_;		//true=ジャンプ中/false=非ジャンプ
+	//ステージとの当たり判定
+	void CollisionStage(void);		
 
+	//重力
+	float gravity_;
+
+	bool isJump_;		//true=ジャンプ中/false=非ジャンプ
 	bool firstJumpFlg_;			//一回目のジャンプ(true=ジャンプ可能/false=ジャンプしたかったなぁ)
 	bool secondJumpFlg_;		//二段ジャンプ(true=ジャンプ可能/false=ジャンプしたかったなぁ)
 	bool thirdJumpFlg_;
-
 	float jumpPower_;		//ジャンプパワー
-
+	float verticalAcceleration_;			//縦方向の加速度
 	int inputJumpKeyCounter_;		//ジャンプの入力時間カウンター
 
-	float verticalAcceleration_;			//縦方向の加速度
+	//int playerDir_		;//プレイヤーが向いている方向
+	AsoUtility::DIRECTION playerDir_;
 
-	void CollisionStage(void);		//ステージとの当たり判定
+	int evasionCounter_;		//回避時間カウンター
+	int evasionCoolDown_;		//回避クールダウンカウンター
+	bool isEvasion_;			//回避フラグ(true=回避中/false=非回避中)
+	bool isEvasionCoolDown_;	//回避クールダウンフラグ(true=クールダウン中/false=非クールダウン中)
 };
 
 

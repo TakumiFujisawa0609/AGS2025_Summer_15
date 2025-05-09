@@ -34,7 +34,12 @@ void Player::GameInit()
 	inputJumpKeyCounter_ = 0;
 	gravity_ = GRAVITY;
 
-	playerDir = static_cast<int>(AsoUtility::DIRECTION::E_DIR_RIGHT);
+	playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
+
+	isEvasion_ = false;
+	isEvasionCoolDown_ = false;
+	evasionCounter_ = 0;
+	evasionCoolDown_ = 0;
 }
 
 void Player::Update()
@@ -42,6 +47,8 @@ void Player::Update()
 	Move();
 	ProcessJump();
 	UpdatePositionY();
+
+	ProcessEvasion();
 
 	CollisionStage();
 }
@@ -51,7 +58,7 @@ void Player::Draw()
 	DrawCircle(player_.pos_.x, player_.pos_.y,10, GetColor(255,0,0), true);
 
 	DrawFormatString(0, 64, 0xffffff, "プレイヤー座標(%.2f,%.2f)", player_.pos_.x, player_.pos_.y);
-	DrawFormatString(0, 80, 0xffffff, "プレイヤーの向き%d", playerDir);
+	DrawFormatString(0, 80, 0xffffff, "プレイヤーの向き%d", playerDir_);
 }
 
 bool Player::Release()
@@ -59,20 +66,59 @@ bool Player::Release()
 	return true;
 }
 
-void Player::Move()
+void Player::Move(void)
 {
 	auto&InpMng= InputManager::GetInstance();
 
 	if (InpMng.IsNew(KEY_INPUT_D)) {
 		player_.pos_.x += player_.speed_;
-		playerDir =static_cast<int>( AsoUtility::DIRECTION::E_DIR_RIGHT);
+		playerDir_ =AsoUtility::DIRECTION::E_DIR_RIGHT;
 	}
 	if (InpMng.IsNew(KEY_INPUT_A)) {
 		player_.pos_.x -= player_.speed_;
-		playerDir = static_cast<int>(AsoUtility::DIRECTION::E_DIR_LEFT);
+		playerDir_ =AsoUtility::DIRECTION::E_DIR_LEFT;
 	}
 }
 
+void Player::Evasion(void)
+{
+	switch (playerDir_)
+	{
+	case AsoUtility::DIRECTION::E_DIR_RIGHT:
+		player_.pos_.x += EVASION_LENGTH;
+		break;
+	case AsoUtility::DIRECTION::E_DIR_LEFT:
+		player_.pos_.x -= EVASION_LENGTH;
+		break;
+	}
+}
+
+void Player::ProcessEvasion(void)
+{
+	//回避
+	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_S)
+		&&!isEvasionCoolDown_) {
+		Evasion();
+		isEvasion_ = true;
+		isEvasionCoolDown_ = true;
+	}
+	//回避時の無敵時間
+	if (isEvasion_) {
+		evasionCounter_++;
+		if (evasionCounter_ >= EVASION_INVINCIBLE) {
+			evasionCounter_ = 0;
+			isEvasion_ = false;			//無敵時間の終了
+		}
+	}
+	//回避のクールダウン
+	if (isEvasionCoolDown_) {
+		evasionCoolDown_++;
+		if (evasionCoolDown_ >= EVASION_COOLDOWN) {
+			evasionCoolDown_ = 0;
+			isEvasionCoolDown_ = false;		//クールタイムの終了
+		}
+	}
+}
 
 void Player::UpdatePositionY(void)
 {
