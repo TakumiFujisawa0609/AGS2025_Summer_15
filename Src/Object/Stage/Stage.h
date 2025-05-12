@@ -1,5 +1,6 @@
 #pragma once
 #include<DxLib.h>
+#include"../../Utility/AsoUtility.h"
 
 class Stage
 {
@@ -14,6 +15,10 @@ public:
 	static constexpr int STAGE_NUM_Y = 24;
 	static constexpr int STAGE_NUM_MAX = STAGE_NUM_X * STAGE_NUM_Y;
 
+	enum TILE {
+		WHITE,
+		BLACK,
+	};
 
 	Stage();
 	~Stage();
@@ -23,6 +28,8 @@ public:
 	void Draw(void);
 	bool Release(void);
 
+
+	float Getfoot(Vector2F pos);
 
 private:
 

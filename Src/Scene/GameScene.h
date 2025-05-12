@@ -1,7 +1,6 @@
 #pragma once
 #include<memory>
 #include "SceneBase.h"
-#include"../Object/Stage/Stage.h"
 
 class Player;
 class Stage;

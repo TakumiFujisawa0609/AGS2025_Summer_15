@@ -3,6 +3,7 @@
 #include "../Manager/InputManager.h"
 #include "../Manager/Camera.h"
 #include"../Object/Player/Player.h"
+#include"../Object/Stage/Stage.h"
 #include"../Application.h"
 #include "GameScene.h"
 
@@ -16,11 +17,11 @@ GameScene::~GameScene(void)
 
 void GameScene::Init(void)
 {
-	player_ = new Player();
-	player_->GameInit();
-
 	stage_ = new Stage();
 	stage_->Init();
+
+	player_ = new Player(stage_);
+	player_->GameInit();
 
 	Camera::GetInstance().Init();
 }
