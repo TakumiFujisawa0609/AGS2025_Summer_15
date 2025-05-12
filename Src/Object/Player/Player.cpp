@@ -2,6 +2,7 @@
 #include"../../Manager/InputManager.h"
 #include"../../Application.h"
 #include"../../Manager/Camera.h"
+#include"../../Manager/Collision.h"
 #include"../Stage/Stage.h"
 
 Player::Player(Stage* instance)
@@ -44,6 +45,7 @@ void Player::GameInit()
 	evasionCounter_ = 0;
 	evasionCoolDown_ = 0;
 	
+	Collision::CreateInstance();
 }
 
 void Player::Update()
@@ -205,12 +207,12 @@ void Player::Gravity(void)
 void Player::CollisionStage(void)
 {
 	//空中にいるなら重力を加える
-	if (player_.pos_.y + 10.0f/*プレイヤーの半径*/ <= stage_->Getfoot(player_.pos_)) {
+	if (player_.pos_.y + 10.0f/*プレイヤーの半径*/ <= Collision::GetInstance().GetStageFoot(player_.pos_,20.0f)) {
 		Gravity();
 	}
 	//地面に接地
 	else {
-		player_.pos_.y = stage_->Getfoot(player_.pos_) - 10.0f/*プレイヤーの半径*/;
+		player_.pos_.y = (Collision::GetInstance().GetStageFoot(player_.pos_, 20.0f)) - 10.0f/*プレイヤーの半径*/;
 		verticalAcceleration_ = 0;
 		isJump_ = false;
 		firstJumpFlg_ = true;

@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\Collision.cpp" />
     <ClCompile Include="Src\Object\Manager\EnemyManager.cpp" />
     <ClCompile Include="Src\Object\Enemy\EnemyBamboo.cpp" />
     <ClCompile Include="Src\Object\Enemy\EnemyBambooShoot.cpp" />
@@ -158,6 +159,7 @@
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\Collision.h" />
     <ClInclude Include="Src\Object\Manager\EnemyManager.h" />
     <ClInclude Include="Src\Object\Enemy\EnemyBamboo.h" />
     <ClInclude Include="Src\Object\Enemy\EnemyBambooShoot.h" />

@@ -29,13 +29,13 @@ public:
 	bool Release(void);
 
 
-	float Getfoot(Vector2F pos);
+	int GetMapData(int y, int x) { return mapDataArray[y][x]; }
 
 private:
 
 	bool LoadMapData(void);
 
 
-	int stageArrayId[STAGE_CHIP_ALL] ;	//ステージのマップチップのハンドル番号
+	int stageArrayId[STAGE_CHIP_ALL];	//ステージのマップチップのハンドル番号
 	int mapDataArray[STAGE_NUM_Y][STAGE_NUM_X];
 };
