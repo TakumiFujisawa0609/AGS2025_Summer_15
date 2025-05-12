@@ -2,9 +2,11 @@
 #include"../../Manager/InputManager.h"
 #include"../../Application.h"
 #include"../../Manager/Camera.h"
+#include"../Stage/Stage.h"
 
-Player::Player()
+Player::Player(Stage* instance)
 {
+	stage_ = instance;
 }
 
 Player::~Player()
@@ -41,6 +43,7 @@ void Player::GameInit()
 	isEvasionInbincible_ = false;
 	evasionCounter_ = 0;
 	evasionCoolDown_ = 0;
+	
 }
 
 void Player::Update()
@@ -202,12 +205,12 @@ void Player::Gravity(void)
 void Player::CollisionStage(void)
 {
 	//空中にいるなら重力を加える
-	if (player_.pos_.y <= 500) {
+	if (player_.pos_.y + 10.0f/*プレイヤーの半径*/ <= stage_->Getfoot(player_.pos_)) {
 		Gravity();
 	}
 	//地面に接地
 	else {
-		player_.pos_.y = 500;
+		player_.pos_.y = stage_->Getfoot(player_.pos_) - 10.0f/*プレイヤーの半径*/;
 		verticalAcceleration_ = 0;
 		isJump_ = false;
 		firstJumpFlg_ = true;

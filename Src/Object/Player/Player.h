@@ -2,6 +2,8 @@
 #include"../Common/Base.h"
 #include"../../Utility/AsoUtility.h"
 
+class Stage;
+
 class Player
 {
 public:
@@ -23,7 +25,7 @@ public:
 	static constexpr int EVASION_INVINCIBLE = 5;		//回避無敵時間
 	static constexpr int EVASION_COOLDOWN = 60;		//回避クールタイム
 
-	Player();
+	Player(Stage* instance);
 	~Player();
 
 	bool SystemInit();
@@ -90,6 +92,8 @@ private:
 	bool isEvasionInbincible_;	//回避時無敵フラグ(true=無敵/false=無敵じゃないよ)
 
 	void ChangeDispPos(void);
+
+	Stage* stage_;
 };
 
 
