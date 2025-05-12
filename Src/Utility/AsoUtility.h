@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
+#include<iostream>
+#include<memory>
 #include <DxLib.h>
 #include "../Common/Vector2.h"
 #include "../Common/Quaternion.h"
@@ -128,5 +130,13 @@ public:
 		E_DIR_MAX,
 	};
 
+	//‰~üã‚Ìˆê“_‚ÌPos‚ğ•Ô‚·
+	Vector2F GetPointOnCircle(float centerX, float centerY,float radius, float angleRadians);
+
+	//‰~üã‚É“_‚ğ“WŠJ‚·‚é
+	std::vector<Vector2F>GetPointsCircle(float centerX, float centerY, float radius, float angle,int numPoints);
+
+	//‰~üã‚É“_‚ğ•`‰æ‚·‚é
+	void DrawCirclePoints(float x, float y, float r, float a, int p);
 };
 
