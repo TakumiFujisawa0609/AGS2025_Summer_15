@@ -16,20 +16,67 @@ void Collision::Init()
 {
 }
 
-float Collision::GetStageFoot(Vector2F pos,float size)
+const float Collision::GetStageFoot(const Vector2F pos, const Vector2F size , const DIR dir) const
 {
-	//足元座標の作成
-	Vector2F foot = pos;
-	foot.y += size / 2;
+	Vector2F work = pos;
 
-	//足元の座標を配列の要素数に直す
-	int pX = static_cast<int>(foot.x / Stage::STAGE_CHIP_SIZE);
-	int pY = static_cast<int>(foot.y / Stage::STAGE_CHIP_SIZE);
+	int pX, pY;
+	int serchrange;
 
-	//白色ブロックが続く間は行う
-	while (mapData_[pY][pX] == static_cast<int>(Stage::TILE::WHITE)) {
-		//一つ下のブロックに移動
+	pX = pY = 0;
+	serchrange = 1;
+
+	bool bre = false;
+
+	switch (dir)
+	{
+	case Collision::UP:
+		work.y -= size.y / 2;
+		work.x -= size.x / 2;
+		serchrange += (int)size.x / Stage::STAGE_CHIP_SIZE;
+		if ((int)work.x % Stage::STAGE_CHIP_SIZE > (int)size.x%Stage::STAGE_CHIP_SIZE  ) {
+			serchrange++;
+		}
+
+		//足元の座標を配列の要素数に直す
+		pX = static_cast<int>(work.x / Stage::STAGE_CHIP_SIZE);
+		pY = static_cast<int>(work.y / Stage::STAGE_CHIP_SIZE);
+
+
+		while (mapData_[pY][pX] == (int)Stage::TILE::WHITE)
+		{
+			for (int x = pX; x < pX + serchrange; x++) {
+				if (!(mapData_[pY][x] == (int)Stage::TILE::WHITE)) {
+					bre = true;
+					break;
+				}
+			}
+
+			if (bre == true || pY <= 0) break;
+			pY--;
+		}
 		pY++;
+		break;
+
+	case Collision::DOWN:
+		//足元座標を作成
+		work.y += size.y / 2;
+
+		//足元の座標を配列の要素数に直す
+		pX = static_cast<int>(work.x / Stage::STAGE_CHIP_SIZE);
+		pY = static_cast<int>(work.y / Stage::STAGE_CHIP_SIZE);
+
+		//白色ブロックが続く間は行う
+		while (mapData_[pY][pX] == static_cast<int>(Stage::TILE::WHITE)) {
+			//一つ下のブロックに移動
+			pY++;
+		}
+		break;
+
+	case Collision::LEFT:
+		break;
+	case Collision::RIGHT:
+		break;
 	}
 
 	//要素指数＊チップ一つの大きさが床の位置

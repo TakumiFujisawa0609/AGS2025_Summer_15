@@ -14,13 +14,19 @@ public:
 	static void DeleteInstance(void) { if (instance != nullptr)delete instance; instance = nullptr; }
 
 	void Init();
-
 	void SetStage(int map,int y,int x){ mapData_[y][x] = map; }
 
+
+	enum DIR {
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT,
+
+		MAX
+	};
 	//ìnÇ≥ÇÍÇΩç¿ïWÇÃè∞ÇÃçÇÇ≥
-	float GetStageFoot(Vector2F pos,float size);
-	
-	//
+ 	const float GetStageFoot(const Vector2F pos,const Vector2F size ,const DIR dir) const;
 
 private:
 	static Collision* instance;
