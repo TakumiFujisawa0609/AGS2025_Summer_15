@@ -2,6 +2,7 @@
 #include"../../Manager/InputManager.h"
 #include"../../Application.h"
 #include"../../Manager/Camera.h"
+#include"../../Manager/Collision.h"
 #include"../Stage/Stage.h"
 
 Player::Player(Stage* instance)
@@ -22,7 +23,7 @@ void Player::GameInit()
 {
 	player_.isAlive_ = true;
 	player_.pos_ = { Application::SCREEN_SIZE_X/2,Application::SCREEN_SIZE_Y/2 };
-	player_.size_ = { SIZE_X,SIZE_Y, };
+	player_.size_ = { /*SIZE_X,SIZE_Y,*/20.0f,20.0f };
 	player_.radius_ = RADIUS;
 	player_.hp_ = HP_MAX;
 	player_.speed_ = MOVE_POW;
@@ -44,6 +45,7 @@ void Player::GameInit()
 	evasionCounter_ = 0;
 	evasionCoolDown_ = 0;
 	
+	Collision::CreateInstance();
 }
 
 void Player::Update()
@@ -204,22 +206,43 @@ void Player::Gravity(void)
 
 void Player::CollisionStage(void)
 {
+	Collision& ins = Collision::GetInstance();
+
 	//空中にいるなら重力を加える
-	if (player_.pos_.y + 10.0f/*プレイヤーの半径*/ <= stage_->Getfoot(player_.pos_)) {
-		Gravity();
-	}
-	//地面に接地
-	else {
-		player_.pos_.y = stage_->Getfoot(player_.pos_) - 10.0f/*プレイヤーの半径*/;
+	Vector2F rightfoot, leftfoot;
+	rightfoot = leftfoot = player_.pos_;
+	rightfoot.x += 10.0f;
+	leftfoot.x -= 10.0f;
+	if (rightfoot.y + 10.0f >= Collision::GetInstance().GetStageFoot(rightfoot, player_.size_,Collision::DIR::DOWN) ||
+		leftfoot.y + 10.0f >= Collision::GetInstance().GetStageFoot(leftfoot, player_.size_, Collision::DIR::DOWN)) {
+		//地面に接地
 		verticalAcceleration_ = 0;
 		isJump_ = false;
 		firstJumpFlg_ = true;
 		secondJumpFlg_ = true;
 		thirdJumpFlg_ = true;
-		jumpPower_ = 0;
+		jumpPower_ = 0; 
 		inputJumpKeyCounter_ = 0;
-
+		if (rightfoot.y + 10.0f >= Collision::GetInstance().GetStageFoot(rightfoot, player_.size_, Collision::DIR::DOWN)) {
+			player_.pos_.y = (Collision::GetInstance().GetStageFoot(rightfoot, player_.size_, Collision::DIR::DOWN)) - 10.0f;
+		}
+		else {
+			player_.pos_.y = (Collision::GetInstance().GetStageFoot(leftfoot, player_.size_, Collision::DIR::DOWN)) - 10.0f;
+		}
+		
 	}
+	else {
+		Gravity();
+	}
+
+	//天井
+	if ((player_.pos_.y - player_.size_.y / 2) <= ins.GetStageFoot(player_.pos_, player_.size_, Collision::DIR::UP)) {
+		player_.pos_.y = ins.GetStageFoot(player_.pos_, player_.size_, Collision::DIR::UP) + player_.size_.y / 2;
+	}
+	//右
+
+
+	//左
 
 }
 

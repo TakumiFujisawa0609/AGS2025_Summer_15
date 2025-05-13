@@ -75,27 +75,6 @@ bool Stage::Release()
 	return true;
 }
 
-float Stage::Getfoot(Vector2F pos)
-{
-	float ret = 0.0f;
-
-	//足元座標の作成
-	Vector2F foot = pos;
-	foot.y += 10.0f/*(Player::SIZE / 2.0f)*/;
-
-	//足元の座標を配列の要素数に直します
-	int pX = static_cast<int>(foot.x / STAGE_CHIP_SIZE);
-	int pY = static_cast<int>(foot.y / STAGE_CHIP_SIZE);
-
-	//白色ブロックが続く間は行う
-	while (mapDataArray[pY][pX] == static_cast<int>(TILE::WHITE)) {
-		//一つ下のブロックに移動
-		pY++;
-	}
-
-	//要素指数＊チップ一つの大きさが床の位置
-	return static_cast<float>(pY * STAGE_CHIP_SIZE);
-}
 
 bool Stage::LoadMapData()
 {
