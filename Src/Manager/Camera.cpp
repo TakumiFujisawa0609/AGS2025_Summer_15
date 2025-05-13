@@ -1,6 +1,7 @@
 #include<DxLib.h>
 #include"Camera.h"
 
+
 Camera* Camera::instance = nullptr;
 
 Camera::Camera()

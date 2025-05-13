@@ -2,6 +2,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/Camera.h"
+#include"../Manager/Collision.h"
 #include"../Object/Player/Player.h"
 #include"../Object/Stage/Stage.h"
 #include"../Application.h"
@@ -24,6 +25,12 @@ void GameScene::Init(void)
 	player_->GameInit();
 
 	Camera::GetInstance().Init();
+	Collision::CreateInstance();
+	for (int y = 0; y < Stage::STAGE_NUM_Y; y++) {
+		for (int x = 0; x < Stage::STAGE_NUM_X; x++) {
+			Collision::GetInstance().SetStage(stage_->GetMapData(y, x), y, x);
+		}
+	}
 }
 
 void GameScene::Update(void)
