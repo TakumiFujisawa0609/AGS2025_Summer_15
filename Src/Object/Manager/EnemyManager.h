@@ -1,4 +1,8 @@
 #pragma once
+#include"../Enemy/EnemyBamboo.h"
+
+class EnemyBamboo;
+
 class EnemyManager
 {
 public:
@@ -9,7 +13,8 @@ public:
     void Update();
     void Draw();
     void Relese();
-
+private:
+    EnemyBamboo* bamboo_;
 
 };
 

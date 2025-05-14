@@ -7,6 +7,8 @@ class UnitBase
 {
 public:
 
+	static constexpr int ENEMYBAMBOO_RADIUS = 32;
+
 	//コンストラクタ
 	UnitBase(void);
 	//デストラクタ
