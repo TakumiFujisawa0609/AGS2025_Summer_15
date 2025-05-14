@@ -76,6 +76,7 @@ void GameScene::Release(void)
 	delete stage_;
 	stage_ = nullptr;
 
+
 	player_->Release();
 	delete player_;
 	player_ = nullptr;
