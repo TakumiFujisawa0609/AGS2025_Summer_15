@@ -27,6 +27,14 @@ void Player::GameInit()
 	player_.radius_ = RADIUS;
 	player_.hp_ = HP_MAX;
 	player_.speed_ = MOVE_POW;
+	motionType_ = MOTION_TYPE::E_MOTION_IDLE;		//モーションタイプ
+	animCounter_ = 0.0f;
+
+	attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
+
+	//攻撃
+	isAttack_ = false;
+	attackCounter_ = 0;
 
 	verticalAcceleration_ = 0;
 	jumpPower_ = 0;
@@ -52,6 +60,8 @@ void Player::Update()
 {
 	Move();
 	ProcessJump();
+	ProcessAtatck();
+
 	UpdatePositionY();
 
 	ProcessEvasion();
@@ -67,6 +77,7 @@ void Player::Draw()
 
 	DrawFormatString(0, 64, 0xffffff, "プレイヤー座標(%.2f,%.2f)", player_.pos_.x, player_.pos_.y);
 	DrawFormatString(0, 80, 0xffffff, "プレイヤーの向き%d", playerDir_);
+	DrawFormatString(0, 96, 0x00ff00, "プレイヤーの攻撃%d", attackStat_);
 }
 
 bool Player::Release()
@@ -78,13 +89,20 @@ void Player::Move(void)
 {
 	auto&InpMng= InputManager::GetInstance();
 
+	//モーションタイプの初期化を行う
+	motionType_ = MOTION_TYPE::E_MOTION_IDLE;
+
 	if (InpMng.IsNew(KEY_INPUT_D)) {
 		player_.pos_.x += player_.speed_;
 		playerDir_ =AsoUtility::DIRECTION::E_DIR_RIGHT;
+		//モーションを変更
+		motionType_ = MOTION_TYPE::E_MOTION_RUN;
 	}
 	if (InpMng.IsNew(KEY_INPUT_A)) {
 		player_.pos_.x -= player_.speed_;
 		playerDir_ =AsoUtility::DIRECTION::E_DIR_LEFT;
+		//モーションを変更
+		motionType_ = MOTION_TYPE::E_MOTION_RUN;
 	}
 }
 
@@ -244,6 +262,48 @@ void Player::CollisionStage(void)
 
 	//左
 
+}
+
+void Player::Attack(void)
+{
+	switch (attackStat_)
+	{
+	case Player::ATTACK_STAT::E_ATTACK_STAT_KATTO:
+		break;
+	case Player::ATTACK_STAT::E_ATTACK_STAT_NUGRU:
+		break;
+	}
+	if (isAttack_) {
+		attackCounter_++;
+		if (attackCounter_ >= ATTACK_TIME) {
+			attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
+			isAttack_ = false;
+			attackCounter_ = 0;
+			isAttackCoolDown_ = true;
+			attackCoolDown_ = 0;
+		}
+	}
+	else if (isAttackCoolDown_) {
+		attackCoolDown_++;
+		if (attackCoolDown_ >= ATTACK_COOLDOWN) {
+			isAttackCoolDown_ = false;
+			attackCoolDown_ = 0;
+		}
+	}
+}
+
+void Player::ProcessAtatck(void)
+{
+	auto& ins = InputManager::GetInstance();
+
+	if (ins.IsNew(KEY_INPUT_Q)) {
+		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_KATTO;
+		isAttack_ = true;
+	}
+	else if (ins.IsNew(KEY_INPUT_E)) {
+		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NUGRU;
+		isAttack_ = true;
+	}
 }
 
 void Player::ChangeDispPos(void)
