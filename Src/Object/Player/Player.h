@@ -11,6 +11,8 @@ public:
 	static constexpr int SIZE_Y = 96;
 	static constexpr float RADIUS = 64.0f;
 
+	static constexpr int MAX_ANIM_NUM = 10;
+
 	static constexpr int HP_MAX = 100;
 
 	static constexpr float MOVE_POW = 10.0f;		//移動量
@@ -24,6 +26,34 @@ public:
 	static constexpr int EVASION_TIME = 10;				//回避時間
 	static constexpr int EVASION_INVINCIBLE = 5;		//回避無敵時間
 	static constexpr int EVASION_COOLDOWN = 60;		//回避クールタイム
+
+	static constexpr int ATTACK_TIME = 60;			//攻撃時間
+	static constexpr int ATTACK_COOLDOWN = 60;
+
+	//モーションタイプ
+	enum class MOTION_TYPE
+	{
+		E_MOTION_IDLE,		//待機モーション
+		E_MOTION_RUN,		//走りモーション
+		E_MOTION_JUMP,		//ジャンプモーション
+		E_MOTION_DAMAGE,	//被ダメージモーション
+		E_MOTION_EVASION,	//回避モーション
+
+		E_MOTION_MAX,		//モーション最大数
+	};
+
+	//攻撃ステータス
+	enum class ATTACK_STAT
+	{
+		E_ATTACK_STAT_NON,	//通常
+		E_ATTACK_STAT_KATTO,
+		E_ATTACK_STAT_NUGRU,
+
+		E_ATTACK_STAT_MAX,
+	};
+
+
+
 
 	Player(Stage* instance);
 	~Player();
@@ -46,6 +76,16 @@ public:
 private:
 	//構造体
 	Base player_;
+
+	//プレイヤー画像のハンドル番号
+	int img[static_cast<int>(MOTION_TYPE::E_MOTION_MAX)][static_cast<int>(ATTACK_STAT::E_ATTACK_STAT_MAX)][MAX_ANIM_NUM];
+
+	//モーションタイプ
+	MOTION_TYPE motionType_;
+
+	//攻撃モーション
+	ATTACK_STAT attackStat_;
+
 
 	//動作
 	void Move(void);
@@ -71,6 +111,12 @@ private:
 	//ステージとの当たり判定
 	void CollisionStage(void);		
 
+	//攻撃
+	void Attack(void);
+
+	//攻撃プロセス
+	void ProcessAtatck(void);
+
 	//重力
 	float gravity_;
 
@@ -84,6 +130,13 @@ private:
 
 	//int playerDir_;			//プレイヤーが向いている方向
 	AsoUtility::DIRECTION playerDir_;
+	float animCounter_;			//アニメーションカウンター
+
+	//攻撃
+	bool isAttack_;
+	bool isAttackCoolDown_;
+	int attackCounter_;			//攻撃時間
+	int attackCoolDown_;		//攻撃クールタイム
 
 	int evasionCounter_;		//回避時間カウンター
 	int evasionCoolDown_;		//回避クールダウンカウンター
