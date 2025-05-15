@@ -22,7 +22,7 @@ bool Player::SystemInit()
 void Player::GameInit()
 {
 	player_.isAlive_ = true;
-	player_.pos_ = { Application::SCREEN_SIZE_X/2,Application::SCREEN_SIZE_Y/2 };
+	player_.pos_ = { Application::SCREEN_SIZE_X/2/*10.0f*/,Application::SCREEN_SIZE_Y/2 };
 	player_.size_ = { /*SIZE_X,SIZE_Y,*/20.0f,20.0f };
 	player_.radius_ = RADIUS;
 	player_.hp_ = HP_MAX;
@@ -59,14 +59,16 @@ void Player::GameInit()
 void Player::Update()
 {
 	Move();
+	ProcessEvasion();
+
+	CollisionStageX();
+
 	ProcessJump();
 	ProcessAtatck();
 
 	UpdatePositionY();
 
-	ProcessEvasion();
-
-	CollisionStage();
+	CollisionStageY();
 
 	ChangeDispPos();
 }
@@ -222,46 +224,46 @@ void Player::Gravity(void)
 	verticalAcceleration_ += gravity_;
 }
 
-void Player::CollisionStage(void)
+void Player::CollisionStageY(void)
 {
 	Collision& ins = Collision::GetInstance();
 
+	////天井
+	if ((player_.pos_.y - player_.size_.y / 2) <= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::UP)) {
+		inputJumpKeyCounter_ = INPUT_JUMPKEY_FRAME;
+		player_.pos_.y = ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::UP) + player_.size_.y / 2;
+	}
+
 	//空中にいるなら重力を加える
-	Vector2F rightfoot, leftfoot;
-	rightfoot = leftfoot = player_.pos_;
-	rightfoot.x += 10.0f;
-	leftfoot.x -= 10.0f;
-	if (rightfoot.y + 10.0f >= Collision::GetInstance().GetStageFoot(rightfoot, player_.size_,Collision::DIR::DOWN) ||
-		leftfoot.y + 10.0f >= Collision::GetInstance().GetStageFoot(leftfoot, player_.size_, Collision::DIR::DOWN)) {
+	if (player_.pos_.y + player_.size_.y / 2 >= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::DOWN)) {
 		//地面に接地
+		player_.pos_.y = (ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::DOWN)) - player_.size_.y / 2;
 		verticalAcceleration_ = 0;
 		isJump_ = false;
 		firstJumpFlg_ = true;
 		secondJumpFlg_ = true;
 		thirdJumpFlg_ = true;
-		jumpPower_ = 0; 
+		jumpPower_ = 0;
 		inputJumpKeyCounter_ = 0;
-		if (rightfoot.y + 10.0f >= Collision::GetInstance().GetStageFoot(rightfoot, player_.size_, Collision::DIR::DOWN)) {
-			player_.pos_.y = (Collision::GetInstance().GetStageFoot(rightfoot, player_.size_, Collision::DIR::DOWN)) - 10.0f;
-		}
-		else {
-			player_.pos_.y = (Collision::GetInstance().GetStageFoot(leftfoot, player_.size_, Collision::DIR::DOWN)) - 10.0f;
-		}
-		
 	}
 	else {
 		Gravity();
 	}
+}
 
-	//天井
-	if ((player_.pos_.y - player_.size_.y / 2) <= ins.GetStageFoot(player_.pos_, player_.size_, Collision::DIR::UP)) {
-		player_.pos_.y = ins.GetStageFoot(player_.pos_, player_.size_, Collision::DIR::UP) + player_.size_.y / 2;
-	}
-	//右
-
+void Player::CollisionStageX(void)
+{
+	Collision& ins = Collision::GetInstance();
 
 	//左
+	if ((player_.pos_.x - player_.size_.x / 2) <= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::LEFT)) {
+		player_.pos_.x = (ins.GetStageLine(player_.pos_, player_.size_, Collision::LEFT)) + player_.size_.x / 2;
+	}
 
+	//右
+	if ((player_.pos_.x + player_.size_.x / 2) >= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::RIGHT)) {
+		player_.pos_.x = (ins.GetStageLine(player_.pos_, player_.size_, Collision::RIGHT)) - player_.size_.x / 2;
+	}
 }
 
 void Player::Attack(void)

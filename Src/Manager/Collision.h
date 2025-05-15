@@ -25,8 +25,8 @@ public:
 
 		MAX
 	};
-	//“n‚³‚ê‚½À•W‚Ì°‚Ì‚‚³
- 	const float GetStageFoot(const Vector2F pos,const Vector2F size ,const DIR dir) const;
+	//“n‚³‚ê‚½À•W‚É‘Î‚·‚éÕ“Ë”»’è‚É‚Â‚©‚¤”’l
+ 	const float GetStageLine(const Vector2F pos,const Vector2F size ,const DIR dir) const;
 
 private:
 	static Collision* instance;

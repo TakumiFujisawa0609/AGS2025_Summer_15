@@ -109,7 +109,8 @@ private:
 	void ProcessJump(void);
 
 	//ステージとの当たり判定
-	void CollisionStage(void);		
+	void CollisionStageY(void);
+	void CollisionStageX(void);
 
 	//攻撃
 	void Attack(void);

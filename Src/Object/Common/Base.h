@@ -6,6 +6,7 @@ struct Base
 {
 	Vector2F pos_;		//À•W
 	Vector2F disppos_;
+	Vector2F prevpos_;
 
 	float radius_;		//”¼Œa
 	Vector2F size_;		//‘å‚«‚³
