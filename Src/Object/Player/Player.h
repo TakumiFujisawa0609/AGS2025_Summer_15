@@ -69,7 +69,8 @@ private:
 	void ProcessJump(void);
 
 	//ステージとの当たり判定
-	void CollisionStage(void);		
+	void CollisionStageY(void);
+	void CollisionStageX(void);
 
 	//重力
 	float gravity_;

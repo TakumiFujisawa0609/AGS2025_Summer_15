@@ -98,6 +98,9 @@ void SceneManager::Update(void)
 	}
 	else
 	{
+		//if (CheckHitKey(KEY_INPUT_A) == 1) {
+		//	int a=0;
+		//}
 		scene_->Update();
 	}
 
