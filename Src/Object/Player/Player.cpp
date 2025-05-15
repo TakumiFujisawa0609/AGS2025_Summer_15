@@ -221,7 +221,7 @@ void Player::Jump(void)
 void Player::Gravity(void)
 {
 	//Yé≤â¡ë¨ìxÇ…èdóÕÇâ¡Ç¶ÇÈ
-	verticalAcceleration_ += gravity_;
+	verticalAcceleration_ = (verticalAcceleration_ < MAX_GRAVITY) ? verticalAcceleration_ += gravity_ : verticalAcceleration_;
 }
 
 void Player::CollisionStageY(void)
