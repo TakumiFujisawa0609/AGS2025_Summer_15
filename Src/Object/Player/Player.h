@@ -21,7 +21,7 @@ public:
 	static constexpr int INPUT_JUMPKEY_FRAME = 6;	//ジャンプ入力受付フレーム数
 
 	static constexpr float GRAVITY = 0.98f;			//重力
-	static constexpr float MAX_GRAVITY = 30.0f;
+	static constexpr float MAX_GRAVITY = 20.0f;
 
 	static constexpr float EVASION_LENGTH = 10.0f;		//回避距離
 	static constexpr int EVASION_TIME = 10;				//回避時間
