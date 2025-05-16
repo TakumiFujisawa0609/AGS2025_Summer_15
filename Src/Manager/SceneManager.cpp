@@ -8,6 +8,7 @@
 #include "ResourceManager.h"
 #include "Camera.h"
 #include "SceneManager.h"
+#include"../Application.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
 
@@ -42,6 +43,11 @@ void SceneManager::Init(void)
 	scene_->Init();
 
 	isSceneChanging_ = false;
+
+
+	//メイクスクリーン
+	mainScreen_ = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+	scale_ = 1;
 
 	// デルタタイム
 	preTime_ = std::chrono::system_clock::now();
@@ -102,6 +108,7 @@ void SceneManager::Update(void)
 		//	int a=0;
 		//}
 		scene_->Update();
+		scale_ += 0.001;
 	}
 
 
@@ -113,7 +120,7 @@ void SceneManager::Draw(void)
 	
 	// 描画先グラフィック領域の指定
 	// (３Ｄ描画で使用するカメラの設定などがリセットされる)
-	SetDrawScreen(DX_SCREEN_BACK);
+	SetDrawScreen(mainScreen_);
 
 	// 画面を初期化
 	ClearDrawScreen();
@@ -127,12 +134,19 @@ void SceneManager::Draw(void)
 	// 暗転・明転
 	fader_->Draw();
 
+	SetDrawScreen(DX_SCREEN_BACK);
+	ClearDrawScreen();
+	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, 1, 0, mainScreen_, true);
+
 }
 
 void SceneManager::Destroy(void)
 {
 
 	scene_->Release();
+
+	DeleteGraph(mainScreen_);
+
 	delete scene_;
 
 	delete fader_;

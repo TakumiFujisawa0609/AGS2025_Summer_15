@@ -63,12 +63,15 @@ void Player::Update()
 
 	CollisionStageX();
 
-	ProcessJump();
-	ProcessAtatck();
 
+	ProcessJump();
 	UpdatePositionY();
 
 	CollisionStageY();
+
+
+	ProcessAtatck();
+
 
 	ChangeDispPos();
 }

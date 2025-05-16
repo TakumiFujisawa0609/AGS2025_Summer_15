@@ -97,4 +97,7 @@ private:
 	// フェード
 	void Fade(void);
 
+
+	int mainScreen_;
+	float scale_;
 };
