@@ -97,13 +97,17 @@ void Player::Move(void)
 	//モーションタイプの初期化を行う
 	motionType_ = MOTION_TYPE::E_MOTION_IDLE;
 
-	if (InpMng.IsNew(KEY_INPUT_D)) {
+	// コントローラー（PAD1の左スティック
+	auto padState = InpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+	const int stickThreshold = 500; // スティックのしきい値
+
+	if (InpMng.IsNew(KEY_INPUT_D)||padState.AKeyLX>stickThreshold) {
 		player_.pos_.x += player_.speed_;
 		playerDir_ =AsoUtility::DIRECTION::E_DIR_RIGHT;
 		//モーションを変更
 		motionType_ = MOTION_TYPE::E_MOTION_RUN;
 	}
-	if (InpMng.IsNew(KEY_INPUT_A)) {
+	if (InpMng.IsNew(KEY_INPUT_A)||padState.AKeyLX<-stickThreshold) {
 		player_.pos_.x -= player_.speed_;
 		playerDir_ =AsoUtility::DIRECTION::E_DIR_LEFT;
 		//モーションを変更
@@ -165,11 +169,19 @@ void Player::UpdatePositionY(void)
 void Player::ProcessJump(void)
 {
 	//ジャンプ判定
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)) {
+	auto& InpMng = InputManager::GetInstance();
+	if (InpMng.IsNew(KEY_INPUT_J) ||
+		InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+		// ジャンプ処理
+	}
+
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)&&
+		InputManager::GetInstance().IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP)){
 		isJump_ = true;		
 	}
 	//一回目のジャンプ
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_J) 
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)&&
+		InputManager::GetInstance().IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP)
 		&&inputJumpKeyCounter_<INPUT_JUMPKEY_FRAME
 		&&firstJumpFlg_) {
 		inputJumpKeyCounter_++;
@@ -179,6 +191,7 @@ void Player::ProcessJump(void)
 	}
 	//二段ジャンプ
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)
+		&& InputManager::GetInstance().IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP)
 		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
 		&& secondJumpFlg_) {
 		inputJumpKeyCounter_++;
@@ -188,6 +201,7 @@ void Player::ProcessJump(void)
 	}
 	//三弾ジャンプ
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)
+		&& InputManager::GetInstance().IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP)
 		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
 		&& thirdJumpFlg_) {
 		inputJumpKeyCounter_++;
@@ -197,7 +211,8 @@ void Player::ProcessJump(void)
 	}
 
 	//ジャンプキーを離したらカウンターをリセット
-	if (InputManager::GetInstance().IsTrgUp(KEY_INPUT_J)) {
+	if (InputManager::GetInstance().IsTrgUp(KEY_INPUT_J)
+		&&InputManager::GetInstance().IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1,InputManager::JOYPAD_BTN::TOP)) {
 		inputJumpKeyCounter_ = 0;
 		if (!secondJumpFlg_) {
 			thirdJumpFlg_ = false;
