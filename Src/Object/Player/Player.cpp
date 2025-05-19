@@ -83,6 +83,8 @@ void Player::Draw()
 	DrawFormatString(0, 64, 0xffffff, "プレイヤー座標(%.2f,%.2f)", player_.pos_.x, player_.pos_.y);
 	DrawFormatString(0, 80, 0xffffff, "プレイヤーの向き%d", playerDir_);
 	DrawFormatString(0, 96, 0x00ff00, "プレイヤーの攻撃%d", attackStat_);
+
+	
 }
 
 bool Player::Release()

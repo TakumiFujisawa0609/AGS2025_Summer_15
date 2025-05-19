@@ -24,5 +24,7 @@ private:
 	//プレイヤークラスのインスタンス
 	Player* player_;
 	Stage* stage_;
+
+	float x;
 };
 

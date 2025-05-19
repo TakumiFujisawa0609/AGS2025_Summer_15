@@ -7,6 +7,7 @@
 #include"../Object/Stage/Stage.h"
 #include"../Application.h"
 #include "GameScene.h"
+#include"../Utility/ShapesPosition.h"
 
 GameScene::GameScene(void)
 {
@@ -31,6 +32,7 @@ void GameScene::Init(void)
 			Collision::GetInstance().SetStage(stage_->GetMapData(y, x), y, x);
 		}
 	}
+	x = 0;
 }
 
 void GameScene::Update(void)
@@ -66,8 +68,18 @@ void GameScene::Draw(void)
 	player_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
+	
+	std::vector<Vector2F>pos = ShapesPosition::GetPositionCircle(Application::SCREEN_SIZE_X/2, Application::SCREEN_SIZE_Y/2, x, x, 12);
+	for (int i = 0; i < (int)pos.size(); i++) {
+		DrawCircle(pos[i].x, pos[i].y, 10, 0xff0000, true);
+	}
 
 	
+	x += 0.05f;
+	 pos=ShapesPosition::GetPositionWave(x, Application::SCREEN_SIZE_Y/2, 200.0f, 1000.0f, x, 20, 100.0f);
+	for (int i = 0; i <(int) pos.size(); i++) {
+		DrawCircle(pos[i].x, pos[i].y,10,0x00ff00, true);
+	}
 }
 
 void GameScene::Release(void)
