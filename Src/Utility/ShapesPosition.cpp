@@ -14,13 +14,36 @@ std::vector<Vector2F> ShapesPosition::GetPositionCircle(float centerX, float cen
 {
 	std::vector<Vector2F>pos;
 	float angleStep = 2.0f * DX_PI_F / numPoints;
-		float angle = startAngle;
+	float angle = startAngle;
 
 	for (int i = 0; i < numPoints; i++) {
 		angle += angleStep;
 		pos.push_back(GetOnePositionCircle(centerX, centerY, radius, angle));
 	}
 	return pos;
+}
+
+/// <summary>
+/// 波形のポジションを返す
+/// </summary>
+/// <param name="startX">開始座標</param>
+/// <param name="startY">開始座標</param>
+/// <param name="amplitude">振幅</param>
+/// <param name="wavelength">波長</param>
+/// <param name="phase">位相(開始角度)</param>
+/// <param name="numPoints">生成する点の数</param>
+/// <param name="interval">点と点の間隔</param>
+/// <returns></returns>
+std::vector<Vector2F> ShapesPosition::GetPositionWave(float startX, float startY, float amplitude, float wavelength, float phase, int numPoints, float interval)
+{
+	std::vector<Vector2F> positions;
+	for (int i = 0; i < numPoints; ++i) {
+		float x = startX + i * interval;
+		float rad = (x / wavelength) * 2.0f * DX_PI_F + phase;
+		float y = startY + amplitude * sinf(rad);
+		positions.push_back(Vector2F(x,y));
+	}
+	return positions;
 }
 
 /// <summary>

@@ -68,8 +68,10 @@ void Stage::Draw()
 //‰ğ•úˆ—
 bool Stage::Release()
 {
-	for (int ii = STAGE_CHIP_ALL; ii > 0; ii--) {
-		if (DeleteGraph(stageArrayId[ii - 1]) == -1)return false;
+	for (int ii = STAGE_CHIP_ALL; ii > 0; ii--)
+	{
+		if (DeleteGraph(stageArrayId[ii - 1]) == -1)
+			return false;
 	}
 
 	return true;
@@ -99,4 +101,6 @@ bool Stage::LoadMapData()
 		}
 		yy++;
 	}
+
+	return true;
 }
