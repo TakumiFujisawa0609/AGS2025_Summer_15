@@ -171,21 +171,13 @@ void Player::UpdatePositionY(void)
 void Player::ProcessJump(void)
 {
 	//ジャンプ判定
-	auto& InpMng = InputManager::GetInstance();
-	if (InpMng.IsNew(KEY_INPUT_J) ||
-		InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
-		// ジャンプ処理
-	}
-
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)&&
-		InputManager::GetInstance().IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP)){
-		isJump_ = true;		
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)) {
+		isJump_ = true;
 	}
 	//一回目のジャンプ
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)&&
-		InputManager::GetInstance().IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP)
-		&&inputJumpKeyCounter_<INPUT_JUMPKEY_FRAME
-		&&firstJumpFlg_) {
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)
+		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
+		&& firstJumpFlg_) {
 		inputJumpKeyCounter_++;
 		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
 
@@ -193,17 +185,15 @@ void Player::ProcessJump(void)
 	}
 	//二段ジャンプ
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)
-		&& InputManager::GetInstance().IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP)
 		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
 		&& secondJumpFlg_) {
 		inputJumpKeyCounter_++;
-		jumpPower_=jumpPower_+ (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
+		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
 
 		Jump();
 	}
 	//三弾ジャンプ
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)
-		&& InputManager::GetInstance().IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP)
 		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
 		&& thirdJumpFlg_) {
 		inputJumpKeyCounter_++;
@@ -213,12 +203,12 @@ void Player::ProcessJump(void)
 	}
 
 	//ジャンプキーを離したらカウンターをリセット
-	if (InputManager::GetInstance().IsTrgUp(KEY_INPUT_J)
-		&&InputManager::GetInstance().IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1,InputManager::JOYPAD_BTN::TOP)) {
+	if (InputManager::GetInstance().IsTrgUp(KEY_INPUT_J)) {
 		inputJumpKeyCounter_ = 0;
 		if (!secondJumpFlg_) {
 			thirdJumpFlg_ = false;
-		}else if (!firstJumpFlg_) {
+		}
+		else if (!firstJumpFlg_) {
 			secondJumpFlg_ = false;
 			jumpPower_ = 0;
 		}
