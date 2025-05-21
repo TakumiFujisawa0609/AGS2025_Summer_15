@@ -99,5 +99,5 @@ private:
 
 
 	int mainScreen_;
-	float scale_;
+
 };

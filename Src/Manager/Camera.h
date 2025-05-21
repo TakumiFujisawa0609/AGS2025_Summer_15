@@ -24,7 +24,7 @@ public:
 
 	void Follow(dir xyz, float move);
 
-	void SHAKE(void) { shakecounter_ = SHAKE_COUNTER_SET; }
+	void SHAKE(void);
 
 private:
 	static Camera* instance;
@@ -32,5 +32,6 @@ private:
 
 	static constexpr int SHAKE_COUNTER_SET = 30;
 	int shakecounter_;
+	VECTOR prevPos;
 };
 

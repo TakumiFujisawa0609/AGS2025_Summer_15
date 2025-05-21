@@ -4,6 +4,7 @@
 #include"../../Manager/Camera.h"
 #include"../../Manager/Collision.h"
 #include"../Stage/Stage.h"
+#include"../../Scene/GameScene.h"
 
 Player::Player(Stage* instance)
 {
@@ -80,8 +81,8 @@ void Player::Draw()
 {
 	DrawCircle(player_.disppos_.x, player_.disppos_.y, 10, GetColor(255, 0, 0), true);
 
-	DrawFormatString(0, 64, 0xffffff, "プレイヤー座標(%.2f,%.2f)", player_.pos_.x, player_.pos_.y);
-	DrawFormatString(0, 80, 0xffffff, "プレイヤーの向き%d", playerDir_);
+	DrawFormatString(0, 64, 0x0000ff, "プレイヤー座標(%.2f,%.2f)", player_.pos_.x, player_.pos_.y);
+	DrawFormatString(0, 80, 0x0000ff, "プレイヤーの向き%d", playerDir_);
 	DrawFormatString(0, 96, 0x00ff00, "プレイヤーの攻撃%d", attackStat_);
 
 	
@@ -131,6 +132,7 @@ void Player::ProcessEvasion(void)
 	//回避
 	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_S)
 		&&!isEvasionCoolDown_) {
+		GameScene::Slow();
 		isEvasion_ = true;
 		isEvasionCoolDown_ = true;
 		isEvasionInbincible_ = true;
@@ -260,14 +262,14 @@ void Player::CollisionStageX(void)
 {
 	Collision& ins = Collision::GetInstance();
 
-	//左
-	if ((player_.pos_.x - player_.size_.x / 2) <= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::LEFT)) {
-		player_.pos_.x = (ins.GetStageLine(player_.pos_, player_.size_, Collision::LEFT)) + player_.size_.x / 2;
-	}
-
 	//右
 	if ((player_.pos_.x + player_.size_.x / 2) >= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::RIGHT)) {
 		player_.pos_.x = (ins.GetStageLine(player_.pos_, player_.size_, Collision::RIGHT)) - player_.size_.x / 2;
+	}
+
+	//左
+	if ((player_.pos_.x - player_.size_.x / 2) <= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::LEFT)) {
+		player_.pos_.x = (ins.GetStageLine(player_.pos_, player_.size_, Collision::LEFT)) + player_.size_.x / 2;
 	}
 }
 

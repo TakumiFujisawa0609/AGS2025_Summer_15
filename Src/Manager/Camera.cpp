@@ -15,6 +15,7 @@ Camera::~Camera()
 void Camera::Init()
 {
 	cameraPos = VGet(0.0f, 150.0f, -300.0f);
+	prevPos = cameraPos;
 	shakecounter_ = 0;
 }
 
@@ -31,8 +32,7 @@ void Camera::Set()
 	}
 	else if (shakecounter_ == 1) {
 		shakecounter_ = 0;
-		cameraPos.x = 0.0f;
-		cameraPos.y = 150.f;
+		cameraPos = prevPos;
 	}
 	SetCameraPositionAndAngle(cameraPos, 0.0f, 0.0f, 0.0f);
 }
@@ -53,6 +53,13 @@ void Camera::Follow(dir xyz, float move)
 	default:
 		break;
 	}
+}
+
+void Camera::SHAKE(void)
+{
+	if (shakecounter_ > 0)return;
+	shakecounter_ = SHAKE_COUNTER_SET;
+	prevPos = cameraPos;
 }
 
 

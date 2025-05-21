@@ -9,6 +9,9 @@
 #include "GameScene.h"
 #include"../Utility/ShapesPosition.h"
 
+int GameScene::slowCounter_ = 0;
+int GameScene::hitStopCounter_ = 0;
+
 GameScene::GameScene(void)
 {
 }
@@ -37,6 +40,23 @@ void GameScene::Init(void)
 
 void GameScene::Update(void)
 {
+	//ヒットストップ-----------------
+	if (hitStopCounter_ > 0) {
+		hitStopCounter_--;
+		return;
+	}
+	//スロー--------------------------
+	if (slowCounter_ > 0) {
+		slowCounter_--;
+		if (slowCounter_ % 2 != 0) {
+			return;
+		}
+	}
+	//--------------------------------
+
+	zoomPos_ = { (float)Application::SCREEN_SIZE_X / 2,(float)Application::SCREEN_SIZE_Y / 2 };
+	scale_ = 1.0f;
+
 	player_->Update();
 	stage_->Update();
 
@@ -47,8 +67,6 @@ void GameScene::Update(void)
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
 	}
 
-
-
 	if (player_->GetPlayer().disppos_.x > Application::SCREEN_SIZE_X / 7 * 4) {
 		if (ins.IsNew(KEY_INPUT_D)) {
 			Camera::GetInstance().Follow(Camera::dir::X, player_->GetPlayer().speed_);
@@ -58,6 +76,17 @@ void GameScene::Update(void)
 		if (ins.IsNew(KEY_INPUT_A)) {
 			Camera::GetInstance().Follow(Camera::dir::X, -(player_->GetPlayer().speed_));
 		}
+	}
+
+
+
+	if (player_->IsEvasion()) {
+		zoomPos_ = player_->GetPlayer().disppos_;
+		scale_ = 1.4f;
+	}
+
+	if (ins.IsTrgDown(KEY_INPUT_Z)) {
+		Camera::GetInstance().SHAKE();
 	}
 
 }

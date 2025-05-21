@@ -1,4 +1,5 @@
 #pragma once
+#include"../Common/Vector2.h"
 
 class SceneBase
 {
@@ -22,5 +23,14 @@ public:
 
 	// ‰ğ•úˆ—
 	virtual void Release(void) = 0;
+
+
+	//’‹“_
+	const Vector2F GetZoomPos(void) { return zoomPos_; }
+	const float GetScale(void) { return scale_; }
+
+protected:
+	Vector2F zoomPos_;
+	float scale_;
 
 };

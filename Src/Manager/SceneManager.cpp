@@ -47,7 +47,6 @@ void SceneManager::Init(void)
 
 	//メイクスクリーン
 	mainScreen_ = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
-	scale_ = 1;
 
 	// デルタタイム
 	preTime_ = std::chrono::system_clock::now();
@@ -104,11 +103,8 @@ void SceneManager::Update(void)
 	}
 	else
 	{
-		//if (CheckHitKey(KEY_INPUT_A) == 1) {
-		//	int a=0;
-		//}
+		
 		scene_->Update();
-		scale_ += 0.001;
 	}
 
 
@@ -136,7 +132,14 @@ void SceneManager::Draw(void)
 
 	SetDrawScreen(DX_SCREEN_BACK);
 	ClearDrawScreen();
-	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, 1, 0, mainScreen_, true);
+
+
+
+	Vector2F vPos,dPos;
+	vPos = { scene_->GetZoomPos().x - Application::SCREEN_SIZE_X / 2, scene_->GetZoomPos().y - Application::SCREEN_SIZE_Y / 2 };
+	dPos = { Application::SCREEN_SIZE_X / 2 - vPos.x,Application::SCREEN_SIZE_Y / 2 - vPos.y };
+
+	DrawRotaGraph(dPos.x, dPos.y, scene_->GetScale(), 0, mainScreen_, true);
 
 }
 
