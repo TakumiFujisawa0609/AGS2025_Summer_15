@@ -1,3 +1,5 @@
+#include<string>
+
 #include "Player.h"
 #include"../../Manager/InputManager.h"
 #include"../../Application.h"
@@ -317,5 +319,34 @@ void Player::ChangeDispPos(void)
 {
 	player_.disppos_.x = player_.pos_.x - Camera::GetInstance().GetPos().x;
 	player_.disppos_.y = player_.pos_.y - Camera::GetInstance().GetPos().y;
+}
+
+bool Player::LoadPlayerImage(void)
+{
+	std::string basePath = Application::PATH_PLAYER;
+
+	int motion = 0;
+	int attackNone = static_cast<int>(ATTACK_STAT::E_ATTACK_STAT_NON);
+	int attackKatto = static_cast<int>(ATTACK_STAT::E_ATTACK_STAT_KATTO);
+	int attackNuguru = static_cast<int>(ATTACK_STAT::E_ATTACK_STAT_NUGRU);
+	int motion_max = static_cast<int>(MOTION_TYPE::E_MOTION_MAX);
+	int attack_max = static_cast<int>(ATTACK_STAT::E_ATTACK_STAT_MAX);
+
+	//画像ハンドル番号のテーブルの初期化
+	for (int i = 0; i < motion_max; i++) {
+		for (int j = 0; j < attack_max; j++) {
+			img[i][j] = -1;
+		}
+	}
+	//待機モーション
+	int err;
+	motion = static_cast<int>(MOTION_TYPE::E_MOTION_IDLE);
+	err=LoadDivGraph(basePath+"Idle.png").c_str(),MAX_ANIM_NUM,MAX_ANIM_NUM,1,
+		SIZE_X, SIZE_Y, &img[motion][attackNone]);
+
+}
+
+void Player::DrawPlayer(void)
+{
 }
 

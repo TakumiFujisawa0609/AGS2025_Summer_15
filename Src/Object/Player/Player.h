@@ -7,8 +7,8 @@ class Stage;
 class Player
 {
 public:
-	static constexpr int SIZE_X = 64;
-	static constexpr int SIZE_Y = 96;
+	static constexpr int SIZE_X = 96;		//画像サイズ
+	static constexpr int SIZE_Y = 96;	//画像サイズ
 	static constexpr float RADIUS = 64.0f;
 
 	static constexpr int MAX_ANIM_NUM = 10;
@@ -30,6 +30,9 @@ public:
 
 	static constexpr int ATTACK_TIME = 60;			//攻撃時間
 	static constexpr int ATTACK_COOLDOWN = 60;
+
+	static constexpr int MAX_ANIM_NUM = 10;		//最大アニメーションパターン
+	static constexpr float ANIM_SPEED = 0.1f;	//アニメーションスピード
 
 	//モーションタイプ
 	enum class MOTION_TYPE
@@ -79,7 +82,7 @@ private:
 	Base player_;
 
 	//プレイヤー画像のハンドル番号
-	int img[static_cast<int>(MOTION_TYPE::E_MOTION_MAX)][static_cast<int>(ATTACK_STAT::E_ATTACK_STAT_MAX)][MAX_ANIM_NUM];
+	int img[static_cast<int>(MOTION_TYPE::E_MOTION_MAX)][static_cast<int>(ATTACK_STAT::E_ATTACK_STAT_MAX)];
 
 	//モーションタイプ
 	MOTION_TYPE motionType_;
@@ -132,7 +135,6 @@ private:
 
 	//int playerDir_;			//プレイヤーが向いている方向
 	AsoUtility::DIRECTION playerDir_;
-	float animCounter_;			//アニメーションカウンター
 
 	//攻撃
 	bool isAttack_;
@@ -149,6 +151,11 @@ private:
 	void ChangeDispPos(void);
 
 	Stage* stage_;
+
+	float animCounter_;			//アニメーションカウンター
+	bool LoadPlayerImage(void);		//プレイヤー画像の読み込み処理
+	void DrawPlayer(void);		//プレイヤーの描画
+
 };
 
 
