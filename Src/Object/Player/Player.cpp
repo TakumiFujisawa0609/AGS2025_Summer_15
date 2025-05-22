@@ -3,6 +3,7 @@
 #include"../../Application.h"
 #include"../../Manager/Camera.h"
 #include"../../Manager/Collision.h"
+#include"../../Manager/SceneManager.h"
 #include"../Stage/Stage.h"
 #include"../../Scene/GameScene.h"
 
@@ -132,7 +133,7 @@ void Player::ProcessEvasion(void)
 	//‰ñ”ð
 	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_S)
 		&&!isEvasionCoolDown_) {
-		GameScene::Slow();
+		SceneManager::GetInstance().Slow();
 		isEvasion_ = true;
 		isEvasionCoolDown_ = true;
 		isEvasionInbincible_ = true;

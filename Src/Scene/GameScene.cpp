@@ -40,19 +40,7 @@ void GameScene::Init(void)
 
 void GameScene::Update(void)
 {
-	//ヒットストップ-----------------
-	if (hitStopCounter_ > 0) {
-		hitStopCounter_--;
-		return;
-	}
-	//スロー--------------------------
-	if (slowCounter_ > 0) {
-		slowCounter_--;
-		if (slowCounter_ % 2 != 0) {
-			return;
-		}
-	}
-	//--------------------------------
+
 
 	zoomPos_ = { (float)Application::SCREEN_SIZE_X / 2,(float)Application::SCREEN_SIZE_Y / 2 };
 	scale_ = 1.0f;
@@ -81,12 +69,12 @@ void GameScene::Update(void)
 
 
 	if (player_->IsEvasion()) {
-		zoomPos_ = player_->GetPlayer().disppos_;
-		scale_ = 1.4f;
+		SceneManager::GetInstance().ZoomPos(player_->GetPlayer().disppos_);
+		SceneManager::GetInstance().ZoomScale(1.4f);
 	}
 
 	if (ins.IsTrgDown(KEY_INPUT_Z)) {
-		Camera::GetInstance().SHAKE();
+		SceneManager::GetInstance().SHAKE();
 	}
 
 }

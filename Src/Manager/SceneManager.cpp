@@ -103,7 +103,22 @@ void SceneManager::Update(void)
 	}
 	else
 	{
-		
+		//ヒットストップ-----------------
+		if (hitStopCounter_ > 0) {
+			hitStopCounter_--;
+			return;
+		}
+		//スロー--------------------------
+		if (slowCounter_ > 0) {
+			slowCounter_--;
+			if (slowCounter_ % 2 != 0) {
+				return;
+			}
+		}
+		//注視点を初期化-----------------
+		zoomPos_ = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
+		scale_ = 1.0f;
+		//--------------------------------
 		scene_->Update();
 	}
 
@@ -134,12 +149,17 @@ void SceneManager::Draw(void)
 	ClearDrawScreen();
 
 
-
 	Vector2F vPos,dPos;
-	vPos = { scene_->GetZoomPos().x - Application::SCREEN_SIZE_X / 2, scene_->GetZoomPos().y - Application::SCREEN_SIZE_Y / 2 };
+	vPos = { zoomPos_.x - Application::SCREEN_SIZE_X / 2, zoomPos_.y - Application::SCREEN_SIZE_Y / 2 };
 	dPos = { Application::SCREEN_SIZE_X / 2 - vPos.x,Application::SCREEN_SIZE_Y / 2 - vPos.y };
 
-	DrawRotaGraph(dPos.x, dPos.y, scene_->GetScale(), 0, mainScreen_, true);
+	if (shakeCounter_ > 0)shakeCounter_--;
+	int shake = shakeCounter_ / 5 % 2;
+	shake *= 2;
+	shake -= 1;
+	shake *= 5;
+
+	DrawRotaGraph(dPos.x+shake, dPos.y-shake, scale_, 0, mainScreen_, true);
 
 }
 

@@ -24,14 +24,9 @@ public:
 
 	void Follow(dir xyz, float move);
 
-	void SHAKE(void);
 
 private:
 	static Camera* instance;
 	VECTOR cameraPos;
-
-	static constexpr int SHAKE_COUNTER_SET = 30;
-	int shakecounter_;
-	VECTOR prevPos;
 };
 

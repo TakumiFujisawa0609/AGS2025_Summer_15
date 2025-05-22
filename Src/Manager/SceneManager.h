@@ -1,5 +1,6 @@
 #pragma once
 #include <chrono>
+#include"../Common/Vector2.h"
 class SceneBase;
 class Fader;
 class Camera;
@@ -58,6 +59,14 @@ public:
 	const CNTL GetController(void)const;
 	void SetController(const CNTL _cntl);
 
+
+	void Slow(void) { slowCounter_ = SLOW_TIME; }
+	void HitStop(void) { hitStopCounter_ = HIT_STOP_TIME; }
+	void SHAKE(void) { shakeCounter_ = SHAKE_TIME; }
+
+	void ZoomPos(Vector2F pos) { zoomPos_ = pos; }
+	void ZoomScale(float scale) { scale_ = scale; }
+
 private:
 
 	// 静的インスタンス
@@ -100,4 +109,15 @@ private:
 
 	int mainScreen_;
 
+	const int SLOW_TIME = 40;
+	int slowCounter_;
+
+	const int HIT_STOP_TIME = 20;
+	int hitStopCounter_;
+
+	const int SHAKE_TIME = 30;
+	int shakeCounter_ = 0;
+
+	Vector2F zoomPos_;
+	float scale_ = 1.0f;
 };
