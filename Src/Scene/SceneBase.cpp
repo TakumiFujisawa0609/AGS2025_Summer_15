@@ -3,8 +3,6 @@
 
 SceneBase::SceneBase(void)
 {
-	zoomPos_ = { (float)Application::SCREEN_SIZE_X / 2,(float)Application::SCREEN_SIZE_Y / 2 };
-	scale_ = 1.0f;
 }
 
 SceneBase::~SceneBase(void)
