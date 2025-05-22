@@ -56,6 +56,7 @@ void Player::GameInit()
 	evasionCoolDown_ = 0;
 	
 	Collision::CreateInstance();
+	LoadPlayerImage();
 }
 
 void Player::Update()
@@ -81,12 +82,13 @@ void Player::Update()
 void Player::Draw()
 {
 	DrawCircle(player_.disppos_.x, player_.disppos_.y, 10, GetColor(255, 0, 0), true);
+	
 
 	DrawFormatString(0, 64, 0xffffff, "プレイヤー座標(%.2f,%.2f)", player_.pos_.x, player_.pos_.y);
 	DrawFormatString(0, 80, 0xffffff, "プレイヤーの向き%d", playerDir_);
 	DrawFormatString(0, 96, 0x00ff00, "プレイヤーの攻撃%d", attackStat_);
 
-	
+	SetDrawPlayer();
 }
 
 bool Player::Release()
@@ -321,7 +323,7 @@ void Player::ChangeDispPos(void)
 	player_.disppos_.y = player_.pos_.y - Camera::GetInstance().GetPos().y;
 }
 
-bool Player::LoadPlayerImage(void)
+void Player::LoadPlayerImage(void)
 {
 	std::string basePath = Application::PATH_PLAYER;
 
@@ -341,12 +343,48 @@ bool Player::LoadPlayerImage(void)
 	//待機モーション
 	int err;
 	motion = static_cast<int>(MOTION_TYPE::E_MOTION_IDLE);
-	err=LoadDivGraph(basePath+"Idle.png").c_str(),MAX_ANIM_NUM,MAX_ANIM_NUM,1,
+	err=LoadDivGraph((basePath+"IDLE.png").c_str(),MAX_ANIM_NUM,MAX_ANIM_NUM,1,
 		SIZE_X, SIZE_Y, &img[motion][attackNone]);
+	
 
 }
 
-void Player::DrawPlayer(void)
+void Player::DrawPlayer(int modelId)
 {
+	//プレイヤーの向き
+	bool isLeft = true;
+	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
+		isLeft = false;
+	}
+	DrawRotaGraph(player_.disppos_.x, player_.disppos_.y-SIZE_Y/2,
+		10.0, 0.0, modelId, true, isLeft);
 }
+
+void Player::SetDrawPlayer(void)
+{
+	if (isJump_) {
+		//ジャンプ中
+	//	motionType_ = MOTION_TYPE::E_MOTION_JUMP;
+	}
+
+	//現在のモーション
+	int nowMotion = static_cast<int>(motionType_);
+
+	//攻撃ステータス
+	int nowAttack = static_cast<int>(attackStat_);
+	switch (motionType_)
+	{
+	case Player::MOTION_TYPE::E_MOTION_IDLE:
+		DrawPlayer(img[nowMotion][nowAttack]);
+	case Player::MOTION_TYPE::E_MOTION_RUN:
+	case Player::MOTION_TYPE::E_MOTION_JUMP:
+	case Player::MOTION_TYPE::E_MOTION_DAMAGE:
+	case Player::MOTION_TYPE::E_MOTION_EVASION:
+		break;
+	}
+
+
+}
+
+
 

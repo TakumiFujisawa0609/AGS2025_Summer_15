@@ -11,8 +11,6 @@ public:
 	static constexpr int SIZE_Y = 96;	//画像サイズ
 	static constexpr float RADIUS = 64.0f;
 
-	static constexpr int MAX_ANIM_NUM = 10;
-
 	static constexpr int HP_MAX = 100;
 
 	static constexpr float MOVE_POW = 10.0f;		//移動量
@@ -153,8 +151,9 @@ private:
 	Stage* stage_;
 
 	float animCounter_;			//アニメーションカウンター
-	bool LoadPlayerImage(void);		//プレイヤー画像の読み込み処理
-	void DrawPlayer(void);		//プレイヤーの描画
+	void LoadPlayerImage(void);		//プレイヤー画像の読み込み処理
+	void DrawPlayer(int modelId);		//プレイヤーの描画
+	void SetDrawPlayer(void);		//描画するプレイヤーの設定
 
 };
 
