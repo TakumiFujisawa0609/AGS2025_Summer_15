@@ -153,11 +153,15 @@ void SceneManager::Draw(void)
 	vPos = { zoomPos_.x - Application::SCREEN_SIZE_X / 2, zoomPos_.y - Application::SCREEN_SIZE_Y / 2 };
 	dPos = { Application::SCREEN_SIZE_X / 2 - vPos.x,Application::SCREEN_SIZE_Y / 2 - vPos.y };
 
-	if (shakeCounter_ > 0)shakeCounter_--;
-	int shake = shakeCounter_ / 5 % 2;
-	shake *= 2;
-	shake -= 1;
-	shake *= 5;
+	int shake = 0;
+	if (shakeCounter_ > 0) {
+		shakeCounter_--;
+
+		shake = shakeCounter_ / 5 % 2;
+		shake *= 2;
+		shake -= 1;
+		shake *= 5;
+	}
 
 	DrawRotaGraph(dPos.x+shake, dPos.y-shake, scale_, 0, mainScreen_, true);
 
