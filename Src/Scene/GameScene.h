@@ -4,6 +4,7 @@
 
 class Player;
 class Stage;
+class EnemyManager;
 
 class GameScene :
     public SceneBase
@@ -24,5 +25,6 @@ private:
 	//プレイヤークラスのインスタンス
 	Player* player_;
 	Stage* stage_;
+	EnemyManager* enemy_ ;
 };
 

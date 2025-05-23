@@ -14,18 +14,20 @@ EnemyManager::~EnemyManager()
 }
 void EnemyManager::Init()
 {
-
+	bamboo_->Init();
 }
 
 void EnemyManager::Update()
 {
+	bamboo_->Update();
 }
 
 void EnemyManager::Draw()
 {
+	bamboo_->Draw();
 }
 
 void EnemyManager::Relese()
 {
-	
+	bamboo_->Release();
 }
