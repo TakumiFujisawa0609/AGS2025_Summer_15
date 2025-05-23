@@ -7,7 +7,11 @@ class UnitBase
 {
 public:
 
-	static constexpr int ENEMYBAMBOO_RADIUS = 32;
+	static constexpr float MAX_JUMP_POWER = -12.0f;	//最大ジャンプ力
+	static constexpr int INPUT_JUMPKEY_FRAME = 6;	//ジャンプ入力受付フレーム数
+
+	static constexpr float GRAVITY = 0.98f;			//重力
+	static constexpr float MAX_GRAVITY = 31.0f;
 
 	//コンストラクタ
 	UnitBase(void);
@@ -47,4 +51,29 @@ public:
 protected:
 
 	Base unit_;
+
+	void StageCollisionUpdate(void);
+
+	//重力
+	void Gravity(void);
+
+	//ジャンプ
+	void Jump(void);
+
+	//Y座標の変更
+	void UpdatePositionY(void);
+
+	//ステージとの当たり判定
+	void CollisionStageY(void);
+	void CollisionStageX(void);
+
+	void ChangeDispPos(void);
+
+
+	//重力
+	float gravity_;
+
+	bool isJump_;				//true=ジャンプ中/false=非ジャンプ
+	float jumpPower_;			//ジャンプパワー
+	float verticalAcceleration_;//縦方向の加速度
 };
