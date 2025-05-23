@@ -1,5 +1,4 @@
 #include <chrono>
-#include <DxLib.h>
 #include "../Common/Fader.h"
 #include "../Scene/TitleScene.h"
 #include "../Scene/GameScene.h"
@@ -8,7 +7,6 @@
 #include "ResourceManager.h"
 #include "Camera.h"
 #include "SceneManager.h"
-#include"../Application.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
 
@@ -46,7 +44,7 @@ void SceneManager::Init(void)
 
 
 	//メイクスクリーン
-	mainScreen_ = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
+	mainScreen_ = MakeScreen(MAIN_SCREEN_SIZE_X, MAIN_SCREEN_SIZE_Y, true);
 
 	// デルタタイム
 	preTime_ = std::chrono::system_clock::now();
@@ -163,7 +161,7 @@ void SceneManager::Draw(void)
 		shake *= 5;
 	}
 
-	DrawRotaGraph(dPos.x+shake, dPos.y-shake, scale_, 0, mainScreen_, true);
+	DrawRotaGraph(dPos.x+shake, dPos.y+shake, scale_, 0, mainScreen_, true);
 
 }
 
