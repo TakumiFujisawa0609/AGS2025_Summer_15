@@ -8,7 +8,7 @@ class ShapesPosition
 {
 public:
 
-	/// <summary>
+/// <summary>
 /// 円周上にポジションを設定する
 /// </summary>
 /// <param name="centerX">中心座標</param>
