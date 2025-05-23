@@ -24,7 +24,7 @@ bool Player::SystemInit()
 void Player::GameInit()
 {
 	player_.isAlive_ = true;
-	player_.pos_ = { Application::SCREEN_SIZE_X/2/*10.0f*/,Application::SCREEN_SIZE_Y/2 };
+	player_.pos_ = { SceneManager::MAIN_SCREEN_SIZE_X/2/*10.0f*/,SceneManager::MAIN_SCREEN_SIZE_Y/2 };
 	player_.size_ = { /*SIZE_X,SIZE_Y,*/20.0f,20.0f };
 	player_.radius_ = RADIUS;
 	player_.hp_ = HP_MAX;
