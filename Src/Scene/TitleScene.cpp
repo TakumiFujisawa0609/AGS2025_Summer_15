@@ -59,8 +59,8 @@ void TitleScene::Release(void)
 void TitleScene::DrawLogo(void)
 {
 
-	int cx = Application::SCREEN_SIZE_X / 2;
-	int cy = Application::SCREEN_SIZE_Y / 2;
+	int cx = SceneManager::MAIN_SCREEN_SIZE_X / 2;
+	int cy = SceneManager::MAIN_SCREEN_SIZE_Y / 2;
 
 	// É^ÉCÉgÉãÉçÉS
 	DrawRotaGraph(

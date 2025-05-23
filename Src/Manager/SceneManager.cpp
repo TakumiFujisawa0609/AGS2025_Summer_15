@@ -140,8 +140,6 @@ void SceneManager::Draw(void)
 	// •`‰æ
 	scene_->Draw();
 
-	// ˆÃ“]E–¾“]
-	fader_->Draw();
 
 	SetDrawScreen(DX_SCREEN_BACK);
 	ClearDrawScreen();
@@ -162,6 +160,9 @@ void SceneManager::Draw(void)
 	}
 
 	DrawRotaGraph(dPos.x+shake, dPos.y+shake, scale_, 0, mainScreen_, true);
+
+	// ˆÃ“]E–¾“]
+	fader_->Draw();
 
 }
 
