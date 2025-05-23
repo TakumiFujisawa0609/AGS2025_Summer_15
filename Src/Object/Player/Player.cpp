@@ -101,13 +101,17 @@ void Player::Move(void)
 	//モーションタイプの初期化を行う
 	motionType_ = MOTION_TYPE::E_MOTION_IDLE;
 
-	if (InpMng.IsNew(KEY_INPUT_D)) {
+	// コントローラー（PAD1の左スティック
+	auto padState = InpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+	const int stickThreshold = 500; // スティックのしきい値
+
+	if (InpMng.IsNew(KEY_INPUT_D)||padState.AKeyLX>stickThreshold) {
 		player_.pos_.x += player_.speed_;
 		playerDir_ =AsoUtility::DIRECTION::E_DIR_RIGHT;
 		//モーションを変更
 		motionType_ = MOTION_TYPE::E_MOTION_RUN;
 	}
-	if (InpMng.IsNew(KEY_INPUT_A)) {
+	if (InpMng.IsNew(KEY_INPUT_A)||padState.AKeyLX<-stickThreshold) {
 		player_.pos_.x -= player_.speed_;
 		playerDir_ =AsoUtility::DIRECTION::E_DIR_LEFT;
 		//モーションを変更
@@ -171,12 +175,12 @@ void Player::ProcessJump(void)
 {
 	//ジャンプ判定
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)) {
-		isJump_ = true;		
+		isJump_ = true;
 	}
 	//一回目のジャンプ
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_J) 
-		&&inputJumpKeyCounter_<INPUT_JUMPKEY_FRAME
-		&&firstJumpFlg_) {
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)
+		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
+		&& firstJumpFlg_) {
 		inputJumpKeyCounter_++;
 		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
 
@@ -187,7 +191,7 @@ void Player::ProcessJump(void)
 		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
 		&& secondJumpFlg_) {
 		inputJumpKeyCounter_++;
-		jumpPower_=jumpPower_+ (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
+		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
 
 		Jump();
 	}
@@ -206,7 +210,8 @@ void Player::ProcessJump(void)
 		inputJumpKeyCounter_ = 0;
 		if (!secondJumpFlg_) {
 			thirdJumpFlg_ = false;
-		}else if (!firstJumpFlg_) {
+		}
+		else if (!firstJumpFlg_) {
 			secondJumpFlg_ = false;
 			jumpPower_ = 0;
 		}

@@ -279,7 +279,7 @@ InputManager::JOYPAD_IN_STATE InputManager::GetJPadInputState(JOYPAD_NO no)
 		//   A
 
 		idx = static_cast<int>(JOYPAD_BTN::TOP);
-		ret.ButtonsNew[idx] = d.Buttons[3];// Y
+ 		ret.ButtonsNew[idx] = d.Buttons[3];// Y
 
 		idx = static_cast<int>(JOYPAD_BTN::LEFT);
 		ret.ButtonsNew[idx] = d.Buttons[2];// X
