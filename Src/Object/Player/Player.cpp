@@ -23,9 +23,11 @@ bool Player::SystemInit()
 
 void Player::GameInit()
 {
+	//LoadPlayerImage();
+
 	player_.isAlive_ = true;
 	player_.pos_ = { Application::SCREEN_SIZE_X/2/*10.0f*/,Application::SCREEN_SIZE_Y/2 };
-	player_.size_ = { /*SIZE_X,SIZE_Y,*/20.0f,20.0f };
+	player_.size_ = { /*SIZE_X,SIZE_Y,*/33.0f,65.0f };
 	player_.radius_ = RADIUS;
 	player_.hp_ = HP_MAX;
 	player_.speed_ = MOVE_POW;
@@ -38,6 +40,7 @@ void Player::GameInit()
 	isAttack_ = false;
 	attackCounter_ = 0;
 
+	//ジャンプ
 	verticalAcceleration_ = 0;
 	jumpPower_ = 0;
 	isJump_ = false;
@@ -56,15 +59,10 @@ void Player::GameInit()
 	evasionCoolDown_ = 0;
 	
 	Collision::CreateInstance();
-	LoadPlayerImage();
 }
 
 void Player::Update()
 {
-	Move();
-	ProcessEvasion();
-
-	CollisionStageX();
 
 
 	ProcessJump();
@@ -72,6 +70,10 @@ void Player::Update()
 
 	CollisionStageY();
 
+	Move();
+	ProcessEvasion();
+
+	CollisionStageX();
 
 	ProcessAtatck();
 
@@ -81,14 +83,19 @@ void Player::Update()
 
 void Player::Draw()
 {
-	DrawCircle(player_.disppos_.x, player_.disppos_.y, 10, GetColor(255, 0, 0), true);
-	
+	//DrawCircle(player_.disppos_.x, player_.disppos_.y, 10, GetColor(255, 0, 0), true);
+	DrawCircle(player_.disppos_.x, player_.disppos_.y, 2, 0x00ffff, true);
+	if (isAttack_) {
+		DrawOval(player_.disppos_.x, player_.disppos_.y, 48,32, 0x00f0f0, true);
+	}
+	DrawOval(player_.disppos_.x, player_.disppos_.y, 16, 32, 0xff0000, true);
+
 
 	DrawFormatString(0, 64, 0xffffff, "プレイヤー座標(%.2f,%.2f)", player_.pos_.x, player_.pos_.y);
 	DrawFormatString(0, 80, 0xffffff, "プレイヤーの向き%d", playerDir_);
 	DrawFormatString(0, 96, 0x00ff00, "プレイヤーの攻撃%d", attackStat_);
 
-	SetDrawPlayer();
+	//SetDrawPlayer();
 }
 
 bool Player::Release()
@@ -264,14 +271,14 @@ void Player::CollisionStageX(void)
 {
 	Collision& ins = Collision::GetInstance();
 
-	//左
-	if ((player_.pos_.x - player_.size_.x / 2) <= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::LEFT)) {
-		player_.pos_.x = (ins.GetStageLine(player_.pos_, player_.size_, Collision::LEFT)) + player_.size_.x / 2;
-	}
 
 	//右
 	if ((player_.pos_.x + player_.size_.x / 2) >= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::RIGHT)) {
 		player_.pos_.x = (ins.GetStageLine(player_.pos_, player_.size_, Collision::RIGHT)) - player_.size_.x / 2;
+	}
+	//左
+	if ((player_.pos_.x - player_.size_.x / 2) <= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::LEFT)) {
+		player_.pos_.x = (ins.GetStageLine(player_.pos_, player_.size_, Collision::LEFT)) + player_.size_.x / 2;
 	}
 }
 
@@ -294,7 +301,7 @@ void Player::Attack(void)
 			attackCoolDown_ = 0;
 		}
 	}
-	else if (isAttackCoolDown_) {
+	 if (isAttackCoolDown_) {
 		attackCoolDown_++;
 		if (attackCoolDown_ >= ATTACK_COOLDOWN) {
 			isAttackCoolDown_ = false;
@@ -306,6 +313,7 @@ void Player::Attack(void)
 void Player::ProcessAtatck(void)
 {
 	auto& ins = InputManager::GetInstance();
+	if (!isAttack_) {
 
 	if (ins.IsNew(KEY_INPUT_Q)) {
 		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_KATTO;
@@ -315,6 +323,8 @@ void Player::ProcessAtatck(void)
 		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NUGRU;
 		isAttack_ = true;
 	}
+	}
+	Attack();
 }
 
 void Player::ChangeDispPos(void)
@@ -323,68 +333,70 @@ void Player::ChangeDispPos(void)
 	player_.disppos_.y = player_.pos_.y - Camera::GetInstance().GetPos().y;
 }
 
-void Player::LoadPlayerImage(void)
-{
-	std::string basePath = Application::PATH_PLAYER;
-
-	int motion = 0;
-	int attackNone = static_cast<int>(ATTACK_STAT::E_ATTACK_STAT_NON);
-	int attackKatto = static_cast<int>(ATTACK_STAT::E_ATTACK_STAT_KATTO);
-	int attackNuguru = static_cast<int>(ATTACK_STAT::E_ATTACK_STAT_NUGRU);
-	int motion_max = static_cast<int>(MOTION_TYPE::E_MOTION_MAX);
-	int attack_max = static_cast<int>(ATTACK_STAT::E_ATTACK_STAT_MAX);
-
-	//画像ハンドル番号のテーブルの初期化
-	for (int i = 0; i < motion_max; i++) {
-		for (int j = 0; j < attack_max; j++) {
-			img[i][j] = -1;
-		}
-	}
-	//待機モーション
-	int err;
-	motion = static_cast<int>(MOTION_TYPE::E_MOTION_IDLE);
-	err=LoadDivGraph((basePath+"IDLE.png").c_str(),MAX_ANIM_NUM,MAX_ANIM_NUM,1,
-		SIZE_X, SIZE_Y, &img[motion][attackNone]);
-	
-
-}
-
-void Player::DrawPlayer(int modelId)
-{
-	//プレイヤーの向き
-	bool isLeft = true;
-	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
-		isLeft = false;
-	}
-	DrawRotaGraph(player_.disppos_.x, player_.disppos_.y-SIZE_Y/2,
-		10.0, 0.0, modelId, true, isLeft);
-}
-
-void Player::SetDrawPlayer(void)
-{
-	if (isJump_) {
-		//ジャンプ中
-	//	motionType_ = MOTION_TYPE::E_MOTION_JUMP;
-	}
-
-	//現在のモーション
-	int nowMotion = static_cast<int>(motionType_);
-
-	//攻撃ステータス
-	int nowAttack = static_cast<int>(attackStat_);
-	switch (motionType_)
-	{
-	case Player::MOTION_TYPE::E_MOTION_IDLE:
-		DrawPlayer(img[nowMotion][nowAttack]);
-	case Player::MOTION_TYPE::E_MOTION_RUN:
-	case Player::MOTION_TYPE::E_MOTION_JUMP:
-	case Player::MOTION_TYPE::E_MOTION_DAMAGE:
-	case Player::MOTION_TYPE::E_MOTION_EVASION:
-		break;
-	}
-
-
-}
+//void Player::LoadPlayerImage(void)
+//{
+//	std::string basePath = Application::PATH_PLAYER;
+//
+//	int motion = 0;
+//	int motion_max = static_cast<int>(MOTION_TYPE::E_MOTION_MAX);
+//
+//	//画像ハンドル番号のテーブルの初期化
+//	for (int i = 0; i < motion_max; i++) {
+//		for (int j = 0; j < 15; j++) {
+//			img[i][j] = -1;
+//		}
+//	}
+//	//待機モーション
+//	int err;
+//	motion = static_cast<int>(MOTION_TYPE::E_MOTION_IDLE);
+//	err=LoadDivGraph((basePath+"IDLE.png").c_str(),3,3,1,
+//		SIZE_X, SIZE_Y, &img[motion][4]);
+//	int img= LoadGraph("Data/Image/Player/IDLE.png");
+//	////走りモーション
+//	//motion = static_cast<int>(MOTION_TYPE::E_MOTION_RUN);
+//	//err = LoadDivGraph((basePath+"RUN.png").c_str(), MAX_ANIM_NUM, MAX_ANIM_NUM, 1,
+//	//	SIZE_X, SIZE_Y, &img[motion]);
+//	////ジャンプモーション
+//	//motion = static_cast<int>(MOTION_TYPE::E_MOTION_JUMP);
+//	//err=LoadDivGraph((basePath+"JUMP.png").c_str(), MAX_ANIM_NUM, MAX_ANIM_NUM, 1,
+//	//	SIZE_X, SIZE_Y, &img[motion]);
+//
+//	
+//}
+//
+//void Player::DrawPlayer(int modelId)
+//{
+//	//プレイヤーの向き
+//	bool isLeft = true;
+//	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
+//		isLeft = false;
+//	}
+//	DrawRotaGraph(player_.disppos_.x, player_.disppos_.y-SIZE_Y/2,
+//		10.0, 0.0, modelId, true, isLeft);
+//}
+//
+//void Player::SetDrawPlayer(void)
+//{
+//	if (isJump_) {
+//		//ジャンプ中
+//		motionType_ = MOTION_TYPE::E_MOTION_JUMP;
+//	}
+//
+//	//現在のモーション
+//	int nowMotion = static_cast<int>(motionType_);
+//	switch (motionType_)
+//	{
+//	case Player::MOTION_TYPE::E_MOTION_IDLE:
+//		DrawPlayer(img[nowMotion][0]);
+//	case Player::MOTION_TYPE::E_MOTION_RUN:
+//	case Player::MOTION_TYPE::E_MOTION_JUMP:
+//	case Player::MOTION_TYPE::E_MOTION_DAMAGE:
+//	case Player::MOTION_TYPE::E_MOTION_EVASION:
+//		break;
+//	}
+//
+//
+//}
 
 
 

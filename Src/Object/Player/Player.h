@@ -80,7 +80,9 @@ private:
 	Base player_;
 
 	//プレイヤー画像のハンドル番号
-	int img[static_cast<int>(MOTION_TYPE::E_MOTION_MAX)][static_cast<int>(ATTACK_STAT::E_ATTACK_STAT_MAX)];
+	int img[static_cast<int>(MOTION_TYPE::E_MOTION_MAX)][15];
+	
+
 
 	//モーションタイプ
 	MOTION_TYPE motionType_;
@@ -151,9 +153,9 @@ private:
 	Stage* stage_;
 
 	float animCounter_;			//アニメーションカウンター
-	void LoadPlayerImage(void);		//プレイヤー画像の読み込み処理
-	void DrawPlayer(int modelId);		//プレイヤーの描画
-	void SetDrawPlayer(void);		//描画するプレイヤーの設定
+	//void LoadPlayerImage(void);		//プレイヤー画像の読み込み処理
+	//void DrawPlayer(int modelId);		//プレイヤーの描画
+	//void SetDrawPlayer(void);		//描画するプレイヤーの設定
 
 };
 
