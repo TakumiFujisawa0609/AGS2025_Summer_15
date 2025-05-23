@@ -4,6 +4,7 @@
 #include "../Manager/Camera.h"
 #include"../Manager/Collision.h"
 #include"../Object/Player/Player.h"
+#include"../Object/Manager/EnemyManager.h"
 #include"../Object/Stage/Stage.h"
 #include"../Application.h"
 #include "GameScene.h"
@@ -28,6 +29,9 @@ void GameScene::Init(void)
 	player_ = new Player(stage_);
 	player_->GameInit();
 
+	enemy_ = new EnemyManager();
+	enemy_->Init();
+
 	Camera::GetInstance().Init();
 	Collision::CreateInstance();
 	for (int y = 0; y < Stage::STAGE_NUM_Y; y++) {
@@ -44,6 +48,9 @@ void GameScene::Update(void)
 
 	player_->Update();
 	stage_->Update();
+	enemy_->Update();
+
+	enemy_->GetBamboo()->SetTargetPos(player_->GetPlayer());
 
 	// ƒV[ƒ“‘JˆÚ
 	auto& ins = InputManager::GetInstance();
@@ -61,6 +68,10 @@ void GameScene::Update(void)
 	if (player_->GetPlayer().disppos_.x < SceneManager::MAIN_SCREEN_SIZE_X / 7 * 3) {
 		Camera::GetInstance().Follow(Camera::dir::X, -(player_->GetPlayer().speed_));
 		if (player_->IsEvasion())Camera::GetInstance().Follow(Camera::dir::X, -Player::EVASION_LENGTH);
+	if (player_->GetPlayer().disppos_.x > Application::SCREEN_SIZE_X / 7 * 4) {
+		if (ins.IsNew(KEY_INPUT_D)) {
+			Camera::GetInstance().Follow(Camera::dir::X, player_->GetPlayer().speed_);
+		}
 	}
 
 
@@ -79,6 +90,7 @@ void GameScene::Update(void)
 void GameScene::Draw(void)
 {
 	stage_->Draw();
+	enemy_->Draw();
 	player_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
@@ -98,6 +110,10 @@ void GameScene::Draw(void)
 
 void GameScene::Release(void)
 {
+	enemy_->Relese();
+	delete enemy_;
+	enemy_ = nullptr;
+
 	stage_->Release();
 	delete stage_;
 	stage_ = nullptr;

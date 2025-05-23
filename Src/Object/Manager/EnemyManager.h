@@ -13,6 +13,9 @@ public:
     void Update();
     void Draw();
     void Relese();
+
+    EnemyBamboo* GetBamboo() { return bamboo_; }
+
 private:
     EnemyBamboo* bamboo_;
 
