@@ -10,8 +10,7 @@
 #include "GameScene.h"
 #include"../Utility/ShapesPosition.h"
 
-int GameScene::slowCounter_ = 0;
-int GameScene::hitStopCounter_ = 0;
+
 
 GameScene::GameScene(void)
 {
@@ -26,7 +25,7 @@ void GameScene::Init(void)
 	stage_ = new Stage();
 	stage_->Init();
 
-	player_ = new Player(stage_);
+	player_ = new Player();
 	player_->GameInit();
 
 	enemy_ = new EnemyManager();
@@ -65,13 +64,10 @@ void GameScene::Update(void)
 		Camera::GetInstance().Follow(Camera::dir::X, player_->GetPlayer().speed_);
 		if (player_->IsEvasion())Camera::GetInstance().Follow(Camera::dir::X, Player::EVASION_LENGTH);
 	}
+
 	if (player_->GetPlayer().disppos_.x < SceneManager::MAIN_SCREEN_SIZE_X / 7 * 3) {
 		Camera::GetInstance().Follow(Camera::dir::X, -(player_->GetPlayer().speed_));
 		if (player_->IsEvasion())Camera::GetInstance().Follow(Camera::dir::X, -Player::EVASION_LENGTH);
-	if (player_->GetPlayer().disppos_.x > Application::SCREEN_SIZE_X / 7 * 4) {
-		if (ins.IsNew(KEY_INPUT_D)) {
-			Camera::GetInstance().Follow(Camera::dir::X, player_->GetPlayer().speed_);
-		}
 	}
 
 

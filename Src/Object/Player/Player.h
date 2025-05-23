@@ -57,7 +57,7 @@ public:
 
 
 
-	Player(Stage* instance);
+	Player();
 	~Player();
 
 	bool SystemInit();

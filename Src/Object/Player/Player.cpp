@@ -9,9 +9,8 @@
 #include"../Stage/Stage.h"
 #include"../../Scene/GameScene.h"
 
-Player::Player(Stage* instance)
+Player::Player()
 {
-	stage_ = instance;
 }
 
 Player::~Player()
