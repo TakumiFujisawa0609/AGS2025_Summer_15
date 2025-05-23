@@ -58,7 +58,9 @@ const float Collision::GetStageLine(const Vector2F pos, const Vector2F size , co
 	case Collision::UP:
 
 		serchrange += (int)size.x / Stage::STAGE_CHIP_SIZE;
+		if ((int)size.x % Stage::STAGE_CHIP_SIZE == 0)serchrange--;
 		if ((int)work.x % Stage::STAGE_CHIP_SIZE > Stage::STAGE_CHIP_SIZE - ((int)size.x % Stage::STAGE_CHIP_SIZE)) serchrange++;
+		if ((int)size.x % Stage::STAGE_CHIP_SIZE == 0 && (int)work.x % Stage::STAGE_CHIP_SIZE > 0)serchrange++;
 
 		while (mapData_[pY][pX] == (int)Stage::TILE::WHITE)
 		{
@@ -77,7 +79,9 @@ const float Collision::GetStageLine(const Vector2F pos, const Vector2F size , co
 
 	case Collision::DOWN:
 		serchrange += (int)size.x / Stage::STAGE_CHIP_SIZE;
+		if ((int)size.x % Stage::STAGE_CHIP_SIZE == 0)serchrange--;
 		if ((int)work.x % Stage::STAGE_CHIP_SIZE > Stage::STAGE_CHIP_SIZE - ((int)size.x % Stage::STAGE_CHIP_SIZE)) serchrange++;
+		if ((int)size.x % Stage::STAGE_CHIP_SIZE == 0 && (int)work.x % Stage::STAGE_CHIP_SIZE > 0)serchrange++;
 
 		while (mapData_[pY][pX] == (int)Stage::TILE::WHITE)
 		{
@@ -96,7 +100,9 @@ const float Collision::GetStageLine(const Vector2F pos, const Vector2F size , co
 	case Collision::LEFT:
 
 		serchrange += (int)size.y / Stage::STAGE_CHIP_SIZE;
+		if ((int)size.y % Stage::STAGE_CHIP_SIZE == 0)serchrange--;
 		if ((int)work.y % Stage::STAGE_CHIP_SIZE > Stage::STAGE_CHIP_SIZE - ((int)size.y % Stage::STAGE_CHIP_SIZE)) serchrange++;
+		if ((int)size.y % Stage::STAGE_CHIP_SIZE == 0 && (int)work.y % Stage::STAGE_CHIP_SIZE > 0)serchrange++;
 
 		while (mapData_[pY][pX] == (int)Stage::TILE::WHITE)
 		{
@@ -116,8 +122,10 @@ const float Collision::GetStageLine(const Vector2F pos, const Vector2F size , co
 	case Collision::RIGHT:		
 
 		serchrange += (int)size.y / Stage::STAGE_CHIP_SIZE;
+		if ((int)size.y % Stage::STAGE_CHIP_SIZE == 0)serchrange--;
 		if ((int)work.y % Stage::STAGE_CHIP_SIZE > Stage::STAGE_CHIP_SIZE - ((int)size.y % Stage::STAGE_CHIP_SIZE)) serchrange++;
-		
+		if ((int)size.y % Stage::STAGE_CHIP_SIZE == 0 && (int)work.y % Stage::STAGE_CHIP_SIZE > 0)serchrange++;
+
 		while (mapData_[pY][pX] == (int)Stage::TILE::WHITE)
 		{
 			for (int y = pY; y < pY + serchrange; y++) {
