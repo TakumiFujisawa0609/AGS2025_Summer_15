@@ -28,7 +28,7 @@ void Player::GameInit()
 	//LoadPlayerImage();
 
 	player_.isAlive_ = true;
-	player_.pos_ = { Application::SCREEN_SIZE_X/2/*10.0f*/,Application::SCREEN_SIZE_Y/2 };
+	player_.pos_ = { SceneManager::MAIN_SCREEN_SIZE_X / 2,SceneManager::MAIN_SCREEN_SIZE_Y / 2 };
 	player_.size_ = { /*SIZE_X,SIZE_Y,*/33.0f,65.0f };
 	player_.radius_ = RADIUS;
 	player_.hp_ = HP_MAX;
@@ -90,7 +90,7 @@ void Player::Draw()
 	if (isAttack_) {
 		DrawOval(player_.disppos_.x, player_.disppos_.y, 48,32, 0x00f0f0, true);
 	}
-	DrawOval(player_.disppos_.x, player_.disppos_.y, player_.size_.x/2, player_.size_.y/2, 0xff0000, true);
+	DrawOval(player_.disppos_.x, player_.disppos_.y, player_.size_.x / 2, player_.size_.y / 2, 0xff0000, true);
 
 	DrawFormatString(0, 64, 0x0000ff, "プレイヤー座標(%.2f,%.2f)", player_.pos_.x, player_.pos_.y);
 	DrawFormatString(0, 80, 0x0000ff, "プレイヤーの向き%d", playerDir_);

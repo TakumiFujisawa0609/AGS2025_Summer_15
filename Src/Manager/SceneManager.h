@@ -15,8 +15,8 @@ public:
 
 	static constexpr float STICK_START_POW = 0.5f;
 	
-	static constexpr int MAIN_SCREEN_SIZE_X = (int)Application::SCREEN_SIZE_X * 1.1;
-	static constexpr int MAIN_SCREEN_SIZE_Y = (int)Application::SCREEN_SIZE_Y * 1.1;
+	static constexpr int MAIN_SCREEN_SIZE_X = (int)(Application::SCREEN_SIZE_X * 1.1);
+	static constexpr int MAIN_SCREEN_SIZE_Y = (int)(Application::SCREEN_SIZE_Y * 1.1);
 
 	// ÉVÅ[Éìä«óùóp
 	enum class SCENE_ID
