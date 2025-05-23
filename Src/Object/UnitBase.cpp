@@ -34,11 +34,12 @@ void UnitBase::UpdatePositionY(void)
 
 void UnitBase::StageCollisionUpdate()
 {
-	CollisionStageX();
 
 	UpdatePositionY();
 
 	CollisionStageY();
+	
+	CollisionStageX();
 
 	ChangeDispPos();
 }

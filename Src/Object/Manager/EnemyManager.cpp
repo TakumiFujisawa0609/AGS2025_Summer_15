@@ -1,33 +1,54 @@
 #include "EnemyManager.h"
+#include"../Enemy/EnemyBamboo.h"
 
 EnemyManager::EnemyManager()
 {
-	bamboo_ = new EnemyBamboo();
-	bamboo_->Init();
+	for (int ii = 0; ii < ENEMY_MAX; ii++)
+	{
+		bamboo_[ii] = new EnemyBamboo();
+		bamboo_[ii]->Init();
+
+	}
 }
 
 EnemyManager::~EnemyManager()
 {
-	bamboo_->Release();
-	delete bamboo_;
-	bamboo_ = nullptr;
+	for (int ii = 0; ii < ENEMY_MAX; ii++)
+	{
+		bamboo_[ii]->Release();
+		delete bamboo_[ii];
+		bamboo_[ii] = nullptr;
+
+	}
 }
 void EnemyManager::Init()
 {
-	bamboo_->Init();
+	for (int ii = 0; ii < ENEMY_MAX; ii++)
+	{
+		bamboo_[ii]->Init();
+	}
 }
 
 void EnemyManager::Update()
 {
-	bamboo_->Update();
+	for (int ii = 0; ii < ENEMY_MAX; ii++)
+	{
+		bamboo_[ii]->Update();
+	}
 }
 
 void EnemyManager::Draw()
 {
-	bamboo_->Draw();
+	for (int ii = 0; ii < ENEMY_MAX; ii++)
+	{
+		bamboo_[ii]->Draw();
+	}
 }
 
 void EnemyManager::Relese()
 {
-	bamboo_->Release();
+	for (int ii = 0; ii < ENEMY_MAX; ii++)
+	{
+		bamboo_[ii]->Release();
+	}
 }
