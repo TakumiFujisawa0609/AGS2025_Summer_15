@@ -108,5 +108,7 @@ private:
 	/// <param name="pixel">“_</param>
 	/// <returns></returns>
 	const bool RectAndPixel(const RECT& rect, const Vector2F& pixel)const;
+
+
 };
 
