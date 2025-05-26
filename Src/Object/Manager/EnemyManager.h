@@ -9,10 +9,12 @@ public:
     EnemyManager();
     ~EnemyManager();
 
-    void Init();
-    void Update();
-    void Draw();
-    void Relese();
+    void Init(int ii);
+    void Update(int ii);
+    void Draw(int ii);
+    void Relese(int ii);
+
+    void Collision(Base& a, Base b);
 
     EnemyBamboo* GetBamboo(int ii) { return bamboo_[ii]; }
 

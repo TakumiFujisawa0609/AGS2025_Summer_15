@@ -29,7 +29,10 @@ void GameScene::Init(void)
 	player_->GameInit();
 
 	enemy_ = new EnemyManager();
-	enemy_->Init();
+	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++)
+	{
+		enemy_->Init(ii);
+	}
 
 	Camera::GetInstance().Init();
 	Collision::CreateInstance();
@@ -49,11 +52,10 @@ void GameScene::Init(void)
 
 void GameScene::Update(void)
 {
-
-
 	player_->Update();
 	stage_->Update();
-	enemy_->Update();
+	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++) enemy_->Update(ii);
+
 
 	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++)
 	{
@@ -94,8 +96,8 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
-	stage_->Draw();
-	enemy_->Draw();
+	stage_->Draw(); 
+	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++) enemy_->Draw(ii);
 	player_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
@@ -115,7 +117,7 @@ void GameScene::Draw(void)
 
 void GameScene::Release(void)
 {
-	enemy_->Relese();
+	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++) enemy_->Relese(ii);
 	delete enemy_;
 	enemy_ = nullptr;
 

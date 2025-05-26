@@ -13,6 +13,13 @@ public:
 	static constexpr float GRAVITY = 0.98f;			//重力
 	static constexpr float MAX_GRAVITY = 31.0f;
 
+
+	static enum MOVE
+	{
+		RIGHT,
+		LEFT
+	};
+
 	//コンストラクタ
 	UnitBase(void);
 	//デストラクタ

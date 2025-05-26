@@ -17,18 +17,20 @@ public:
     void Update()override;
     void Draw()override;
     void Release()override;
+    
+    Base GetBase() { return unit_; }
 
     void SetStartPos(int ii);
 
     //damage == 与えられたダメージ
-    void SetDmg(int damage) { unit_.hp_ -= damage; }
+    void SetDmg(int damage);
 
     void SetTargetPos(Base target) { targetPos_ = target.pos_; }
 
 private:
 
-    //true : 右移動 / false : 左移動
-    bool isMove_;
+    MOVE move_;
+    
     Vector2F targetPos_;
 
     void Move();

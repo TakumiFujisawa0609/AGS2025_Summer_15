@@ -1,54 +1,39 @@
 #include "EnemyManager.h"
 #include"../Enemy/EnemyBamboo.h"
+#include"cmath"
 
 EnemyManager::EnemyManager()
 {
-	for (int ii = 0; ii < ENEMY_MAX; ii++)
-	{
-		bamboo_[ii] = new EnemyBamboo();
-		bamboo_[ii]->Init();
 
-	}
 }
 
 EnemyManager::~EnemyManager()
 {
-	for (int ii = 0; ii < ENEMY_MAX; ii++)
-	{
-		bamboo_[ii]->Release();
-		delete bamboo_[ii];
-		bamboo_[ii] = nullptr;
-
-	}
 }
-void EnemyManager::Init()
+void EnemyManager::Init(int ii)
 {
-	for (int ii = 0; ii < ENEMY_MAX; ii++)
-	{
-		bamboo_[ii]->Init();
-	}
+	bamboo_[ii] = new EnemyBamboo();
+	bamboo_[ii]->Init();
 }
 
-void EnemyManager::Update()
+void EnemyManager::Update(int ii)
 {
-	for (int ii = 0; ii < ENEMY_MAX; ii++)
-	{
-		bamboo_[ii]->Update();
-	}
+	bamboo_[ii]->Update();
 }
 
-void EnemyManager::Draw()
+void EnemyManager::Draw(int ii)
 {
-	for (int ii = 0; ii < ENEMY_MAX; ii++)
-	{
-		bamboo_[ii]->Draw();
-	}
+	bamboo_[ii]->Draw();
 }
 
-void EnemyManager::Relese()
+void EnemyManager::Relese(int ii)
 {
-	for (int ii = 0; ii < ENEMY_MAX; ii++)
-	{
-		bamboo_[ii]->Release();
-	}
+	bamboo_[ii]->Release();
+	delete bamboo_[ii];
+	bamboo_[ii] = nullptr;
+}
+
+void EnemyManager::Collision(Base& a, Base& b)
+{
+
 }

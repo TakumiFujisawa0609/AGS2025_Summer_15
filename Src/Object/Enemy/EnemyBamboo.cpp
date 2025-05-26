@@ -21,7 +21,7 @@ void EnemyBamboo::Init()
 	unit_.radius_ = ENEMYBAMBOO_RADIUS;
 	unit_.size_ = { unit_.radius_ * 2.0f,unit_.radius_ * 2.0f };
 	targetPos_ = { 0.0f, 0.0f };
-	isMove_ = true;
+	move_ = RIGHT;
 }
 
 void EnemyBamboo::Update()
@@ -33,18 +33,31 @@ void EnemyBamboo::Update()
 
 void EnemyBamboo::Draw()
 {
-	//DrawCircle(unit_.disppos_.x, unit_.disppos_.y, unit_.radius_, 0x00ff00, true);
-	DrawBox(
-		unit_.disppos_.x - unit_.radius_,
-		unit_.disppos_.y - unit_.radius_,
-		unit_.disppos_.x + unit_.radius_,
-		unit_.disppos_.y + unit_.radius_,
-		0xfff000, true
-	);
+	if (unit_.isAlive_)
+	{
+		//DrawCircle(unit_.disppos_.x, unit_.disppos_.y, unit_.radius_, 0x00ff00, true);
+		DrawBox(
+			unit_.disppos_.x - unit_.radius_,
+			unit_.disppos_.y - unit_.radius_,
+			unit_.disppos_.x + unit_.radius_,
+			unit_.disppos_.y + unit_.radius_,
+			0xfff000, true
+		);
+	}
 }
 
 void EnemyBamboo::Release()
 {
+}
+
+void EnemyBamboo::SetDmg(int damage)	
+{
+	unit_.hp_ -= damage;
+
+	if (unit_.hp_ <= 0)
+	{
+		unit_.isAlive_ = false;
+	}
 }
 
 void EnemyBamboo::SetStartPos(int ii)
@@ -56,25 +69,28 @@ void EnemyBamboo::Move()
 {
 	Collision& ins = Collision::GetInstance();
 
-	if ((unit_.pos_.x - unit_.size_.x / 2) <= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::LEFT)) {
-		if (!isMove_)
-		{
-			isMove_ = true;
-		}
+	if ((unit_.pos_.x - unit_.size_.x / 2) <= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::LEFT)) 
+	{
+		move_ = RIGHT;
 	}
-	if ((unit_.pos_.x + unit_.size_.x / 2) >= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::RIGHT)) {
-
-		if (isMove_)
-		{
-			isMove_ = false;
-		}
+	if ((unit_.pos_.x + unit_.size_.x / 2) >= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::RIGHT)) 
+	{
+		move_ = LEFT;
 	}
 
 	if (unit_.pos_.x - 250 <= targetPos_.x && unit_.pos_.x + 250 >= targetPos_.x)
 	{
-		isMove_ = (unit_.pos_.x <= targetPos_.x);
+		move_ = unit_.pos_.x <= targetPos_.x? RIGHT : LEFT;
 	}
 
-	unit_.pos_.x += isMove_ ? MOVE_SPEED : -MOVE_SPEED;
+	switch (move_)
+	{
+	case EnemyBamboo::RIGHT:
+		unit_.pos_.x += MOVE_SPEED;
+		break;
+	case EnemyBamboo::LEFT:
+		unit_.pos_.x -= MOVE_SPEED;
+		break;
+	}
 
 }
