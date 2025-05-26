@@ -6,6 +6,12 @@ class EnemyManager
 public:
     static constexpr int ENEMY_MAX = 5;
 
+    enum MOVE
+    {
+        RIGHT,
+        LEFT
+    };
+
     EnemyManager();
     ~EnemyManager();
 
@@ -14,7 +20,6 @@ public:
     void Draw(int ii);
     void Relese(int ii);
 
-    void Collision(Base& a, Base b);
 
     EnemyBamboo* GetBamboo(int ii) { return bamboo_[ii]; }
 

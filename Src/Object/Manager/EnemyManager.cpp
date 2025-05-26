@@ -33,7 +33,3 @@ void EnemyManager::Relese(int ii)
 	bamboo_[ii] = nullptr;
 }
 
-void EnemyManager::Collision(Base& a, Base& b)
-{
-
-}

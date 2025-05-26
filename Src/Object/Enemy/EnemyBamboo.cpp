@@ -6,7 +6,7 @@
 
 EnemyBamboo::EnemyBamboo()
 {
-
+	unit_.modelId_ = LoadGraph("Data/Image/Enemy/EnemyBamboo.png");
 }
 
 EnemyBamboo::~EnemyBamboo()
@@ -19,7 +19,7 @@ void EnemyBamboo::Init()
 	unit_.hp_ = HP_MAX;
 	unit_.pos_ = { 500,250 };
 	unit_.radius_ = ENEMYBAMBOO_RADIUS;
-	unit_.size_ = { unit_.radius_ * 2.0f,unit_.radius_ * 2.0f };
+	unit_.size_ = { All_SIZE_X ,All_SIZE_Y };
 	targetPos_ = { 0.0f, 0.0f };
 	move_ = RIGHT;
 }
@@ -36,18 +36,21 @@ void EnemyBamboo::Draw()
 	if (unit_.isAlive_)
 	{
 		//DrawCircle(unit_.disppos_.x, unit_.disppos_.y, unit_.radius_, 0x00ff00, true);
-		DrawBox(
-			unit_.disppos_.x - unit_.radius_,
-			unit_.disppos_.y - unit_.radius_,
-			unit_.disppos_.x + unit_.radius_,
-			unit_.disppos_.y + unit_.radius_,
-			0xfff000, true
-		);
+		//DrawBox(
+		//	unit_.disppos_.x - unit_.radius_,
+		//	unit_.disppos_.y - unit_.radius_,
+		//	unit_.disppos_.x + unit_.radius_,
+		//	unit_.disppos_.y + unit_.radius_,
+		//	0xfff000, true
+		//);
+
+		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, EX_SIZE, 0.0f, unit_.modelId_, true);
 	}
 }
 
 void EnemyBamboo::Release()
 {
+	DeleteGraph(unit_.modelId_);
 }
 
 void EnemyBamboo::SetDmg(int damage)	
