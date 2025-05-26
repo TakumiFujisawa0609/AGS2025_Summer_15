@@ -2,7 +2,6 @@
 #include"../Common/Base.h"
 #include"../../Utility/AsoUtility.h"
 
-class Stage;
 
 class Player
 {
@@ -150,7 +149,6 @@ private:
 
 	void ChangeDispPos(void);
 
-	Stage* stage_;
 
 	float animCounter_;			//アニメーションカウンター
 	//void LoadPlayerImage(void);		//プレイヤー画像の読み込み処理

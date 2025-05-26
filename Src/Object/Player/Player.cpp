@@ -64,19 +64,24 @@ void Player::GameInit()
 
 void Player::Update()
 {
+	Move();
+
+	ProcessEvasion();
+	CollisionStageX();
+
 
 
 	ProcessJump();
-	UpdatePositionY();
 
+	UpdatePositionY();
 	CollisionStageY();
 
-	Move();
-	ProcessEvasion();
 
-	CollisionStageX();
+
 
 	ProcessAtatck();
+
+
 
 
 	ChangeDispPos();
