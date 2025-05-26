@@ -39,6 +39,12 @@ void GameScene::Init(void)
 		}
 	}
 	x = 0;
+	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++)
+	{
+		enemy_->GetBamboo(ii)->SetStartPos(ii);
+
+	}
+
 }
 
 void GameScene::Update(void)
@@ -49,7 +55,10 @@ void GameScene::Update(void)
 	stage_->Update();
 	enemy_->Update();
 
-	enemy_->GetBamboo()->SetTargetPos(player_->GetPlayer());
+	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++)
+	{
+		enemy_->GetBamboo(ii)->SetTargetPos(player_->GetPlayer());
+	}
 
 	// ƒV[ƒ“‘JˆÚ
 	auto& ins = InputManager::GetInstance();

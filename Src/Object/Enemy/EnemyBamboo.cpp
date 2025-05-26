@@ -2,6 +2,7 @@
 #include<cmath>
 #include"../../Utility/AsoUtility.h"
 #include"../../Manager/Collision.h"
+#include "../Manager/EnemyManager.h"
 
 EnemyBamboo::EnemyBamboo()
 {
@@ -46,6 +47,11 @@ void EnemyBamboo::Release()
 {
 }
 
+void EnemyBamboo::SetStartPos(int ii)
+{
+	unit_.pos_ = START_POS[ii]; 
+}
+
 void EnemyBamboo::Move()
 {
 	Collision& ins = Collision::GetInstance();
@@ -71,9 +77,4 @@ void EnemyBamboo::Move()
 
 	unit_.pos_.x += isMove_ ? MOVE_SPEED : -MOVE_SPEED;
 
-}
-
-void EnemyBamboo::ProcessJump(void)
-{
-	
 }
