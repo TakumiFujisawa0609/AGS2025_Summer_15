@@ -19,7 +19,7 @@ void EnemyBamboo::Init()
 	unit_.hp_ = HP_MAX;
 	unit_.pos_ = { 500,250 };
 	unit_.radius_ = ENEMYBAMBOO_RADIUS;
-	unit_.size_ = { All_SIZE_X ,All_SIZE_Y };
+	unit_.size_ = { All_SIZE_X , All_SIZE_Y };
 	targetPos_ = { 0.0f, 0.0f };
 	move_ = RIGHT;
 }
@@ -44,7 +44,7 @@ void EnemyBamboo::Draw()
 		//	0xfff000, true
 		//);
 
-		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, EX_SIZE, 0.0f, unit_.modelId_, true);
+		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, EX_SIZE, 0.0f, unit_.modelId_, true, move_);
 	}
 }
 

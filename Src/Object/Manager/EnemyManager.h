@@ -6,11 +6,7 @@ class EnemyManager
 public:
     static constexpr int ENEMY_MAX = 5;
 
-    enum MOVE
-    {
-        RIGHT,
-        LEFT
-    };
+ 
 
     EnemyManager();
     ~EnemyManager();
