@@ -29,24 +29,46 @@ SoundManager& SoundManager::GetInstance()
 
 void SoundManager::Init()
 {
-	m_sounds[SID::TITLE_BGM] = LoadSoundMem("Data/Sound/4m.rarara.mp3");
+	
 }
 
 void SoundManager::Release()
 {
-	DeleteSound();
+	AllDeleteSound();
 	m_sounds.clear();
 	delete instance_;
 }
 
+void SoundManager::LoadSound(SID sid)
+{
+	switch (sid)
+	{
+	case SoundManager::SID::TITLE_BGM:
+		m_sounds[SID::TITLE_BGM] = LoadSoundMem("Data/Sound/4m.rarara.mp3");
+		break;
+	}
+}
+
+void SoundManager::DeleteSound(SID sid)
+{
+	switch (sid)
+	{
+	case SoundManager::SID::TITLE_BGM:
+		DeleteSoundMem(m_sounds[sid]);
+		break;
+	}
+}
+
 // 再生処理(true = ループしない / false = ループする)
-bool SoundManager::Play(SID sid, bool loop)
+bool SoundManager::Play(SID sid, bool loop, bool isBegin)
 {
 	auto it = m_sounds.find(sid);
 	if (it == m_sounds.end())return false;
 
-	int playType = loop ? DX_PLAYTYPE_LOOP : DX_PLAYTYPE_BACK;
-	PlaySoundMem(it->second, playType);
+	if (CheckSoundMem(it->second))
+	{
+		PlaySoundMem(it->second, loop ? DX_PLAYTYPE_LOOP : DX_PLAYTYPE_BACK, isBegin);
+	}
 
 	return true;
 }
@@ -55,11 +77,11 @@ void SoundManager::StopSound(SID sid)
 {
 	auto it = m_sounds.find(sid);
 	if (it == m_sounds.end())return;
-
+	
 	StopSoundMem(it->second);
 }
 
-void SoundManager::DeleteSound()
+void SoundManager::AllDeleteSound()
 {
 	for (auto& a : m_sounds)
 	{

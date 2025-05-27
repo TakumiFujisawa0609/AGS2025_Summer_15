@@ -24,14 +24,20 @@ public:
 
 	static SoundManager& GetInstance(void);
 
+
+
 	// ‰Šú‰»
 	void Init();
 	// ‰ğ•úˆ—
 	void Release();
-	
-	void DeleteSound();
 
-	bool Play(SID sid, bool loop = false);
+	void LoadSound(SID sid);
+
+	void DeleteSound(SID sid);
+	
+	void AllDeleteSound();
+
+	bool Play(SID sid, bool isLoop = false, bool isBegin = true);
 
 	void StopSound(SID sid);
 

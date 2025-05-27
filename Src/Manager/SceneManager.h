@@ -69,6 +69,7 @@ public:
 	void Slow(void) { slowCounter_ = SLOW_TIME; }
 	void HitStop(void) { hitStopCounter_ = HIT_STOP_TIME; }
 	void SHAKE(void) { shakeCounter_ = SHAKE_TIME; }
+	bool IsShake(void) { return shakeCounter_ > 0; }
 
 	void ZoomPos(Vector2F pos) { zoomPos_ = pos; }
 	void ZoomScale(float scale) { scale_ = scale; }

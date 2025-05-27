@@ -44,6 +44,9 @@ void GameScene::Init(void)
 	{
 		enemy_->GetBamboo(ii)->SetStartPos(ii);
 	}
+
+	SoundManager::GetInstance().LoadSound(SoundManager::SID::TITLE_BGM);
+
 	SoundManager::GetInstance().Play(SoundManager::SID::TITLE_BGM, true);
 }
 
@@ -88,7 +91,12 @@ void GameScene::Update(void)
 
 	if (ins.IsTrgDown(KEY_INPUT_Z)) {
 		SceneManager::GetInstance().SHAKE();
+		SoundManager::GetInstance().StopSound(SoundManager::SID::TITLE_BGM);
 	}
+	if (!SceneManager::GetInstance().IsShake()) {
+		SoundManager::GetInstance().Play(SoundManager::SID::TITLE_BGM, true, false);
+	}
+
 
 }
 
@@ -115,7 +123,7 @@ void GameScene::Draw(void)
 
 void GameScene::Release(void)
 {
-
+	SoundManager::GetInstance().DeleteSound(SoundManager::SID::TITLE_BGM);
 
 	enemy_->Relese();
 	delete enemy_;
@@ -130,6 +138,6 @@ void GameScene::Release(void)
 	delete player_;
 	player_ = nullptr;
 
-	SoundManager::GetInstance().DeleteSound();
+	SoundManager::GetInstance().AllDeleteSound();
 
 }
