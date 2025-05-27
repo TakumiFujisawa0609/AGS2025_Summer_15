@@ -7,6 +7,7 @@
 #include "ResourceManager.h"
 #include "Camera.h"
 #include "SceneManager.h"
+#include"SoundManager.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
 
@@ -40,6 +41,8 @@ void SceneManager::Init(void)
 	scene_ = new TitleScene();
 	scene_->Init();
 
+	SoundManager::GetInstance().CreateInstance();
+
 	isSceneChanging_ = false;
 
 
@@ -54,6 +57,8 @@ void SceneManager::Init(void)
 
 	// ‰ŠúƒV[ƒ“‚ÌÝ’è
 	DoChangeScene(SCENE_ID::GAME);
+
+
 
 }
 
@@ -172,6 +177,7 @@ void SceneManager::Destroy(void)
 	scene_->Release();
 
 	DeleteGraph(mainScreen_);
+
 
 	delete scene_;
 

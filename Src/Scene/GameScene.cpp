@@ -9,6 +9,7 @@
 #include"../Application.h"
 #include "GameScene.h"
 #include"../Utility/ShapesPosition.h"
+#include"../Manager/SoundManager.h"
 
 
 
@@ -42,9 +43,8 @@ void GameScene::Init(void)
 	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++)
 	{
 		enemy_->GetBamboo(ii)->SetStartPos(ii);
-
 	}
-
+	SoundManager::GetInstance().Play(SoundManager::SID::TITLE_BGM, true);
 }
 
 void GameScene::Update(void)
@@ -115,6 +115,8 @@ void GameScene::Draw(void)
 
 void GameScene::Release(void)
 {
+
+
 	enemy_->Relese();
 	delete enemy_;
 	enemy_ = nullptr;
@@ -127,4 +129,7 @@ void GameScene::Release(void)
 	player_->Release();
 	delete player_;
 	player_ = nullptr;
+
+	SoundManager::GetInstance().DeleteSound();
+
 }
