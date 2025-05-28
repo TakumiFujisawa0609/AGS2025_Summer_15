@@ -17,7 +17,8 @@ public:
 	static enum MOVE
 	{
 		RIGHT,
-		LEFT
+		LEFT,
+		IDOL
 	};
 
 	//コンストラクタ

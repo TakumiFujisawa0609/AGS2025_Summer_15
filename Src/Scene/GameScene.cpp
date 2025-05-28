@@ -29,10 +29,7 @@ void GameScene::Init(void)
 	player_->GameInit();
 
 	enemy_ = new EnemyManager();
-	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++)
-	{
-		enemy_->Init(ii);
-	}
+	enemy_->Init();
 
 	Camera::GetInstance().Init();
 	Collision::CreateInstance();
@@ -41,7 +38,9 @@ void GameScene::Init(void)
 			Collision::GetInstance().SetStage(stage_->GetMapData(y, x), y, x);
 		}
 	}
+
 	x = 0;
+
 	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++)
 	{
 		enemy_->GetBamboo(ii)->SetStartPos(ii);
@@ -52,24 +51,27 @@ void GameScene::Init(void)
 
 void GameScene::Update(void)
 {
+	auto& ins = InputManager::GetInstance();
+
 	player_->Update();
 	stage_->Update();
-	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++) enemy_->Update(ii);
-
+	enemy_->Update();
 
 	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++)
 	{
 		enemy_->GetBamboo(ii)->SetTargetPos(player_->GetPlayer());
+
+		if (ins.IsTrgDown(KEY_INPUT_0))
+		{
+			enemy_->GetBamboo(ii)->SetDmg(10);
+		}
 	}
 
 	// ƒV[ƒ“‘JˆÚ
-	auto& ins = InputManager::GetInstance();
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
 	}
-
-
 
 	if (player_->GetPlayer().disppos_.x > SceneManager::MAIN_SCREEN_SIZE_X / 7 * 4) {
 		Camera::GetInstance().Follow(Camera::dir::X, player_->GetPlayer().speed_);
@@ -80,8 +82,6 @@ void GameScene::Update(void)
 		Camera::GetInstance().Follow(Camera::dir::X, -(player_->GetPlayer().speed_));
 		if (player_->IsEvasion())Camera::GetInstance().Follow(Camera::dir::X, -Player::EVASION_LENGTH);
 	}
-
-
 
 	if (player_->IsEvasion()) {
 		SceneManager::GetInstance().ZoomPos(player_->GetPlayer().disppos_);
@@ -97,7 +97,7 @@ void GameScene::Update(void)
 void GameScene::Draw(void)
 {
 	stage_->Draw(); 
-	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++) enemy_->Draw(ii);
+	enemy_->Draw();
 	player_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
@@ -117,7 +117,7 @@ void GameScene::Draw(void)
 
 void GameScene::Release(void)
 {
-	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++) enemy_->Relese(ii);
+	enemy_->Relese();
 	delete enemy_;
 	enemy_ = nullptr;
 
