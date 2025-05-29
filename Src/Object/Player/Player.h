@@ -1,9 +1,9 @@
 #pragma once
 #include"../Common/Base.h"
 #include"../../Utility/AsoUtility.h"
+#include"../UnitBase.h"
 
-
-class Player
+class Player:public UnitBase
 {
 public:
 	static constexpr int SIZE_X = 96;		//画像サイズ
@@ -59,24 +59,23 @@ public:
 	Player();
 	~Player();
 
-	bool SystemInit();
-	void GameInit();
-	void Update();
-	void Draw();
-	bool Release();
+	void Init(void)override;
+	void Update(void)override;
+	void Draw(void)override;
+	void Release(void)override;
 
 
 	//ゲッター関数
-	Base GetPlayer(void) { return player_; }
+	Base GetPlayer(void) { return unit_; }
 	bool IsEvasion(void) { return isEvasion_; }
 	bool IsInvincible(void) { return isEvasionInbincible_; }
 	
 	//セッター関数
-	void SetAliveOff(void) { player_.isAlive_ = false; }
+	void SetAliveOff(void) { unit_.isAlive_ = false; }
 
 private:
 	//構造体
-	Base player_;
+	Base unit_;
 
 	//プレイヤー画像のハンドル番号
 	int img[static_cast<int>(MOTION_TYPE::E_MOTION_MAX)][15];

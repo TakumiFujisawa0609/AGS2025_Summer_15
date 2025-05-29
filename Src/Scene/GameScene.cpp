@@ -26,7 +26,7 @@ void GameScene::Init(void)
 	stage_->Init();
 
 	player_ = new Player();
-	player_->GameInit();
+	player_->Init();
 
 	enemy_ = new EnemyManager();
 	enemy_->Init();

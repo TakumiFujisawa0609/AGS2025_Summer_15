@@ -17,21 +17,18 @@ Player::~Player()
 {
 }
 
-bool Player::SystemInit()
-{
-	return true;
-}
 
-void Player::GameInit()
+
+void Player::Init()
 {
 	//LoadPlayerImage();
 
-	player_.isAlive_ = true;
-	player_.pos_ = { SceneManager::MAIN_SCREEN_SIZE_X / 2,SceneManager::MAIN_SCREEN_SIZE_Y / 2 };
-	player_.size_ = { /*SIZE_X,SIZE_Y,*/33.0f,65.0f };
-	player_.radius_ = RADIUS;
-	player_.hp_ = HP_MAX;
-	player_.speed_ = MOVE_POW;
+	unit_.isAlive_ = true;
+	unit_.pos_ = { SceneManager::MAIN_SCREEN_SIZE_X / 2,SceneManager::MAIN_SCREEN_SIZE_Y / 2 };
+	unit_.size_ = { /*SIZE_X,SIZE_Y,*/33.0f,65.0f };
+	unit_.radius_ = RADIUS;
+	unit_.hp_ = HP_MAX;
+	unit_.speed_ = MOVE_POW;
 	motionType_ = MOTION_TYPE::E_MOTION_IDLE;		//モーションタイプ
 	animCounter_ = 0.0f;
 
@@ -90,22 +87,27 @@ void Player::Update()
 void Player::Draw()
 {
 	//DrawCircle(player_.disppos_.x, player_.disppos_.y, 10, GetColor(255, 0, 0), true);
-	DrawCircle(player_.disppos_.x, player_.disppos_.y, 2, 0x00ffff, true);
+	DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 2, 0x00ffff, true);
 	if (isAttack_) {
-		DrawOval(player_.disppos_.x, player_.disppos_.y, 48,32, 0x00f0f0, true);
+		DrawOval(unit_.disppos_.x, unit_.disppos_.y, 48,32, 0x00f0f0, true);
 	}
-	DrawOval(player_.disppos_.x, player_.disppos_.y, player_.size_.x / 2, player_.size_.y / 2, 0xff0000, true);
+	DrawOval(unit_.disppos_.x, unit_.disppos_.y, unit_.size_.x / 2, unit_.size_.y / 2, 0xff0000, true);
 
-	DrawFormatString(0, 64, 0x0000ff, "プレイヤー座標(%.2f,%.2f)", player_.pos_.x, player_.pos_.y);
+	DrawFormatString(0, 64, 0x0000ff, "プレイヤー座標(%.2f,%.2f)", unit_.pos_.x, unit_.pos_.y);
 	DrawFormatString(0, 80, 0x0000ff, "プレイヤーの向き%d", playerDir_);
 	DrawFormatString(0, 96, 0x00ff00, "プレイヤーの攻撃%d", attackStat_);
+
+	auto& inp = InputManager::GetInstance();
+		Vector2 mP = inp.GetMousePos();
+		DrawFormatString(0, 120, 0xff00ff, "マウス左クリック: (%d, %d)", mP.x, mP.y);
+	if (inp.IsTrgMouseLeft()) {
+	}
 
 	//SetDrawPlayer();
 }
 
-bool Player::Release()
+void Player::Release()
 {
-	return true;
 }
 
 void Player::Move(void)
@@ -120,13 +122,13 @@ void Player::Move(void)
 	const int stickThreshold = 500; // スティックのしきい値
 
 	if (InpMng.IsNew(KEY_INPUT_D)||padState.AKeyLX>stickThreshold) {
-		player_.pos_.x += player_.speed_;
+		unit_.pos_.x += unit_.speed_;
 		playerDir_ =AsoUtility::DIRECTION::E_DIR_RIGHT;
 		//モーションを変更
 		motionType_ = MOTION_TYPE::E_MOTION_RUN;
 	}
 	if (InpMng.IsNew(KEY_INPUT_A)||padState.AKeyLX<-stickThreshold) {
-		player_.pos_.x -= player_.speed_;
+		unit_.pos_.x -= unit_.speed_;
 		playerDir_ =AsoUtility::DIRECTION::E_DIR_LEFT;
 		//モーションを変更
 		motionType_ = MOTION_TYPE::E_MOTION_RUN;
@@ -138,10 +140,10 @@ void Player::Evasion(void)
 	switch (playerDir_)
 	{
 	case AsoUtility::DIRECTION::E_DIR_RIGHT:
-		player_.pos_.x += EVASION_LENGTH;
+		unit_.pos_.x += EVASION_LENGTH;
 		break;
 	case AsoUtility::DIRECTION::E_DIR_LEFT:
-		player_.pos_.x -= EVASION_LENGTH;
+		unit_.pos_.x -= EVASION_LENGTH;
 		break;
 	}
 }
@@ -182,7 +184,7 @@ void Player::ProcessEvasion(void)
 
 void Player::UpdatePositionY(void)
 {
-	player_.pos_.y += verticalAcceleration_;
+	unit_.pos_.y += verticalAcceleration_;
 }
 
 void Player::ProcessJump(void)
@@ -256,15 +258,15 @@ void Player::CollisionStageY(void)
 	Collision& ins = Collision::GetInstance();
 
 	////天井
-	if ((player_.pos_.y - player_.size_.y / 2) <= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::UP)) {
+	if ((unit_.pos_.y - unit_.size_.y / 2) <= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::UP)) {
 		inputJumpKeyCounter_ = INPUT_JUMPKEY_FRAME;
-		player_.pos_.y = ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::UP) + player_.size_.y / 2;
+		unit_.pos_.y = ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::UP) + unit_.size_.y / 2;
 	}
 
 	//空中にいるなら重力を加える
-	if (player_.pos_.y + player_.size_.y / 2 >= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::DOWN)) {
+	if (unit_.pos_.y + unit_.size_.y / 2 >= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::DOWN)) {
 		//地面に接地
-		player_.pos_.y = (ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::DOWN)) - player_.size_.y / 2;
+		unit_.pos_.y = (ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::DOWN)) - unit_.size_.y / 2;
 		verticalAcceleration_ = 0;
 		isJump_ = false;
 		firstJumpFlg_ = true;
@@ -283,13 +285,13 @@ void Player::CollisionStageX(void)
 	Collision& ins = Collision::GetInstance();
 
 	//右
-	if ((player_.pos_.x + player_.size_.x / 2) >= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::RIGHT)) {
-		player_.pos_.x = (ins.GetStageLine(player_.pos_, player_.size_, Collision::RIGHT)) - player_.size_.x / 2;
+	if ((unit_.pos_.x + unit_.size_.x / 2) >= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::RIGHT)) {
+		unit_.pos_.x = (ins.GetStageLine(unit_.pos_, unit_.size_, Collision::RIGHT)) - unit_.size_.x / 2;
 	}
 
 	//左
-	if ((player_.pos_.x - player_.size_.x / 2) <= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::LEFT)) {
-		player_.pos_.x = (ins.GetStageLine(player_.pos_, player_.size_, Collision::LEFT)) + player_.size_.x / 2;
+	if ((unit_.pos_.x - unit_.size_.x / 2) <= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::LEFT)) {
+		unit_.pos_.x = (ins.GetStageLine(unit_.pos_, unit_.size_, Collision::LEFT)) + unit_.size_.x / 2;
 	}
 }
 
@@ -340,8 +342,8 @@ void Player::ProcessAtatck(void)
 
 void Player::ChangeDispPos(void)
 {
-	player_.disppos_.x = player_.pos_.x - Camera::GetInstance().GetPos().x;
-	player_.disppos_.y = player_.pos_.y - Camera::GetInstance().GetPos().y;
+	unit_.disppos_.x = unit_.pos_.x - Camera::GetInstance().GetPos().x;
+	unit_.disppos_.y = unit_.pos_.y - Camera::GetInstance().GetPos().y;
 }
 
 //void Player::LoadPlayerImage(void)
