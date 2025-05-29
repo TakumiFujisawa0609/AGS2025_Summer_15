@@ -297,46 +297,53 @@ void Player::CollisionStageX(void)
 
 void Player::Attack(void)
 {
-	switch (attackStat_)
-	{
-	case Player::ATTACK_STAT::E_ATTACK_STAT_KATTO:
-		break;
-	case Player::ATTACK_STAT::E_ATTACK_STAT_NUGRU:
-		break;
-	}
-	if (isAttack_) {
-		attackCounter_++;
-		if (attackCounter_ >= ATTACK_TIME) {
-			attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
-			isAttack_ = false;
-			attackCounter_ = 0;
-			isAttackCoolDown_ = true;
-			attackCoolDown_ = 0;
-		}
-	}
-	 if (isAttackCoolDown_) {
-		attackCoolDown_++;
-		if (attackCoolDown_ >= ATTACK_COOLDOWN) {
-			isAttackCoolDown_ = false;
-			attackCoolDown_ = 0;
-		}
-	}
+#pragma region MyRegion
+
+	//switch (attackStat_)
+	//{
+	//case Player::ATTACK_STAT::E_ATTACK_STAT_KATTO:
+	//	break;
+	//case Player::ATTACK_STAT::E_ATTACK_STAT_NUGRU:
+	//	break;
+	//}
+	//if (isAttack_) {
+	//	attackCounter_++;
+	//	if (attackCounter_ >= ATTACK_TIME) {
+	//		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
+	//		isAttack_ = false;
+	//		attackCounter_ = 0;
+	//		isAttackCoolDown_ = true;
+	//		attackCoolDown_ = 0;
+	//	}
+	//}
+	// if (isAttackCoolDown_) {
+	//	attackCoolDown_++;
+	//	if (attackCoolDown_ >= ATTACK_COOLDOWN) {
+	//		isAttackCoolDown_ = false;
+	//		attackCoolDown_ = 0;
+	//	}
+	//}
+#pragma endregion
 }
 
 void Player::ProcessAtatck(void)
 {
-	auto& ins = InputManager::GetInstance();
-	if (!isAttack_) {
+#pragma region MyRegion
 
-	if (ins.IsNew(KEY_INPUT_Q)) {
-		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_KATTO;
-		isAttack_ = true;
-	}
-	else if (ins.IsNew(KEY_INPUT_E)) {
-		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NUGRU;
-		isAttack_ = true;
-	}
-	}
+
+	//auto& ins = InputManager::GetInstance();
+	//if (!isAttack_) {
+
+	//if (ins.IsNew(KEY_INPUT_Q)) {
+	//	attackStat_ = ATTACK_STAT::E_ATTACK_STAT_KATTO;
+	//	isAttack_ = true;
+	//}
+	//else if (ins.IsNew(KEY_INPUT_E)) {
+	//	attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NUGRU;
+	//	isAttack_ = true;
+	//}
+	//}
+#pragma endregion
 	Attack();
 }
 
