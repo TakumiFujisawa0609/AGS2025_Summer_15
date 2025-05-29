@@ -6,6 +6,7 @@
 #include"../../Manager/Camera.h"
 #include"../../Manager/Collision.h"
 #include"../../Manager/SceneManager.h"
+#include"../../Manager/SoundManager.h"
 #include"../Stage/Stage.h"
 #include"../../Scene/GameScene.h"
 
@@ -60,6 +61,8 @@ void Player::GameInit()
 	evasionCoolDown_ = 0;
 	
 	Collision::CreateInstance();
+
+	SoundManager::GetInstance().LoadSound(SoundManager::SID::JUMP_SOUND);
 }
 
 void Player::Update()
@@ -105,6 +108,7 @@ void Player::Draw()
 
 bool Player::Release()
 {
+	SoundManager::GetInstance().DeleteSound(SoundManager::SID::JUMP_SOUND);
 	return true;
 }
 
@@ -198,6 +202,8 @@ void Player::ProcessJump(void)
 		inputJumpKeyCounter_++;
 		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
 
+		SoundManager::GetInstance().Play(SoundManager::SID::JUMP_SOUND);
+
 		Jump();
 	}
 	//二段ジャンプ
@@ -207,6 +213,8 @@ void Player::ProcessJump(void)
 		inputJumpKeyCounter_++;
 		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
 
+		SoundManager::GetInstance().Play(SoundManager::SID::JUMP_SOUND);
+
 		Jump();
 	}
 	//三弾ジャンプ
@@ -215,6 +223,9 @@ void Player::ProcessJump(void)
 		&& thirdJumpFlg_) {
 		inputJumpKeyCounter_++;
 		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
+		
+		SoundManager::GetInstance().Play(SoundManager::SID::JUMP_SOUND);
+
 		Jump();
 
 	}

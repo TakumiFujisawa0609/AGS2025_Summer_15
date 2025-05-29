@@ -12,7 +12,7 @@ public:
 		TITLE_BGM,
 
 		// Œø‰Ê‰¹
-
+		JUMP_SOUND
 
 		//ƒQ[ƒ€ƒV[ƒ“‚ÌŒø‰Ê‰¹
 	};
