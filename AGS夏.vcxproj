@@ -133,6 +133,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Boss\BossTutrial.cpp" />
+    <ClCompile Include="Src\Object\Enemy\EnemyBase.cpp" />
     <ClCompile Include="Src\Utility\ShapesPosition.cpp" />
     <ClCompile Include="Src\Manager\Collision.cpp" />
     <ClCompile Include="Src\Object\Manager\EnemyManager.cpp" />
@@ -160,6 +162,8 @@
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Boss\BossTutrial.h" />
+    <ClInclude Include="Src\Object\Enemy\EnemyBase.h" />
     <ClInclude Include="Src\Utility\ShapesPosition.h" />
     <ClInclude Include="Src\Manager\Collision.h" />
     <ClInclude Include="Src\Object\Manager\EnemyManager.h" />

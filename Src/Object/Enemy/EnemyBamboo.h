@@ -1,7 +1,7 @@
 #pragma once
-#include "../UnitBase.h"
+#include "EnemyBase.h"
 
-class EnemyBamboo : public UnitBase
+class EnemyBamboo : public EnemyBase
 {
 public:
 
@@ -19,6 +19,8 @@ public:
     static constexpr float All_SIZE_X = IMAGE_SIZE_X * EX_SIZE;     // bambooの横サイズ
     static constexpr float All_SIZE_Y = IMAGE_SIZE_Y * EX_SIZE;     // bambooのtateサイズ
 
+    static constexpr int ENEMY_MAX = 5;
+
     EnemyBamboo();
     ~EnemyBamboo();
 
@@ -27,25 +29,17 @@ public:
     void Draw()override;
     void Release()override;
 
-    bool DeathProcess();
-    
     Base GetBase() { return unit_; }
-
-    void SetStartPos(int ii);
-
-    //damage == 与えられたダメージ
-    void SetDmg(int damage);
 
     void SetTargetPos(Base target) { targetPos_ = target.pos_; }
 
-private:
+    void SetStartPos(int ii);
 
-    MOVE move_;
+    void SetDmg(int damage);
+
+private:
 
     float rotate_;
     
     Vector2F targetPos_;
-
-    void Move();
-
 };
