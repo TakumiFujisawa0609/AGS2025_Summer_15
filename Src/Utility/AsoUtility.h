@@ -69,6 +69,7 @@ public:
 	static float Lerp(float start, float end, float t);
 	static double Lerp(double start, double end, double t);
 	static Vector2 Lerp(const Vector2& start, const Vector2& end, float t);
+	static Vector2F Lerp(const Vector2F& start, const Vector2F& end, float t);
 	static VECTOR Lerp(const VECTOR& start, const VECTOR& end, float t);
 
 	// Šp“x‚ÌüŒ`•âŠÔ

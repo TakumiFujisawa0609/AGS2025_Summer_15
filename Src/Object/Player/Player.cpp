@@ -55,6 +55,9 @@ void Player::Init()
 	isEvasionInbincible_ = false;
 	evasionCounter_ = 0;
 	evasionCoolDown_ = 0;
+
+	mPos_ = { 0,0 };
+	worldMousePos_ = { 0,0 };
 	
 	Collision::CreateInstance();
 }
@@ -96,12 +99,12 @@ void Player::Draw()
 	DrawFormatString(0, 64, 0x0000ff, "プレイヤー座標(%.2f,%.2f)", unit_.pos_.x, unit_.pos_.y);
 	DrawFormatString(0, 80, 0x0000ff, "プレイヤーの向き%d", playerDir_);
 	DrawFormatString(0, 96, 0x00ff00, "プレイヤーの攻撃%d", attackStat_);
+	//DrawFormatString(0.112, 0xff00ff, "プレイヤーのでぃすぷぽす(%.2f,%.2f)", unit_.disppos_.x,unit_.disppos_.y);
+    // 修正されたコード
+    DrawFormatString(0, 112, 0xff00ff, _T("プレイヤーのでぃすぷぽす(%.2f,%.2f)"), unit_.disppos_.x, unit_.disppos_.y);
+	DrawCircle(mPos_.x, mPos_.y, 5, 0x000000,true);
 
-	auto& inp = InputManager::GetInstance();
-		Vector2 mP = inp.GetMousePos();
-		DrawFormatString(0, 120, 0xff00ff, "マウス左クリック: (%d, %d)", mP.x, mP.y);
-	if (inp.IsTrgMouseLeft()) {
-	}
+	DrawCircle(worldMousePos_.x, worldMousePos_.y, 2, 0xffaaaa, true);
 
 	//SetDrawPlayer();
 }
@@ -189,6 +192,7 @@ void Player::UpdatePositionY(void)
 
 void Player::ProcessJump(void)
 {
+#pragma region キーボード操作
 	//ジャンプ判定
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)) {
 		isJump_ = true;
@@ -236,6 +240,61 @@ void Player::ProcessJump(void)
 			jumpPower_ = 0;
 		}
 	}
+#pragma endregion
+
+
+#pragma region コントローラー操作
+	//ジャンプ判定
+	auto& InpMng = InputManager::GetInstance();
+	auto padState = InpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+	if (InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+		isJump_ = true;
+	}
+	//一回目のジャンプ
+	if (InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)
+		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
+		&& firstJumpFlg_) {
+		inputJumpKeyCounter_++;
+		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
+
+		Jump();
+	}
+	//二段ジャンプ
+	if (InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)
+		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
+		&& secondJumpFlg_) {
+		inputJumpKeyCounter_++;
+		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
+
+		Jump();
+	}
+	//三弾ジャンプ
+	if (InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)
+		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
+		&& thirdJumpFlg_) {
+		inputJumpKeyCounter_++;
+		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
+		Jump();
+
+	}
+
+	//ジャンプキーを離したらカウンターをリセット
+	if (InpMng.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+		inputJumpKeyCounter_ = 0;
+		if (!secondJumpFlg_) {
+			thirdJumpFlg_ = false;
+		}
+		else if (!firstJumpFlg_) {
+			secondJumpFlg_ = false;
+			jumpPower_ = 0;
+		}
+		else {
+			firstJumpFlg_ = false;
+			jumpPower_ = 0;
+		}
+	}
+#pragma endregion
+
 }
 
 
@@ -250,7 +309,10 @@ void Player::Jump(void)
 void Player::Gravity(void)
 {
 	//Y軸加速度に重力を加える
+	if (!isAttack_) {
+
 	verticalAcceleration_ = (verticalAcceleration_ < MAX_GRAVITY) ? verticalAcceleration_ + gravity_ : verticalAcceleration_;
+	}
 }
 
 void Player::CollisionStageY(void)
@@ -324,6 +386,10 @@ void Player::Attack(void)
 	//	}
 	//}
 #pragma endregion
+
+
+
+
 }
 
 void Player::ProcessAtatck(void)

@@ -154,6 +154,11 @@ private:
 	//void DrawPlayer(int modelId);		//プレイヤーの描画
 	//void SetDrawPlayer(void);		//描画するプレイヤーの設定
 
+	//プレイヤー攻撃時のマウスの座標
+	Vector2 mPos_;
+
+	Vector2F worldMousePos_;
+
 };
 
 
