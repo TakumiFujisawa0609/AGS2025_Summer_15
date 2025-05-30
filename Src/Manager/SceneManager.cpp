@@ -37,14 +37,12 @@ void SceneManager::Init(void)
 	// カメラ
 	Camera::CreateInstance();
 
-	scene_ = new TitleScene();
-	scene_->Init();
 
 	isSceneChanging_ = false;
 
 
 	//メイクスクリーン
-	mainScreen_ = MakeScreen(MAIN_SCREEN_SIZE_X, MAIN_SCREEN_SIZE_Y, true);
+	mainScreen_ = MakeScreen(Application:: MAIN_SCREEN_SIZE_X, Application::MAIN_SCREEN_SIZE_Y, true);
 
 	// デルタタイム
 	preTime_ = std::chrono::system_clock::now();
@@ -114,7 +112,7 @@ void SceneManager::Update(void)
 			}
 		}
 		//注視点を初期化-----------------
-		zoomPos_ = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
+		zoomPos_ = { Application::MAIN_SCREEN_SIZE_X / 2,Application::MAIN_SCREEN_SIZE_Y / 2 };
 		scale_ = 1.0f;
 		//--------------------------------
 		scene_->Update();
@@ -146,8 +144,9 @@ void SceneManager::Draw(void)
 
 
 	Vector2F vPos,dPos;
-	vPos = { zoomPos_.x - Application::SCREEN_SIZE_X / 2, zoomPos_.y - Application::SCREEN_SIZE_Y / 2 };
+	vPos = { zoomPos_.x - Application::MAIN_SCREEN_SIZE_X / 2, zoomPos_.y - Application::MAIN_SCREEN_SIZE_Y / 2 };
 	dPos = { Application::SCREEN_SIZE_X / 2 - vPos.x,Application::SCREEN_SIZE_Y / 2 - vPos.y };
+
 
 	int shake = 0;
 	if (shakeCounter_ > 0) {
