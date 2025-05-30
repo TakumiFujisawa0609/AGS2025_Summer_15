@@ -13,7 +13,7 @@ Camera::~Camera()
 
 void Camera::Init()
 {
-	cameraPos = VGet(0.0f, 150.0f, -300.0f);
+	cameraPos = VGet(0.0f, 0.0f, 0.0f);
 }
 
 void Camera::Set()

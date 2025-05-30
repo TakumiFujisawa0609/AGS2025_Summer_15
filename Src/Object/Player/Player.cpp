@@ -27,7 +27,7 @@ void Player::GameInit()
 	//LoadPlayerImage();
 
 	player_.isAlive_ = true;
-	player_.pos_ = { SceneManager::MAIN_SCREEN_SIZE_X / 2,SceneManager::MAIN_SCREEN_SIZE_Y / 2 };
+	player_.pos_ = { Application::MAIN_SCREEN_SIZE_X / 2,Application::MAIN_SCREEN_SIZE_Y / 2 };
 	player_.size_ = { /*SIZE_X,SIZE_Y,*/33.0f,65.0f };
 	player_.radius_ = RADIUS;
 	player_.hp_ = HP_MAX;

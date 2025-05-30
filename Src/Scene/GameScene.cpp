@@ -59,15 +59,17 @@ void GameScene::Update(void)
 	}
 
 
-
-	if (player_->GetPlayer().disppos_.x > SceneManager::MAIN_SCREEN_SIZE_X / 7 * 4) {
-		Camera::GetInstance().Follow(Camera::dir::X, player_->GetPlayer().speed_);
-		if (player_->IsEvasion())Camera::GetInstance().Follow(Camera::dir::X, Player::EVASION_LENGTH);
+	auto& camera = Camera::GetInstance();
+	if (player_->GetPlayer().disppos_.x > Application::MAIN_SCREEN_SIZE_X / 7 * 4 && 
+		!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X)-((Application::MAIN_SCREEN_SIZE_X-Application::SCREEN_SIZE_X)/2) >= Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X)) {
+		camera.Follow(Camera::dir::X, player_->GetPlayer().speed_);
+		if (player_->IsEvasion())camera.Follow(Camera::dir::X, Player::EVASION_LENGTH);
 	}
 
-	if (player_->GetPlayer().disppos_.x < SceneManager::MAIN_SCREEN_SIZE_X / 7 * 3) {
-		Camera::GetInstance().Follow(Camera::dir::X, -(player_->GetPlayer().speed_));
-		if (player_->IsEvasion())Camera::GetInstance().Follow(Camera::dir::X, -Player::EVASION_LENGTH);
+	if (player_->GetPlayer().disppos_.x < Application::MAIN_SCREEN_SIZE_X / 7 * 3 &&
+		!(camera.GetPos().x <= -((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2))) {
+		camera.Follow(Camera::dir::X, -(player_->GetPlayer().speed_));
+		if (player_->IsEvasion())camera.Follow(Camera::dir::X, -Player::EVASION_LENGTH);
 	}
 
 

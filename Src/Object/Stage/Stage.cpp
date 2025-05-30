@@ -22,10 +22,12 @@ bool Stage::Load(void)
 {
 	if (LoadMapData() == false)return false;
 
-	int err = LoadDivGraph("Data/Image/block.png", STAGE_CHIP_ALL,
-		STAGE_CHIP_WIDTH, STAGE_CHIP_HEIGHT,
+	int err = LoadDivGraph("Data/Image/Stage/ForestTile.png", STAGE_CHIP_ALL,
+		STAGE_CHIP_X, STAGE_CHIP_Y,
 		STAGE_CHIP_SIZE, STAGE_CHIP_SIZE, stageArrayId);
 	if (err == -1)return false;
+
+	haikei_ = LoadGraph("Data/Image/Stage/BackGround.png");
 
 	return true;
 }
@@ -49,8 +51,15 @@ void Stage::Update()
 //描画処理
 void Stage::Draw()
 {
-	DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, GetColor(0, 0, 0), true);
+	DrawBox(0, 0, Application::MAIN_SCREEN_SIZE_X, Application::MAIN_SCREEN_SIZE_Y, GetColor(70, 70, 255), true);
 	
+	for (int i = 0; i < HAIKEI_MAX; i++) {
+		int dx = HAIKEI_SIZE_X * i-Camera::GetInstance().GetPos().x;
+		int dy = (Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2 - Camera::GetInstance().GetPos().y;
+		DrawGraph(dx, dy, haikei_, true);
+	}
+
+
 	//マップチップ画像を表示
 	for (int yy = 0; yy < STAGE_NUM_Y; yy++) {
 		for (int xx = 0; xx < STAGE_NUM_X; xx++) {
@@ -63,6 +72,7 @@ void Stage::Draw()
 			DrawGraph(dx, dy, stageArrayId[chip], true);
 		}
 	}
+
 }
 
 //解放処理
@@ -83,7 +93,7 @@ bool Stage::LoadMapData()
 	memset((int*)&mapDataArray[0], -1, sizeof(int) * STAGE_NUM_MAX);
 
 	//ファイストリームの取得
-	std::ifstream ifs = std::ifstream("Data/CSV/Stage.csv");
+	std::ifstream ifs = std::ifstream("Data/CSV/ForestStage.csv");
 	if (!ifs)return false;
 
 	std::string line;
