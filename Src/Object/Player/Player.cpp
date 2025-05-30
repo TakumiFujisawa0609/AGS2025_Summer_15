@@ -153,9 +153,10 @@ void Player::Evasion(void)
 
 void Player::ProcessEvasion(void)
 {
+#pragma region	キーボード操作
 	//回避
 	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_S)
-		&&!isEvasionCoolDown_) {
+		&& !isEvasionCoolDown_) {
 		SceneManager::GetInstance().Slow();
 		isEvasion_ = true;
 		isEvasionCoolDown_ = true;
@@ -183,6 +184,43 @@ void Player::ProcessEvasion(void)
 			isEvasionCoolDown_ = false;		//クールタイムの終了
 		}
 	}
+#pragma endregion
+
+#pragma region コントローラー操作
+	auto& inpMng = InputManager::GetInstance();
+	inpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+	//回避
+	if (inpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1,InputManager::JOYPAD_BTN::R_TRIGGER)
+		&& !isEvasionCoolDown_) {
+		SceneManager::GetInstance().Slow();
+		isEvasion_ = true;
+		isEvasionCoolDown_ = true;
+		isEvasionInbincible_ = true;
+	}
+	//回避時の無敵時間
+	if (isEvasion_) {
+		evasionCounter_++;
+		Evasion();
+		//無敵処理
+		if (evasionCounter_ >= EVASION_INVINCIBLE) {
+			isEvasionInbincible_ = false;
+		}
+		//回避処理
+		if (evasionCounter_ >= EVASION_TIME) {
+			evasionCounter_ = 0;
+			isEvasion_ = false;			//無敵時間の終了
+		}
+	}
+	//回避のクールダウン
+	if (isEvasionCoolDown_) {
+		evasionCoolDown_++;
+		if (evasionCoolDown_ >= EVASION_COOLDOWN) {
+			evasionCoolDown_ = 0;
+			isEvasionCoolDown_ = false;		//クールタイムの終了
+		}
+	}
+#pragma endregion
+
 }
 
 void Player::UpdatePositionY(void)
@@ -246,7 +284,7 @@ void Player::ProcessJump(void)
 #pragma region コントローラー操作
 	//ジャンプ判定
 	auto& InpMng = InputManager::GetInstance();
-	auto padState = InpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+	InpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
 	if (InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
 		isJump_ = true;
 	}
