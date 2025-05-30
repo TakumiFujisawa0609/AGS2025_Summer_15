@@ -12,7 +12,7 @@ EnemyManager::~EnemyManager()
 }
 void EnemyManager::Init()
 {
-	for (int ii = 0; ii < ENEMY_MAX; ii++)
+	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
 	{
 		bamboo_[ii] = new EnemyBamboo();
 		bamboo_[ii]->Init();
@@ -21,7 +21,7 @@ void EnemyManager::Init()
 
 void EnemyManager::Update()
 {
-	for (int ii = 0; ii < ENEMY_MAX; ii++)
+	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
 	{
 		bamboo_[ii]->Update();
 	}
@@ -29,7 +29,7 @@ void EnemyManager::Update()
 
 void EnemyManager::Draw()
 {
-	for (int ii = 0; ii < ENEMY_MAX; ii++)
+	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
 	{
 		bamboo_[ii]->Draw();
 	}
@@ -37,7 +37,7 @@ void EnemyManager::Draw()
 
 void EnemyManager::Relese()
 {
-	for (int ii = 0; ii < ENEMY_MAX; ii++)
+	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
 	{
 		bamboo_[ii]->Release();
 		delete bamboo_[ii];

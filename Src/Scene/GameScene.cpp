@@ -5,6 +5,7 @@
 #include"../Manager/Collision.h"
 #include"../Object/Player/Player.h"
 #include"../Object/Manager/EnemyManager.h"
+#include"../Object/Boss/BossTutrial.h"
 #include"../Object/Stage/Stage.h"
 #include"../Application.h"
 #include "GameScene.h"
@@ -31,6 +32,9 @@ void GameScene::Init(void)
 	enemy_ = new EnemyManager();
 	enemy_->Init();
 
+	boss_ = new BossTutrial();
+	boss_->Init();
+
 	Camera::GetInstance().Init();
 	Collision::CreateInstance();
 	for (int y = 0; y < Stage::STAGE_NUM_Y; y++) {
@@ -41,12 +45,10 @@ void GameScene::Init(void)
 
 	x = 0;
 
-	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++)
+	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
 	{
 		enemy_->GetBamboo(ii)->SetStartPos(ii);
-
 	}
-
 }
 
 void GameScene::Update(void)
@@ -56,8 +58,9 @@ void GameScene::Update(void)
 	player_->Update();
 	stage_->Update();
 	enemy_->Update();
+	boss_->Update();
 
-	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++)
+	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
 	{
 		enemy_->GetBamboo(ii)->SetTargetPos(player_->GetPlayer());
 
@@ -99,6 +102,7 @@ void GameScene::Draw(void)
 	stage_->Draw(); 
 	enemy_->Draw();
 	player_->Draw();
+	boss_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 	
@@ -117,6 +121,10 @@ void GameScene::Draw(void)
 
 void GameScene::Release(void)
 {
+	boss_->Release();
+	delete boss_;
+	boss_ = nullptr;
+
 	enemy_->Relese();
 	delete enemy_;
 	enemy_ = nullptr;

@@ -14,12 +14,7 @@ public:
 	static constexpr float MAX_GRAVITY = 31.0f;
 
 
-	static enum MOVE
-	{
-		RIGHT,
-		LEFT,
-		IDOL
-	};
+
 
 	//コンストラクタ
 	UnitBase(void);
