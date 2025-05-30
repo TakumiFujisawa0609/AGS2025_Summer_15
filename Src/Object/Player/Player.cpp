@@ -202,7 +202,8 @@ void Player::ProcessJump(void)
 		inputJumpKeyCounter_++;
 		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
 
-		SoundManager::GetInstance().Play(SoundManager::SID::JUMP_SOUND);
+		SoundManager::GetInstance().StopSound(SoundManager::SID::JUMP_SOUND);
+		SoundManager::GetInstance().Play(SoundManager::SID::JUMP_SOUND,100);
 
 		Jump();
 	}
@@ -213,7 +214,8 @@ void Player::ProcessJump(void)
 		inputJumpKeyCounter_++;
 		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
 
-		SoundManager::GetInstance().Play(SoundManager::SID::JUMP_SOUND);
+		SoundManager::GetInstance().StopSound(SoundManager::SID::JUMP_SOUND);
+		SoundManager::GetInstance().Play(SoundManager::SID::JUMP_SOUND,100);
 
 		Jump();
 	}
@@ -224,7 +226,8 @@ void Player::ProcessJump(void)
 		inputJumpKeyCounter_++;
 		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
 		
-		SoundManager::GetInstance().Play(SoundManager::SID::JUMP_SOUND);
+		SoundManager::GetInstance().StopSound(SoundManager::SID::JUMP_SOUND);
+		SoundManager::GetInstance().Play(SoundManager::SID::JUMP_SOUND, 100);
 
 		Jump();
 

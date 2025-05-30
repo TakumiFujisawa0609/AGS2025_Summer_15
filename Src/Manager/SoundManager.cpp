@@ -60,13 +60,14 @@ void SoundManager::DeleteSound(SID sid)
 // サウンドID
 // ループ(true = する / false = しない)
 // 最初から再生(true = する / false = しない)
-bool SoundManager::Play(SID sid, bool loop, bool isBegin)
+bool SoundManager::Play(SID sid, int volume, bool loop, bool isBegin)
 {
 	auto it = m_sounds.find(sid);
-	if (it == m_sounds.end())return false;
+	if (it == m_sounds.end()) return false;
 
 	if (CheckSoundMem(it->second) == 0)
 	{
+		SetVolumeSoundMem((int)(255 * (volume / 100)), it->second);
 		PlaySoundMem(it->second, loop ? DX_PLAYTYPE_LOOP : DX_PLAYTYPE_BACK, isBegin);
 	}
 
@@ -78,6 +79,7 @@ void SoundManager::StopSound(SID sid)
 	auto it = m_sounds.find(sid);
 	if (it == m_sounds.end())return;
 	
+	ChangeVolumeSoundMem(255, it->second);
 	StopSoundMem(it->second);
 }
 

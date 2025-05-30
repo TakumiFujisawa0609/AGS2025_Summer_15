@@ -47,13 +47,11 @@ void GameScene::Init(void)
 
 	SoundManager::GetInstance().LoadSound(SoundManager::SID::TITLE_BGM);
 
-	SoundManager::GetInstance().Play(SoundManager::SID::TITLE_BGM, true);
+	SoundManager::GetInstance().Play(SoundManager::SID::TITLE_BGM, 20);
 }
 
 void GameScene::Update(void)
 {
-
-
 	player_->Update();
 	stage_->Update();
 	enemy_->Update();

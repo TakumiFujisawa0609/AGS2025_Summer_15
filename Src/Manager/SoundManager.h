@@ -5,6 +5,8 @@ class SoundManager
 {
 public:
 
+	
+
 	// リソースの定義
 	enum class SID 
 	{
@@ -37,7 +39,7 @@ public:
 	
 	void AllDeleteSound();
 
-	bool Play(SID sid, bool isLoop = false, bool isBegin = true);
+	bool Play(SID sid, int volume,  bool isLoop = false, bool isBegin = true);
 
 	void StopSound(SID sid);
 
