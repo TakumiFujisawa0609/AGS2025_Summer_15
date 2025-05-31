@@ -48,9 +48,9 @@ void BossTutorial::Draw()
 {
 	if (unit_.isDraw_)
 	{
-		DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xff0000, true);
+		DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
 	}
-	DrawFormatString(120, 120, 0x0ff0ff, "boss(%.2f,%.2f)", unit_.pos_.x, unit_.pos_.y);
+	DrawFormatString(120, 120, 0x0fffff, "boss(%.2f,%.2f)", unit_.pos_.x, unit_.pos_.y);
 }
 
 void BossTutorial::Release()
