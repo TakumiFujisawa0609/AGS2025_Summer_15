@@ -32,5 +32,7 @@ private:
     Vector2F targetPos_;
 
     void Move();
+    void MoveX()override;
+    void MoveY()override;
 
 };

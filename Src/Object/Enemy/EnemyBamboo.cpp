@@ -26,9 +26,8 @@ void EnemyBamboo::Init()
 
 void EnemyBamboo::Update()
 {
-	Move();
+	UnitBase::Update();
 
-	StageCollisionUpdate();
 }
 
 void EnemyBamboo::Draw()
@@ -51,6 +50,17 @@ void EnemyBamboo::SetStartPos(int ii)
 {
 	unit_.pos_ = START_POS[ii]; 
 }
+
+
+void EnemyBamboo::MoveX()
+{
+	Move();
+}
+void EnemyBamboo::MoveY()
+{
+
+}
+
 
 void EnemyBamboo::Move()
 {
@@ -78,3 +88,4 @@ void EnemyBamboo::Move()
 	unit_.pos_.x += isMove_ ? MOVE_SPEED : -MOVE_SPEED;
 
 }
+

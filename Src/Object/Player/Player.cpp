@@ -39,14 +39,13 @@ void Player::Init()
 	attackCounter_ = 0;
 
 	//ジャンプ
-	verticalAcceleration_ = 0;
+	unit_.yAccel_ = 0;
 	jumpPower_ = 0;
 	isJump_ = false;
 	firstJumpFlg_ = true;
 	secondJumpFlg_ = true;
 	thirdJumpFlg_ = true;
 	inputJumpKeyCounter_ = 0;
-	gravity_ = GRAVITY;
 
 	playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
 
@@ -64,27 +63,10 @@ void Player::Init()
 
 void Player::Update()
 {
-	Move();
-
-	ProcessEvasion();
-	CollisionStageX();
-
-
-
-	ProcessJump();
-
-	UpdatePositionY();
-	CollisionStageY();
-
-
-
+	UnitBase::Update();
 
 	ProcessAtatck();
 
-
-
-
-	ChangeDispPos();
 }
 
 void Player::Draw()
@@ -113,6 +95,20 @@ void Player::Release()
 {
 }
 
+
+
+void Player::MoveX(void)
+{
+	Move();
+	ProcessEvasion();
+}
+
+void Player::MoveY(void)
+{
+	ProcessJump();
+}
+
+
 void Player::Move(void)
 {
 	auto&InpMng= InputManager::GetInstance();
@@ -138,18 +134,6 @@ void Player::Move(void)
 	}
 }
 
-void Player::Evasion(void)
-{
-	switch (playerDir_)
-	{
-	case AsoUtility::DIRECTION::E_DIR_RIGHT:
-		unit_.pos_.x += EVASION_LENGTH;
-		break;
-	case AsoUtility::DIRECTION::E_DIR_LEFT:
-		unit_.pos_.x -= EVASION_LENGTH;
-		break;
-	}
-}
 
 void Player::ProcessEvasion(void)
 {
@@ -223,10 +207,22 @@ void Player::ProcessEvasion(void)
 
 }
 
-void Player::UpdatePositionY(void)
+
+void Player::Evasion(void)
 {
-	unit_.pos_.y += verticalAcceleration_;
+	switch (playerDir_)
+	{
+	case AsoUtility::DIRECTION::E_DIR_RIGHT:
+		unit_.pos_.x += EVASION_LENGTH;
+		break;
+	case AsoUtility::DIRECTION::E_DIR_LEFT:
+		unit_.pos_.x -= EVASION_LENGTH;
+		break;
+	}
 }
+
+
+
 
 void Player::ProcessJump(void)
 {
@@ -339,117 +335,110 @@ void Player::ProcessJump(void)
 void Player::Jump(void)
 {
 	//Y軸加速度にジャンプ力を加える
-	verticalAcceleration_ += jumpPower_;
+	unit_.yAccel_ += jumpPower_;
 	//Y軸加速度が最大ジャンプ力を超えたら最大ジャンプ量に設定
-	verticalAcceleration_ = (verticalAcceleration_ < MAX_JUMP_POWER) ? MAX_JUMP_POWER : verticalAcceleration_;
+	unit_.yAccel_ = (unit_.yAccel_ < MAX_JUMP_POWER) ? MAX_JUMP_POWER : unit_.yAccel_;
 }
 
-void Player::Gravity(void)
+
+// 接地している時の数値の代入などをまとめた関数
+void Player::IsGround(Collision::DIR dir)
 {
-	//Y軸加速度に重力を加える
-	if (!isAttack_) {
+	switch (dir)
+	{
+	case Collision::UP:
 
-	verticalAcceleration_ = (verticalAcceleration_ < MAX_GRAVITY) ? verticalAcceleration_ + gravity_ : verticalAcceleration_;
-	}
-}
-
-void Player::CollisionStageY(void)
-{
-	Collision& ins = Collision::GetInstance();
-
-	////天井
-	if ((unit_.pos_.y - unit_.size_.y / 2) <= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::UP)) {
+		//天井に衝突していたら行う処理
 		inputJumpKeyCounter_ = INPUT_JUMPKEY_FRAME;
-		unit_.pos_.y = ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::UP) + unit_.size_.y / 2;
-	}
+		unit_.yAccel_ = 0;
 
-	//空中にいるなら重力を加える
-	if (unit_.pos_.y + unit_.size_.y / 2 >= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::DOWN)) {
-		//地面に接地
-		unit_.pos_.y = (ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::DOWN)) - unit_.size_.y / 2;
-		verticalAcceleration_ = 0;
+		break;
+
+	case Collision::DOWN:
+
+		//地面に接地していたら行う処理
+		unit_.yAccel_ = 0;
 		isJump_ = false;
 		firstJumpFlg_ = true;
 		secondJumpFlg_ = true;
 		thirdJumpFlg_ = true;
 		jumpPower_ = 0;
 		inputJumpKeyCounter_ = 0;
-	}
-	else {
-		Gravity();
-	}
-}
+		unit_.isGround_ = true;
 
-void Player::CollisionStageX(void)
-{
-	Collision& ins = Collision::GetInstance();
+		break;
 
-	//右
-	if ((unit_.pos_.x + unit_.size_.x / 2) >= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::RIGHT)) {
-		unit_.pos_.x = (ins.GetStageLine(unit_.pos_, unit_.size_, Collision::RIGHT)) - unit_.size_.x / 2;
-	}
+	case Collision::LEFT:
 
-	//左
-	if ((unit_.pos_.x - unit_.size_.x / 2) <= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::LEFT)) {
-		unit_.pos_.x = (ins.GetStageLine(unit_.pos_, unit_.size_, Collision::LEFT)) + unit_.size_.x / 2;
+		//左側の壁に衝突していたら行う処理
+
+		break;
+
+	case Collision::RIGHT:
+
+		//右側の壁に衝突していたら行う処理
+
+		break;
+
 	}
 }
 
-void Player::Attack(void)
-{
-#pragma region MyRegion
 
-	//switch (attackStat_)
-	//{
-	//case Player::ATTACK_STAT::E_ATTACK_STAT_KATTO:
-	//	break;
-	//case Player::ATTACK_STAT::E_ATTACK_STAT_NUGRU:
-	//	break;
-	//}
-	//if (isAttack_) {
-	//	attackCounter_++;
-	//	if (attackCounter_ >= ATTACK_TIME) {
-	//		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
-	//		isAttack_ = false;
-	//		attackCounter_ = 0;
-	//		isAttackCoolDown_ = true;
-	//		attackCoolDown_ = 0;
-	//	}
-	//}
-	// if (isAttackCoolDown_) {
-	//	attackCoolDown_++;
-	//	if (attackCoolDown_ >= ATTACK_COOLDOWN) {
-	//		isAttackCoolDown_ = false;
-	//		attackCoolDown_ = 0;
-	//	}
-	//}
-#pragma endregion
-
-
-
-
-}
 
 void Player::ProcessAtatck(void)
 {
 #pragma region MyRegion
 
 
-	//auto& ins = InputManager::GetInstance();
-	//if (!isAttack_) {
+	auto& ins = InputManager::GetInstance();
+	if (!isAttack_) {
 
-	//if (ins.IsNew(KEY_INPUT_Q)) {
-	//	attackStat_ = ATTACK_STAT::E_ATTACK_STAT_KATTO;
-	//	isAttack_ = true;
-	//}
-	//else if (ins.IsNew(KEY_INPUT_E)) {
-	//	attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NUGRU;
-	//	isAttack_ = true;
-	//}
-	//}
+		if (ins.IsNew(KEY_INPUT_Q)) {
+			attackStat_ = ATTACK_STAT::E_ATTACK_STAT_KATTO;
+			isAttack_ = true;
+		}
+		else if (ins.IsNew(KEY_INPUT_E)) {
+			attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NUGRU;
+			isAttack_ = true;
+		}
+	}
 #pragma endregion
 	Attack();
 }
+
+void Player::Attack(void)
+{
+#pragma region MyRegion
+
+	switch (attackStat_)
+	{
+	case Player::ATTACK_STAT::E_ATTACK_STAT_KATTO:
+		break;
+	case Player::ATTACK_STAT::E_ATTACK_STAT_NUGRU:
+		break;
+	}
+	if (isAttack_) {
+		attackCounter_++;
+		if (attackCounter_ >= ATTACK_TIME) {
+			attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
+			isAttack_ = false;
+			attackCounter_ = 0;
+			isAttackCoolDown_ = true;
+			attackCoolDown_ = 0;
+		}
+	}
+	 if (isAttackCoolDown_) {
+		attackCoolDown_++;
+		if (attackCoolDown_ >= ATTACK_COOLDOWN) {
+			isAttackCoolDown_ = false;
+			attackCoolDown_ = 0;
+		}
+	}
+#pragma endregion
+
+}
+
+
 
 
 //void Player::LoadPlayerImage(void)
@@ -482,7 +471,8 @@ void Player::ProcessAtatck(void)
 //
 //	
 //}
-//
+
+
 //void Player::DrawPlayer(int modelId)
 //{
 //	//プレイヤーの向き
@@ -516,6 +506,7 @@ void Player::ProcessAtatck(void)
 //
 //
 //}
+
 
 
 

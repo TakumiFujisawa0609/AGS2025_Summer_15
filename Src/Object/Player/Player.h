@@ -54,8 +54,6 @@ public:
 	};
 
 
-
-
 	Player();
 	~Player();
 
@@ -82,46 +80,42 @@ private:
 	//攻撃モーション
 	ATTACK_STAT attackStat_;
 
-	//動作
+	//移動
+	void MoveX(void)override;
+	void MoveY(void)override;
+
 	void Move(void);
 
-	//回避
-	void Evasion(void);
+	// 接地している時の数値の代入などをまとめた関数
+	void IsGround(Collision::DIR dir)override;
 
 	//回避発動処理
 	void ProcessEvasion(void);
 
-	//重力
-	void Gravity(void);
+	//回避更新処理
+	void Evasion(void);
 
-	//Y座標の変更
-	void UpdatePositionY(void);
-
-	//ジャンプ
-	void Jump(void);
 
 	//ジャンプ発動処理
 	void ProcessJump(void);
 
-	//ステージとの当たり判定
-	void CollisionStageY(void);
-	void CollisionStageX(void);
+	//ジャンプ更新処理
+	void Jump(void);
 
-	//攻撃
-	void Attack(void);
 
 	//攻撃プロセス
 	void ProcessAtatck(void);
 
-	//重力
-	float gravity_;
+	//攻撃更新処理
+	void Attack(void);
+
 
 	bool isJump_;				//true=ジャンプ中/false=非ジャンプ
 	bool firstJumpFlg_;			//一回目のジャンプ(true=ジャンプ可能/false=ジャンプしたかったなぁ)
 	bool secondJumpFlg_;		//二段ジャンプ(true=ジャンプ可能/false=ジャンプしたかったなぁ)
 	bool thirdJumpFlg_;
 	float jumpPower_;			//ジャンプパワー
-	float verticalAcceleration_;//縦方向の加速度
+	float yAccel_;//縦方向の加速度
 	int inputJumpKeyCounter_;	//ジャンプの入力時間カウンター
 
 	//int playerDir_;			//プレイヤーが向いている方向
@@ -148,6 +142,8 @@ private:
 	Vector2 mPos_;
 
 	Vector2F worldMousePos_;
+
+
 
 };
 
