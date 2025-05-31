@@ -163,7 +163,11 @@ const Vector2F UnitBase::GetMoveVec(const Vector2F _start, const Vector2F _goal,
 	// (変更後)
 	// //移動量を求める
 	// Vector2F ret = { targetVec.x * s , targetVec.y * s };
+	// 
+	// 
+	//これで指定がなければそのオブジェクトのunit_.speed_に入ってる数値で計算した移動ベクトルが取得できる--------
 	//----------------------------------------------------------------------------------------------------------
+	 
 	
 	//標的への方向ベクトルを取得
 	Vector2F targetVec = { _goal.x- _start.x ,_goal.y-_start.y  };
