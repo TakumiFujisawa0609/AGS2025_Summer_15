@@ -5,7 +5,7 @@
 #include"../Manager/Collision.h"
 #include"../Object/Player/Player.h"
 #include"../Object/Manager/EnemyManager.h"
-#include"../Object/Boss/BossTutrial.h"
+#include"../Object/Boss/BossTutorial.h"
 #include"../Object/Stage/Stage.h"
 #include"../Application.h"
 #include "GameScene.h"
@@ -32,7 +32,7 @@ void GameScene::Init(void)
 	enemy_ = new EnemyManager();
 	enemy_->Init();
 
-	boss_ = new BossTutrial();
+	boss_ = new BossTutorial();
 	boss_->Init();
 
 	Camera::GetInstance().Init();
@@ -136,7 +136,6 @@ void GameScene::Release(void)
 	stage_->Release();
 	delete stage_;
 	stage_ = nullptr;
-
 
 	player_->Release();
 	delete player_;

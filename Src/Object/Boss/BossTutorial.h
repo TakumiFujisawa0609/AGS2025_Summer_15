@@ -1,23 +1,29 @@
 #pragma once
 #include"../Enemy/EnemyBase.h"
 
-class BossTutrial : public EnemyBase
+class BossTutorial : public EnemyBase
 {
 public:
 
-	BossTutrial();
-	~BossTutrial();
+	enum PATTERN
+	{
+		E_NON,
+		E_MOVE,
+		E_ATTACK,
+	};
+
+	BossTutorial();
+	~BossTutorial();
 
 	void Init()override;
 	void Update()override;
 	void Draw()override;
 	void Release()override;
 
-
-protected:
-
-	
 private:
+	PATTERN pattaern_;
+
+	void Attack();
 
 	void Move();
 };

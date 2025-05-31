@@ -5,7 +5,7 @@
 class Player;
 class Stage;
 class EnemyManager;
-class BossTutrial;
+class BossTutorial;
 
 class GameScene :
     public SceneBase
@@ -29,7 +29,7 @@ private:
 	Player* player_;
 	Stage* stage_;
 	EnemyManager* enemy_ ;
-	BossTutrial* boss_;
+	BossTutorial* boss_;
 
 	float x;
 
