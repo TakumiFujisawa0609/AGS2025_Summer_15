@@ -16,6 +16,7 @@ void EnemyManager::Init()
 	{
 		bamboo_[ii] = new EnemyBamboo();
 		bamboo_[ii]->Init();
+		bamboo_[ii]->SetStartPos(ii);
 	}
 }
 

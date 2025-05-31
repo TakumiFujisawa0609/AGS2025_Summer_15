@@ -18,7 +18,7 @@ void EnemyBase::Init()
 
 void EnemyBase::Update()
 {
-	StageCollisionUpdate();
+	UnitBase::Update();
 }
 
 void EnemyBase::Draw()
@@ -28,7 +28,6 @@ void EnemyBase::Draw()
 
 void EnemyBase::Release()
 {
-	DeleteGraph(unit_.modelId_);
 }
 
 

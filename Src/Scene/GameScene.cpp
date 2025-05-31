@@ -27,7 +27,7 @@ void GameScene::Init(void)
 	stage_->Init();
 
 	player_ = new Player();
-	player_->GameInit();
+	player_->Init();
 
 	enemy_ = new EnemyManager();
 	enemy_->Init();
@@ -45,10 +45,6 @@ void GameScene::Init(void)
 
 	x = 0;
 
-	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
-	{
-		enemy_->GetBamboo(ii)->SetStartPos(ii);
-	}
 }
 
 void GameScene::Update(void)
@@ -62,12 +58,13 @@ void GameScene::Update(void)
 
 	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
 	{
-		enemy_->GetBamboo(ii)->SetTargetPos(player_->GetPlayer());
+		enemy_->GetBamboo(ii)->SetTargetPos(player_->GetUnit().pos_);
 
 		if (ins.IsTrgDown(KEY_INPUT_0))
 		{
 			enemy_->GetBamboo(ii)->SetDmg(10);
 		}
+		enemy_->GetBamboo(ii)->SetTargetPos(player_->GetUnit().pos_);
 	}
 
 	// ƒV[ƒ“‘JˆÚ
@@ -78,20 +75,20 @@ void GameScene::Update(void)
 
 
 	auto& camera = Camera::GetInstance();
-	if (player_->GetPlayer().disppos_.x > Application::MAIN_SCREEN_SIZE_X / 7 * 4 && 
+	if (player_->GetUnit().disppos_.x > Application::MAIN_SCREEN_SIZE_X / 7 * 4 && 
 		!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X)-((Application::MAIN_SCREEN_SIZE_X-Application::SCREEN_SIZE_X)/2) >= Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X)) {
-		camera.Follow(Camera::dir::X, player_->GetPlayer().speed_);
+		camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
 		if (player_->IsEvasion())camera.Follow(Camera::dir::X, Player::EVASION_LENGTH);
 	}
 
-	if (player_->GetPlayer().disppos_.x < Application::MAIN_SCREEN_SIZE_X / 7 * 3 &&
+	if (player_->GetUnit().disppos_.x < Application::MAIN_SCREEN_SIZE_X / 7 * 3 &&
 		!(camera.GetPos().x <= -((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2))) {
-		camera.Follow(Camera::dir::X, -(player_->GetPlayer().speed_));
+		camera.Follow(Camera::dir::X, -(player_->GetUnit().speed_));
 		if (player_->IsEvasion())camera.Follow(Camera::dir::X, -Player::EVASION_LENGTH);
 	}
 
 	if (player_->IsEvasion()) {
-		SceneManager::GetInstance().ZoomPos(player_->GetPlayer().disppos_);
+		SceneManager::GetInstance().ZoomPos(player_->GetUnit().disppos_);
 		SceneManager::GetInstance().ZoomScale(1.4f);
 	}
 

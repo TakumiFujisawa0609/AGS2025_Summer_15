@@ -1,4 +1,5 @@
 #pragma once
+
 class Vector2
 {
 public:
@@ -15,12 +16,21 @@ public:
 	// デストラクタ
 	~Vector2(void);
 
+	//演算
+
+	Vector2 operator+(const Vector2 value)const;
+	void operator+=(const Vector2 value);
+	Vector2 operator-(const Vector2 value)const;
+	void operator-=(const Vector2 value);
+	Vector2 operator*(const int value)const;
+	void operator*=(const int value);
+	Vector2 operator/(const int value)const;
+	void operator/=(const int value);
 };
 
 class Vector2F
 {
 public:
-
 
 	float x;
 	float y;
@@ -33,4 +43,15 @@ public:
 
 	//デストラクタ
 	~Vector2F(void);
+
+	//演算
+
+	Vector2F operator+(const Vector2F value)const;
+	void operator+=(const Vector2F value);
+	Vector2F operator-(const Vector2F value)const;
+	void operator-=(const Vector2F value);
+	Vector2F operator*(const float value)const;
+	void operator*=(const float value);
+	Vector2F operator/(const float value)const;
+	void operator/=(const float value);
 };

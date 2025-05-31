@@ -17,21 +17,18 @@ Player::~Player()
 {
 }
 
-bool Player::SystemInit()
-{
-	return true;
-}
 
-void Player::GameInit()
+
+void Player::Init()
 {
 	//LoadPlayerImage();
 
-	player_.isAlive_ = true;
-	player_.pos_ = { Application::MAIN_SCREEN_SIZE_X / 2,Application::MAIN_SCREEN_SIZE_Y / 2 };
-	player_.size_ = { /*SIZE_X,SIZE_Y,*/33.0f,65.0f };
-	player_.radius_ = RADIUS;
-	player_.hp_ = HP_MAX;
-	player_.speed_ = MOVE_POW;
+	unit_.isAlive_ = true;
+	unit_.pos_ = { Application::MAIN_SCREEN_SIZE_X / 2,Application::MAIN_SCREEN_SIZE_Y / 2 };
+	unit_.size_ = { /*SIZE_X,SIZE_Y,*/33.0f,65.0f };
+	unit_.radius_ = RADIUS;
+	unit_.hp_ = HP_MAX;
+	unit_.speed_ = MOVE_POW;
 	motionType_ = MOTION_TYPE::E_MOTION_IDLE;		//モーションタイプ
 	animCounter_ = 0.0f;
 
@@ -42,14 +39,13 @@ void Player::GameInit()
 	attackCounter_ = 0;
 
 	//ジャンプ
-	verticalAcceleration_ = 0;
+	unit_.yAccel_ = 0;
 	jumpPower_ = 0;
 	isJump_ = false;
 	firstJumpFlg_ = true;
 	secondJumpFlg_ = true;
 	thirdJumpFlg_ = true;
 	inputJumpKeyCounter_ = 0;
-	gravity_ = GRAVITY;
 
 	playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
 
@@ -58,55 +54,60 @@ void Player::GameInit()
 	isEvasionInbincible_ = false;
 	evasionCounter_ = 0;
 	evasionCoolDown_ = 0;
+
+	mPos_ = { 0,0 };
+	worldMousePos_ = { 0,0 };
 	
 	Collision::CreateInstance();
 }
 
 void Player::Update()
 {
-	Move();
-
-	ProcessEvasion();
-	CollisionStageX();
-
-
-
-	ProcessJump();
-
-	UpdatePositionY();
-	CollisionStageY();
-
-
-
+	UnitBase::Update();
 
 	ProcessAtatck();
 
-
-
-
-	ChangeDispPos();
 }
 
 void Player::Draw()
 {
-	//DrawCircle(player_.disppos_.x, player_.disppos_.y, 10, GetColor(255, 0, 0), true);
-	DrawCircle(player_.disppos_.x, player_.disppos_.y, 2, 0x00ffff, true);
+	//DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 10, GetColor(255, 0, 0), true);
+	DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 2, 0x00ffff, true);
 	if (isAttack_) {
-		DrawOval(player_.disppos_.x, player_.disppos_.y, 48,32, 0x00f0f0, true);
+		DrawOval(unit_.disppos_.x, unit_.disppos_.y, 48,32, 0x00f0f0, true);
 	}
-	DrawOval(player_.disppos_.x, player_.disppos_.y, player_.size_.x / 2, player_.size_.y / 2, 0xff0000, true);
+	DrawOval(unit_.disppos_.x, unit_.disppos_.y, unit_.size_.x / 2, unit_.size_.y / 2, 0xff0000, true);
 
-	DrawFormatString(0, 64, 0x0000ff, "プレイヤー座標(%.2f,%.2f)", player_.pos_.x, player_.pos_.y);
+	DrawFormatString(0, 64, 0x0000ff, "プレイヤー座標(%.2f,%.2f)", unit_.pos_.x, unit_.pos_.y);
 	DrawFormatString(0, 80, 0x0000ff, "プレイヤーの向き%d", playerDir_);
 	DrawFormatString(0, 96, 0x00ff00, "プレイヤーの攻撃%d", attackStat_);
+	//DrawFormatString(0.112, 0xff00ff, "プレイヤーのでぃすぷぽす(%.2f,%.2f)", unit_.disppos_.x,unit_.disppos_.y);
+    // 修正されたコード
+    DrawFormatString(0, 112, 0xff00ff, _T("プレイヤーのでぃすぷぽす(%.2f,%.2f)"), unit_.disppos_.x, unit_.disppos_.y);
+	DrawCircle(mPos_.x, mPos_.y, 5, 0x000000,true);
+
+	DrawCircle(worldMousePos_.x, worldMousePos_.y, 2, 0xffaaaa, true);
 
 	//SetDrawPlayer();
 }
 
-bool Player::Release()
+void Player::Release()
 {
-	return true;
 }
+
+
+
+void Player::MoveX(void)
+{
+	Move();
+	ProcessEvasion();
+}
+
+void Player::MoveY(void)
+{
+	ProcessJump();
+}
+
 
 void Player::Move(void)
 {
@@ -120,37 +121,26 @@ void Player::Move(void)
 	const int stickThreshold = 500; // スティックのしきい値
 
 	if (InpMng.IsNew(KEY_INPUT_D)||padState.AKeyLX>stickThreshold) {
-		player_.pos_.x += player_.speed_;
+		unit_.pos_.x += unit_.speed_;
 		playerDir_ =AsoUtility::DIRECTION::E_DIR_RIGHT;
 		//モーションを変更
 		motionType_ = MOTION_TYPE::E_MOTION_RUN;
 	}
 	if (InpMng.IsNew(KEY_INPUT_A)||padState.AKeyLX<-stickThreshold) {
-		player_.pos_.x -= player_.speed_;
+		unit_.pos_.x -= unit_.speed_;
 		playerDir_ =AsoUtility::DIRECTION::E_DIR_LEFT;
 		//モーションを変更
 		motionType_ = MOTION_TYPE::E_MOTION_RUN;
 	}
 }
 
-void Player::Evasion(void)
-{
-	switch (playerDir_)
-	{
-	case AsoUtility::DIRECTION::E_DIR_RIGHT:
-		player_.pos_.x += EVASION_LENGTH;
-		break;
-	case AsoUtility::DIRECTION::E_DIR_LEFT:
-		player_.pos_.x -= EVASION_LENGTH;
-		break;
-	}
-}
 
 void Player::ProcessEvasion(void)
 {
+#pragma region	キーボード操作
 	//回避
 	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_S)
-		&&!isEvasionCoolDown_) {
+		&& !isEvasionCoolDown_) {
 		SceneManager::GetInstance().Slow();
 		isEvasion_ = true;
 		isEvasionCoolDown_ = true;
@@ -178,15 +168,65 @@ void Player::ProcessEvasion(void)
 			isEvasionCoolDown_ = false;		//クールタイムの終了
 		}
 	}
+#pragma endregion
+
+#pragma region コントローラー操作
+	auto& inpMng = InputManager::GetInstance();
+	inpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+	//回避
+	if (inpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1,InputManager::JOYPAD_BTN::R_TRIGGER)
+		&& !isEvasionCoolDown_) {
+		SceneManager::GetInstance().Slow();
+		isEvasion_ = true;
+		isEvasionCoolDown_ = true;
+		isEvasionInbincible_ = true;
+	}
+	//回避時の無敵時間
+	if (isEvasion_) {
+		evasionCounter_++;
+		Evasion();
+		//無敵処理
+		if (evasionCounter_ >= EVASION_INVINCIBLE) {
+			isEvasionInbincible_ = false;
+		}
+		//回避処理
+		if (evasionCounter_ >= EVASION_TIME) {
+			evasionCounter_ = 0;
+			isEvasion_ = false;			//無敵時間の終了
+		}
+	}
+	//回避のクールダウン
+	if (isEvasionCoolDown_) {
+		evasionCoolDown_++;
+		if (evasionCoolDown_ >= EVASION_COOLDOWN) {
+			evasionCoolDown_ = 0;
+			isEvasionCoolDown_ = false;		//クールタイムの終了
+		}
+	}
+#pragma endregion
+
 }
 
-void Player::UpdatePositionY(void)
+
+void Player::Evasion(void)
 {
-	player_.pos_.y += verticalAcceleration_;
+	switch (playerDir_)
+	{
+	case AsoUtility::DIRECTION::E_DIR_RIGHT:
+		unit_.pos_.x += EVASION_LENGTH;
+		break;
+	case AsoUtility::DIRECTION::E_DIR_LEFT:
+		unit_.pos_.x -= EVASION_LENGTH;
+		break;
+	}
 }
+
+
+
 
 void Player::ProcessJump(void)
 {
+#pragma region キーボード操作
 	//ジャンプ判定
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)) {
 		isJump_ = true;
@@ -234,67 +274,142 @@ void Player::ProcessJump(void)
 			jumpPower_ = 0;
 		}
 	}
+#pragma endregion
+
+
+#pragma region コントローラー操作
+	//ジャンプ判定
+	auto& InpMng = InputManager::GetInstance();
+	InpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+	if (InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+		isJump_ = true;
+	}
+	//一回目のジャンプ
+	if (InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)
+		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
+		&& firstJumpFlg_) {
+		inputJumpKeyCounter_++;
+		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
+
+		Jump();
+	}
+	//二段ジャンプ
+	if (InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)
+		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
+		&& secondJumpFlg_) {
+		inputJumpKeyCounter_++;
+		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
+
+		Jump();
+	}
+	//三弾ジャンプ
+	if (InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)
+		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
+		&& thirdJumpFlg_) {
+		inputJumpKeyCounter_++;
+		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
+		Jump();
+
+	}
+
+	//ジャンプキーを離したらカウンターをリセット
+	if (InpMng.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+		inputJumpKeyCounter_ = 0;
+		if (!secondJumpFlg_) {
+			thirdJumpFlg_ = false;
+		}
+		else if (!firstJumpFlg_) {
+			secondJumpFlg_ = false;
+			jumpPower_ = 0;
+		}
+		else {
+			firstJumpFlg_ = false;
+			jumpPower_ = 0;
+		}
+	}
+#pragma endregion
+
 }
 
 
 void Player::Jump(void)
 {
 	//Y軸加速度にジャンプ力を加える
-	verticalAcceleration_ += jumpPower_;
+	unit_.yAccel_ += jumpPower_;
 	//Y軸加速度が最大ジャンプ力を超えたら最大ジャンプ量に設定
-	verticalAcceleration_ = (verticalAcceleration_ < MAX_JUMP_POWER) ? MAX_JUMP_POWER : verticalAcceleration_;
+	unit_.yAccel_ = (unit_.yAccel_ < MAX_JUMP_POWER) ? MAX_JUMP_POWER : unit_.yAccel_;
 }
 
-void Player::Gravity(void)
-{
-	//Y軸加速度に重力を加える
-	verticalAcceleration_ = (verticalAcceleration_ < MAX_GRAVITY) ? verticalAcceleration_ + gravity_ : verticalAcceleration_;
-}
 
-void Player::CollisionStageY(void)
+// 接地している時の数値の代入などをまとめた関数
+void Player::IsGround(Collision::DIR dir)
 {
-	Collision& ins = Collision::GetInstance();
+	switch (dir)
+	{
+	case Collision::UP:
 
-	////天井
-	if ((player_.pos_.y - player_.size_.y / 2) <= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::UP)) {
+		//天井に衝突していたら行う処理
 		inputJumpKeyCounter_ = INPUT_JUMPKEY_FRAME;
-		player_.pos_.y = ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::UP) + player_.size_.y / 2;
-	}
+		unit_.yAccel_ = 0;
 
-	//空中にいるなら重力を加える
-	if (player_.pos_.y + player_.size_.y / 2 >= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::DOWN)) {
-		//地面に接地
-		player_.pos_.y = (ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::DOWN)) - player_.size_.y / 2;
-		verticalAcceleration_ = 0;
+		break;
+
+	case Collision::DOWN:
+
+		//地面に接地していたら行う処理
+		unit_.yAccel_ = 0;
 		isJump_ = false;
 		firstJumpFlg_ = true;
 		secondJumpFlg_ = true;
 		thirdJumpFlg_ = true;
 		jumpPower_ = 0;
 		inputJumpKeyCounter_ = 0;
-	}
-	else {
-		Gravity();
+		unit_.isGround_ = true;
+
+		break;
+
+	case Collision::LEFT:
+
+		//左側の壁に衝突していたら行う処理
+
+		break;
+
+	case Collision::RIGHT:
+
+		//右側の壁に衝突していたら行う処理
+
+		break;
+
 	}
 }
 
-void Player::CollisionStageX(void)
+
+
+void Player::ProcessAtatck(void)
 {
-	Collision& ins = Collision::GetInstance();
+#pragma region MyRegion
 
-	//右
-	if ((player_.pos_.x + player_.size_.x / 2) >= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::RIGHT)) {
-		player_.pos_.x = (ins.GetStageLine(player_.pos_, player_.size_, Collision::RIGHT)) - player_.size_.x / 2;
-	}
 
-	//左
-	if ((player_.pos_.x - player_.size_.x / 2) <= ins.GetStageLine(player_.pos_, player_.size_, Collision::DIR::LEFT)) {
-		player_.pos_.x = (ins.GetStageLine(player_.pos_, player_.size_, Collision::LEFT)) + player_.size_.x / 2;
+	auto& ins = InputManager::GetInstance();
+	if (!isAttack_) {
+
+		if (ins.IsNew(KEY_INPUT_Q)) {
+			attackStat_ = ATTACK_STAT::E_ATTACK_STAT_KATTO;
+			isAttack_ = true;
+		}
+		else if (ins.IsNew(KEY_INPUT_E)) {
+			attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NUGRU;
+			isAttack_ = true;
+		}
 	}
+#pragma endregion
+	Attack();
 }
 
 void Player::Attack(void)
 {
+#pragma region MyRegion
+
 	switch (attackStat_)
 	{
 	case Player::ATTACK_STAT::E_ATTACK_STAT_KATTO:
@@ -319,30 +434,12 @@ void Player::Attack(void)
 			attackCoolDown_ = 0;
 		}
 	}
+#pragma endregion
+
 }
 
-void Player::ProcessAtatck(void)
-{
-	auto& ins = InputManager::GetInstance();
-	if (!isAttack_) {
 
-	if (ins.IsNew(KEY_INPUT_Q)) {
-		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_KATTO;
-		isAttack_ = true;
-	}
-	else if (ins.IsNew(KEY_INPUT_E)) {
-		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NUGRU;
-		isAttack_ = true;
-	}
-	}
-	Attack();
-}
 
-void Player::ChangeDispPos(void)
-{
-	player_.disppos_.x = player_.pos_.x - Camera::GetInstance().GetPos().x;
-	player_.disppos_.y = player_.pos_.y - Camera::GetInstance().GetPos().y;
-}
 
 //void Player::LoadPlayerImage(void)
 //{
@@ -374,7 +471,8 @@ void Player::ChangeDispPos(void)
 //
 //	
 //}
-//
+
+
 //void Player::DrawPlayer(int modelId)
 //{
 //	//プレイヤーの向き
@@ -382,7 +480,7 @@ void Player::ChangeDispPos(void)
 //	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
 //		isLeft = false;
 //	}
-//	DrawRotaGraph(player_.disppos_.x, player_.disppos_.y-SIZE_Y/2,
+//	DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y-SIZE_Y/2,
 //		10.0, 0.0, modelId, true, isLeft);
 //}
 //
@@ -408,6 +506,7 @@ void Player::ChangeDispPos(void)
 //
 //
 //}
+
 
 
 
