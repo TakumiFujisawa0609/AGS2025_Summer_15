@@ -28,28 +28,20 @@ public:
 	virtual void Release(void) = 0;
 
 	//ゲッター関数
-	//---------------------------------------
-	//座標
-		//位置
-	const Vector2F& GetPos(void)const { return unit_.pos_; }
-
-	const Vector2F& GetSize(void)const { return unit_.size_; }
-
-	//半径
-	const float GetRadius(void)const { return unit_.radius_; }
-
-	const int GetHp(void)const { return unit_.hp_; }
-
 	const Base& GetUnit(void)const { return unit_; }
 
-	//セッター
-	//----------------------
+	//セッタ関数ー---------------------------------------------------
 
 	//位置
 	void SetPos(const Vector2F& _pos) { unit_.pos_ = _pos; }
 
-protected:
+	//生存フラグ
+	void SetAliveOff(void) { unit_.isAlive_ = false; }
+	void SetAliveOn(void) { unit_.isAlive_ = true; }
 
+	//---------------------------------------------------------------
+
+protected:
 	Base unit_;
 
 	void StageCollisionUpdate(void);
@@ -78,11 +70,11 @@ protected:
 	float verticalAcceleration_;//縦方向の加速度
 
 	/// <summary>
-/// とある点からとある点までの移動ベクトルを返す
-/// </summary>
-/// <param name="_start">狙う側</param>
-/// <param name="_goal">向かう先</param>
-/// <param name="_speed">設定速度(未設定だと、方向ベクトルのみを返す)</param>
-/// <returns>向かう先までの移動ベクトル</returns>
+	/// とある点からとある点までの移動ベクトルを返す
+	/// </summary>
+	/// <param name="_start">狙う側</param>
+	/// <param name="_goal">向かう先</param>
+	/// <param name="_speed">設定速度(未設定だと、方向ベクトルのみを返す)</param>
+	/// <returns>向かう先までの移動ベクトル</returns>
 	const Vector2F GetMoveVec(const Vector2F _start, const Vector2F _goal,  const float _speed = 1.0f)const;
 };

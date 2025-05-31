@@ -99,16 +99,35 @@ void UnitBase::ChangeDispPos(void)
 {
 	unit_.disppos_.x = unit_.pos_.x - Camera::GetInstance().GetPos().x;
 	unit_.disppos_.y = unit_.pos_.y - Camera::GetInstance().GetPos().y;
-
-
 }
 
 
 const Vector2F UnitBase::GetMoveVec(const Vector2F _start, const Vector2F _goal, const float _speed)const
 {
+	//こっちのがよくない？-------------------------------------------------------------------------------------
+	// <.hの定義>
+	// 
+	// (変更前)
+	// const Vector2F GetMoveVec(const Vector2F _start, const Vector2F _goal,  const float _speed = 1.0f)const;
+	// (変更後)
+	// const Vector2F GetMoveVec(const Vector2F _start, const Vector2F _goal,  const float _speed = 0.0f)const;
+	//																								↑変更
+	// <.cppの関数の中身>
+	// 
+	// (追加)
+	// スピードの設定
+	// float s = (_speed == 0.0f) ? unit_.speed_ : _speed;
+	// 
+	// (変更前)
+	// //移動量を求める
+	// Vector2F ret = { targetVec.x * _speed,targetVec.y * _speed };
+	// (変更後)
+	// //移動量を求める
+	// Vector2F ret = { targetVec.x * s , targetVec.y * s };
+	//----------------------------------------------------------------------------------------------------------
+	
 	//標的への方向ベクトルを取得
 	Vector2F targetVec = { _goal.x- _start.x ,_goal.y-_start.y  };
-
 
 	//正規化
 	float len = std::sqrtf(targetVec.x * targetVec.x+targetVec.y * targetVec.y);
@@ -117,7 +136,6 @@ const Vector2F UnitBase::GetMoveVec(const Vector2F _start, const Vector2F _goal,
 
 	//移動量を求める
 	Vector2F ret = { targetVec.x * _speed,targetVec.y * _speed };
-
 
 	return ret;
 }

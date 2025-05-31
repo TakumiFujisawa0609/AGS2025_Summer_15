@@ -451,11 +451,6 @@ void Player::ProcessAtatck(void)
 	Attack();
 }
 
-void Player::ChangeDispPos(void)
-{
-	unit_.disppos_.x = unit_.pos_.x - Camera::GetInstance().GetPos().x;
-	unit_.disppos_.y = unit_.pos_.y - Camera::GetInstance().GetPos().y;
-}
 
 //void Player::LoadPlayerImage(void)
 //{

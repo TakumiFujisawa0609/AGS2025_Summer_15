@@ -66,7 +66,6 @@ public:
 
 
 	//ゲッター関数
-	Base GetPlayer(void) { return unit_; }
 	bool IsEvasion(void) { return isEvasion_; }
 	bool IsInvincible(void) { return isEvasionInbincible_; }
 	
@@ -74,20 +73,14 @@ public:
 	void SetAliveOff(void) { unit_.isAlive_ = false; }
 
 private:
-	//構造体
-	Base unit_;
-
 	//プレイヤー画像のハンドル番号
 	int img[static_cast<int>(MOTION_TYPE::E_MOTION_MAX)][15];
-	
-
 
 	//モーションタイプ
 	MOTION_TYPE motionType_;
 
 	//攻撃モーション
 	ATTACK_STAT attackStat_;
-
 
 	//動作
 	void Move(void);
@@ -145,9 +138,6 @@ private:
 	bool isEvasion_;			//回避フラグ(true=回避中/false=非回避中)
 	bool isEvasionCoolDown_;	//回避クールダウンフラグ(true=クールダウン中/false=非クールダウン中)
 	bool isEvasionInbincible_;	//回避時無敵フラグ(true=無敵/false=無敵じゃないよ)
-
-	void ChangeDispPos(void);
-
 
 	float animCounter_;			//アニメーションカウンター
 	//void LoadPlayerImage(void);		//プレイヤー画像の読み込み処理
