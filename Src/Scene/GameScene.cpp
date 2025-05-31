@@ -26,7 +26,7 @@ void GameScene::Init(void)
 	stage_->Init();
 
 	player_ = new Player();
-	player_->GameInit();
+	player_->Init();
 
 	enemy_ = new EnemyManager();
 	enemy_->Init();
@@ -59,12 +59,13 @@ void GameScene::Update(void)
 
 	for (int ii = 0; ii < EnemyManager::ENEMY_MAX; ii++)
 	{
-		enemy_->GetBamboo(ii)->SetTargetPos(player_->GetPlayer());
+		enemy_->GetBamboo(ii)->SetTargetPos(player_->GetUnit());
 
 		if (ins.IsTrgDown(KEY_INPUT_0))
 		{
 			enemy_->GetBamboo(ii)->SetDmg(10);
 		}
+		enemy_->GetBamboo(ii)->SetTargetPos(player_->GetUnit());
 	}
 
 	// ƒV[ƒ“‘JˆÚ
@@ -73,18 +74,20 @@ void GameScene::Update(void)
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
 	}
 
-	if (player_->GetPlayer().disppos_.x > SceneManager::MAIN_SCREEN_SIZE_X / 7 * 4) {
-		Camera::GetInstance().Follow(Camera::dir::X, player_->GetPlayer().speed_);
+
+
+	if (player_->GetUnit().disppos_.x > SceneManager::MAIN_SCREEN_SIZE_X / 7 * 4) {
+		Camera::GetInstance().Follow(Camera::dir::X, player_->GetUnit().speed_);
 		if (player_->IsEvasion())Camera::GetInstance().Follow(Camera::dir::X, Player::EVASION_LENGTH);
 	}
 
-	if (player_->GetPlayer().disppos_.x < SceneManager::MAIN_SCREEN_SIZE_X / 7 * 3) {
-		Camera::GetInstance().Follow(Camera::dir::X, -(player_->GetPlayer().speed_));
+	if (player_->GetUnit().disppos_.x < SceneManager::MAIN_SCREEN_SIZE_X / 7 * 3) {
+		Camera::GetInstance().Follow(Camera::dir::X, -(player_->GetUnit().speed_));
 		if (player_->IsEvasion())Camera::GetInstance().Follow(Camera::dir::X, -Player::EVASION_LENGTH);
 	}
 
 	if (player_->IsEvasion()) {
-		SceneManager::GetInstance().ZoomPos(player_->GetPlayer().disppos_);
+		SceneManager::GetInstance().ZoomPos(player_->GetUnit().disppos_);
 		SceneManager::GetInstance().ZoomScale(1.4f);
 	}
 

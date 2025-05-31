@@ -1,9 +1,9 @@
 #pragma once
 #include"../Common/Base.h"
 #include"../../Utility/AsoUtility.h"
+#include"../UnitBase.h"
 
-
-class Player
+class Player:public UnitBase
 {
 public:
 	static constexpr int SIZE_X = 96;		//画像サイズ
@@ -54,34 +54,25 @@ public:
 	};
 
 
-
-
 	Player();
 	~Player();
 
-	bool SystemInit();
-	void GameInit();
-	void Update();
-	void Draw();
-	bool Release();
+	void Init(void)override;
+	void Update(void)override;
+	void Draw(void)override;
+	void Release(void)override;
 
 
 	//ゲッター関数
-	Base GetPlayer(void) { return player_; }
 	bool IsEvasion(void) { return isEvasion_; }
 	bool IsInvincible(void) { return isEvasionInbincible_; }
 	
 	//セッター関数
-	void SetAliveOff(void) { player_.isAlive_ = false; }
+	void SetAliveOff(void) { unit_.isAlive_ = false; }
 
 private:
-	//構造体
-	Base player_;
-
 	//プレイヤー画像のハンドル番号
 	int img[static_cast<int>(MOTION_TYPE::E_MOTION_MAX)][15];
-	
-
 
 	//モーションタイプ
 	MOTION_TYPE motionType_;
@@ -89,47 +80,42 @@ private:
 	//攻撃モーション
 	ATTACK_STAT attackStat_;
 
+	//移動
+	void MoveX(void)override;
+	void MoveY(void)override;
 
-	//動作
 	void Move(void);
 
-	//回避
-	void Evasion(void);
+	// 接地している時の数値の代入などをまとめた関数
+	void IsGround(Collision::DIR dir)override;
 
 	//回避発動処理
 	void ProcessEvasion(void);
 
-	//重力
-	void Gravity(void);
+	//回避更新処理
+	void Evasion(void);
 
-	//Y座標の変更
-	void UpdatePositionY(void);
-
-	//ジャンプ
-	void Jump(void);
 
 	//ジャンプ発動処理
 	void ProcessJump(void);
 
-	//ステージとの当たり判定
-	void CollisionStageY(void);
-	void CollisionStageX(void);
+	//ジャンプ更新処理
+	void Jump(void);
 
-	//攻撃
-	void Attack(void);
 
 	//攻撃プロセス
 	void ProcessAtatck(void);
 
-	//重力
-	float gravity_;
+	//攻撃更新処理
+	void Attack(void);
+
 
 	bool isJump_;				//true=ジャンプ中/false=非ジャンプ
 	bool firstJumpFlg_;			//一回目のジャンプ(true=ジャンプ可能/false=ジャンプしたかったなぁ)
 	bool secondJumpFlg_;		//二段ジャンプ(true=ジャンプ可能/false=ジャンプしたかったなぁ)
 	bool thirdJumpFlg_;
 	float jumpPower_;			//ジャンプパワー
-	float verticalAcceleration_;//縦方向の加速度
+	float yAccel_;//縦方向の加速度
 	int inputJumpKeyCounter_;	//ジャンプの入力時間カウンター
 
 	//int playerDir_;			//プレイヤーが向いている方向
@@ -147,13 +133,17 @@ private:
 	bool isEvasionCoolDown_;	//回避クールダウンフラグ(true=クールダウン中/false=非クールダウン中)
 	bool isEvasionInbincible_;	//回避時無敵フラグ(true=無敵/false=無敵じゃないよ)
 
-	void ChangeDispPos(void);
-
-
 	float animCounter_;			//アニメーションカウンター
 	//void LoadPlayerImage(void);		//プレイヤー画像の読み込み処理
 	//void DrawPlayer(int modelId);		//プレイヤーの描画
 	//void SetDrawPlayer(void);		//描画するプレイヤーの設定
+
+	//プレイヤー攻撃時のマウスの座標
+	Vector2 mPos_;
+
+	Vector2F worldMousePos_;
+
+
 
 };
 

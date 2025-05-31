@@ -6,7 +6,7 @@
 
 EnemyBamboo::EnemyBamboo()
 {
-	unit_.modelId_ = LoadGraph("Data/Image/Enemy/EnemyBamboo.png");
+	modelId_ = LoadGraph("Data/Image/Enemy/EnemyBamboo.png");
 }
 
 EnemyBamboo::~EnemyBamboo()
@@ -23,29 +23,26 @@ void EnemyBamboo::Init()
 	targetPos_ = { 0.0f, 0.0f };
 	move_ = RIGHT;
 	rotate_ = 0.0f;
+	isMove_ = true;
 }
 
 void EnemyBamboo::Update()
 {
-	if (DeathProcess() == false)
-	{
-		Move();
+	UnitBase::Update();
 
-		StageCollisionUpdate();
-	}
 }
 
 void EnemyBamboo::Draw()
 {
 	if (unit_.isDraw_)
 	{
-		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, EX_SIZE, rotate_, unit_.modelId_, true, move_);
+		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, EX_SIZE, rotate_, modelId_, true, move_);
 	}
 }
 
 void EnemyBamboo::Release()
 {
-	DeleteGraph(unit_.modelId_);
+	DeleteGraph(modelId_);
 }
 
 bool EnemyBamboo::DeathProcess()
@@ -88,9 +85,20 @@ void EnemyBamboo::SetStartPos(int ii)
 	unit_.pos_ = START_POS[ii]; 
 }
 
+
+void EnemyBamboo::MoveX()
+{
+	if (DeathProcess())return;
+	Move();
+}
+void EnemyBamboo::MoveY()
+{
+
+}
+
+
 void EnemyBamboo::Move()
 {
-	Collision& ins = Collision::GetInstance();
 
 	// ターゲットが近くにいるかどうかを判別
 	if (unit_.pos_.x - 250 <= targetPos_.x && unit_.pos_.x + 250 >= targetPos_.x)
@@ -107,18 +115,6 @@ void EnemyBamboo::Move()
 		// ターゲットの近くにいる場合その方向に向かって進む
 		move_ = unit_.pos_.x <= targetPos_.x ? RIGHT : LEFT;
 	}
-	else
-	{
-		// 壁に当たったら反対の方向を向く
-		if ((unit_.pos_.x - unit_.size_.x / 2) <= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::LEFT))
-		{
-			move_ = RIGHT;
-		}
-		if ((unit_.pos_.x + unit_.size_.x / 2) >= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::RIGHT))
-		{
-			move_ = LEFT;
-		}
-	}
 
 	switch (move_)
 	{
@@ -130,5 +126,47 @@ void EnemyBamboo::Move()
 		break;
 	case EnemyBamboo::IDOL:
 		break;
+	}
+
+
+}
+
+// 接地している時の数値の代入などをまとめた関数
+void EnemyBamboo::IsGround(Collision::DIR dir)
+{
+	switch (dir)
+	{
+	case Collision::UP:
+
+		//天井に衝突していたら行う処理
+		unit_.yAccel_ = 0;
+
+		break;
+
+	case Collision::DOWN:
+
+		//地面に接地していたら行う処理
+		unit_.yAccel_ = 0;
+		unit_.isGround_ = true;
+		unit_.isGravity_ = false;
+
+		break;
+
+	case Collision::LEFT:
+
+		//左側の壁に衝突していたら行う処理
+		if (!(unit_.pos_.x - 250 <= targetPos_.x && unit_.pos_.x + 250 >= targetPos_.x)) move_ = RIGHT;
+
+
+		break;
+
+	case Collision::RIGHT:
+
+		//右側の壁に衝突していたら行う処理
+		if (!(unit_.pos_.x - 250 <= targetPos_.x && unit_.pos_.x + 250 >= targetPos_.x)) move_ = LEFT;
+		
+
+		break;
+
 	}
 }

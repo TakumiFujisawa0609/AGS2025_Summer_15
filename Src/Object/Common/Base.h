@@ -1,22 +1,26 @@
 #pragma once
 #include"../../Common/Vector2.h"
 
-
 struct Base
 {
-	Vector2F pos_;		//座標
-	Vector2F disppos_;
-	Vector2F prevpos_;
-
-	float radius_;		//半径
-	Vector2F size_;		//大きさ
-
-	int modelId_;		//ハンドル番号
-
-	float speed_;		//移動速度
-
+	//変数
 	bool isAlive_;		//生存判定(true=生存/false=死んでいる！！！)
 	bool isDraw_;
 
-	int hp_;			//HP
+	Vector2F pos_;		//ワールド座標
+	Vector2F disppos_;	//マップ座標
+
+	float xAccel_;		//横方向の移動量計算用変数
+	float yAccel_;		//縦方向の移動量計算用変数
+
+	bool isGravity_;	//重力をかけるかどうか(true = かける / false = かけない)
+	bool isGround_;		//接地判定	(true = 接地している / false = 接地していない)
+
+	int hp_;			//ヒットポイント
+
+	//パラメータ(定数扱い)
+	float speed_;		//移動速度
+
+	float radius_;		//半径
+	Vector2F size_;		//大きさ
 };

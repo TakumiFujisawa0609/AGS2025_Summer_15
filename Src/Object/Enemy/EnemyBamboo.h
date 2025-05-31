@@ -29,7 +29,6 @@ public:
 
     bool DeathProcess();
     
-    Base GetBase() { return unit_; }
 
     void SetStartPos(int ii);
 
@@ -41,11 +40,18 @@ public:
 private:
 
     MOVE move_;
+    int modelId_;
 
     float rotate_;
+
+    bool isMove_;
     
     Vector2F targetPos_;
 
     void Move();
+    void MoveX()override;
+    void MoveY()override;
 
+    // Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
+    void IsGround(Collision::DIR dir)override;
 };
