@@ -24,6 +24,13 @@ public:
 		MAX,
 	};
 
+	const Vector2F BOSS_POINT[3] =
+	{
+		{3700.0f,712.0f},
+		{4160.0f,712.0f},
+		{4640.0f,712.0f}
+	};
+
 	BossTutorial();
 	~BossTutorial();
 
@@ -36,11 +43,12 @@ private:
 	PATTERN pattaern_;
 	ATTACK attackState_;
 
-	bool movereturn;
 	int attackCounter_;
-	Vector2F target_;
+	int targetIndex_;
 
-	void ChangeState(void);
+	bool encount_;
+
+	void PattaernManager(void);
 	bool EnCount(void);
 	void Attack();
 	void Move();

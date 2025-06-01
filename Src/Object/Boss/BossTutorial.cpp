@@ -19,20 +19,26 @@ void BossTutorial::Init()
 	unit_.size_ = { 140, 240};
 	unit_.speed_ = 10.0f;
 
-	pattaern_ = E_MOVE;
+	pattaern_ = E_NON;
 	attackState_ = NON;
+	attackCounter_ = 0;
+	targetIndex_ = -1;
+	encount_ = false;
 }
 
 void BossTutorial::Update()
 {
-	ChangeState();
+	if (EnCount())encount_ = true;
 
-	if (pattaern_ == E_MOVE) {
-		unit_.nextpos_ += GetMoveVec(unit_.nextpos_, player_->GetUnit().pos_, unit_.speed_);
+	if (encount_) {
+		PattaernManager();
 	}
+	
+
+
+
 
 	EnemyBase::Update();
-
 }
 
 void BossTutorial::Draw()
@@ -50,12 +56,15 @@ void BossTutorial::Release()
 }
 
 
-void BossTutorial::ChangeState(void)
+void BossTutorial::PattaernManager(void)
 {
 	switch (pattaern_)
 	{
 	case BossTutorial::E_NON:
-		if (EnCount())pattaern_ = E_MOVE;
+		// ƒ‰ƒ“ƒ_ƒ€‚Å1‚Â‘I‚Ô
+		targetIndex_ = GetRand(2); // 0,1,2‚Ì‚¢‚¸‚ê‚©
+		attackCounter_ = 0;
+		pattaern_ = E_MOVE;
 		break;
 	case BossTutorial::E_MOVE:
 		Move();
@@ -81,15 +90,36 @@ bool BossTutorial::EnCount(void)
 
 void BossTutorial::Move()
 {
+	if (targetIndex_ < 0) return; // ”O‚Ì‚½‚ß
 
+	Vector2F point = BOSS_POINT[targetIndex_];
+
+	if (attackCounter_ == 0) {
+		Vector2F d = { point.x - unit_.nextpos_.x, point.y - unit_.nextpos_.y };
+		float t = d.x / unit_.speed_;
+		if (t <= 0.0f) t *= -1;
+		float jumppower = (d.y + 0.5f * gravity_ * t * t) / t;
+		unit_.yAccel_ -= jumppower;
+	}
+
+	attackCounter_++;
+
+	unit_.nextpos_.x += GetMoveVec(unit_.nextpos_, point, unit_.speed_).x;
+
+	if (GetDis(unit_.nextpos_, point) <= unit_.speed_ && GetDis(unit_.nextpos_, point) >= -unit_.speed_) {
+		attackCounter_ = 0;
+		pattaern_ = E_ATTACK;
+	}
 }
 
 
 void BossTutorial::Attack()
 {
+	//pattaern_ = E_NON;
 
-
-
+	if (CheckHitKey(KEY_INPUT_U) == 1) {
+		pattaern_ = E_NON;
+	}
 	
 
 }

@@ -165,3 +165,12 @@ const Vector2F UnitBase::GetMoveVec(const Vector2F _start, const Vector2F _goal,
 
 	return ret;
 }
+
+const float UnitBase::GetDis(const Vector2F _start, const Vector2F _goal) const
+{
+	Vector2F targetVec = { _goal.x - _start.x ,_goal.y - _start.y };
+
+	float dis = std::sqrtf(targetVec.x * targetVec.x + targetVec.y * targetVec.y);
+
+	return dis;
+}
