@@ -142,7 +142,7 @@ void SceneManager::Draw(void)
 	SetDrawScreen(DX_SCREEN_BACK);
 	ClearDrawScreen();
 
-
+	ZoomCtr();
 	Vector2F vPos,dPos;
 	vPos = { zoomPos_.x - Application::MAIN_SCREEN_SIZE_X / 2, zoomPos_.y - Application::MAIN_SCREEN_SIZE_Y / 2 };
 	dPos = { Application::SCREEN_SIZE_X / 2 - vPos.x,Application::SCREEN_SIZE_Y / 2 - vPos.y };
@@ -315,6 +315,26 @@ void SceneManager::Fade(void)
 			fader_->SetFade(Fader::STATE::FADE_IN);
 		}
 		break;
+	}
+
+}
+
+void SceneManager::ZoomCtr(void)
+{
+	auto& camera = Camera::GetInstance();
+
+	Vector2F worldZoomPos = zoomPos_ + camera.GetPos();
+
+	Vector2F drawRange = { (Application::SCREEN_SIZE_X / scale_) / 2,(Application::SCREEN_SIZE_Y / scale_) / 2 };
+
+	Vector2F screenDiff = { (Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2,(Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2 };
+
+	if (worldZoomPos.x - drawRange.x <= 0) {
+		zoomPos_.x -= (worldZoomPos.x - drawRange.x);
+	}
+
+	if (worldZoomPos.x + drawRange.x >= Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X) {
+		zoomPos_.x -= ((worldZoomPos.x + drawRange.x) - (Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X));
 	}
 
 }

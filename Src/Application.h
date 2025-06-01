@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include"Object/Stage/Stage.h"
 
 class Application
 {
@@ -11,7 +12,7 @@ public:
 	static constexpr int SCREEN_SIZE_Y =  720;
 
 	static constexpr int MAIN_SCREEN_SIZE_X = (int)(SCREEN_SIZE_X * 1.5f);
-	static constexpr int MAIN_SCREEN_SIZE_Y = 32*40;
+	static constexpr int MAIN_SCREEN_SIZE_Y = /*32 * 40; */Stage::STAGE_CHIP_SIZE* Stage::STAGE_NUM_Y;
 
 	// データパス関連
 	//-------------------------------------------

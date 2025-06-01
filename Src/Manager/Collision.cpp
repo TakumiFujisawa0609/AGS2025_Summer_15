@@ -82,8 +82,8 @@ const float Collision::GetStageLine(const Vector2F& pos, const Vector2F& size , 
 		line += step;
 	}
 
-	// 1つ手前に戻る（UP/LEFT時）
-	if (step == -1) line++;
+	// 1つ手前に戻る（UP/LEFT時）(ただし、ステージの端に到達していた場合戻らない)
+	if (step == -1 && line > 0) line++;
 
 	return static_cast<float>(line * Stage::STAGE_CHIP_SIZE);
 }

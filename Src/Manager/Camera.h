@@ -1,6 +1,6 @@
 #pragma once
 #include<DxLib.h>
-
+#include"../Common/Vector2.h"
 
 class Camera
 {
@@ -18,16 +18,15 @@ public:
 	enum dir {
 		X,
 		Y,
-		Z,
 	};
 
-	VECTOR GetPos(void) { return cameraPos; }
+	Vector2F GetPos(void) { return cameraPos; }
 
-	void Follow(dir xyz, float move);
+	void Follow(dir xy, float move);
 
 
 private:
 	static Camera* instance;
-	VECTOR cameraPos;
+	Vector2F cameraPos;
 };
 

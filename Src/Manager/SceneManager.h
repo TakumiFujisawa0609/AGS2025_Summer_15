@@ -126,4 +126,6 @@ private:
 
 	Vector2F zoomPos_;
 	float scale_ = 1.0f;
+
+	void ZoomCtr(void);
 };

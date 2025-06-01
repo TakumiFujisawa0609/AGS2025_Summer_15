@@ -13,26 +13,23 @@ Camera::~Camera()
 
 void Camera::Init()
 {
-	cameraPos = VGet(0.0f, 0.0f, 0.0f);
+	cameraPos = { 0.0f,0.0f };
 }
 
 void Camera::Set()
 {
-	SetCameraPositionAndAngle(cameraPos, 0.0f, 0.0f, 0.0f);
+	//SetCameraPositionAndAngle(cameraPos, 0.0f, 0.0f, 0.0f);
 }
 
-void Camera::Follow(dir xyz, float move)
+void Camera::Follow(dir xy, float move)
 {
-	switch (xyz)
+	switch (xy)
 	{
 	case Camera::X:
 		cameraPos.x += move;
 		break;
 	case Camera::Y:
 		cameraPos.y += move;
-		break;
-	case Camera::Z:
-		cameraPos.z += move;
 		break;
 	default:
 		break;
