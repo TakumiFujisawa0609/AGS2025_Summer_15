@@ -12,6 +12,18 @@ public:
 		E_ATTACK,
 	};
 
+	enum ATTACK
+	{
+		NON = -1,
+		TACKLE,
+		SLASH,
+		BULLET,
+		ROAR,
+		BLAST,
+
+		MAX,
+	};
+
 	BossTutorial();
 	~BossTutorial();
 
@@ -22,13 +34,17 @@ public:
 
 private:
 	PATTERN pattaern_;
+	ATTACK attackState_;
 
+	bool movereturn;
+	int attackCounter_;
+	Vector2F target_;
+
+	void ChangeState(void);
+	bool EnCount(void);
 	void Attack();
-
 	void Move();
 
-	void MoveX()override;
-	void MoveY()override;
 
 	// Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
 	void IsGround(Collision::DIR dir)override;

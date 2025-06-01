@@ -8,6 +8,7 @@ struct Base
 	bool isDraw_;
 
 	Vector2F pos_;		//ワールド座標
+	Vector2F nextpos_;	//座標更新用変数
 	Vector2F disppos_;	//マップ座標
 
 	float xAccel_;		//横方向の移動量計算用変数

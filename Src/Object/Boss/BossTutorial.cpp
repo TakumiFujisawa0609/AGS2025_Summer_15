@@ -14,29 +14,24 @@ void BossTutorial::Init()
 	unit_.isAlive_ = true;
 	unit_.isDraw_ = true;
 	unit_.pos_ = { 4500,250 };
+	unit_.nextpos_ = unit_.pos_;
 	unit_.radius_ = 0;
 	unit_.size_ = { 140, 240};
+	unit_.speed_ = 10.0f;
 
-	pattaern_ = E_NON;
+	pattaern_ = E_MOVE;
+	attackState_ = NON;
 }
 
 void BossTutorial::Update()
 {
-	EnemyBase::Update();
+	ChangeState();
 
-
-	switch (pattaern_)
-	{
-	case BossTutorial::E_NON:
-	
-		break;
-	case BossTutorial::E_MOVE:
-		
-		break;
-	case BossTutorial::E_ATTACK:
-		
-		break;
+	if (pattaern_ == E_MOVE) {
+		unit_.nextpos_ += GetMoveVec(unit_.nextpos_, player_->GetUnit().pos_, unit_.speed_);
 	}
+
+	EnemyBase::Update();
 
 }
 
@@ -46,7 +41,7 @@ void BossTutorial::Draw()
 	{
 		DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
 	}
-	DrawFormatString(120, 120, 0x0fffff, "boss(%.2f,%.2f)", unit_.pos_.x, unit_.pos_.y);
+	DrawFormatString(120, 120, 0x0fffff, "boss(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
 }
 
 void BossTutorial::Release()
@@ -54,25 +49,51 @@ void BossTutorial::Release()
 
 }
 
+
+void BossTutorial::ChangeState(void)
+{
+	switch (pattaern_)
+	{
+	case BossTutorial::E_NON:
+		if (EnCount())pattaern_ = E_MOVE;
+		break;
+	case BossTutorial::E_MOVE:
+		Move();
+		break;
+	case BossTutorial::E_ATTACK:
+		Attack();
+		break;
+	}
+}
+
+
+bool BossTutorial::EnCount(void)
+{
+	Vector2F vec = { player_->GetUnit().pos_.x - unit_.nextpos_.x,player_->GetUnit().pos_.y - unit_.nextpos_.y };
+
+	float distance = sqrtf(vec.x * vec.x + vec.y * vec.y);
+
+	if (distance < 500.0f)return true;
+
+	return false;
+}
+
+
 void BossTutorial::Move()
 {
 
 }
 
+
 void BossTutorial::Attack()
 {
 
-}
 
-void BossTutorial::MoveX()
-{
 
-}
-
-void BossTutorial::MoveY()
-{
+	
 
 }
+
 
 void BossTutorial::IsGround(Collision::DIR dir)
 {
@@ -97,6 +118,7 @@ void BossTutorial::IsGround(Collision::DIR dir)
 	case Collision::LEFT:
 
 		//¶‘¤‚Ì•Ç‚ÉÕ“Ë‚µ‚Ä‚¢‚½‚çs‚¤ˆ—
+		unit_.xAccel_ = 0;
 
 
 		break;
@@ -104,6 +126,7 @@ void BossTutorial::IsGround(Collision::DIR dir)
 	case Collision::RIGHT:
 
 		//‰E‘¤‚Ì•Ç‚ÉÕ“Ë‚µ‚Ä‚¢‚½‚çs‚¤ˆ—
+		unit_.xAccel_ = 0;
 
 
 		break;

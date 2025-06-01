@@ -29,10 +29,8 @@ public:
     void Draw()override;
     void Release()override;
 
-    Base GetBase() { return unit_; }
 
     void SetTargetPos(Vector2F target) { targetPos_ = target; }
-    
 
     void SetStartPos(int ii);
 
@@ -50,8 +48,6 @@ private:
     Vector2F targetPos_;
 
     void Move();
-    void MoveX()override;
-    void MoveY()override;
 
     // Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
     void IsGround(Collision::DIR dir)override;

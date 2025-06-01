@@ -25,6 +25,7 @@ void Player::Init()
 
 	unit_.isAlive_ = true;
 	unit_.pos_ = { Application::MAIN_SCREEN_SIZE_X / 2,Application::MAIN_SCREEN_SIZE_Y / 2 };
+	unit_.nextpos_ = unit_.pos_;
 	unit_.size_ = { /*SIZE_X,SIZE_Y,*/33.0f,65.0f };
 	unit_.radius_ = RADIUS;
 	unit_.hp_ = HP_MAX;
@@ -63,10 +64,13 @@ void Player::Init()
 
 void Player::Update()
 {
-	UnitBase::Update();
+	Move();
+	ProcessEvasion();
+	ProcessJump();
 
 	ProcessAtatck();
 
+	UnitBase::Update();
 }
 
 void Player::Draw()
@@ -78,7 +82,7 @@ void Player::Draw()
 	}
 	DrawOval(unit_.disppos_.x, unit_.disppos_.y, unit_.size_.x / 2, unit_.size_.y / 2, 0xff0000, true);
 
-	DrawFormatString(0, 64, 0x0000ff, "プレイヤー座標(%.2f,%.2f)", unit_.pos_.x, unit_.pos_.y);
+	DrawFormatString(0, 64, 0x0000ff, "プレイヤー座標(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
 	DrawFormatString(0, 80, 0x0000ff, "プレイヤーの向き%d", playerDir_);
 	DrawFormatString(0, 96, 0x00ff00, "プレイヤーの攻撃%d", attackStat_);
 	//DrawFormatString(0.112, 0xff00ff, "プレイヤーのでぃすぷぽす(%.2f,%.2f)", unit_.disppos_.x,unit_.disppos_.y);
@@ -96,19 +100,6 @@ void Player::Release()
 }
 
 
-
-void Player::MoveX(void)
-{
-	Move();
-	ProcessEvasion();
-}
-
-void Player::MoveY(void)
-{
-	ProcessJump();
-}
-
-
 void Player::Move(void)
 {
 	auto&InpMng= InputManager::GetInstance();
@@ -121,13 +112,13 @@ void Player::Move(void)
 	const int stickThreshold = 500; // スティックのしきい値
 
 	if (InpMng.IsNew(KEY_INPUT_D)||padState.AKeyLX>stickThreshold) {
-		unit_.pos_.x += unit_.speed_;
+		unit_.nextpos_.x += unit_.speed_;
 		playerDir_ =AsoUtility::DIRECTION::E_DIR_RIGHT;
 		//モーションを変更
 		motionType_ = MOTION_TYPE::E_MOTION_RUN;
 	}
 	if (InpMng.IsNew(KEY_INPUT_A)||padState.AKeyLX<-stickThreshold) {
-		unit_.pos_.x -= unit_.speed_;
+		unit_.nextpos_.x -= unit_.speed_;
 		playerDir_ =AsoUtility::DIRECTION::E_DIR_LEFT;
 		//モーションを変更
 		motionType_ = MOTION_TYPE::E_MOTION_RUN;
@@ -213,10 +204,10 @@ void Player::Evasion(void)
 	switch (playerDir_)
 	{
 	case AsoUtility::DIRECTION::E_DIR_RIGHT:
-		unit_.pos_.x += EVASION_LENGTH;
+		unit_.nextpos_.x += EVASION_LENGTH;
 		break;
 	case AsoUtility::DIRECTION::E_DIR_LEFT:
-		unit_.pos_.x -= EVASION_LENGTH;
+		unit_.nextpos_.x -= EVASION_LENGTH;
 		break;
 	}
 }

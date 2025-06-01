@@ -20,13 +20,14 @@ public:
     virtual void Draw()override;
     virtual void Release()override;
 
+    void SetPlayer(UnitBase* p) { player_ = p; }
+
 protected:
+    UnitBase* player_;
 
     void Move(Vector2F targetpos, float moveSpeed);
 
     MOVE move_;
-    virtual void MoveX()override = 0;
-    virtual void MoveY()override = 0;
 
     // Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
     virtual void IsGround(Collision::DIR dir)override = 0;

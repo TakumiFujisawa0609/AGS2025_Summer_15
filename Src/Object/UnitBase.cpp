@@ -31,83 +31,65 @@ UnitBase::~UnitBase()
 
 void UnitBase::Update()
 {
-
-	UpdatePos();
+	unit_.nextpos_.y += unit_.yAccel_;
+	StageCollision();
 
 	ChangeDispPos();
 }
 
 
-void UnitBase::UpdatePos(void)
+void UnitBase::StageCollision(void)
 {
-	UpdatePosX();
-	UpdatePosY();
+	Vector2F y = { unit_.pos_.x,unit_.nextpos_ .y};
+
+    // 衝突判定・補正
+    Collision& col = Collision::GetInstance();
+
+    // 上方向
+    float upLine = col.GetStageLine(y, unit_.size_, Collision::UP);
+    if (unit_.nextpos_.y - unit_.size_.y / 2 < upLine) {
+        unit_.nextpos_.y = upLine + unit_.size_.y / 2;
+        unit_.yAccel_ = 0;
+        IsGround(Collision::UP);
+    }
+
+    // 下方向
+    float downLine = col.GetStageLine(y, unit_.size_, Collision::DOWN);
+    if (unit_.nextpos_.y + unit_.size_.y / 2 > downLine) {
+        unit_.nextpos_.y = downLine - unit_.size_.y / 2;
+        unit_.yAccel_ = 0;
+        IsGround(Collision::DOWN);
+    } else {
+        // 空中なら重力を加える
+        Gravity();
+    }
+
+    // 左方向
+    float leftLine = col.GetStageLine(unit_.nextpos_, unit_.size_, Collision::LEFT);
+    if (unit_.nextpos_.x - unit_.size_.x / 2 < leftLine) {
+        unit_.nextpos_.x = leftLine + unit_.size_.x / 2;
+        unit_.xAccel_ = 0;
+        IsGround(Collision::LEFT);
+    }
+
+    // 右方向
+    float rightLine = col.GetStageLine(unit_.nextpos_, unit_.size_, Collision::RIGHT);
+    if (unit_.nextpos_.x + unit_.size_.x / 2 > rightLine) {
+        unit_.nextpos_.x = rightLine - unit_.size_.x / 2;
+        unit_.xAccel_ = 0;
+        IsGround(Collision::RIGHT);
+    }
+
+    // 実際に座標を更新
+    unit_.pos_ = unit_.nextpos_;
 }
-
-
-void UnitBase::UpdatePosX(void)
-{
-	MoveX();
-	unit_.pos_.x += unit_.xAccel_;
-	CollisionStageX();
-}
-
-
-void UnitBase::UpdatePosY(void)
-{
-	unit_.isGravity_ = true;
-	MoveY();
-	unit_.pos_.y += unit_.yAccel_;
-	CollisionStageY();
-}
-
 
 
 void UnitBase::Gravity(void)
 {
 	//Y軸加速度に重力を加える
-	if (!unit_.isGravity_)return;
+	//if (!unit_.isGravity_)return;
 	unit_.yAccel_ = (unit_.yAccel_ < MAX_GRAVITY) ? unit_.yAccel_ + gravity_ : unit_.yAccel_;
-}
-
-
-void UnitBase::CollisionStageY(void)
-{
-	Collision& ins = Collision::GetInstance();
-
-	////天井
-	if ((unit_.pos_.y - unit_.size_.y / 2) <= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::UP)) {
-		unit_.pos_.y = ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::UP) + unit_.size_.y / 2;
-		IsGround(Collision::DIR::UP);
-	}
-
-	//空中にいるなら重力を加える
-	if (unit_.pos_.y + unit_.size_.y / 2 >= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::DOWN)) {
-		//地面に接地
-		unit_.pos_.y = (ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::DOWN)) - unit_.size_.y / 2;
-		IsGround(Collision::DIR::DOWN);
-	}
-	else {
-		Gravity();
-	}
-}
-
-
-void UnitBase::CollisionStageX(void)
-{
-	Collision& ins = Collision::GetInstance();
-
-	//左
-	if ((unit_.pos_.x - unit_.size_.x / 2) <= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::LEFT)) {
-		unit_.pos_.x = (ins.GetStageLine(unit_.pos_, unit_.size_, Collision::LEFT)) + unit_.size_.x / 2;
-		IsGround(Collision::DIR::LEFT);
-	}
-
-	//右
-	if ((unit_.pos_.x + unit_.size_.x / 2) >= ins.GetStageLine(unit_.pos_, unit_.size_, Collision::DIR::RIGHT)) {
-		unit_.pos_.x = (ins.GetStageLine(unit_.pos_, unit_.size_, Collision::RIGHT)) - unit_.size_.x / 2;
-		IsGround(Collision::DIR::RIGHT);
-	}
 }
 
 
@@ -138,6 +120,7 @@ void UnitBase::ChangeDispPos(void)
 	unit_.disppos_.x = unit_.pos_.x - Camera::GetInstance().GetPos().x;
 	unit_.disppos_.y = unit_.pos_.y - Camera::GetInstance().GetPos().y;
 }
+
 
 
 

@@ -50,18 +50,7 @@ protected:
 	// <UnitBase::Update()のなかに入っている関数>-----------------------------------------------------
 	
 	// 座標の更新に関する処理をまとめる関数
-	void UpdatePos(void);
-	void UpdatePosX(void);
-	void UpdatePosY(void);
-
-	// 移動に関する更新処理をまとめて書く場所
-	// (それぞれの派生クラスでoverrideする必要がある)
-	virtual void MoveX(void) = 0;
-	virtual void MoveY(void) = 0;
-
-	// ステージとの当たり判定
-	void CollisionStageY(void);
-	void CollisionStageX(void);
+	void StageCollision(void);
 
 	// 接地している時の数値の代入などをまとめた関数
 	// (それぞれの派生クラスでoverrideする必要がある)

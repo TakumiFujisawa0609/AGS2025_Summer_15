@@ -4,6 +4,7 @@
 
 EnemyBase::EnemyBase()
 {
+	unit_.isDraw_ = true;
 }
 
 EnemyBase::~EnemyBase()

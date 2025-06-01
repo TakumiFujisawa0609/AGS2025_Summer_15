@@ -80,9 +80,6 @@ private:
 	//UŒ‚ƒ‚[ƒVƒ‡ƒ“
 	ATTACK_STAT attackStat_;
 
-	//ˆÚ“®
-	void MoveX(void)override;
-	void MoveY(void)override;
 
 	void Move(void);
 

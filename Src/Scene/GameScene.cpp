@@ -34,6 +34,7 @@ void GameScene::Init(void)
 
 	boss_ = new BossTutorial();
 	boss_->Init();
+	boss_->SetPlayer(player_);
 
 	Camera::GetInstance().Init();
 	Collision::CreateInstance();
