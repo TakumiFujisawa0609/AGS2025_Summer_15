@@ -28,6 +28,15 @@ void AttackBase::Update()
 	ChangeDispPos();
 }
 
+const std::vector<Base> AttackBase::Get(void) const
+{
+	std::vector<Base>ret;
+
+	ret.emplace_back(obj_);
+
+	return ret;
+}
+
 
 
 

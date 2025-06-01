@@ -2,6 +2,7 @@
 #include"../Enemy/EnemyBase.h"
 
 #include"Attack/Slash.h"
+#include"Attack/Bullet.h"
 
 
 class BossTutorial : public EnemyBase
@@ -27,8 +28,6 @@ public:
 		MAX,
 	};
 
-
-
 	const Vector2F BOSS_POINT[3] =
 	{
 		{3700.0f,712.0f},
@@ -45,6 +44,10 @@ public:
 	void Release()override;
 
 	const bool GetEnCount(void)const { return encount_; }
+
+	const ATTACK GetAttack(void)const { return attackState_; }
+
+	const std::vector<Base> GetObjAttack(const ATTACK state)const;
 
 private:
 	PATTERN pattaern_;
@@ -66,7 +69,9 @@ private:
 
 
 	Vector2F panVec_;
-	Slash* slash_;
-
 	Vector2F target_;
+
+
+	Slash* slash_;
+	Bullet* bullet_;
 };

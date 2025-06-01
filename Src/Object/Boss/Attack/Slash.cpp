@@ -61,12 +61,7 @@ void Slash::Release()
 }
 
 
-void Slash::On()
-{
-	obj_.isAlive_ = true;
 
-
-}
 
 void Slash::SetTarget(const AttackBase::DIR dir)
 {

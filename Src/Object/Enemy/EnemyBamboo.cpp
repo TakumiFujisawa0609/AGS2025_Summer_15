@@ -113,7 +113,7 @@ void EnemyBamboo::IsGround(Collision::DIR dir)
 		//’n–Ê‚ÉÚ’n‚µ‚Ä‚¢‚½‚çs‚¤ˆ—
 		unit_.yAccel_ = 0;
 		unit_.isGround_ = true;
-		unit_.isGravity_ = false;
+		//unit_.isGravity_ = false;
 
 		break;
 

@@ -16,7 +16,6 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
-	void On(void)override;
 
 	void SetTarget(const AttackBase::DIR dir);
 

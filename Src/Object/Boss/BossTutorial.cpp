@@ -30,7 +30,7 @@ void BossTutorial::Init()
 
 
 	slash_ = new Slash();
-
+	bullet_ = new Bullet();
 
 }
 
@@ -42,9 +42,6 @@ void BossTutorial::Update()
 	if (encount_) {
 		PattaernManager();
 	}
-	
-
-
 
 
 	EnemyBase::Update();
@@ -55,7 +52,7 @@ void BossTutorial::Draw()
 	if (unit_.isDraw_)
 	{
 		slash_->Draw();
-
+		bullet_->Draw();
 
 
 
@@ -66,8 +63,14 @@ void BossTutorial::Draw()
 
 void BossTutorial::Release()
 {
+	bullet_->Release();
+	delete bullet_;
+
 	slash_->Release();
+	delete slash_;
 }
+
+
 
 
 void BossTutorial::PattaernManager(void)
@@ -133,7 +136,7 @@ void BossTutorial::Move()
 
 	if (GetDis(unit_.nextpos_, point) <= unit_.speed_) {
 		attackCounter_ = 0;
-		attackState_ = (ATTACK)0/*GetRand(ATTACK::MAX - 1)*/;
+		attackState_ = (ATTACK)GetRand(1);
 		pattaern_ = E_ATTACK;
 	}
 }
@@ -144,7 +147,6 @@ void BossTutorial::Attack()
 	switch (attackState_)
 	{
 	case BossTutorial::SLASH:
-
 
 		if (attackCounter_ == 0) {
 			panVec_ = { 0.0f,0.0f };
@@ -191,13 +193,25 @@ void BossTutorial::Attack()
 			attackCounter_ = 0;
 			unit_.isGravity_ = true;
 			pattaern_ = E_NON;
+			attackState_ = NON;
 		}
 
 		slash_->Update();
 
 		break;
 	case BossTutorial::BULLET:
-		
+
+		if (attackCounter_ == 0) {
+			bullet_->Init(&unit_.pos_);
+		}
+
+		if (bullet_->End()) {
+			attackCounter_ = 0;
+			pattaern_ = E_NON;
+			attackState_ = NON;
+		}
+
+		bullet_->Update();
 		break;
 	case BossTutorial::ROAR:
 
@@ -259,4 +273,32 @@ void BossTutorial::IsGround(Collision::DIR dir)
 		break;
 
 	}
+}
+
+
+const std::vector<Base> BossTutorial::GetObjAttack(const ATTACK state) const
+{
+	std::vector<Base>ret;
+
+	switch (state)
+	{
+	case BossTutorial::NON:
+		break;
+	case BossTutorial::SLASH:
+		ret = slash_->Get();
+		break;
+	case BossTutorial::BULLET:
+		ret = bullet_->Get();
+		break;
+	case BossTutorial::ROAR:
+		break;
+	case BossTutorial::BLAST:
+		break;
+	case BossTutorial::TACKLE:
+		break;
+	case BossTutorial::MAX:
+		break;
+	}
+
+	return ret;
 }
