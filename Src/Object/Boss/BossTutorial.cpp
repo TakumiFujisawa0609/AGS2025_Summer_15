@@ -22,6 +22,9 @@ void BossTutorial::Init()
 
 void BossTutorial::Update()
 {
+	EnemyBase::Update();
+
+
 	switch (pattaern_)
 	{
 	case BossTutorial::E_NON:
@@ -35,13 +38,6 @@ void BossTutorial::Update()
 		break;
 	}
 
-	CollisionStageX();
-
-	UpdatePositionY();
-
-	CollisionStageY();
-
-	ChangeDispPos();
 }
 
 void BossTutorial::Draw()
@@ -66,4 +62,51 @@ void BossTutorial::Move()
 void BossTutorial::Attack()
 {
 
+}
+
+void BossTutorial::MoveX()
+{
+
+}
+
+void BossTutorial::MoveY()
+{
+
+}
+
+void BossTutorial::IsGround(Collision::DIR dir)
+{
+	switch (dir)
+	{
+	case Collision::UP:
+
+		//天井に衝突していたら行う処理
+		unit_.yAccel_ = 0;
+
+		break;
+
+	case Collision::DOWN:
+
+		//地面に接地していたら行う処理
+		unit_.yAccel_ = 0;
+		unit_.isGround_ = true;
+		unit_.isGravity_ = false;
+
+		break;
+
+	case Collision::LEFT:
+
+		//左側の壁に衝突していたら行う処理
+
+
+		break;
+
+	case Collision::RIGHT:
+
+		//右側の壁に衝突していたら行う処理
+
+
+		break;
+
+	}
 }
