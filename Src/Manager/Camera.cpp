@@ -1,6 +1,9 @@
 #include"Camera.h"
 
 
+#include"../Application.h"
+#include"../Object/Stage/Stage.h"
+
 Camera* Camera::instance = nullptr;
 
 Camera::Camera()
@@ -34,6 +37,11 @@ void Camera::Follow(dir xy, float move)
 	default:
 		break;
 	}
+}
+
+bool Camera::BossSet()
+{
+	return cameraPos.x == (Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X)-(Application::MAIN_SCREEN_SIZE_X-((Application::MAIN_SCREEN_SIZE_X-Application::SCREEN_SIZE_X)/2));
 }
 
 

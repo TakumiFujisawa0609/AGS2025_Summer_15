@@ -22,12 +22,21 @@ void BossTutorial::Init()
 	pattaern_ = E_NON;
 	attackState_ = NON;
 	attackCounter_ = 0;
-	targetIndex_ = -1;
+	targetIndex_ = 2;
 	encount_ = false;
+
+
+
+
+
+	slash_ = new Slash();
+
+
 }
 
 void BossTutorial::Update()
 {
+	unit_.isGravity_ = true;
 	if (EnCount())encount_ = true;
 
 	if (encount_) {
@@ -45,6 +54,11 @@ void BossTutorial::Draw()
 {
 	if (unit_.isDraw_)
 	{
+		slash_->Draw();
+
+
+
+
 		DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
 	}
 	DrawFormatString(120, 120, 0x0fffff, "boss(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
@@ -52,7 +66,7 @@ void BossTutorial::Draw()
 
 void BossTutorial::Release()
 {
-
+	slash_->Release();
 }
 
 
@@ -61,11 +75,23 @@ void BossTutorial::PattaernManager(void)
 	switch (pattaern_)
 	{
 	case BossTutorial::E_NON:
-		// ランダムで1つ選ぶ
-		targetIndex_ = GetRand(2); // 0,1,2のいずれか
+		switch (targetIndex_)
+		{
+		case 0:
+		case 2:
+			targetIndex_ = 1;	//真ん中へ
+			break;
+		case 1:
+			targetIndex_ = GetRand(1);
+			targetIndex_ *= 2;	//右か左へ
+			break;
+		}
+
 		attackCounter_ = 0;
 		pattaern_ = E_MOVE;
+
 		break;
+
 	case BossTutorial::E_MOVE:
 		Move();
 		break;
@@ -90,8 +116,6 @@ bool BossTutorial::EnCount(void)
 
 void BossTutorial::Move()
 {
-	if (targetIndex_ < 0) return; // 念のため
-
 	Vector2F point = BOSS_POINT[targetIndex_];
 
 	if (attackCounter_ == 0) {
@@ -106,8 +130,10 @@ void BossTutorial::Move()
 
 	unit_.nextpos_.x += GetMoveVec(unit_.nextpos_, point, unit_.speed_).x;
 
-	if (GetDis(unit_.nextpos_, point) <= unit_.speed_ && GetDis(unit_.nextpos_, point) >= -unit_.speed_) {
+
+	if (GetDis(unit_.nextpos_, point) <= unit_.speed_) {
 		attackCounter_ = 0;
+		attackState_ = (ATTACK)0/*GetRand(ATTACK::MAX - 1)*/;
 		pattaern_ = E_ATTACK;
 	}
 }
@@ -115,12 +141,78 @@ void BossTutorial::Move()
 
 void BossTutorial::Attack()
 {
-	//pattaern_ = E_NON;
+	switch (attackState_)
+	{
+	case BossTutorial::SLASH:
 
+
+		if (attackCounter_ == 0) {
+			panVec_ = { 0.0f,0.0f };
+
+			slash_->Init(&unit_.pos_);
+
+
+		}
+
+		if (attackCounter_ == Slash::CHARGE - 1) {
+
+			target_ = player_->GetUnit().pos_;
+
+			Slash::DIR dir;
+
+			if (target_.x <= unit_.pos_.x) dir = Slash::DIR::LEFT;
+			else						   dir = Slash::DIR::RIGHT;
+
+			slash_->SetTarget(dir);
+
+
+		}
+
+		if (attackCounter_ == Slash::CHARGE) {
+			panVec_ = GetMoveVec(unit_.pos_,target_, unit_.speed_ * 3.0f);
+		}
+
+		if (!(panVec_.x == 0.0f && panVec_.y == 0.0f)) {
+
+			unit_.isGravity_ = false;
+
+			float dis = target_.x - unit_.nextpos_.x;
+			if (dis < 0)dis *= -1;
+			if (dis <= player_->GetUnit().size_.x + unit_.size_.x) {
+				panVec_ = { 0.0f,0.0f };
+				slash_->On();
+			}
+
+		}
+
+		unit_.nextpos_ += panVec_;
+
+		if (slash_->End()) {
+			attackCounter_ = 0;
+			unit_.isGravity_ = true;
+			pattaern_ = E_NON;
+		}
+
+		slash_->Update();
+
+		break;
+	case BossTutorial::BULLET:
+		
+		break;
+	case BossTutorial::ROAR:
+
+		break;
+	case BossTutorial::BLAST:
+
+		break;
+	case BossTutorial::TACKLE:
+
+		break;
+	}
+	attackCounter_++;
 	if (CheckHitKey(KEY_INPUT_U) == 1) {
 		pattaern_ = E_NON;
 	}
-	
 
 }
 
@@ -140,8 +232,13 @@ void BossTutorial::IsGround(Collision::DIR dir)
 
 		//地面に接地していたら行う処理
 		unit_.yAccel_ = 0;
-		unit_.isGround_ = true;
+
+		if (unit_.isGround_==false) {
+			unit_.isGround_ = true;
+			SceneManager::GetInstance().SHAKE();
+		}
 		unit_.isGravity_ = false;
+		
 
 		break;
 

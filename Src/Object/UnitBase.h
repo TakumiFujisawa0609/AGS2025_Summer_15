@@ -3,6 +3,7 @@
 #include"../Common/Vector2.h"
 #include"Common/Base.h"
 #include"../Manager/Collision.h"
+#include"../Manager/SceneManager.h"
 
 class UnitBase
 {
@@ -85,4 +86,5 @@ protected:
 	/// <param name="_goal">終点</param>
 	/// <returns>始点と終点の間の距離（float型）。</returns>
 	const float GetDis(const Vector2F _start, const Vector2F _goal)const;
+
 };

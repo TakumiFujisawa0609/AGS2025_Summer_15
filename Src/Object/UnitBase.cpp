@@ -32,6 +32,7 @@ UnitBase::~UnitBase()
 void UnitBase::Update()
 {
 	unit_.nextpos_.y += unit_.yAccel_;
+	unit_.nextpos_.x += unit_.xAccel_;
 	StageCollision();
 
 	ChangeDispPos();
@@ -47,7 +48,7 @@ void UnitBase::StageCollision(void)
 
     // 上方向
     float upLine = col.GetStageLine(y, unit_.size_, Collision::UP);
-    if (unit_.nextpos_.y - unit_.size_.y / 2 < upLine) {
+    if (unit_.nextpos_.y - unit_.size_.y / 2 <= upLine) {
         unit_.nextpos_.y = upLine + unit_.size_.y / 2;
         unit_.yAccel_ = 0;
         IsGround(Collision::UP);
@@ -55,18 +56,19 @@ void UnitBase::StageCollision(void)
 
     // 下方向
     float downLine = col.GetStageLine(y, unit_.size_, Collision::DOWN);
-    if (unit_.nextpos_.y + unit_.size_.y / 2 > downLine) {
+    if (unit_.nextpos_.y + unit_.size_.y / 2 >= downLine) {
         unit_.nextpos_.y = downLine - unit_.size_.y / 2;
         unit_.yAccel_ = 0;
         IsGround(Collision::DOWN);
     } else {
         // 空中なら重力を加える
+		unit_.isGround_ = false;
         Gravity();
     }
 
     // 左方向
     float leftLine = col.GetStageLine(unit_.nextpos_, unit_.size_, Collision::LEFT);
-    if (unit_.nextpos_.x - unit_.size_.x / 2 < leftLine) {
+    if (unit_.nextpos_.x - unit_.size_.x / 2 <= leftLine) {
         unit_.nextpos_.x = leftLine + unit_.size_.x / 2;
         unit_.xAccel_ = 0;
         IsGround(Collision::LEFT);
@@ -74,7 +76,7 @@ void UnitBase::StageCollision(void)
 
     // 右方向
     float rightLine = col.GetStageLine(unit_.nextpos_, unit_.size_, Collision::RIGHT);
-    if (unit_.nextpos_.x + unit_.size_.x / 2 > rightLine) {
+    if (unit_.nextpos_.x + unit_.size_.x / 2 >= rightLine) {
         unit_.nextpos_.x = rightLine - unit_.size_.x / 2;
         unit_.xAccel_ = 0;
         IsGround(Collision::RIGHT);
@@ -88,7 +90,7 @@ void UnitBase::StageCollision(void)
 void UnitBase::Gravity(void)
 {
 	//Y軸加速度に重力を加える
-	//if (!unit_.isGravity_)return;
+	if (!unit_.isGravity_)return;
 	unit_.yAccel_ = (unit_.yAccel_ < MAX_GRAVITY) ? unit_.yAccel_ + gravity_ : unit_.yAccel_;
 }
 
@@ -174,3 +176,4 @@ const float UnitBase::GetDis(const Vector2F _start, const Vector2F _goal) const
 
 	return dis;
 }
+

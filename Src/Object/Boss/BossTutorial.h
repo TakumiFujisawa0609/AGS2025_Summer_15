@@ -1,6 +1,9 @@
 #pragma once
 #include"../Enemy/EnemyBase.h"
 
+#include"Attack/Slash.h"
+
+
 class BossTutorial : public EnemyBase
 {
 public:
@@ -15,20 +18,22 @@ public:
 	enum ATTACK
 	{
 		NON = -1,
-		TACKLE,
 		SLASH,
 		BULLET,
 		ROAR,
 		BLAST,
+		TACKLE,
 
 		MAX,
 	};
+
+
 
 	const Vector2F BOSS_POINT[3] =
 	{
 		{3700.0f,712.0f},
 		{4160.0f,712.0f},
-		{4640.0f,712.0f}
+		{4700.0f,712.0f}
 	};
 
 	BossTutorial();
@@ -38,6 +43,8 @@ public:
 	void Update()override;
 	void Draw()override;
 	void Release()override;
+
+	const bool GetEnCount(void)const { return encount_; }
 
 private:
 	PATTERN pattaern_;
@@ -56,4 +63,10 @@ private:
 
 	// Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
 	void IsGround(Collision::DIR dir)override;
+
+
+	Vector2F panVec_;
+	Slash* slash_;
+
+	Vector2F target_;
 };
