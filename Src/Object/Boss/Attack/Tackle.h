@@ -1,5 +1,6 @@
 #pragma once
 #include"AttackBase.h"
+#include<DxLib.h>
 
 class Tackle : public AttackBase
 {

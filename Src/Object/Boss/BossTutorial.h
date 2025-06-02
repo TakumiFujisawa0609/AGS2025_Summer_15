@@ -31,9 +31,9 @@ public:
 
 	const Vector2F BOSS_POINT[3] =
 	{
-		{3700.0f,712.0f},
+		{3600.0f,712.0f},
 		{4160.0f,712.0f},
-		{4700.0f,712.0f}
+		{4600.0f,712.0f}
 	};
 
 	BossTutorial();
@@ -57,6 +57,8 @@ private:
 	int attackCounter_;
 	int targetIndex_;
 
+	int idolImg;
+
 	bool encount_;
 
 	void PattaernManager(void);
@@ -71,6 +73,8 @@ private:
 
 	Vector2F panVec_;
 	Vector2F target_;
+
+	AttackBase::DIR bossDir_;
 
 
 	Slash* slash_;

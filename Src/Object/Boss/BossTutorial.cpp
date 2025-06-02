@@ -11,12 +11,14 @@ BossTutorial::~BossTutorial()
 
 void BossTutorial::Init()
 {
+	idolImg = LoadGraph("Data/Image/Boss/TutrialBoss.png");
+
 	unit_.isAlive_ = true;
 	unit_.isDraw_ = true;
 	unit_.pos_ = { 4500,250 };
 	unit_.nextpos_ = unit_.pos_;
 	unit_.radius_ = 0;
-	unit_.size_ = { 140, 240};
+	unit_.size_ = { 240, 249};
 	unit_.speed_ = 10.0f;
 
 	pattaern_ = E_NON;
@@ -53,11 +55,11 @@ void BossTutorial::Draw()
 	if (unit_.isDraw_)
 	{
 		slash_->Draw();
-		bullet_->Draw();
+		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, idolImg, true, bossDir_);
 
 
-
-		DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
+		
+		//DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
 	}
 	DrawFormatString(120, 120, 0x0fffff, "boss(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
 }
@@ -92,6 +94,15 @@ void BossTutorial::PattaernManager(void)
 			targetIndex_ = GetRand(1);
 			targetIndex_ *= 2;	//右か左へ
 			break;
+		}
+
+		if (targetIndex_ == 0)
+		{
+			bossDir_ = AttackBase::DIR::LEFT;
+		}
+		else if (targetIndex_ == 2)
+		{
+			bossDir_ = AttackBase::DIR::RIGHT;
 		}
 
 		attackCounter_ = 0;
@@ -133,6 +144,19 @@ void BossTutorial::Move()
 		unit_.yAccel_ -= jumppower;
 	}
 
+
+	
+
+	if (targetIndex_ == 0)
+	{
+		bossDir_ = AttackBase::DIR::LEFT;
+	}
+	else if (targetIndex_ == 2)
+	{
+		bossDir_ = AttackBase::DIR::RIGHT;
+	}
+
+
 	attackCounter_++;
 
 	unit_.nextpos_.x += GetMoveVec(unit_.nextpos_, point, unit_.speed_).x;
@@ -140,7 +164,7 @@ void BossTutorial::Move()
 
 	if (GetDis(unit_.nextpos_, point) <= unit_.speed_) {
 		attackCounter_ = 0;
-		attackState_ = ATTACK::TACKLE;//(ATTACK)GetRand(1);
+		attackState_ = (ATTACK)GetRand(1);
 		pattaern_ = E_ATTACK;
 	}
 }
@@ -233,7 +257,6 @@ void BossTutorial::Attack()
 			pattaern_ = E_NON;
 		}
 
-		DrawString(120, 120, "タックル", 0x000000);
 		break;
 	}
 	attackCounter_++;
@@ -265,6 +288,9 @@ void BossTutorial::IsGround(Collision::DIR dir)
 			SceneManager::GetInstance().SHAKE();
 		}
 		unit_.isGravity_ = false;
+
+		if (player_->GetUnit().pos_.x <= unit_.pos_.x) bossDir_ = AttackBase::DIR::LEFT;
+		else										   bossDir_ = AttackBase::DIR::RIGHT;
 		
 
 		break;
