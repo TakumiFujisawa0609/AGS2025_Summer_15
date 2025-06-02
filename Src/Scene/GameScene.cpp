@@ -69,10 +69,10 @@ void GameScene::Update(void)
 	}
 
 	// ÉVÅ[ÉìëJà⁄
-	if (ins.IsTrgDown(KEY_INPUT_SPACE))
-	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
-	}
+	//if (ins.IsTrgDown(KEY_INPUT_SPACE))
+	//{
+	//	SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
+	//}
 
 
 	auto& camera = Camera::GetInstance();

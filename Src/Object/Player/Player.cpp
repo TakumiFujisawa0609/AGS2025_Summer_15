@@ -8,6 +8,7 @@
 #include"../../Manager/SceneManager.h"
 #include"../Stage/Stage.h"
 #include"../../Scene/GameScene.h"
+#include"Attack/ArialSweep.h"
 
 Player::Player()
 {
@@ -56,8 +57,9 @@ void Player::Init()
 	evasionCounter_ = 0;
 	evasionCoolDown_ = 0;
 
-	mPos_ = { 0,0 };
-	worldMousePos_ = { 0,0 };
+	arialSweep_ = new ArialSweep();
+	arialSweep_->Init(&unit_.disppos_);
+
 	
 	Collision::CreateInstance();
 }
@@ -89,12 +91,9 @@ void Player::Draw()
     // 修正されたコード
     DrawFormatString(0, 112, 0xff00ff, _T("プレイヤーのでぃすぷぽす(%.2f,%.2f)"), unit_.disppos_.x, unit_.disppos_.y);
 
-	
-	DrawCircle(mPos_.x, mPos_.y, 5, 0x000000,true);
-	//描画時のずれを補正
-	worldMousePos_.x = mPos_.x + ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2);
-	worldMousePos_.y = mPos_.y+ ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2);;
-	DrawCircle(worldMousePos_.x, worldMousePos_.y, 2, 0x0f0f0f, true);
+	arialSweep_->Draw();
+
+
 
 
 	//SetDrawPlayer();
@@ -102,6 +101,9 @@ void Player::Draw()
 
 void Player::Release()
 {
+	arialSweep_->Release();
+	delete arialSweep_;
+	arialSweep_ = nullptr;
 }
 
 
@@ -135,7 +137,10 @@ void Player::ProcessEvasion(void)
 {
 #pragma region	キーボード操作
 	//回避
-	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_S)
+	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_S)||
+		InputManager::GetInstance().IsTrgDown(KEY_INPUT_W)|| 
+		InputManager::GetInstance().IsTrgDown(KEY_INPUT_LSHIFT)||
+		InputManager::GetInstance().IsTrgDown(KEY_INPUT_LCONTROL)
 		&& !isEvasionCoolDown_) {
 		SceneManager::GetInstance().Slow();
 		isEvasion_ = true;
@@ -224,11 +229,11 @@ void Player::ProcessJump(void)
 {
 #pragma region キーボード操作
 	//ジャンプ判定
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)) {
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE)) {
 		isJump_ = true;
 	}
 	//一回目のジャンプ
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE)
 		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
 		&& firstJumpFlg_) {
 		inputJumpKeyCounter_++;
@@ -237,7 +242,7 @@ void Player::ProcessJump(void)
 		Jump();
 	}
 	//二段ジャンプ
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE)
 		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
 		&& secondJumpFlg_) {
 		inputJumpKeyCounter_++;
@@ -246,7 +251,7 @@ void Player::ProcessJump(void)
 		Jump();
 	}
 	//三弾ジャンプ
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE)
 		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
 		&& thirdJumpFlg_) {
 		inputJumpKeyCounter_++;
@@ -256,7 +261,7 @@ void Player::ProcessJump(void)
 	}
 
 	//ジャンプキーを離したらカウンターをリセット
-	if (InputManager::GetInstance().IsTrgUp(KEY_INPUT_J)) {
+	if (InputManager::GetInstance().IsTrgUp(KEY_INPUT_SPACE)) {
 		inputJumpKeyCounter_ = 0;
 		if (!secondJumpFlg_) {
 			thirdJumpFlg_ = false;
@@ -388,12 +393,9 @@ void Player::ProcessAtatck(void)
 
 void Player::Attack(void)
 {
-	 
+	arialSweep_->Update();
 
-	 GetMousePoint(&mPos_.x, &mPos_.y);
-	 DrawFormatString(0, 128, 0x0000ff, "マウス座標(%.2f,%.2f)", mPos_.x, mPos_.y);
-	 DrawLine(unit_.disppos_.x, unit_.disppos_.y, mPos_.x, mPos_.y, 0x0f0f0f);
-	 DrawLine(unit_.disppos_.x, unit_.disppos_.y, worldMousePos_.x, worldMousePos_.y, 0x000f12);
+
 }
 
 

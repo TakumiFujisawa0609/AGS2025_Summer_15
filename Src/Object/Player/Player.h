@@ -3,6 +3,8 @@
 #include"../../Utility/AsoUtility.h"
 #include"../UnitBase.h"
 
+class ArialSweep;
+
 class Player:public UnitBase
 {
 public:
@@ -74,6 +76,9 @@ private:
 	//プレイヤー画像のハンドル番号
 	int img[static_cast<int>(MOTION_TYPE::E_MOTION_MAX)][15];
 
+
+	ArialSweep* arialSweep_;
+
 	//モーションタイプ
 	MOTION_TYPE motionType_;
 
@@ -135,10 +140,7 @@ private:
 	//void DrawPlayer(int modelId);		//プレイヤーの描画
 	//void SetDrawPlayer(void);		//描画するプレイヤーの設定
 
-	//プレイヤー攻撃時のマウスの座標
-	Vector2 mPos_;
 
-	Vector2F worldMousePos_;
 
 
 

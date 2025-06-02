@@ -128,31 +128,8 @@ void UnitBase::ChangeDispPos(void)
 
 const Vector2F UnitBase::GetMoveVec(const Vector2F _start, const Vector2F _goal, const float _speed)const
 {
-	//こっちのがよくない？-------------------------------------------------------------------------------------
-	// <.hの定義>
-	// 
-	// (変更前)
-	// const Vector2F GetMoveVec(const Vector2F _start, const Vector2F _goal,  const float _speed = 1.0f)const;
-	// (変更後)
-	// const Vector2F GetMoveVec(const Vector2F _start, const Vector2F _goal,  const float _speed = 0.0f)const;
-	//																								↑変更
-	// <.cppの関数の中身>
-	// 
-	// (追加)
-	// スピードの設定
-	// float s = (_speed == 0.0f) ? unit_.speed_ : _speed;
-	// 
-	// (変更前)
-	// //移動量を求める
-	// Vector2F ret = { targetVec.x * _speed,targetVec.y * _speed };
-	// (変更後)
-	// //移動量を求める
-	// Vector2F ret = { targetVec.x * s , targetVec.y * s };
-	// 
-	// 
-	//これで指定がなければそのオブジェクトのunit_.speed_に入ってる数値で計算した移動ベクトルが取得できる--------
-	//----------------------------------------------------------------------------------------------------------
-	 
+	//スピードの設定
+	float s = (_speed == 0.0f) ? unit_.speed_ : _speed;
 	
 	//標的への方向ベクトルを取得
 	Vector2F targetVec = { _goal.x- _start.x ,_goal.y-_start.y  };
@@ -163,7 +140,7 @@ const Vector2F UnitBase::GetMoveVec(const Vector2F _start, const Vector2F _goal,
 	targetVec = { targetVec.x / len, targetVec.y / len };
 
 	//移動量を求める
-	Vector2F ret = { targetVec.x * _speed,targetVec.y * _speed };
+	Vector2F ret = { targetVec.x * s , targetVec.y * s };
 
 	return ret;
 }
