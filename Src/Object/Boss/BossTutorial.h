@@ -31,7 +31,7 @@ public:
 
 	const Vector2F BOSS_POINT[3] =
 	{
-		{3600.0f,712.0f},
+		{3700.0f,712.0f},
 		{4160.0f,712.0f},
 		{4600.0f,712.0f}
 	};
@@ -59,7 +59,13 @@ private:
 
 	int idolImg;
 
+	int StartSlashtImg_;
+	int EndSlashImg_;
+
 	bool encount_;
+
+	bool isSlash_;
+	bool isStartSlash_;
 
 	void PattaernManager(void);
 	bool EnCount(void);

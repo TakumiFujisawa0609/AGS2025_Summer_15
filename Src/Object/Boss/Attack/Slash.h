@@ -21,7 +21,7 @@ public:
 
 private:
 
-
+	bool isSlash;
 
 
 };

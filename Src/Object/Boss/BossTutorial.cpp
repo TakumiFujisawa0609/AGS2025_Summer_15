@@ -12,6 +12,8 @@ BossTutorial::~BossTutorial()
 void BossTutorial::Init()
 {
 	idolImg = LoadGraph("Data/Image/Boss/TutrialBoss.png");
+	StartSlashtImg_ = LoadGraph("Data/Image/Boss/BossSlash.png");
+	EndSlashImg_ = LoadGraph("Data/Image/Boss/BossSlashEnd.png");
 
 	unit_.isAlive_ = true;
 	unit_.isDraw_ = true;
@@ -27,14 +29,12 @@ void BossTutorial::Init()
 	targetIndex_ = 2;
 	encount_ = false;
 
-
-
-
-
 	slash_ = new Slash();
 	bullet_ = new Bullet();
 	tackle_ = new Tackle();
 
+	isStartSlash_ = false;
+	isSlash_ = true;
 }
 
 void BossTutorial::Update()
@@ -54,9 +54,23 @@ void BossTutorial::Draw()
 {
 	if (unit_.isDraw_)
 	{
-		slash_->Draw();
-		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, idolImg, true, bossDir_);
+		bullet_->Draw();
 
+		if(isStartSlash_)
+		{
+			if (isSlash_) {
+				DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, StartSlashtImg_, true, bossDir_);
+			}
+			else {
+				DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y + 14, 1.0f, 0.0f, EndSlashImg_, true, bossDir_);
+			}
+		}
+		else
+		{
+			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, idolImg, true, bossDir_);
+		}
+
+		slash_->Draw();
 
 		
 		//DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
@@ -74,6 +88,11 @@ void BossTutorial::Release()
 
 	tackle_->Release();
 	delete tackle_;
+
+	//‰æ‘œ‚ÌŠJ•ú
+	DeleteGraph(idolImg);
+	DeleteGraph(StartSlashtImg_);
+	DeleteGraph(EndSlashImg_);
 }
 
 
@@ -136,6 +155,9 @@ void BossTutorial::Move()
 {
 	Vector2F point = BOSS_POINT[targetIndex_];
 
+	isSlash_ = true;;
+	isStartSlash_ = false;
+
 	if (attackCounter_ == 0) {
 		Vector2F d = { point.x - unit_.nextpos_.x, point.y - unit_.nextpos_.y };
 		float t = d.x / unit_.speed_;
@@ -143,9 +165,6 @@ void BossTutorial::Move()
 		float jumppower = (d.y + 0.5f * gravity_ * t * t) / t;
 		unit_.yAccel_ -= jumppower;
 	}
-
-
-	
 
 	if (targetIndex_ == 0)
 	{
@@ -175,23 +194,29 @@ void BossTutorial::Attack()
 	switch (attackState_)
 	{
 	case BossTutorial::SLASH:
+		isStartSlash_ = true;
 
 		if (attackCounter_ == 0) {
 			panVec_ = { 0.0f,0.0f };
-
 			slash_->Init(&unit_.pos_);
+			isSlash_ = true;
 
 
 		}
 
 		if (attackCounter_ == Slash::CHARGE - 1) {
-
 			target_ = player_->GetUnit().pos_;
 
 			Slash::DIR dir;
 
-			if (target_.x <= unit_.pos_.x) dir = Slash::DIR::LEFT;
-			else						   dir = Slash::DIR::RIGHT;
+			if (target_.x <= unit_.pos_.x) {
+				dir = Slash::DIR::LEFT;
+				bossDir_ = AttackBase::DIR::LEFT;
+			}
+			else {
+				dir = Slash::DIR::RIGHT;
+				bossDir_ = AttackBase::DIR::RIGHT;
+			}
 
 			slash_->SetTarget(dir);
 
@@ -208,14 +233,17 @@ void BossTutorial::Attack()
 
 			float dis = target_.x - unit_.nextpos_.x;
 			if (dis < 0)dis *= -1;
-			if (dis <= player_->GetUnit().size_.x + unit_.size_.x) {
+			if (dis <= player_->GetUnit().size_.x / 2 + unit_.size_.x / 2) {
 				panVec_ = { 0.0f,0.0f };
 				slash_->On();
+				isSlash_ = false;
+				
 			}
 
 		}
 
 		unit_.nextpos_ += panVec_;
+
 
 		if (slash_->End()) {
 			attackCounter_ = 0;
@@ -248,15 +276,7 @@ void BossTutorial::Attack()
 
 		break;
 	case BossTutorial::TACKLE:
-		if (attackCounter_ == 0) {
-			tackle_->Init(&unit_.pos_);
-		}
-
-		if (attackCounter_ > 300)
-		{
-			pattaern_ = E_NON;
-		}
-
+		
 		break;
 	}
 	attackCounter_++;
