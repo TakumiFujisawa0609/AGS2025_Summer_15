@@ -18,7 +18,6 @@ public:
 
 private:
     EnemyBamboo* bamboo_[ENEMY_MAX];
-
 };
 
 const Vector2F START_POS[EnemyManager::ENEMY_MAX] =
