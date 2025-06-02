@@ -3,6 +3,7 @@
 #include"../Common/Vector2.h"
 #include"Common/Base.h"
 #include"../Manager/Collision.h"
+#include"../Manager/SceneManager.h"
 
 class UnitBase
 {
@@ -77,4 +78,13 @@ protected:
 	/// <param name="_speed">設定速度(未設定だと、方向ベクトルのみを返す)</param>
 	/// <returns>向かう先までの移動ベクトル</returns>
 	const Vector2F GetMoveVec(const Vector2F _start, const Vector2F _goal,  const float _speed = 1.0f)const;
+
+	/// <summary>
+	/// 2つの座標間の距離を計算します。
+	/// </summary>
+	/// <param name="_start">始点</param>
+	/// <param name="_goal">終点</param>
+	/// <returns>始点と終点の間の距離（float型）。</returns>
+	const float GetDis(const Vector2F _start, const Vector2F _goal)const;
+
 };

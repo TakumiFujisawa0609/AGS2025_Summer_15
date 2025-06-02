@@ -133,6 +133,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Boss\Attack\AttackBase.cpp" />
+    <ClCompile Include="Src\Object\Boss\Attack\Bullet.cpp" />
+    <ClCompile Include="Src\Object\Boss\Attack\Slash.cpp" />
     <ClCompile Include="Src\Object\Boss\Attack\Tackle.cpp" />
     <ClCompile Include="Src\Object\Boss\BossTutorial.cpp" />
     <ClCompile Include="Src\Object\Enemy\EnemyBase.cpp" />
@@ -163,6 +166,9 @@
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Boss\Attack\AttackBase.h" />
+    <ClInclude Include="Src\Object\Boss\Attack\Bullet.h" />
+    <ClInclude Include="Src\Object\Boss\Attack\Slash.h" />
     <ClInclude Include="Src\Object\Boss\Attack\Tackle.h" />
     <ClInclude Include="Src\Object\Boss\BossTutorial.h" />
     <ClInclude Include="Src\Object\Enemy\EnemyBase.h" />

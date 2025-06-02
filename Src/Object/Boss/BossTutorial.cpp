@@ -19,26 +19,43 @@ void BossTutorial::Init()
 	unit_.size_ = { 140, 240};
 	unit_.speed_ = 10.0f;
 
-	pattaern_ = E_MOVE;
+	pattaern_ = E_NON;
 	attackState_ = NON;
+	attackCounter_ = 0;
+	targetIndex_ = 2;
+	encount_ = false;
+
+
+
+
+
+	slash_ = new Slash();
+	bullet_ = new Bullet();
+
 }
 
 void BossTutorial::Update()
 {
-	ChangeState();
+	unit_.isGravity_ = true;
+	if (EnCount())encount_ = true;
 
-	if (pattaern_ == E_MOVE) {
-		unit_.nextpos_ += GetMoveVec(unit_.nextpos_, player_->GetUnit().pos_, unit_.speed_);
+	if (encount_) {
+		PattaernManager();
 	}
 
-	EnemyBase::Update();
 
+	EnemyBase::Update();
 }
 
 void BossTutorial::Draw()
 {
 	if (unit_.isDraw_)
 	{
+		slash_->Draw();
+		bullet_->Draw();
+
+
+
 		DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
 	}
 	DrawFormatString(120, 120, 0x0fffff, "boss(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
@@ -46,17 +63,38 @@ void BossTutorial::Draw()
 
 void BossTutorial::Release()
 {
+	bullet_->Release();
+	delete bullet_;
 
+	slash_->Release();
+	delete slash_;
 }
 
 
-void BossTutorial::ChangeState(void)
+
+
+void BossTutorial::PattaernManager(void)
 {
 	switch (pattaern_)
 	{
 	case BossTutorial::E_NON:
-		if (EnCount())pattaern_ = E_MOVE;
+		switch (targetIndex_)
+		{
+		case 0:
+		case 2:
+			targetIndex_ = 1;	//真ん中へ
+			break;
+		case 1:
+			targetIndex_ = GetRand(1);
+			targetIndex_ *= 2;	//右か左へ
+			break;
+		}
+
+		attackCounter_ = 0;
+		pattaern_ = E_MOVE;
+
 		break;
+
 	case BossTutorial::E_MOVE:
 		Move();
 		break;
@@ -81,16 +119,114 @@ bool BossTutorial::EnCount(void)
 
 void BossTutorial::Move()
 {
+	Vector2F point = BOSS_POINT[targetIndex_];
 
+	if (attackCounter_ == 0) {
+		Vector2F d = { point.x - unit_.nextpos_.x, point.y - unit_.nextpos_.y };
+		float t = d.x / unit_.speed_;
+		if (t <= 0.0f) t *= -1;
+		float jumppower = (d.y + 0.5f * gravity_ * t * t) / t;
+		unit_.yAccel_ -= jumppower;
+	}
+
+	attackCounter_++;
+
+	unit_.nextpos_.x += GetMoveVec(unit_.nextpos_, point, unit_.speed_).x;
+
+
+	if (GetDis(unit_.nextpos_, point) <= unit_.speed_) {
+		attackCounter_ = 0;
+		attackState_ = (ATTACK)GetRand(1);
+		pattaern_ = E_ATTACK;
+	}
 }
 
 
 void BossTutorial::Attack()
 {
+	switch (attackState_)
+	{
+	case BossTutorial::SLASH:
+
+		if (attackCounter_ == 0) {
+			panVec_ = { 0.0f,0.0f };
+
+			slash_->Init(&unit_.pos_);
 
 
+		}
 
-	
+		if (attackCounter_ == Slash::CHARGE - 1) {
+
+			target_ = player_->GetUnit().pos_;
+
+			Slash::DIR dir;
+
+			if (target_.x <= unit_.pos_.x) dir = Slash::DIR::LEFT;
+			else						   dir = Slash::DIR::RIGHT;
+
+			slash_->SetTarget(dir);
+
+
+		}
+
+		if (attackCounter_ == Slash::CHARGE) {
+			panVec_ = GetMoveVec(unit_.pos_,target_, unit_.speed_ * 3.0f);
+		}
+
+		if (!(panVec_.x == 0.0f && panVec_.y == 0.0f)) {
+
+			unit_.isGravity_ = false;
+
+			float dis = target_.x - unit_.nextpos_.x;
+			if (dis < 0)dis *= -1;
+			if (dis <= player_->GetUnit().size_.x + unit_.size_.x) {
+				panVec_ = { 0.0f,0.0f };
+				slash_->On();
+			}
+
+		}
+
+		unit_.nextpos_ += panVec_;
+
+		if (slash_->End()) {
+			attackCounter_ = 0;
+			unit_.isGravity_ = true;
+			pattaern_ = E_NON;
+			attackState_ = NON;
+		}
+
+		slash_->Update();
+
+		break;
+	case BossTutorial::BULLET:
+
+		if (attackCounter_ == 0) {
+			bullet_->Init(&unit_.pos_);
+		}
+
+		if (bullet_->End()) {
+			attackCounter_ = 0;
+			pattaern_ = E_NON;
+			attackState_ = NON;
+		}
+
+		bullet_->Update();
+		break;
+	case BossTutorial::ROAR:
+
+		break;
+	case BossTutorial::BLAST:
+
+		break;
+	case BossTutorial::TACKLE:
+
+		break;
+	}
+	attackCounter_++;
+	if (CheckHitKey(KEY_INPUT_U) == 1) {
+		pattaern_ = E_NON;
+	}
 
 }
 
@@ -110,8 +246,13 @@ void BossTutorial::IsGround(Collision::DIR dir)
 
 		//地面に接地していたら行う処理
 		unit_.yAccel_ = 0;
-		unit_.isGround_ = true;
+
+		if (unit_.isGround_==false) {
+			unit_.isGround_ = true;
+			SceneManager::GetInstance().SHAKE();
+		}
 		unit_.isGravity_ = false;
+		
 
 		break;
 
@@ -132,4 +273,32 @@ void BossTutorial::IsGround(Collision::DIR dir)
 		break;
 
 	}
+}
+
+
+const std::vector<Base> BossTutorial::GetObjAttack(const ATTACK state) const
+{
+	std::vector<Base>ret;
+
+	switch (state)
+	{
+	case BossTutorial::NON:
+		break;
+	case BossTutorial::SLASH:
+		ret = slash_->Get();
+		break;
+	case BossTutorial::BULLET:
+		ret = bullet_->Get();
+		break;
+	case BossTutorial::ROAR:
+		break;
+	case BossTutorial::BLAST:
+		break;
+	case BossTutorial::TACKLE:
+		break;
+	case BossTutorial::MAX:
+		break;
+	}
+
+	return ret;
 }

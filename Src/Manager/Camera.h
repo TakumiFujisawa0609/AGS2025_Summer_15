@@ -2,6 +2,7 @@
 #include<DxLib.h>
 #include"../Common/Vector2.h"
 
+
 class Camera
 {
 private:
@@ -23,6 +24,7 @@ public:
 	Vector2F GetPos(void) { return cameraPos; }
 
 	void Follow(dir xy, float move);
+	bool BossSet(void);
 
 
 private:

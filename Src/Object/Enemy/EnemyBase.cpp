@@ -4,7 +4,22 @@
 
 EnemyBase::EnemyBase()
 {
+	unit_.pos_ = { 0.0f,0.0f };
+	unit_.size_ = { 0.0f,0.f };
+
+	unit_.radius_ = 0.0f;
+	unit_.speed_ = 0.0f;
+
+	unit_.hp_ = 0;
+
+	unit_.xAccel_ = 0.0f;
+	unit_.yAccel_ = 0.0f;
+
+	unit_.isGravity_ = true;
+
 	unit_.isDraw_ = true;
+
+	gravity_ = GRAVITY;
 }
 
 EnemyBase::~EnemyBase()

@@ -76,16 +76,23 @@ void GameScene::Update(void)
 
 
 	auto& camera = Camera::GetInstance();
-	if (player_->GetUnit().disppos_.x > Application::MAIN_SCREEN_SIZE_X / 7 * 4 && 
-		!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X)-((Application::MAIN_SCREEN_SIZE_X-Application::SCREEN_SIZE_X)/2) >= Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X)) {
-		camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
-		if (player_->IsEvasion())camera.Follow(Camera::dir::X, Player::EVASION_LENGTH);
-	}
+	if (!boss_->GetEnCount()) {
+		if (player_->GetUnit().disppos_.x > Application::MAIN_SCREEN_SIZE_X / 7 * 4 &&
+			!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X) - ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) >= Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X)) {
+			camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
+			if (player_->IsEvasion())camera.Follow(Camera::dir::X, Player::EVASION_LENGTH);
+		}
 
-	if (player_->GetUnit().disppos_.x < Application::MAIN_SCREEN_SIZE_X / 7 * 3 &&
-		!(camera.GetPos().x <= -((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2))) {
-		camera.Follow(Camera::dir::X, -(player_->GetUnit().speed_));
-		if (player_->IsEvasion())camera.Follow(Camera::dir::X, -Player::EVASION_LENGTH);
+		if (player_->GetUnit().disppos_.x < Application::MAIN_SCREEN_SIZE_X / 7 * 3 &&
+			!(camera.GetPos().x <= -((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2))) {
+			camera.Follow(Camera::dir::X, -(player_->GetUnit().speed_));
+			if (player_->IsEvasion())camera.Follow(Camera::dir::X, -Player::EVASION_LENGTH);
+		}
+	}
+	else {
+		if (!camera.BossSet()) {
+			camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
+		}
 	}
 
 	if (player_->IsEvasion()) {
