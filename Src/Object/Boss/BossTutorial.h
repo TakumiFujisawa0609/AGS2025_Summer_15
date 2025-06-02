@@ -15,6 +15,14 @@ public:
 		E_NON,
 		E_MOVE,
 		E_ATTACK,
+
+	};
+
+	enum DRAWPAT
+	{
+		NORMAL,
+		E_SLASH_START,
+		E_SLASH_END,
 	};
 
 	enum ATTACK
@@ -64,9 +72,6 @@ private:
 
 	bool encount_;
 
-	bool isSlash_;
-	bool isStartSlash_;
-
 	void PattaernManager(void);
 	bool EnCount(void);
 	void Attack();
@@ -82,6 +87,7 @@ private:
 
 	AttackBase::DIR bossDir_;
 
+	DRAWPAT DrawPat_;
 
 	Slash* slash_;
 	Bullet* bullet_;

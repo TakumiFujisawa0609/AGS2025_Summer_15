@@ -33,8 +33,7 @@ void BossTutorial::Init()
 	bullet_ = new Bullet();
 	tackle_ = new Tackle();
 
-	isStartSlash_ = false;
-	isSlash_ = true;
+	DrawPat_ = NORMAL;
 }
 
 void BossTutorial::Update()
@@ -56,18 +55,20 @@ void BossTutorial::Draw()
 	{
 		bullet_->Draw();
 
-		if(isStartSlash_)
+		switch (DrawPat_)
 		{
-			if (isSlash_) {
-				DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, StartSlashtImg_, true, bossDir_);
-			}
-			else {
-				DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y + 14, 1.0f, 0.0f, EndSlashImg_, true, bossDir_);
-			}
-		}
-		else
-		{
+		case NORMAL:
+			// ’Êíó‘Ô
 			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, idolImg, true, bossDir_);
+			break;
+		case E_SLASH_START:
+			// Œ•‚ðU‚èã‚°‚é
+			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, StartSlashtImg_, true, bossDir_);
+			break;
+		case E_SLASH_END:
+			// Œ•‚ðU‚è‰º‚ë‚·
+			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y + 14, 1.0f, 0.0f, EndSlashImg_, true, bossDir_);
+			break;
 		}
 
 		slash_->Draw();
@@ -94,9 +95,6 @@ void BossTutorial::Release()
 	DeleteGraph(StartSlashtImg_);
 	DeleteGraph(EndSlashImg_);
 }
-
-
-
 
 void BossTutorial::PattaernManager(void)
 {
@@ -155,8 +153,7 @@ void BossTutorial::Move()
 {
 	Vector2F point = BOSS_POINT[targetIndex_];
 
-	isSlash_ = true;;
-	isStartSlash_ = false;
+	DrawPat_ = NORMAL;
 
 	if (attackCounter_ == 0) {
 		Vector2F d = { point.x - unit_.nextpos_.x, point.y - unit_.nextpos_.y };
@@ -165,6 +162,7 @@ void BossTutorial::Move()
 		float jumppower = (d.y + 0.5f * gravity_ * t * t) / t;
 		unit_.yAccel_ -= jumppower;
 	}
+
 
 	if (targetIndex_ == 0)
 	{
@@ -194,13 +192,11 @@ void BossTutorial::Attack()
 	switch (attackState_)
 	{
 	case BossTutorial::SLASH:
-		isStartSlash_ = true;
 
 		if (attackCounter_ == 0) {
 			panVec_ = { 0.0f,0.0f };
 			slash_->Init(&unit_.pos_);
-			isSlash_ = true;
-
+			DrawPat_ = E_SLASH_START;
 
 		}
 
@@ -219,8 +215,6 @@ void BossTutorial::Attack()
 			}
 
 			slash_->SetTarget(dir);
-
-
 		}
 
 		if (attackCounter_ == Slash::CHARGE) {
@@ -236,14 +230,12 @@ void BossTutorial::Attack()
 			if (dis <= player_->GetUnit().size_.x / 2 + unit_.size_.x / 2) {
 				panVec_ = { 0.0f,0.0f };
 				slash_->On();
-				isSlash_ = false;
-				
+				DrawPat_ = E_SLASH_END;
 			}
 
 		}
 
 		unit_.nextpos_ += panVec_;
-
 
 		if (slash_->End()) {
 			attackCounter_ = 0;

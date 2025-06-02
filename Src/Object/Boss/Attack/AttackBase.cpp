@@ -20,6 +20,7 @@ void AttackBase::Init(const Vector2F* pos)
 	boss = pos;
 	end_ = false;
 	obj_.isAlive_ = false;
+	obj_.isDraw_ = true;
 	attackCounter_ = 0;
 }
 

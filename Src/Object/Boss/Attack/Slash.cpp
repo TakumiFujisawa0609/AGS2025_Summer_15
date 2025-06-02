@@ -37,8 +37,17 @@ void Slash::Update()
 			isSlash = false;
 			break;
 		}
+
 		attackCounter_++;
+
+		// エフェクトを時間分表示
+		if (attackCounter_ > ATTACK_DRAW_TIME) {
+			obj_.isDraw_ = false;
+		}
+		
+		// 攻撃終了処理
 		if (attackCounter_ > ATTACK_TIME) {
+		
 			obj_.isAlive_ = false;
 			end_ = true;
 		}
@@ -49,9 +58,11 @@ void Slash::Update()
 
 void Slash::Draw()
 {
-	if (obj_.isAlive_) {
-		//DrawCircleAA(obj_.disppos_.x, obj_.disppos_.y, obj_.radius_, 30, RGB(0, 0, 0));
-		DrawRotaGraph(obj_.disppos_.x, obj_.disppos_.y, 1.0f, 0.0f, image_, true, isSlash);
+	if (obj_.isAlive_)
+	{
+		if (obj_.isDraw_) {
+			DrawRotaGraph(obj_.disppos_.x, obj_.disppos_.y, 1.0f, 0.0f, image_, true, isSlash);
+		}
 	}
 }
 
@@ -59,9 +70,6 @@ void Slash::Release()
 {
 	DeleteGraph(image_);
 }
-
-
-
 
 void Slash::SetTarget(const AttackBase::DIR dir)
 {

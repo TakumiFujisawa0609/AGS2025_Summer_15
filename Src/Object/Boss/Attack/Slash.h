@@ -8,6 +8,8 @@ public:
 
 	static constexpr int ATTACK_TIME = 60;
 
+	static constexpr int ATTACK_DRAW_TIME = 30;		// 攻撃のエフェクト表示時間
+
 	Slash();
 	~Slash();
 
@@ -16,7 +18,7 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
-
+	Base GetObj() { return obj_; }
 	void SetTarget(const AttackBase::DIR dir);
 
 private:
