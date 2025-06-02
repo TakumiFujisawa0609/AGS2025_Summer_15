@@ -18,7 +18,7 @@ void BossTutorial::Init()
 	unit_.pos_ = { 4500,250 };
 	unit_.nextpos_ = unit_.pos_;
 	unit_.radius_ = 0;
-	unit_.size_ = { 240, 249};
+	unit_.size_ = { 240, 249 };
 	unit_.speed_ = 10.0f;
 
 	pattaern_ = E_NON;
@@ -55,8 +55,8 @@ void BossTutorial::Draw()
 	if (unit_.isDraw_)
 	{
 		slash_->Draw();
+		bullet_->Draw();
 		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, idolImg, true, bossDir_);
-
 
 		
 		//DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
@@ -66,14 +66,21 @@ void BossTutorial::Draw()
 
 void BossTutorial::Release()
 {
+	tackle_->Release();
+	delete tackle_;
+	tackle_ = nullptr;
+
 	bullet_->Release();
 	delete bullet_;
+	bullet_ = nullptr;
 
 	slash_->Release();
 	delete slash_;
+	slash_ = nullptr;
 
-	tackle_->Release();
-	delete tackle_;
+	if (DeleteGraph(idolImg) == -1) {
+		return;
+	}
 }
 
 
@@ -208,7 +215,7 @@ void BossTutorial::Attack()
 
 			float dis = target_.x - unit_.nextpos_.x;
 			if (dis < 0)dis *= -1;
-			if (dis <= player_->GetUnit().size_.x + unit_.size_.x) {
+			if (dis <= player_->GetUnit().size_.x / 2 + unit_.size_.x / 2) {
 				panVec_ = { 0.0f,0.0f };
 				slash_->On();
 			}

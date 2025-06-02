@@ -2,7 +2,6 @@
 #include <DxLib.h>
 #include "../Application.h"
 #include "../Utility/AsoUtility.h"
-#include "../Manager/ResourceManager.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/Camera.h"
@@ -10,7 +9,6 @@
 
 TitleScene::TitleScene(void)
 {
-	imgTitleLogo_ = -1;
 }
 
 TitleScene::~TitleScene(void)
@@ -20,8 +18,6 @@ TitleScene::~TitleScene(void)
 void TitleScene::Init(void)
 {
 
-	// タイトルロゴ
-	imgTitleLogo_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::START_LOGO).handleId_;
 
 }
 
@@ -47,8 +43,6 @@ void TitleScene::Update(void)
 void TitleScene::Draw(void)
 {
 
-	// ロゴ描画
-	DrawLogo();
 
 }
 
@@ -56,24 +50,3 @@ void TitleScene::Release(void)
 {
 }
 
-void TitleScene::DrawLogo(void)
-{
-
-	int cx = Application::MAIN_SCREEN_SIZE_X / 2;
-	int cy = Application::MAIN_SCREEN_SIZE_Y / 2;
-
-	// タイトルロゴ
-	DrawRotaGraph(
-		cx, cy - 200,
-		1.0f, 0.0f, imgTitleLogo_, true);
-
-	// Pushメッセージ
-	std::string msg = "Push Space";
-	SetFontSize(28);
-	int len = (int)strlen(msg.c_str());
-	int width = GetDrawStringWidth(msg.c_str(), len);
-	DrawFormatString(cx - (width / 2), 200, 0x87cefa, msg.c_str());
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	SetFontSize(16);
-
-}

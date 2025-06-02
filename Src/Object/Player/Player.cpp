@@ -58,8 +58,6 @@ void Player::Init()
 
 	mPos_ = { 0,0 };
 	worldMousePos_ = { 0,0 };
-	
-	Collision::CreateInstance();
 }
 
 void Player::Update()

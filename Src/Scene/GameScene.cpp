@@ -23,6 +23,8 @@ GameScene::~GameScene(void)
 
 void GameScene::Init(void)
 {
+	Collision::CreateInstance();
+
 	stage_ = new Stage();
 	stage_->Init();
 
@@ -37,7 +39,6 @@ void GameScene::Init(void)
 	boss_->SetPlayer(player_);
 
 	Camera::GetInstance().Init();
-	Collision::CreateInstance();
 	for (int y = 0; y < Stage::STAGE_NUM_Y; y++) {
 		for (int x = 0; x < Stage::STAGE_NUM_X; x++) {
 			Collision::GetInstance().SetStage(stage_->GetMapData(y, x), y, x);
@@ -138,11 +139,13 @@ void GameScene::Release(void)
 	delete enemy_;
 	enemy_ = nullptr;
 
+	player_->Release();
+	delete player_;
+	player_ = nullptr;
+
 	stage_->Release();
 	delete stage_;
 	stage_ = nullptr;
 
-	player_->Release();
-	delete player_;
-	player_ = nullptr;
+	Collision::DeleteInstance();
 }

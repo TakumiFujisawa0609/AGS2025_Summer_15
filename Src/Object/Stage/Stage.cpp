@@ -35,7 +35,6 @@ bool Stage::Load(void)
 //‰Šú‰»ˆ—
 void Stage::Init()
 {
-	Camera::CreateInstance();
 	Camera& camera = Camera::GetInstance();
 
 	Load();
@@ -78,6 +77,10 @@ void Stage::Draw()
 //‰ð•úˆ—
 bool Stage::Release()
 {
+	if (DeleteGraph(haikei_) == -1) {
+		return false;
+	}
+
 	for (int ii = STAGE_CHIP_ALL; ii > 0; ii--)
 	{
 		if (DeleteGraph(stageArrayId[ii - 1]) == -1)

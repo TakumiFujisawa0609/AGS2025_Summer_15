@@ -6,7 +6,6 @@
 
 class SceneBase;
 class Fader;
-class Camera;
 
 class SceneManager
 {
@@ -57,9 +56,6 @@ public:
 
 	// デルタタイムの取得
 	float GetDeltaTime(void) const;
-
-	// カメラの取得
-	Camera& GetCamera(void) const;
 
 	//操作種別の取得・設定
 	const CNTL GetController(void)const;

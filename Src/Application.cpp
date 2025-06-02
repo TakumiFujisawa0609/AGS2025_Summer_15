@@ -1,5 +1,4 @@
 #include <DxLib.h>
-#include "Manager/ResourceManager.h"
 #include "Manager/InputManager.h"
 #include "Manager/SceneManager.h"
 #include "Application.h"
@@ -49,7 +48,6 @@ void Application::Init(void)
 	InputManager::CreateInstance();
 
 	// リソース管理初期化
-	ResourceManager::CreateInstance();
 
 	// シーン管理初期化
 	SceneManager::CreateInstance();
@@ -81,7 +79,6 @@ void Application::Destroy(void)
 {
 
 	InputManager::GetInstance().Destroy();
-	ResourceManager::GetInstance().Destroy();
 	SceneManager::GetInstance().Destroy();
 	
 	// DxLib終了

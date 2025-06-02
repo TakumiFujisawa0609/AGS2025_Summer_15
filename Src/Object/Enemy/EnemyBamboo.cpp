@@ -5,7 +5,6 @@
 
 EnemyBamboo::EnemyBamboo()
 {
-	modelId_ = LoadGraph("Data/Image/Enemy/EnemyBamboo.png");
 }
 
 EnemyBamboo::~EnemyBamboo()
@@ -14,6 +13,8 @@ EnemyBamboo::~EnemyBamboo()
 
 void EnemyBamboo::Init()
 {
+	modelId_ = LoadGraph("Data/Image/Enemy/EnemyBamboo.png");
+
 	unit_.isAlive_ = true;
 	unit_.hp_ = HP_MAX;
 	unit_.pos_ = { 500,250 };

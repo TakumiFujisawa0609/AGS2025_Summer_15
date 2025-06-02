@@ -3,6 +3,7 @@
 #include<DxLib.h>
 
 #include"../../../Manager/Camera.h"
+#include"../BossTutorial.h"
 
 Slash::Slash()
 {
@@ -29,10 +30,10 @@ void Slash::Update()
 		switch (dir_)
 		{
 		case Slash::LEFT:
-			obj_.pos_ = { boss->x - 70.0f,boss->y };
+			obj_.pos_ = { boss->x - (BossTutorial::SIZE_X / 2),boss->y };
 			break;
 		case Slash::RIGHT:
-			obj_.pos_ = { boss->x + 70.0f,boss->y };
+			obj_.pos_ = { boss->x + (BossTutorial::SIZE_X / 2),boss->y };
 			break;
 		}
 		attackCounter_++;

@@ -10,6 +10,9 @@ class BossTutorial : public EnemyBase
 {
 public:
 
+	static constexpr int SIZE_X = 240;
+	static constexpr int SIZE_Y = 249;
+
 	enum PATTERN
 	{
 		E_NON,
@@ -31,7 +34,7 @@ public:
 
 	const Vector2F BOSS_POINT[3] =
 	{
-		{3600.0f,712.0f},
+		{3700.0f,712.0f},
 		{4160.0f,712.0f},
 		{4600.0f,712.0f}
 	};

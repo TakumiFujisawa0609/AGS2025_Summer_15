@@ -4,7 +4,6 @@
 #include "../Scene/GameScene.h"
 #include "../Scene/GameClear.h"
 #include "../Scene/GameOverScene.h"
-#include "ResourceManager.h"
 #include "Camera.h"
 #include "SceneManager.h"
 
@@ -178,6 +177,8 @@ void SceneManager::Destroy(void)
 
 	delete instance_;
 
+	Camera::DeleteInstance();
+
 }
 
 void SceneManager::ChangeScene(SCENE_ID nextId)
@@ -202,11 +203,6 @@ float SceneManager::GetDeltaTime(void) const
 {
 	//return 1.0f / 60.0f;
 	return deltaTime_;
-}
-
-Camera& SceneManager::GetCamera(void) const
-{
-	return Camera::GetInstance();
 }
 
 const SceneManager::CNTL SceneManager::GetController(void) const
@@ -244,10 +240,6 @@ void SceneManager::ResetDeltaTime(void)
 
 void SceneManager::DoChangeScene(SCENE_ID sceneId)
 {
-	auto& resM = ResourceManager::GetInstance();
-
-	// リソースの解放
-	resM.Release();
 
 	// シーンを変更する
 	sceneId_ = sceneId;
@@ -263,22 +255,18 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	{
 	case SCENE_ID::TITLE:
 		scene_ = new TitleScene();
-		resM.InitTitle();
 		break;
 
 	case SCENE_ID::GAME:
 		scene_ = new GameScene();
-		resM.InitGame();
 		break;
 
 	case SCENE_ID::CLEAR:
 		scene_ = new GameClear();
-		resM.InitClear();
 		break;
 
 	case SCENE_ID::GAMEOVER:
 		scene_ = new GameOverScene();
-		resM.InitGameOver();
 		break;
 	}
 
