@@ -26,11 +26,11 @@ void GameScene::Init(void)
 	stage_ = new Stage();
 	stage_->Init();
 
-	player_ = new Player();
-	player_->Init();
 
 	enemy_ = new EnemyManager();
 	enemy_->Init();
+	player_ = new Player();
+	player_->Init();
 
 	boss_ = new BossTutorial();
 	boss_->Init();

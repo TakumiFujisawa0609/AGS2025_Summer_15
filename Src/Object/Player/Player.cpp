@@ -88,9 +88,14 @@ void Player::Draw()
 	//DrawFormatString(0.112, 0xff00ff, "プレイヤーのでぃすぷぽす(%.2f,%.2f)", unit_.disppos_.x,unit_.disppos_.y);
     // 修正されたコード
     DrawFormatString(0, 112, 0xff00ff, _T("プレイヤーのでぃすぷぽす(%.2f,%.2f)"), unit_.disppos_.x, unit_.disppos_.y);
-	DrawCircle(mPos_.x, mPos_.y, 5, 0x000000,true);
 
-	DrawCircle(worldMousePos_.x, worldMousePos_.y, 2, 0xffaaaa, true);
+	
+	DrawCircle(mPos_.x, mPos_.y, 5, 0x000000,true);
+	//描画時のずれを補正
+	worldMousePos_.x = mPos_.x + ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2);
+	worldMousePos_.y = mPos_.y+ ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2);;
+	DrawCircle(worldMousePos_.x, worldMousePos_.y, 2, 0x0f0f0f, true);
+
 
 	//SetDrawPlayer();
 }
@@ -378,55 +383,17 @@ void Player::IsGround(Collision::DIR dir)
 
 void Player::ProcessAtatck(void)
 {
-#pragma region MyRegion
-
-
-	auto& ins = InputManager::GetInstance();
-	if (!isAttack_) {
-
-		if (ins.IsNew(KEY_INPUT_Q)) {
-			attackStat_ = ATTACK_STAT::E_ATTACK_STAT_KATTO;
-			isAttack_ = true;
-		}
-		else if (ins.IsNew(KEY_INPUT_E)) {
-			attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NUGRU;
-			isAttack_ = true;
-		}
-	}
-#pragma endregion
 	Attack();
 }
 
 void Player::Attack(void)
 {
-#pragma region MyRegion
+	 
 
-	switch (attackStat_)
-	{
-	case Player::ATTACK_STAT::E_ATTACK_STAT_KATTO:
-		break;
-	case Player::ATTACK_STAT::E_ATTACK_STAT_NUGRU:
-		break;
-	}
-	if (isAttack_) {
-		attackCounter_++;
-		if (attackCounter_ >= ATTACK_TIME) {
-			attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
-			isAttack_ = false;
-			attackCounter_ = 0;
-			isAttackCoolDown_ = true;
-			attackCoolDown_ = 0;
-		}
-	}
-	 if (isAttackCoolDown_) {
-		attackCoolDown_++;
-		if (attackCoolDown_ >= ATTACK_COOLDOWN) {
-			isAttackCoolDown_ = false;
-			attackCoolDown_ = 0;
-		}
-	}
-#pragma endregion
-
+	 GetMousePoint(&mPos_.x, &mPos_.y);
+	 DrawFormatString(0, 128, 0x0000ff, "マウス座標(%.2f,%.2f)", mPos_.x, mPos_.y);
+	 DrawLine(unit_.disppos_.x, unit_.disppos_.y, mPos_.x, mPos_.y, 0x0f0f0f);
+	 DrawLine(unit_.disppos_.x, unit_.disppos_.y, worldMousePos_.x, worldMousePos_.y, 0x000f12);
 }
 
 
