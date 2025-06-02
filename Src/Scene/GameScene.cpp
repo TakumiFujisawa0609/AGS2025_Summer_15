@@ -69,11 +69,11 @@ void GameScene::Update(void)
 		enemy_->GetBamboo(ii)->SetTargetPos(player_->GetUnit().pos_);
 	}
 
-	// シーン遷移
-	//if (ins.IsTrgDown(KEY_INPUT_SPACE))
-	//{
-	//	SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
-	//}
+	 //シーン遷移
+	if (ins.IsTrgDown(KEY_INPUT_P))
+	{
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
+	}
 
 
 	auto& camera = Camera::GetInstance();

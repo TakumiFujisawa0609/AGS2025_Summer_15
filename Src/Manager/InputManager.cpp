@@ -41,7 +41,7 @@ void InputManager::Init(void)
 	ins.Add(KEY_INPUT_LSHIFT);
 	ins.Add(KEY_INPUT_LCONTROL);
 
-
+	ins.Add(KEY_INPUT_P);
 	InputManager::GetInstance().Add(KEY_INPUT_UP);
 	InputManager::GetInstance().Add(KEY_INPUT_DOWN);
 	InputManager::GetInstance().Add(KEY_INPUT_LEFT);
