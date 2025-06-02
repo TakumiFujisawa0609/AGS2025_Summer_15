@@ -8,6 +8,7 @@
 #include"../../Manager/SceneManager.h"
 #include"../Stage/Stage.h"
 #include"../../Scene/GameScene.h"
+#include"Attack/ArialSweep.h"
 
 Player::Player()
 {
@@ -56,8 +57,11 @@ void Player::Init()
 	evasionCounter_ = 0;
 	evasionCoolDown_ = 0;
 
-	mPos_ = { 0,0 };
-	worldMousePos_ = { 0,0 };
+	arialSweep_ = new ArialSweep();
+	arialSweep_->Init(&unit_.disppos_);
+
+	
+	Collision::CreateInstance();
 }
 
 void Player::Update()
@@ -86,15 +90,20 @@ void Player::Draw()
 	//DrawFormatString(0.112, 0xff00ff, "プレイヤーのでぃすぷぽす(%.2f,%.2f)", unit_.disppos_.x,unit_.disppos_.y);
     // 修正されたコード
     DrawFormatString(0, 112, 0xff00ff, _T("プレイヤーのでぃすぷぽす(%.2f,%.2f)"), unit_.disppos_.x, unit_.disppos_.y);
-	DrawCircle(mPos_.x, mPos_.y, 5, 0x000000,true);
 
-	DrawCircle(worldMousePos_.x, worldMousePos_.y, 2, 0xffaaaa, true);
+	arialSweep_->Draw();
+
+
+
 
 	//SetDrawPlayer();
 }
 
 void Player::Release()
 {
+	arialSweep_->Release();
+	delete arialSweep_;
+	arialSweep_ = nullptr;
 }
 
 
@@ -128,7 +137,10 @@ void Player::ProcessEvasion(void)
 {
 #pragma region	キーボード操作
 	//回避
-	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_S)
+	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_S)||
+		InputManager::GetInstance().IsTrgDown(KEY_INPUT_W)|| 
+		InputManager::GetInstance().IsTrgDown(KEY_INPUT_LSHIFT)||
+		InputManager::GetInstance().IsTrgDown(KEY_INPUT_LCONTROL)
 		&& !isEvasionCoolDown_) {
 		SceneManager::GetInstance().Slow();
 		isEvasion_ = true;
@@ -217,11 +229,11 @@ void Player::ProcessJump(void)
 {
 #pragma region キーボード操作
 	//ジャンプ判定
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)) {
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE)) {
 		isJump_ = true;
 	}
 	//一回目のジャンプ
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE)
 		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
 		&& firstJumpFlg_) {
 		inputJumpKeyCounter_++;
@@ -230,7 +242,7 @@ void Player::ProcessJump(void)
 		Jump();
 	}
 	//二段ジャンプ
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE)
 		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
 		&& secondJumpFlg_) {
 		inputJumpKeyCounter_++;
@@ -239,7 +251,7 @@ void Player::ProcessJump(void)
 		Jump();
 	}
 	//三弾ジャンプ
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE)
 		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
 		&& thirdJumpFlg_) {
 		inputJumpKeyCounter_++;
@@ -249,7 +261,7 @@ void Player::ProcessJump(void)
 	}
 
 	//ジャンプキーを離したらカウンターをリセット
-	if (InputManager::GetInstance().IsTrgUp(KEY_INPUT_J)) {
+	if (InputManager::GetInstance().IsTrgUp(KEY_INPUT_SPACE)) {
 		inputJumpKeyCounter_ = 0;
 		if (!secondJumpFlg_) {
 			thirdJumpFlg_ = false;
@@ -376,54 +388,13 @@ void Player::IsGround(Collision::DIR dir)
 
 void Player::ProcessAtatck(void)
 {
-#pragma region MyRegion
-
-
-	auto& ins = InputManager::GetInstance();
-	if (!isAttack_) {
-
-		if (ins.IsNew(KEY_INPUT_Q)) {
-			attackStat_ = ATTACK_STAT::E_ATTACK_STAT_KATTO;
-			isAttack_ = true;
-		}
-		else if (ins.IsNew(KEY_INPUT_E)) {
-			attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NUGRU;
-			isAttack_ = true;
-		}
-	}
-#pragma endregion
 	Attack();
 }
 
 void Player::Attack(void)
 {
-#pragma region MyRegion
+	arialSweep_->Update();
 
-	switch (attackStat_)
-	{
-	case Player::ATTACK_STAT::E_ATTACK_STAT_KATTO:
-		break;
-	case Player::ATTACK_STAT::E_ATTACK_STAT_NUGRU:
-		break;
-	}
-	if (isAttack_) {
-		attackCounter_++;
-		if (attackCounter_ >= ATTACK_TIME) {
-			attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
-			isAttack_ = false;
-			attackCounter_ = 0;
-			isAttackCoolDown_ = true;
-			attackCoolDown_ = 0;
-		}
-	}
-	 if (isAttackCoolDown_) {
-		attackCoolDown_++;
-		if (attackCoolDown_ >= ATTACK_COOLDOWN) {
-			isAttackCoolDown_ = false;
-			attackCoolDown_ = 0;
-		}
-	}
-#pragma endregion
 
 }
 

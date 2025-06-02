@@ -77,7 +77,7 @@ protected:
 	/// <param name="_goal">向かう先</param>
 	/// <param name="_speed">設定速度(未設定だと、方向ベクトルのみを返す)</param>
 	/// <returns>向かう先までの移動ベクトル</returns>
-	const Vector2F GetMoveVec(const Vector2F _start, const Vector2F _goal,  const float _speed = 1.0f)const;
+	const Vector2F GetMoveVec(const Vector2F _start, const Vector2F _goal, const float _speed = 0.0f)const;
 
 	/// <summary>
 	/// 2つの座標間の距離を計算します。
