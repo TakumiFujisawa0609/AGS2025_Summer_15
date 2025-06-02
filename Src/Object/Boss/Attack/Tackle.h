@@ -1,18 +1,20 @@
 #pragma once
+#include"AttackBase.h"
 
-class Tackle
+class Tackle : public AttackBase
 {
 public:
+
+	static constexpr float TACKLE_SPEED = 20.0f;
 
 	Tackle();
 	~Tackle();
 
-	bool SystemInit();
-	void GameInit();
-	void Update();
-	void Draw();
-	bool Release();
+	void Init(const Vector2F* pos)override;
+	void Update(void)override;
+	void Draw(void)override;
+	void Release(void)override;
 
 private:
-
+	VECTOR bPos_;
 };

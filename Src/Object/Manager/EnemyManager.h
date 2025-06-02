@@ -13,10 +13,10 @@ public:
     void Draw();
     void Relese();
 
-
     EnemyBamboo* GetBamboo(int ii) { return bamboo_[ii]; }
 
 private:
+
     EnemyBamboo* bamboo_[EnemyBamboo::ENEMY_MAX];
 
 };

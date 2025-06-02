@@ -3,6 +3,7 @@
 
 #include"Attack/Slash.h"
 #include"Attack/Bullet.h"
+#include"Attack/Tackle.h"
 
 
 class BossTutorial : public EnemyBase
@@ -74,4 +75,5 @@ private:
 
 	Slash* slash_;
 	Bullet* bullet_;
+	Tackle* tackle_;
 };

@@ -31,6 +31,7 @@ void BossTutorial::Init()
 
 	slash_ = new Slash();
 	bullet_ = new Bullet();
+	tackle_ = new Tackle();
 
 }
 
@@ -68,6 +69,9 @@ void BossTutorial::Release()
 
 	slash_->Release();
 	delete slash_;
+
+	tackle_->Release();
+	delete tackle_;
 }
 
 
@@ -136,7 +140,7 @@ void BossTutorial::Move()
 
 	if (GetDis(unit_.nextpos_, point) <= unit_.speed_) {
 		attackCounter_ = 0;
-		attackState_ = (ATTACK)GetRand(1);
+		attackState_ = ATTACK::TACKLE;//(ATTACK)GetRand(1);
 		pattaern_ = E_ATTACK;
 	}
 }
@@ -220,7 +224,16 @@ void BossTutorial::Attack()
 
 		break;
 	case BossTutorial::TACKLE:
+		if (attackCounter_ == 0) {
+			tackle_->Init(&unit_.pos_);
+		}
 
+		if (attackCounter_ > 300)
+		{
+			pattaern_ = E_NON;
+		}
+
+		DrawString(120, 120, "ƒ^ƒbƒNƒ‹", 0x000000);
 		break;
 	}
 	attackCounter_++;
