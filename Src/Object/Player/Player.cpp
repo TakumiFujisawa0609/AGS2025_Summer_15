@@ -39,6 +39,7 @@ void Player::Init()
 	//攻撃
 	isAttack_ = false;
 	attackCounter_ = 0;
+	arialSweepCounter_ = 0;
 
 	//ジャンプ
 	unit_.yAccel_ = 0;
@@ -50,6 +51,7 @@ void Player::Init()
 	inputJumpKeyCounter_ = 0;
 
 	playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
+	isMove_ = true;
 
 	isEvasion_ = false;
 	isEvasionCoolDown_ = false;
@@ -57,43 +59,62 @@ void Player::Init()
 	evasionCounter_ = 0;
 	evasionCoolDown_ = 0;
 
-	arialSweep_ = new ArialSweep();
-	arialSweep_->Init(&unit_.disppos_);
+	// ガード用変数の初期化
+    isGuard_ = false;           // ガード中
+    guardMaxCounter_ = 60;      // 最大ガード時間（例: 60フレーム）
+    perStiffness_ = 5;          // 前硬直（例: 5フレーム）
+    isperStiffness_ = false;    // 前硬直フラグ
+    postStiffness_ = 10;        // 後硬直（例: 10フレーム）
+    isPostStiffness_ = false;   // 後硬直フラグ
+    perGuardKey_ = 0;           // トリガーアップ用変数
+    nowGuardKey_ = 0;           // トリガーアップ用変数
+	guardKeyUpBuffer_=0;		//後入力受付猶予カウンター
 
-	
+
+	arialSweep_ = new ArialSweep();
+	arialSweep_->Init(&unit_.nextpos_, &unit_.disppos_);
+
 	Collision::CreateInstance();
 }
 
 void Player::Update()
 {
+	if (isMove_) {
 	Move();
 	ProcessEvasion();
 	ProcessJump();
+	}
 
 	ProcessAtatck();
+	ProcessGuard();
 
 	UnitBase::Update();
 }
 
 void Player::Draw()
 {
-	//DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 10, GetColor(255, 0, 0), true);
-	DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 2, 0x00ffff, true);
-	if (isAttack_) {
-		DrawOval(unit_.disppos_.x, unit_.disppos_.y, 48,32, 0x00f0f0, true);
-	}
 	DrawOval(unit_.disppos_.x, unit_.disppos_.y, unit_.size_.x / 2, unit_.size_.y / 2, 0xff0000, true);
 
 	DrawFormatString(0, 64, 0x0000ff, "プレイヤー座標(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
 	DrawFormatString(0, 80, 0x0000ff, "プレイヤーの向き%d", playerDir_);
 	DrawFormatString(0, 96, 0x00ff00, "プレイヤーの攻撃%d", attackStat_);
 	//DrawFormatString(0.112, 0xff00ff, "プレイヤーのでぃすぷぽす(%.2f,%.2f)", unit_.disppos_.x,unit_.disppos_.y);
-    // 修正されたコード
-    DrawFormatString(0, 112, 0xff00ff, _T("プレイヤーのでぃすぷぽす(%.2f,%.2f)"), unit_.disppos_.x, unit_.disppos_.y);
+	// 修正されたコード
+	DrawFormatString(0, 112, 0xff00ff, _T("プレイヤーのでぃすぷぽす(%.2f,%.2f)"), unit_.disppos_.x, unit_.disppos_.y);
 
-	arialSweep_->Draw();
+	switch (attackStat_)
+	{
+	case Player::ATTACK_STAT::E_ATTACK_STAT_NON:
+		break;
+	case Player::ATTACK_STAT::E_ATTACK_STAT_ARIALSWEEP:
+		break;
+	}
+		arialSweep_->Draw();
 
+		if (isGuard_) {
 
+			DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 50, 0x0000ff, false);
+	}
 
 
 	//SetDrawPlayer();
@@ -109,7 +130,7 @@ void Player::Release()
 
 void Player::Move(void)
 {
-	auto&InpMng= InputManager::GetInstance();
+	auto& InpMng = InputManager::GetInstance();
 
 	//モーションタイプの初期化を行う
 	motionType_ = MOTION_TYPE::E_MOTION_IDLE;
@@ -118,15 +139,15 @@ void Player::Move(void)
 	auto padState = InpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
 	const int stickThreshold = 500; // スティックのしきい値
 
-	if (InpMng.IsNew(KEY_INPUT_D)||padState.AKeyLX>stickThreshold) {
+	if (InpMng.IsNew(KEY_INPUT_D) || padState.AKeyLX > stickThreshold) {
 		unit_.nextpos_.x += unit_.speed_;
-		playerDir_ =AsoUtility::DIRECTION::E_DIR_RIGHT;
+		playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
 		//モーションを変更
 		motionType_ = MOTION_TYPE::E_MOTION_RUN;
 	}
-	if (InpMng.IsNew(KEY_INPUT_A)||padState.AKeyLX<-stickThreshold) {
+	if (InpMng.IsNew(KEY_INPUT_A) || padState.AKeyLX < -stickThreshold) {
 		unit_.nextpos_.x -= unit_.speed_;
-		playerDir_ =AsoUtility::DIRECTION::E_DIR_LEFT;
+		playerDir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
 		//モーションを変更
 		motionType_ = MOTION_TYPE::E_MOTION_RUN;
 	}
@@ -137,9 +158,9 @@ void Player::ProcessEvasion(void)
 {
 #pragma region	キーボード操作
 	//回避
-	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_S)||
-		InputManager::GetInstance().IsTrgDown(KEY_INPUT_W)|| 
-		InputManager::GetInstance().IsTrgDown(KEY_INPUT_LSHIFT)||
+	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_S) ||
+		InputManager::GetInstance().IsTrgDown(KEY_INPUT_W) ||
+		InputManager::GetInstance().IsTrgDown(KEY_INPUT_LSHIFT) ||
 		InputManager::GetInstance().IsTrgDown(KEY_INPUT_LCONTROL)
 		&& !isEvasionCoolDown_) {
 		SceneManager::GetInstance().Slow();
@@ -175,7 +196,7 @@ void Player::ProcessEvasion(void)
 	auto& inpMng = InputManager::GetInstance();
 	inpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
 	//回避
-	if (inpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1,InputManager::JOYPAD_BTN::R_TRIGGER)
+	if (inpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER)
 		&& !isEvasionCoolDown_) {
 		SceneManager::GetInstance().Slow();
 		isEvasion_ = true;
@@ -388,14 +409,97 @@ void Player::IsGround(Collision::DIR dir)
 
 void Player::ProcessAtatck(void)
 {
-	Attack();
+
+	auto& ins = InputManager::GetInstance();
+	if (ins.IsClickMouseLeft()) {
+		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_ARIALSWEEP;
+		GetMousePoint(&mPos_.x, &mPos_.y);
+	}
+
+	switch (attackStat_)
+	{
+	case Player::ATTACK_STAT::E_ATTACK_STAT_NON:
+		Attack();
+		break;
+	case Player::ATTACK_STAT::E_ATTACK_STAT_ARIALSWEEP:
+		ArialSweepAttack();
+		break;
+	}
+
 }
 
 void Player::Attack(void)
 {
-	arialSweep_->Update();
 
 
+
+
+
+}
+
+void Player::ArialSweepAttack(void)
+{
+	//重力を一時的になくす
+	unit_.isGravity_ = false;
+	unit_.yAccel_ = 0;
+	//移動できなくする
+	isMove_ = false;
+
+	arialSweep_->Update(&mPos_);
+	//描画時のずれを補正
+	mapMousePos_.x = mPos_.x + ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2);
+	mapMousePos_.y = mPos_.y + ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2);
+	//プレイヤーの描画座標とマウスのマップ座標とのベクトルを求める
+	Vector2F vec = GetMoveVec(unit_.disppos_, { (float)mapMousePos_.x,(float)mapMousePos_.y });
+	arialSweepCounter_++;
+	if (arialSweepCounter_ < 15) {
+		unit_.nextpos_ += vec*2;
+	}
+	else {
+	unit_.yAccel_ = 0;		//かかりすぎている重力をなくす
+	//初期化
+	unit_.isGravity_ = true;
+	attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
+	arialSweepCounter_ = 0;
+	isMove_ = true;
+	}
+}
+
+void Player::ProcessGuard(void)
+{
+	auto& ins = InputManager::GetInstance();
+	if (ins.IsClickMouseRight()) {
+		Guard();
+	}
+	else {
+		isGuard_ = false;
+
+	}
+
+	//トリガーアップ判定
+	if (perGuardKey_ && !nowGuardKey_) {
+		guardKeyUpBuffer_ = 5;		//例
+	}
+	//猶予カウント中
+	if (guardKeyUpBuffer_ > 0) {
+		JustGuard();
+		guardKeyUpBuffer_--;
+	}
+
+	perGuardKey_ = nowGuardKey_;
+	nowGuardKey_ = ins.IsClickMouseRight();
+
+	
+}
+
+void Player::Guard(void)
+{
+	isGuard_ = true;
+}
+
+void Player::JustGuard(void)
+{
+	SceneManager::GetInstance().Slow();
 }
 
 

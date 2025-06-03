@@ -49,8 +49,7 @@ public:
 	enum class ATTACK_STAT
 	{
 		E_ATTACK_STAT_NON,	//通常
-		E_ATTACK_STAT_KATTO,
-		E_ATTACK_STAT_NUGRU,
+		E_ATTACK_STAT_ARIALSWEEP,
 
 		E_ATTACK_STAT_MAX,
 	};
@@ -76,42 +75,23 @@ private:
 	//プレイヤー画像のハンドル番号
 	int img[static_cast<int>(MOTION_TYPE::E_MOTION_MAX)][15];
 
-
-	ArialSweep* arialSweep_;
-
 	//モーションタイプ
 	MOTION_TYPE motionType_;
 
-	//攻撃モーション
-	ATTACK_STAT attackStat_;
-
-
-	void Move(void);
+	//移動処理--------------------------------------------------------------
+	void Move(void);	
+	//int playerDir_;			//プレイヤーが向いている方向
+	AsoUtility::DIRECTION playerDir_;
+	bool isMove_;				//移動処理用
 
 	// 接地している時の数値の代入などをまとめた関数
 	void IsGround(Collision::DIR dir)override;
 
-	//回避発動処理
-	void ProcessEvasion(void);
-
-	//回避更新処理
-	void Evasion(void);
-
-
+	//ジャンプ-------------------------------------------------------------------------------------
 	//ジャンプ発動処理
 	void ProcessJump(void);
-
 	//ジャンプ更新処理
 	void Jump(void);
-
-
-	//攻撃プロセス
-	void ProcessAtatck(void);
-
-	//攻撃更新処理
-	void Attack(void);
-
-
 	bool isJump_;				//true=ジャンプ中/false=非ジャンプ
 	bool firstJumpFlg_;			//一回目のジャンプ(true=ジャンプ可能/false=ジャンプしたかったなぁ)
 	bool secondJumpFlg_;		//二段ジャンプ(true=ジャンプ可能/false=ジャンプしたかったなぁ)
@@ -120,15 +100,30 @@ private:
 	float yAccel_;//縦方向の加速度
 	int inputJumpKeyCounter_;	//ジャンプの入力時間カウンター
 
-	//int playerDir_;			//プレイヤーが向いている方向
-	AsoUtility::DIRECTION playerDir_;
-
-	//攻撃
+	//攻撃---------------------------------------------------------------
+	//攻撃プロセス
+	void ProcessAtatck(void);
+	//攻撃更新処理
+	void Attack(void);
+	//特殊攻撃
+	void ArialSweepAttack(void);
 	bool isAttack_;
 	bool isAttackCoolDown_;
 	int attackCounter_;			//攻撃時間
 	int attackCoolDown_;		//攻撃クールタイム
+	int arialSweepCounter_;			
+	//プレイヤー攻撃時のマウスの座標
+	Vector2 mPos_;
+	Vector2F mapMousePos_;
+	//攻撃モーション
+	ATTACK_STAT attackStat_;
+	ArialSweep* arialSweep_;
 
+	//回避---------------------------------------------------------------------------------------------------
+	//回避発動処理
+	void ProcessEvasion(void);
+	//回避更新処理
+	void Evasion(void);
 	int evasionCounter_;		//回避時間カウンター
 	int evasionCoolDown_;		//回避クールダウンカウンター
 	bool isEvasion_;			//回避フラグ(true=回避中/false=非回避中)
@@ -141,7 +136,22 @@ private:
 	//void SetDrawPlayer(void);		//描画するプレイヤーの設定
 
 
-
+	//ガード---------------------------------------------
+	//ガード発動処理
+	void ProcessGuard(void);
+	//ガード更新処理
+	void Guard(void);
+	//ジャストガード更新処理
+	void JustGuard(void);
+	bool isGuard_;			//ガード中
+	int guardMaxCounter_;	//最大ガード時間
+	int perStiffness_;		//前硬直
+	bool isperStiffness_;	//前硬直フラグ
+	int postStiffness_;		//後硬直
+	bool isPostStiffness_;	//後硬直フラグ
+	int perGuardKey_;		//トリガーアップ用変数
+	int nowGuardKey_;		//トリガーアップ用変数
+	int guardKeyUpBuffer_;	//後入力受付猶予カウンター
 
 
 };
