@@ -55,6 +55,7 @@ void BossTutorial::Draw()
 	if (unit_.isDraw_)
 	{
 		bullet_->Draw();
+		blast_->Draw();
 
 		switch (DrawPat_)
 		{
@@ -98,8 +99,6 @@ void BossTutorial::Release()
 	delete slash_;
 	slash_ = nullptr;
 
-	tackle_->Release();
-	delete tackle_;
 
 	//‰æ‘œ‚ÌŠJ•ú
 	DeleteGraph(idolImg);

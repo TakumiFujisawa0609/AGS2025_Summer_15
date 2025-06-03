@@ -82,7 +82,6 @@ private:
 	void Idle(void);
 	void Move();
 	void Attack();
-	void Move();
 	void TargetLook(void);
 
 
