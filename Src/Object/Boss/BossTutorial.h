@@ -20,6 +20,14 @@ public:
 		E_IDLE,
 		E_MOVE,
 		E_ATTACK,
+
+	};
+
+	enum DRAWPAT
+	{
+		NORMAL,
+		E_SLASH_START,
+		E_SLASH_END,
 	};
 
 	enum ATTACK
@@ -64,6 +72,9 @@ private:
 
 	int idolImg;
 
+	int StartSlashtImg_;
+	int EndSlashImg_;
+
 	bool encount_;
 
 	void PattaernManager(void);
@@ -71,6 +82,8 @@ private:
 	void Idle(void);
 	void Move();
 	void Attack();
+	void Move();
+	void TargetLook(void);
 
 
 	// Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
@@ -82,6 +95,7 @@ private:
 
 	AttackBase::DIR bossDir_;
 
+	DRAWPAT DrawPat_;
 
 	Slash* slash_;
 	Bullet* bullet_;

@@ -12,6 +12,8 @@ BossTutorial::~BossTutorial()
 void BossTutorial::Init()
 {
 	idolImg = LoadGraph("Data/Image/Boss/TutrialBoss.png");
+	StartSlashtImg_ = LoadGraph("Data/Image/Boss/BossSlash.png");
+	EndSlashImg_ = LoadGraph("Data/Image/Boss/BossSlashEnd.png");
 
 	unit_.isAlive_ = true;
 	unit_.isDraw_ = true;
@@ -27,15 +29,12 @@ void BossTutorial::Init()
 	targetIndex_ = 2;
 	encount_ = false;
 
-
-
-
-
 	slash_ = new Slash();
 	bullet_ = new Bullet();
 	blast_ = new Blast();
 	tackle_ = new Tackle();
 
+	DrawPat_ = NORMAL;
 }
 
 void BossTutorial::Update()
@@ -55,12 +54,28 @@ void BossTutorial::Draw()
 {
 	if (unit_.isDraw_)
 	{
-		slash_->Draw();
 		bullet_->Draw();
-		blast_->Draw();
-		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, idolImg, true, bossDir_);
+
+		switch (DrawPat_)
+		{
+		case NORMAL:
+			// 通常状態
+			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, idolImg, true, bossDir_);
+			break;
+		case E_SLASH_START:
+			// 剣を振り上げる
+			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, StartSlashtImg_, true, bossDir_);
+			break;
+		case E_SLASH_END:
+			// 剣を振り下ろす
+			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y + 14, 1.0f, 0.0f, EndSlashImg_, true, bossDir_);
+			break;
+		}
+
+		slash_->Draw();
 
 		
+		//DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
 	}
 	DrawFormatString(120, 120, 0x0fffff, "boss(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
 }
@@ -83,13 +98,14 @@ void BossTutorial::Release()
 	delete slash_;
 	slash_ = nullptr;
 
-	if (DeleteGraph(idolImg) == -1) {
-		return;
-	}
+	tackle_->Release();
+	delete tackle_;
+
+	//画像の開放
+	DeleteGraph(idolImg);
+	DeleteGraph(StartSlashtImg_);
+	DeleteGraph(EndSlashImg_);
 }
-
-
-
 
 void BossTutorial::PattaernManager(void)
 {
@@ -159,6 +175,8 @@ void BossTutorial::Move()
 {
 	Vector2F point = BOSS_POINT[targetIndex_];
 
+	DrawPat_ = NORMAL;
+
 	if (attackCounter_ == 0) {
 		Vector2F d = { point.x - unit_.nextpos_.x, point.y - unit_.nextpos_.y };
 		float t = d.x / unit_.speed_;
@@ -167,18 +185,16 @@ void BossTutorial::Move()
 		unit_.yAccel_ -= jumppower;
 	}
 
+	TargetLook();
 
-	
-
-	if (targetIndex_ == 0)
-	{
-		bossDir_ = AttackBase::DIR::LEFT;
-	}
-	else if (targetIndex_ == 2)
-	{
-		bossDir_ = AttackBase::DIR::RIGHT;
-	}
-
+	//if (targetIndex_ == 0)
+	//{
+	//	bossDir_ = AttackBase::DIR::LEFT;
+	//}
+	//else if (targetIndex_ == 2)
+	//{
+	//	bossDir_ = AttackBase::DIR::RIGHT;
+	//}
 
 	attackCounter_++;
 
@@ -197,7 +213,6 @@ void BossTutorial::Move()
 	}
 }
 
-
 void BossTutorial::Attack()
 {
 	attackCounter_++;
@@ -208,10 +223,8 @@ void BossTutorial::Attack()
 
 		if (attackCounter_ == 1) {
 			panVec_ = { 0.0f,0.0f };
-
 			slash_->Init(&unit_.pos_);
-
-
+			DrawPat_ = E_SLASH_START;
 		}
 
 		if (attackCounter_ == Slash::CHARGE - 1) {
@@ -219,10 +232,20 @@ void BossTutorial::Attack()
 
 			Slash::DIR dir;
 
-			if (target_.x <= unit_.pos_.x) dir = Slash::DIR::LEFT;
-			else						   dir = Slash::DIR::RIGHT;
+			if (target_.x <= unit_.pos_.x) {
+				dir = Slash::DIR::LEFT;
+				
+			}
+			else {
+				dir = Slash::DIR::RIGHT;
+			}
 
 			slash_->SetTarget(dir);
+		}
+
+		if (attackCounter_ < Slash::CHARGE)
+		{
+			TargetLook();
 		}
 
 		if (attackCounter_ == Slash::CHARGE) {
@@ -238,8 +261,8 @@ void BossTutorial::Attack()
 			if (dis <= player_->GetUnit().size_.x / 2 + unit_.size_.x / 2) {
 				panVec_ = { 0.0f,0.0f };
 				slash_->On();
+				DrawPat_ = E_SLASH_END;
 			}
-
 		}
 
 		unit_.nextpos_ += panVec_;
@@ -294,10 +317,6 @@ void BossTutorial::Attack()
 			tackle_->Init(&unit_.pos_);
 		}
 
-		if (attackCounter_ > 300)
-		{
-			pattaern_ = E_NON;
-		}
 
 		break;
 	}
@@ -324,7 +343,6 @@ void BossTutorial::IsGround(Collision::DIR dir)
 		unit_.yAccel_ = 0;
 
 		break;
-
 	case Collision::DOWN:
 
 		//地面に接地していたら行う処理
@@ -336,18 +354,11 @@ void BossTutorial::IsGround(Collision::DIR dir)
 		}
 		unit_.isGravity_ = false;
 
-		if (player_->GetUnit().pos_.x <= unit_.pos_.x) bossDir_ = AttackBase::DIR::LEFT;
-		else										   bossDir_ = AttackBase::DIR::RIGHT;
-		
-
 		break;
-
 	case Collision::LEFT:
 
 		//左側の壁に衝突していたら行う処理
 		unit_.xAccel_ = 0;
-
-
 		break;
 
 	case Collision::RIGHT:
@@ -355,9 +366,7 @@ void BossTutorial::IsGround(Collision::DIR dir)
 		//右側の壁に衝突していたら行う処理
 		unit_.xAccel_ = 0;
 
-
 		break;
-
 	}
 }
 
@@ -387,4 +396,10 @@ const std::vector<Base> BossTutorial::GetObjAttack(const ATTACK state) const
 	}
 
 	return ret;
+}
+
+void BossTutorial::TargetLook(void)
+{
+	if (player_->GetUnit().pos_.x <= unit_.pos_.x) bossDir_ = AttackBase::DIR::LEFT;
+	else										   bossDir_ = AttackBase::DIR::RIGHT;
 }
