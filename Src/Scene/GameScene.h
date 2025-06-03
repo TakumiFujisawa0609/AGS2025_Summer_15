@@ -31,6 +31,12 @@ private:
 	EnemyManager* enemy_ ;
 	BossTutorial* boss_;
 
+
+	void ObjCollision(void);
+	void PlayerToBoss(void);
+	void PlayerToBossAttack(void);
+	void PlayerToEnemyBamboo(void);
+
 	float x;
 
 };
