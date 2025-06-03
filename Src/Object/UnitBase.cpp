@@ -34,7 +34,6 @@ void UnitBase::Update()
 	unit_.nextpos_.y += unit_.yAccel_;
 	unit_.nextpos_.x += unit_.xAccel_;
 	StageCollision();
-
 	ChangeDispPos();
 }
 

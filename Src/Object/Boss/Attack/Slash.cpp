@@ -15,11 +15,14 @@ Slash::~Slash()
 
 void Slash::Init(const Vector2F* pos)
 {
-	image_ = LoadGraph("Data/Image/Boss/Slash.png");
+	LoadDivGraph("Data/Image/Boss/SlashAnim.png", ANIM_ALL,
+		X_NUM, Y_NUM, X_SIZE, Y_SIZE, img);
+	
 
 	AttackBase::Init(pos);
 	obj_.radius_ = 120.0f;
 	obj_.size_ = { 240.0f,240.0f };
+	animCounter_ = 0;
 }
 
 void Slash::Update()
@@ -49,6 +52,7 @@ void Slash::Update()
 		if (attackCounter_ > ATTACK_TIME) {
 		
 			obj_.isAlive_ = false;
+			animCounter_ = 0;
 			end_ = true;
 		}
 	}
@@ -60,14 +64,20 @@ void Slash::Draw()
 {
 	if (obj_.isAlive_)
 	{
-		if (obj_.isDraw_) {
-			DrawRotaGraph(obj_.disppos_.x, obj_.disppos_.y, 1.0f, 0.0f, image_, true, isSlash);
+		if (obj_.isDraw_ && animCounter_ <= ANIM_ALL) {
+			animCounter_++;
+			DrawRotaGraph(obj_.disppos_.x += isSlash ? -(X_SIZE / 2) :  X_SIZE / 2, obj_.disppos_.y, 1.0f, 0.0f, img[animCounter_], true, isSlash);
+			//DrawGraph(obj_.disppos_.x, obj_.disppos_.y - Y_SIZE / 2, img[animCounter_], true);
 		}
+		
 	}
 }
 
 void Slash::Release()
 {
+	for (int ii = 0; ii < ANIM_ALL; ii++) {
+		DeleteGraph(img[ii]);
+	}
 	DeleteGraph(image_);
 }
 

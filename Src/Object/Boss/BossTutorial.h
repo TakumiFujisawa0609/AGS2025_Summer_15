@@ -76,6 +76,7 @@ private:
 	bool EnCount(void);
 	void Attack();
 	void Move();
+	void TargetLook(void);
 
 
 	// Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”

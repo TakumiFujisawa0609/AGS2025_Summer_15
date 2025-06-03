@@ -68,15 +68,6 @@ void EnemyBamboo::Move()
 	// ターゲットが近くにいるかどうかを判別
 	if (unit_.nextpos_.x - 250 <= targetPos_.x && unit_.nextpos_.x + 250 >= targetPos_.x)
 	{
-		//if (unit_.nextpos_.x - 5 <= targetPos_.x)
-		//{
-		//	unit_.nextpos_.x += MOVE_SPEED;  // 右へ
-		//}
-		//else if (unit_.nextpos_.x + 5 >= targetPos_.x)		//改善余地
-		//{
-		//	unit_.nextpos_.x -= MOVE_SPEED;  // 左へ
-		//}
-		
 		// ターゲットの近くにいる場合その方向に向かって進む
 		move_ = unit_.nextpos_.x <= targetPos_.x ? RIGHT : LEFT;
 	}

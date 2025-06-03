@@ -10,6 +10,18 @@ public:
 
 	static constexpr int ATTACK_DRAW_TIME = 30;		// 攻撃のエフェクト表示時間
 
+	static constexpr int ANIM_ALL = 6;
+
+	static constexpr int X_NUM = 6;
+
+	static constexpr int Y_NUM = 1;
+
+	static constexpr int X_SIZE = 1225 / X_NUM;
+
+	static constexpr int Y_SIZE = 280;
+
+	
+
 	Slash();
 	~Slash();
 
@@ -24,6 +36,10 @@ public:
 private:
 
 	bool isSlash;
+
+	int img[ANIM_ALL];
+
+	int animCounter_;
 
 
 };

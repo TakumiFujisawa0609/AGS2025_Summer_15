@@ -163,16 +163,16 @@ void BossTutorial::Move()
 		unit_.yAccel_ -= jumppower;
 	}
 
+	TargetLook();
 
-	if (targetIndex_ == 0)
-	{
-		bossDir_ = AttackBase::DIR::LEFT;
-	}
-	else if (targetIndex_ == 2)
-	{
-		bossDir_ = AttackBase::DIR::RIGHT;
-	}
-
+	//if (targetIndex_ == 0)
+	//{
+	//	bossDir_ = AttackBase::DIR::LEFT;
+	//}
+	//else if (targetIndex_ == 2)
+	//{
+	//	bossDir_ = AttackBase::DIR::RIGHT;
+	//}
 
 	attackCounter_++;
 
@@ -197,7 +197,6 @@ void BossTutorial::Attack()
 			panVec_ = { 0.0f,0.0f };
 			slash_->Init(&unit_.pos_);
 			DrawPat_ = E_SLASH_START;
-
 		}
 
 		if (attackCounter_ == Slash::CHARGE - 1) {
@@ -207,14 +206,18 @@ void BossTutorial::Attack()
 
 			if (target_.x <= unit_.pos_.x) {
 				dir = Slash::DIR::LEFT;
-				bossDir_ = AttackBase::DIR::LEFT;
+				
 			}
 			else {
 				dir = Slash::DIR::RIGHT;
-				bossDir_ = AttackBase::DIR::RIGHT;
+				
 			}
 
 			slash_->SetTarget(dir);
+		}
+		if (attackCounter_ < Slash::CHARGE)
+		{
+			TargetLook();
 		}
 
 		if (attackCounter_ == Slash::CHARGE) {
@@ -268,7 +271,10 @@ void BossTutorial::Attack()
 
 		break;
 	case BossTutorial::TACKLE:
-		
+		if (attackCounter_ == 0)
+		{
+
+		}
 		break;
 	}
 	attackCounter_++;
@@ -289,7 +295,6 @@ void BossTutorial::IsGround(Collision::DIR dir)
 		unit_.yAccel_ = 0;
 
 		break;
-
 	case Collision::DOWN:
 
 		//地面に接地していたら行う処理
@@ -301,18 +306,11 @@ void BossTutorial::IsGround(Collision::DIR dir)
 		}
 		unit_.isGravity_ = false;
 
-		if (player_->GetUnit().pos_.x <= unit_.pos_.x) bossDir_ = AttackBase::DIR::LEFT;
-		else										   bossDir_ = AttackBase::DIR::RIGHT;
-		
-
 		break;
-
 	case Collision::LEFT:
 
 		//左側の壁に衝突していたら行う処理
 		unit_.xAccel_ = 0;
-
-
 		break;
 
 	case Collision::RIGHT:
@@ -320,9 +318,7 @@ void BossTutorial::IsGround(Collision::DIR dir)
 		//右側の壁に衝突していたら行う処理
 		unit_.xAccel_ = 0;
 
-
 		break;
-
 	}
 }
 
@@ -352,4 +348,10 @@ const std::vector<Base> BossTutorial::GetObjAttack(const ATTACK state) const
 	}
 
 	return ret;
+}
+
+void BossTutorial::TargetLook(void)
+{
+	if (player_->GetUnit().pos_.x <= unit_.pos_.x) bossDir_ = AttackBase::DIR::LEFT;
+	else										   bossDir_ = AttackBase::DIR::RIGHT;
 }
