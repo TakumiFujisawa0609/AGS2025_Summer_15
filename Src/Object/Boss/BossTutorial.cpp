@@ -33,6 +33,7 @@ void BossTutorial::Init()
 
 	slash_ = new Slash();
 	bullet_ = new Bullet();
+	blast_ = new Blast();
 	tackle_ = new Tackle();
 
 }
@@ -56,10 +57,10 @@ void BossTutorial::Draw()
 	{
 		slash_->Draw();
 		bullet_->Draw();
+		blast_->Draw();
 		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, idolImg, true, bossDir_);
 
 		
-		//DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
 	}
 	DrawFormatString(120, 120, 0x0fffff, "boss(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
 }
@@ -69,6 +70,10 @@ void BossTutorial::Release()
 	tackle_->Release();
 	delete tackle_;
 	tackle_ = nullptr;
+
+	blast_->Release();
+	delete blast_;
+	blast_ = nullptr;
 
 	bullet_->Release();
 	delete bullet_;
@@ -91,32 +96,16 @@ void BossTutorial::PattaernManager(void)
 	switch (pattaern_)
 	{
 	case BossTutorial::E_NON:
-		switch (targetIndex_)
-		{
-		case 0:
-		case 2:
-			targetIndex_ = 1;	//真ん中へ
-			break;
-		case 1:
-			targetIndex_ = GetRand(1);
-			targetIndex_ *= 2;	//右か左へ
-			break;
+		attackCounter_++;
+		if (attackCounter_ > 100) {
+			attackCounter_ = 0;
+			pattaern_ = E_IDLE;
 		}
-
-		if (targetIndex_ == 0)
-		{
-			bossDir_ = AttackBase::DIR::LEFT;
-		}
-		else if (targetIndex_ == 2)
-		{
-			bossDir_ = AttackBase::DIR::RIGHT;
-		}
-
-		attackCounter_ = 0;
-		pattaern_ = E_MOVE;
-
 		break;
 
+	case BossTutorial::E_IDLE:
+		Idle();
+		break;
 	case BossTutorial::E_MOVE:
 		Move();
 		break;
@@ -136,6 +125,33 @@ bool BossTutorial::EnCount(void)
 	if (distance < 500.0f)return true;
 
 	return false;
+}
+
+void BossTutorial::Idle(void)
+{
+	switch (targetIndex_)
+	{
+	case 0:
+	case 2:
+		targetIndex_ = 1;	//真ん中へ
+		break;
+	case 1:
+		targetIndex_ = GetRand(1);
+		targetIndex_ *= 2;	//右か左へ
+		break;
+	}
+
+	if (targetIndex_ == 0)
+	{
+		bossDir_ = AttackBase::DIR::LEFT;
+	}
+	else if (targetIndex_ == 2)
+	{
+		bossDir_ = AttackBase::DIR::RIGHT;
+	}
+
+	attackCounter_ = 0;
+	pattaern_ = E_MOVE;
 }
 
 
@@ -171,19 +187,26 @@ void BossTutorial::Move()
 
 	if (GetDis(unit_.nextpos_, point) <= unit_.speed_) {
 		attackCounter_ = 0;
-		attackState_ = (ATTACK)GetRand(1);
-		pattaern_ = E_ATTACK;
+		if (!(targetIndex_ == 1)) {
+			attackState_ = (ATTACK)GetRand(3);
+			pattaern_ = E_ATTACK;
+		}
+		else {
+			pattaern_ = E_NON;
+		}
 	}
 }
 
 
 void BossTutorial::Attack()
 {
+	attackCounter_++;
+
 	switch (attackState_)
 	{
 	case BossTutorial::SLASH:
 
-		if (attackCounter_ == 0) {
+		if (attackCounter_ == 1) {
 			panVec_ = { 0.0f,0.0f };
 
 			slash_->Init(&unit_.pos_);
@@ -192,7 +215,6 @@ void BossTutorial::Attack()
 		}
 
 		if (attackCounter_ == Slash::CHARGE - 1) {
-
 			target_ = player_->GetUnit().pos_;
 
 			Slash::DIR dir;
@@ -201,8 +223,6 @@ void BossTutorial::Attack()
 			else						   dir = Slash::DIR::RIGHT;
 
 			slash_->SetTarget(dir);
-
-
 		}
 
 		if (attackCounter_ == Slash::CHARGE) {
@@ -227,7 +247,7 @@ void BossTutorial::Attack()
 		if (slash_->End()) {
 			attackCounter_ = 0;
 			unit_.isGravity_ = true;
-			pattaern_ = E_NON;
+			pattaern_ = E_IDLE;
 			attackState_ = NON;
 		}
 
@@ -236,26 +256,41 @@ void BossTutorial::Attack()
 		break;
 	case BossTutorial::BULLET:
 
-		if (attackCounter_ == 0) {
+		if (attackCounter_ == 1) {
 			bullet_->Init(&unit_.pos_);
 		}
 
 		if (bullet_->End()) {
 			attackCounter_ = 0;
-			pattaern_ = E_NON;
+			pattaern_ = E_IDLE;
 			attackState_ = NON;
 		}
 
 		bullet_->Update();
 		break;
 	case BossTutorial::ROAR:
-
+		pattaern_ = E_IDLE;
+		attackState_ = NON;
 		break;
 	case BossTutorial::BLAST:
+		
+		if (attackCounter_ == 1) {
+			blast_->Init(&unit_.pos_);
+		}
+		if (attackCounter_ == 60) {
+			blast_->LookOn(player_->GetUnit().pos_);
+		}
 
+		if (blast_->End()) {
+			attackCounter_ = 0;
+			pattaern_ = E_IDLE;
+			attackState_ = NON;
+		}
+
+		blast_->Update();
 		break;
 	case BossTutorial::TACKLE:
-		if (attackCounter_ == 0) {
+		if (attackCounter_ == 1) {
 			tackle_->Init(&unit_.pos_);
 		}
 
@@ -266,9 +301,14 @@ void BossTutorial::Attack()
 
 		break;
 	}
-	attackCounter_++;
 	if (CheckHitKey(KEY_INPUT_U) == 1) {
 		pattaern_ = E_NON;
+	}
+
+	if (attackCounter_ > 1000) {
+		attackCounter_ = 0;
+		pattaern_ = E_IDLE;
+		attackState_ = NON;
 	}
 
 }

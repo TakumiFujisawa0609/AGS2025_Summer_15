@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\Object\Boss\Attack\AttackBase.cpp" />
+    <ClCompile Include="Src\Object\Boss\Attack\Blast.cpp" />
     <ClCompile Include="Src\Object\Boss\Attack\Bullet.cpp" />
     <ClCompile Include="Src\Object\Boss\Attack\Slash.cpp" />
     <ClCompile Include="Src\Object\Boss\Attack\Tackle.cpp" />
@@ -165,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Boss\Attack\AttackBase.h" />
+    <ClInclude Include="Src\Object\Boss\Attack\Blast.h" />
     <ClInclude Include="Src\Object\Boss\Attack\Bullet.h" />
     <ClInclude Include="Src\Object\Boss\Attack\Slash.h" />
     <ClInclude Include="Src\Object\Boss\Attack\Tackle.h" />

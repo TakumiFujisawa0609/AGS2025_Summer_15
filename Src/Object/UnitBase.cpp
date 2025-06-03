@@ -21,6 +21,8 @@ UnitBase::UnitBase()
 
 	unit_.isGravity_ = true;
 
+	unit_.isStageCollision_ = true;
+
 	gravity_ = GRAVITY;
 }
 
@@ -35,55 +37,59 @@ void UnitBase::Update()
 	unit_.nextpos_.x += unit_.xAccel_;
 	StageCollision();
 
+	// 実際に座標を更新
+	unit_.pos_ = unit_.nextpos_;
+
 	ChangeDispPos();
 }
 
 
 void UnitBase::StageCollision(void)
 {
-	Vector2F y = { unit_.pos_.x,unit_.nextpos_ .y};
+	if (!unit_.isStageCollision_)return;
 
-    // 衝突判定・補正
-    Collision& col = Collision::GetInstance();
 
-    // 上方向
-    float upLine = col.GetStageLine(y, unit_.size_, Collision::UP);
-    if (unit_.nextpos_.y - unit_.size_.y / 2 <= upLine) {
-        unit_.nextpos_.y = upLine + unit_.size_.y / 2;
-        unit_.yAccel_ = 0;
-        IsGround(Collision::UP);
-    }
+	Vector2F y = { unit_.pos_.x,unit_.nextpos_.y };
 
-    // 下方向
-    float downLine = col.GetStageLine(y, unit_.size_, Collision::DOWN);
-    if (unit_.nextpos_.y + unit_.size_.y / 2 >= downLine) {
-        unit_.nextpos_.y = downLine - unit_.size_.y / 2;
-        unit_.yAccel_ = 0;
-        IsGround(Collision::DOWN);
-    } else {
-        // 空中なら重力を加える
+	// 衝突判定・補正
+	Collision& col = Collision::GetInstance();
+
+	// 上方向
+	float upLine = col.GetStageLine(y, unit_.size_, Collision::UP);
+	if (unit_.nextpos_.y - unit_.size_.y / 2 <= upLine) {
+		unit_.nextpos_.y = upLine + unit_.size_.y / 2;
+		unit_.yAccel_ = 0;
+		IsGround(Collision::UP);
+	}
+
+	// 下方向
+	float downLine = col.GetStageLine(y, unit_.size_, Collision::DOWN);
+	if (unit_.nextpos_.y + unit_.size_.y / 2 >= downLine) {
+		unit_.nextpos_.y = downLine - unit_.size_.y / 2;
+		unit_.yAccel_ = 0;
+		IsGround(Collision::DOWN);
+	}
+	else {
+		// 空中なら重力を加える
 		unit_.isGround_ = false;
-        Gravity();
-    }
+		Gravity();
+	}
 
-    // 左方向
-    float leftLine = col.GetStageLine(unit_.nextpos_, unit_.size_, Collision::LEFT);
-    if (unit_.nextpos_.x - unit_.size_.x / 2 <= leftLine) {
-        unit_.nextpos_.x = leftLine + unit_.size_.x / 2;
-        unit_.xAccel_ = 0;
-        IsGround(Collision::LEFT);
-    }
+	// 左方向
+	float leftLine = col.GetStageLine(unit_.nextpos_, unit_.size_, Collision::LEFT);
+	if (unit_.nextpos_.x - unit_.size_.x / 2 <= leftLine) {
+		unit_.nextpos_.x = leftLine + unit_.size_.x / 2;
+		unit_.xAccel_ = 0;
+		IsGround(Collision::LEFT);
+	}
 
-    // 右方向
-    float rightLine = col.GetStageLine(unit_.nextpos_, unit_.size_, Collision::RIGHT);
-    if (unit_.nextpos_.x + unit_.size_.x / 2 >= rightLine) {
-        unit_.nextpos_.x = rightLine - unit_.size_.x / 2;
-        unit_.xAccel_ = 0;
-        IsGround(Collision::RIGHT);
-    }
-
-    // 実際に座標を更新
-    unit_.pos_ = unit_.nextpos_;
+	// 右方向
+	float rightLine = col.GetStageLine(unit_.nextpos_, unit_.size_, Collision::RIGHT);
+	if (unit_.nextpos_.x + unit_.size_.x / 2 >= rightLine) {
+		unit_.nextpos_.x = rightLine - unit_.size_.x / 2;
+		unit_.xAccel_ = 0;
+		IsGround(Collision::RIGHT);
+	}
 }
 
 

@@ -3,6 +3,7 @@
 
 #include"Attack/Slash.h"
 #include"Attack/Bullet.h"
+#include"Attack/Blast.h"
 #include"Attack/Tackle.h"
 
 
@@ -16,6 +17,7 @@ public:
 	enum PATTERN
 	{
 		E_NON,
+		E_IDLE,
 		E_MOVE,
 		E_ATTACK,
 	};
@@ -66,8 +68,9 @@ private:
 
 	void PattaernManager(void);
 	bool EnCount(void);
-	void Attack();
+	void Idle(void);
 	void Move();
+	void Attack();
 
 
 	// Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
@@ -82,5 +85,6 @@ private:
 
 	Slash* slash_;
 	Bullet* bullet_;
+	Blast* blast_;
 	Tackle* tackle_;
 };
