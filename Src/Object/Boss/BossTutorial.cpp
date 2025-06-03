@@ -181,11 +181,10 @@ void BossTutorial::Move()
 
 	if (GetDis(unit_.nextpos_, point) <= unit_.speed_) {
 		attackCounter_ = 0;
-		attackState_ = (ATTACK)GetRand(1);
+		attackState_ = BossTutorial::SLASH;//(ATTACK)GetRand(1);
 		pattaern_ = E_ATTACK;
 	}
 }
-
 
 void BossTutorial::Attack()
 {
@@ -210,11 +209,11 @@ void BossTutorial::Attack()
 			}
 			else {
 				dir = Slash::DIR::RIGHT;
-				
 			}
 
 			slash_->SetTarget(dir);
 		}
+
 		if (attackCounter_ < Slash::CHARGE)
 		{
 			TargetLook();
@@ -235,7 +234,6 @@ void BossTutorial::Attack()
 				slash_->On();
 				DrawPat_ = E_SLASH_END;
 			}
-
 		}
 
 		unit_.nextpos_ += panVec_;
@@ -275,13 +273,14 @@ void BossTutorial::Attack()
 		{
 
 		}
+
+
 		break;
 	}
 	attackCounter_++;
 	if (CheckHitKey(KEY_INPUT_U) == 1) {
 		pattaern_ = E_NON;
 	}
-
 }
 
 

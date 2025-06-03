@@ -35,7 +35,7 @@ public:
 
 private:
 
-	bool isSlash;
+	bool isTurn;
 
 	int img[ANIM_ALL];
 

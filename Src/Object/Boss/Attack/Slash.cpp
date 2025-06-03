@@ -33,11 +33,11 @@ void Slash::Update()
 		{
 		case Slash::LEFT:
 			obj_.pos_ = { boss->x - 70.0f,boss->y };
-			isSlash = true;
+			isTurn = true;
 			break;
 		case Slash::RIGHT:
 			obj_.pos_ = { boss->x + 70.0f,boss->y };
-			isSlash = false;
+			isTurn = false;
 			break;
 		}
 
@@ -66,7 +66,7 @@ void Slash::Draw()
 	{
 		if (obj_.isDraw_ && animCounter_ <= ANIM_ALL) {
 			animCounter_++;
-			DrawRotaGraph(obj_.disppos_.x += isSlash ? -(X_SIZE / 2) :  X_SIZE / 2, obj_.disppos_.y, 1.0f, 0.0f, img[animCounter_], true, isSlash);
+			DrawRotaGraph(obj_.disppos_.x += isTurn ? -(X_SIZE / 2) :  X_SIZE / 2, obj_.disppos_.y, 1.0f, 0.0f, img[animCounter_], true, isTurn);
 			//DrawGraph(obj_.disppos_.x, obj_.disppos_.y - Y_SIZE / 2, img[animCounter_], true);
 		}
 		
