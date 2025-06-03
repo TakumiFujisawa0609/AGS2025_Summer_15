@@ -10,7 +10,8 @@ public:
 	PlayerAttackBase();
 	~PlayerAttackBase();
 
-	virtual void Init(Vector2F* pos);
+	void Init(void)override;
+	virtual void Init(Vector2F* movePos,Vector2F*drawPos);
 	virtual void Update(void);
 	virtual void Draw(void);
 	virtual void Release(void);
@@ -23,7 +24,9 @@ protected:
 
 	Base attackObj_;
 
-	Vector2F* playerPos_;
+	Vector2F* pMovePos_;
+	Vector2F* pDrawPos_;
+	float* pSpeed_;
 
 	//更新処理に使うカウンター
 	int attackCounter_;

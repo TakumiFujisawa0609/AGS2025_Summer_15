@@ -11,13 +11,18 @@ PlayerAttackBase::~PlayerAttackBase()
 {
 }
 
-void PlayerAttackBase::Init(Vector2F *pos)
+
+void PlayerAttackBase::Init(void)
+{
+}
+
+void PlayerAttackBase::Init(Vector2F* movePos, Vector2F* drawPos)
 {
 	unit_.isAlive_ = false;
-	playerPos_= pos;
+	pMovePos_= movePos;
+	pDrawPos_ = drawPos;
 	isattackEnd_ = false;
 	attackCounter_ = 0;
-
 
 }
 
