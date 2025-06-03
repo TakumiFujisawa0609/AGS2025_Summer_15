@@ -203,7 +203,7 @@ void BossTutorial::Move()
 	if (GetDis(unit_.nextpos_, point) <= unit_.speed_) {
 		attackCounter_ = 0;
 		if (!(targetIndex_ == 1)) {
-			attackState_ = (ATTACK)GetRand(3);
+			attackState_ = BossTutorial::TACKLE;//(ATTACK)GetRand(4);
 			pattaern_ = E_ATTACK;
 		}
 		else {
@@ -312,13 +312,41 @@ void BossTutorial::Attack()
 		blast_->Update();
 		break;
 	case BossTutorial::TACKLE:
+
 		if (attackCounter_ == 1) {
 			tackle_->Init(&unit_.pos_);
 		}
 
+		Tackle::MODE mode_ = Tackle::NON_MODE;
+
+		tackle_->SetTarget(player_->GetUnit().pos_);
+
+		if (attackCounter_ > Tackle::WAIT_TIME && mode_ == Tackle::NON_MODE)
+		{
+			unit_.nextpos_.y -= 10;
+			if (attackCounter_ > Tackle::TACKLE_START && unit_.isGravity_ == true)
+			{
+				mode_ = Tackle::STANP_MODE;
+				unit_.isGravity_ = false;
+			}
+		}
+
+		if (mode_ == Tackle::STANP_MODE && unit_.nextpos_.y + SIZE_Y / 2 > 0)
+		{
+			unit_.nextpos_.y -= 30;
+		}
+
+		if (unit_.nextpos_.y + SIZE_Y / 2 < 0)
+		{
+			unit_.isGravity_ = true;
+		}
+
+			
+		
 
 		break;
 	}
+
 	if (CheckHitKey(KEY_INPUT_U) == 1) {
 		pattaern_ = E_NON;
 	}
