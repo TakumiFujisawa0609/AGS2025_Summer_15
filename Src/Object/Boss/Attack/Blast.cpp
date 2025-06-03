@@ -5,6 +5,9 @@
 
 Blast::Blast()
 {
+	reticleImg_ = LoadGraph("Data/Image/Boss/Reticle.png");
+
+	LoadDivGraph("Data/Image/Effect/Blast.png", BLAST_NUM_MAX, BLAST_NUM_X, BLAST_NUM_Y, BLAST_SIZE, BLAST_SIZE, blastImg_);
 }
 
 Blast::~Blast()
@@ -14,10 +17,6 @@ Blast::~Blast()
 void Blast::Init(const Vector2F* pos)
 {
 	AttackBase::Init(pos);
-
-	reticleImg_ = LoadGraph("Data/Image/Boss/Reticle.png");
-
-	LoadDivGraph("Data/Image/Effect/Blast.png", BLAST_NUM_MAX, BLAST_NUM_X, BLAST_NUM_Y, BLAST_SIZE, BLAST_SIZE, blastImg_);
 
 	obj_.isAlive_ = false;
 	end_ = false;
