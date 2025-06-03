@@ -182,28 +182,19 @@ void BossTutorial::Move()
 		if (t <= 0.0f) t *= -1;
 		float jumppower = (d.y + 0.5f * gravity_ * t * t) / t;
 		unit_.yAccel_ -= jumppower;
+
+		TargetLook(point);
 	}
-
-	TargetLook();
-
-	//if (targetIndex_ == 0)
-	//{
-	//	bossDir_ = AttackBase::DIR::LEFT;
-	//}
-	//else if (targetIndex_ == 2)
-	//{
-	//	bossDir_ = AttackBase::DIR::RIGHT;
-	//}
 
 	attackCounter_++;
 
 	unit_.nextpos_.x += GetMoveVec(unit_.nextpos_, point, unit_.speed_).x;
 
-
 	if (GetDis(unit_.nextpos_, point) <= unit_.speed_) {
 		attackCounter_ = 0;
 		if (!(targetIndex_ == 1)) {
-			attackState_ = (ATTACK)GetRand(3);
+			TargetLook(player_->GetUnit().pos_);
+			attackState_ = (ATTACK)GetRand(0);
 			pattaern_ = E_ATTACK;
 		}
 		else {
@@ -226,29 +217,20 @@ void BossTutorial::Attack()
 			DrawPat_ = E_SLASH_START;
 		}
 
-		if (attackCounter_ == Slash::CHARGE - 1) {
+		if (attackCounter_ < Slash::CHARGE) TargetLook(player_->GetUnit().pos_);
+
+
+		if (attackCounter_ == Slash::CHARGE) {
 			target_ = player_->GetUnit().pos_;
 
 			Slash::DIR dir;
 
-			if (target_.x <= unit_.pos_.x) {
-				dir = Slash::DIR::LEFT;
-				
-			}
-			else {
-				dir = Slash::DIR::RIGHT;
-			}
+			if (target_.x <= unit_.pos_.x)	dir = Slash::DIR::LEFT;
+			else							dir = Slash::DIR::RIGHT;
 
 			slash_->SetTarget(dir);
-		}
-
-		if (attackCounter_ < Slash::CHARGE)
-		{
-			TargetLook();
-		}
-
-		if (attackCounter_ == Slash::CHARGE) {
-			panVec_ = GetMoveVec(unit_.pos_,target_, unit_.speed_ * 3.0f);
+		
+			panVec_ = GetMoveVec(unit_.pos_, target_, unit_.speed_ * 3.0f);
 		}
 
 		if (!(panVec_.x == 0.0f && panVec_.y == 0.0f)) {
@@ -323,7 +305,7 @@ void BossTutorial::Attack()
 		pattaern_ = E_NON;
 	}
 
-	if (attackCounter_ > 1000) {
+	if (attackCounter_ > 1000 || attackState_ == NON) {
 		attackCounter_ = 0;
 		pattaern_ = E_IDLE;
 		attackState_ = NON;
@@ -370,11 +352,11 @@ void BossTutorial::IsGround(Collision::DIR dir)
 }
 
 
-const std::vector<Base> BossTutorial::GetObjAttack(const ATTACK state) const
+const std::vector<Base> BossTutorial::GetAttackObj() const
 {
 	std::vector<Base>ret;
 
-	switch (state)
+	switch (attackState_)
 	{
 	case BossTutorial::NON:
 		break;
@@ -387,18 +369,17 @@ const std::vector<Base> BossTutorial::GetObjAttack(const ATTACK state) const
 	case BossTutorial::ROAR:
 		break;
 	case BossTutorial::BLAST:
+		ret = blast_->Get();
 		break;
 	case BossTutorial::TACKLE:
-		break;
-	case BossTutorial::MAX:
 		break;
 	}
 
 	return ret;
 }
 
-void BossTutorial::TargetLook(void)
+void BossTutorial::TargetLook(Vector2F target)
 {
-	if (player_->GetUnit().pos_.x <= unit_.pos_.x) bossDir_ = AttackBase::DIR::LEFT;
-	else										   bossDir_ = AttackBase::DIR::RIGHT;
+	if (target.x <= unit_.pos_.x)	bossDir_ = AttackBase::DIR::LEFT;
+	else							bossDir_ = AttackBase::DIR::RIGHT;
 }

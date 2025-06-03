@@ -30,8 +30,8 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
-	Base GetObj() { return obj_; }
-	void SetTarget(const AttackBase::DIR dir);
+
+	void SetTarget(const AttackBase::DIR dir) { dir_ = dir; }
 
 private:
 

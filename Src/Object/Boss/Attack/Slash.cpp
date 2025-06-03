@@ -8,6 +8,8 @@
 Slash::Slash()
 {
 	image_ = -1;
+	LoadDivGraph("Data/Image/Boss/SlashAnim.png", ANIM_ALL,
+		X_NUM, Y_NUM, X_SIZE, Y_SIZE, img);
 }
 
 Slash::~Slash()
@@ -16,8 +18,8 @@ Slash::~Slash()
 
 void Slash::Init(const Vector2F* pos)
 {
-	LoadDivGraph("Data/Image/Boss/SlashAnim.png", ANIM_ALL,
-		X_NUM, Y_NUM, X_SIZE, Y_SIZE, img);
+	//LoadDivGraph("Data/Image/Boss/SlashAnim.png", ANIM_ALL,
+	//	X_NUM, Y_NUM, X_SIZE, Y_SIZE, img);
 	
 
 	AttackBase::Init(pos);
@@ -80,9 +82,4 @@ void Slash::Release()
 		DeleteGraph(img[ii]);
 	}
 	DeleteGraph(image_);
-}
-
-void Slash::SetTarget(const AttackBase::DIR dir)
-{
-	dir_ = dir;
 }

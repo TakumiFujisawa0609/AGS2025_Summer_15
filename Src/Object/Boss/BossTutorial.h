@@ -61,43 +61,58 @@ public:
 
 	const ATTACK GetAttack(void)const { return attackState_; }
 
-	const std::vector<Base> GetObjAttack(const ATTACK state)const;
+	const std::vector<Base> GetAttackObj()const;
 
 private:
-	PATTERN pattaern_;
-	ATTACK attackState_;
-
-	int attackCounter_;
-	int targetIndex_;
-
+	//画像
 	int idolImg;
 
 	int StartSlashtImg_;
 	int EndSlashImg_;
 
+	//戦闘を行うか行わないか
 	bool encount_;
-
-	void PattaernManager(void);
 	bool EnCount(void);
+
+	//ボスの立ち位置の振り分け
+	int targetIndex_;
+
+	//状態
+	PATTERN pattaern_;
+	ATTACK attackState_;
+
+	//状態管理
+	void PattaernManager(void);
+
+	//状態ごとの行動
 	void Idle(void);
 	void Move();
 	void Attack();
-	void TargetLook(void);
+
+
+	//便利
+	int attackCounter_;
+
+	Vector2F panVec_;
+	Vector2F target_;
+
+	DRAWPAT DrawPat_;
+
+	AttackBase::DIR bossDir_;
+
+
+	//指定した座標の方向を向く
+	void TargetLook(Vector2F target);
 
 
 	// 接地している時の数値の代入などをまとめた関数
 	void IsGround(Collision::DIR dir)override;
 
 
-	Vector2F panVec_;
-	Vector2F target_;
-
-	AttackBase::DIR bossDir_;
-
-	DRAWPAT DrawPat_;
-
+	//攻撃クラスのインスタンス達----
 	Slash* slash_;
 	Bullet* bullet_;
 	Blast* blast_;
 	Tackle* tackle_;
+	//------------------------------
 };
