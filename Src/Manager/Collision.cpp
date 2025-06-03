@@ -16,6 +16,7 @@ void Collision::Init()
 {
 }
 
+
 const float Collision::GetStageLine(const Vector2F& pos, const Vector2F& size , const DIR dir) const
 {
 	// ’Tõ•ûŒü‚É‡‚í‚¹‚Ä‰ŠúˆÊ’u‚ğ’²®

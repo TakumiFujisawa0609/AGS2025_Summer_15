@@ -17,11 +17,18 @@ void Tackle::Init(const Vector2F* pos)
 
 void Tackle::Update()
 {
-
+	if (obj_.isAlive_)
+	{
+		
+	}
 }
 
 void Tackle::Draw()
 {
+	if (obj_.isAlive_)
+	{
+		
+	}
 }
 
 void Tackle::Release()

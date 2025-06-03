@@ -3,6 +3,7 @@
 
 #include"Attack/Slash.h"
 #include"Attack/Bullet.h"
+#include"Attack/Blast.h"
 #include"Attack/Tackle.h"
 
 
@@ -16,8 +17,17 @@ public:
 	enum PATTERN
 	{
 		E_NON,
+		E_IDLE,
 		E_MOVE,
 		E_ATTACK,
+
+	};
+
+	enum DRAWPAT
+	{
+		NORMAL,
+		E_SLASH_START,
+		E_SLASH_END,
 	};
 
 	enum ATTACK
@@ -62,12 +72,17 @@ private:
 
 	int idolImg;
 
+	int StartSlashtImg_;
+	int EndSlashImg_;
+
 	bool encount_;
 
 	void PattaernManager(void);
 	bool EnCount(void);
-	void Attack();
+	void Idle(void);
 	void Move();
+	void Attack();
+	void TargetLook(void);
 
 
 	// Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
@@ -79,8 +94,10 @@ private:
 
 	AttackBase::DIR bossDir_;
 
+	DRAWPAT DrawPat_;
 
 	Slash* slash_;
 	Bullet* bullet_;
+	Blast* blast_;
 	Tackle* tackle_;
 };

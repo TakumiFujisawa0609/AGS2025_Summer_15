@@ -16,7 +16,6 @@ public:
 	void Init();
 	void SetStage(int map,int y,int x){ mapData_[y][x] = map; }
 
-
 	enum DIR {
 		UP,
 		DOWN,

@@ -4,20 +4,22 @@
 struct Base
 {
 	//変数
-	bool isAlive_;		//生存判定(true=生存/false=死んでいる！！！)
+	bool isAlive_;			//生存判定(true=生存/false=死んでいる！！！)
 	bool isDraw_;
 
-	Vector2F pos_;		//ワールド座標
-	Vector2F nextpos_;	//座標更新用変数
-	Vector2F disppos_;	//マップ座標
+	Vector2F pos_;			//ワールド座標
+	Vector2F nextpos_;		//座標更新用変数
+	Vector2F disppos_;		//マップ座標
 
-	float xAccel_;		//横方向の移動量計算用変数
-	float yAccel_;		//縦方向の移動量計算用変数
+	float xAccel_;			//横方向の移動量計算用変数
+	float yAccel_;			//縦方向の移動量計算用変数
 
-	bool isGravity_;	//重力をかけるかどうか(true = かける / false = かけない)
-	bool isGround_;		//接地判定	(true = 接地している / false = 接地していない)
+	bool isGravity_;		//重力をかけるかどうか(true = かける / false = かけない)
+	bool isGround_;			//接地判定	(true = 接地している / false = 接地していない)
 
-	int hp_;			//ヒットポイント
+	bool isStageCollision_;	//ステージとの当たり判定を実行するかどうか　(true = する / false = しない)
+
+	int hp_;				//ヒットポイント
 
 	//パラメータ(定数扱い)
 	float speed_;		//移動速度
