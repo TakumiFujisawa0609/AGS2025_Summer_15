@@ -8,8 +8,12 @@ class ArialSweep;
 class Player:public UnitBase
 {
 public:
-	static constexpr int SIZE_X = 96;		//画像サイズ
-	static constexpr int SIZE_Y = 96;	//画像サイズ
+	static constexpr int LOAD_SIZE_X = 120;		//画像サイズ
+	static constexpr int LOAD_SIZE_Y = 80;		//画像サイズ
+
+	static constexpr int SIZE_X = 32;
+	static constexpr int SIZE_Y = 128;
+
 	static constexpr float RADIUS = 64.0f;
 
 	static constexpr int HP_MAX = 100;
