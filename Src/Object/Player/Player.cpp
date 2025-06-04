@@ -12,6 +12,7 @@
 
 Player::Player()
 {
+	LoadPlayerImage();
 }
 
 Player::~Player()
@@ -22,12 +23,11 @@ Player::~Player()
 
 void Player::Init()
 {
-	//LoadPlayerImage();
 
 	unit_.isAlive_ = true;
 	unit_.pos_ = { Application::MAIN_SCREEN_SIZE_X / 2,Application::MAIN_SCREEN_SIZE_Y / 2 };
 	unit_.nextpos_ = unit_.pos_;
-	unit_.size_ = { /*SIZE_X,SIZE_Y,*/33.0f,65.0f };
+	unit_.size_ = { SIZE_X,SIZE_Y, };
 	unit_.radius_ = RADIUS;
 	unit_.hp_ = HP_MAX;
 	unit_.speed_ = MOVE_POW;
@@ -93,7 +93,7 @@ void Player::Update()
 
 void Player::Draw()
 {
-	DrawOval(unit_.disppos_.x, unit_.disppos_.y, unit_.size_.x / 2, unit_.size_.y / 2, 0xff0000, true);
+	//DrawOval(unit_.disppos_.x, unit_.disppos_.y, unit_.size_.x / 2, unit_.size_.y / 2, 0xff0000, true);
 
 	DrawFormatString(0, 64, 0x0000ff, "プレイヤー座標(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
 	DrawFormatString(0, 80, 0x0000ff, "プレイヤーの向き%d", playerDir_);
@@ -115,14 +115,14 @@ void Player::Draw()
 
 		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 50, 0x0000ff, true);
 	}
-	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
-		DrawCircle(unit_.disppos_.x-20, unit_.disppos_.y, 6, 0x00ff00);
-	}
-	else if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
-		DrawCircle(unit_.disppos_.x + 20, unit_.disppos_.y, 6, 0x00ff00);
-	}
+	//if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
+	//	DrawCircle(unit_.disppos_.x-20, unit_.disppos_.y, 6, 0x00ff00);
+	//}
+	//else if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
+	//	DrawCircle(unit_.disppos_.x + 20, unit_.disppos_.y, 6, 0x00ff00);
+	//}
 
-	//SetDrawPlayer();
+	SetDrawPlayer();
 }
 
 void Player::Release()
@@ -130,6 +130,15 @@ void Player::Release()
 	arialSweep_->Release();
 	delete arialSweep_;
 	arialSweep_ = nullptr;
+
+	//画像解放
+	for (int i = 0; i < (int)MOTION_TYPE::E_MOTION_MAX; i++) {
+		for (auto id : image_[i]) {
+			DeleteGraph(id);
+		}
+		image_[i].clear();
+	}
+
 }
 
 
@@ -564,71 +573,108 @@ void Player::JustGuard(void)
 
 
 
-//void Player::LoadPlayerImage(void)
-//{
-//	std::string basePath = Application::PATH_PLAYER;
-//
-//	int motion = 0;
-//	int motion_max = static_cast<int>(MOTION_TYPE::E_MOTION_MAX);
-//
-//	//画像ハンドル番号のテーブルの初期化
-//	for (int i = 0; i < motion_max; i++) {
-//		for (int j = 0; j < 15; j++) {
-//			img[i][j] = -1;
-//		}
-//	}
-//	//待機モーション
-//	int err;
-//	motion = static_cast<int>(MOTION_TYPE::E_MOTION_IDLE);
-//	err=LoadDivGraph((basePath+"IDLE.png").c_str(),3,3,1,
-//		SIZE_X, SIZE_Y, &img[motion][4]);
-//	int img= LoadGraph("Data/Image/Player/IDLE.png");
-//	////走りモーション
-//	//motion = static_cast<int>(MOTION_TYPE::E_MOTION_RUN);
-//	//err = LoadDivGraph((basePath+"RUN.png").c_str(), MAX_ANIM_NUM, MAX_ANIM_NUM, 1,
-//	//	SIZE_X, SIZE_Y, &img[motion]);
-//	////ジャンプモーション
-//	//motion = static_cast<int>(MOTION_TYPE::E_MOTION_JUMP);
-//	//err=LoadDivGraph((basePath+"JUMP.png").c_str(), MAX_ANIM_NUM, MAX_ANIM_NUM, 1,
-//	//	SIZE_X, SIZE_Y, &img[motion]);
-//
-//	
-//}
+void Player::LoadPlayerImage(void)
+{
+	std::string basePath = Application::PATH_PLAYER;
+
+	int motion = 0;
+
+	//待機状態の画像を読み込み-----------------------------------------------
+	motion = (int)MOTION_TYPE::E_MOTION_IDLE;
+
+	int idleLoad[IDLE_LOAD_NUM];
+
+	LoadDivGraph((basePath + "Idle.png").c_str(),
+		IDLE_LOAD_NUM, IDLE_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y,idleLoad);
+
+	image_[motion].insert(image_[motion].end(), idleLoad, idleLoad + IDLE_LOAD_NUM);
+	//-----------------------------------------------------------------------
+
+	//走り状態の画像を読み込み-----------------------------------------------
+	motion = (int)MOTION_TYPE::E_MOTION_RUN;
+
+	int runLoad[RUN_LOAD_NUM];
+
+	LoadDivGraph((basePath + "Run.png").c_str(),
+		RUN_LOAD_NUM, RUN_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, runLoad);
+
+	image_[motion].insert(image_[motion].end(), runLoad, runLoad + RUN_LOAD_NUM);
+	//-----------------------------------------------------------------------
+
+	//ジャンプ状態の画像を読み込み-------------------------------------------
+	motion = (int)MOTION_TYPE::E_MOTION_JUMP;
+
+	int jumpLoad[JUMP_LOAD_NUM];
+
+	LoadDivGraph((basePath + "Jump.png").c_str(),
+		JUMP_LOAD_NUM, JUMP_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, jumpLoad);
+
+	image_[motion].insert(image_[motion].end(), jumpLoad, jumpLoad + JUMP_LOAD_NUM);
+	//-----------------------------------------------------------------------
+
+	//落下状態の画像を読み込み-----------------------------------------------
+	motion = (int)MOTION_TYPE::E_MOTION_FALL;
+
+	int fallLoad[FALL_LOAD_NUM];
+
+	LoadDivGraph((basePath + "Fall.png").c_str(),
+		FALL_LOAD_NUM, FALL_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, fallLoad);
+		
+	image_[motion].insert(image_[motion].end(), fallLoad, fallLoad + JUMP_LOAD_NUM);
+	//-----------------------------------------------------------------------
+
+	//回避状態の画像を読み込み-----------------------------------------------
+	motion = (int)MOTION_TYPE::E_MOTION_EVASION;
+
+	int evasionlLoad[EVASION_LOAD_NUM];
+
+	LoadDivGraph((basePath + "Roll.png").c_str(),
+		EVASION_LOAD_NUM, EVASION_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, evasionlLoad);
+
+	image_[motion].insert(image_[motion].end(), evasionlLoad, evasionlLoad + EVASION_LOAD_NUM);
+	//-----------------------------------------------------------------------
+}
 
 
-//void Player::DrawPlayer(int modelId)
-//{
-//	//プレイヤーの向き
-//	bool isLeft = true;
-//	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
-//		isLeft = false;
-//	}
-//	DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y-SIZE_Y/2,
-//		10.0, 0.0, modelId, true, isLeft);
-//}
-//
-//void Player::SetDrawPlayer(void)
-//{
-//	if (isJump_) {
-//		//ジャンプ中
-//		motionType_ = MOTION_TYPE::E_MOTION_JUMP;
-//	}
-//
-//	//現在のモーション
-//	int nowMotion = static_cast<int>(motionType_);
-//	switch (motionType_)
-//	{
-//	case Player::MOTION_TYPE::E_MOTION_IDLE:
-//		DrawPlayer(img[nowMotion][0]);
-//	case Player::MOTION_TYPE::E_MOTION_RUN:
-//	case Player::MOTION_TYPE::E_MOTION_JUMP:
-//	case Player::MOTION_TYPE::E_MOTION_DAMAGE:
-//	case Player::MOTION_TYPE::E_MOTION_EVASION:
-//		break;
-//	}
-//
-//
-//}
+void Player::DrawPlayer(std::vector<int> modelId, bool loop)
+{
+	//プレイヤーの向き
+	bool isLeft = true;
+	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) isLeft = false;
+
+
+	animCounter_+=0.5;
+	if (animCounter_ >= modelId.size()) {
+		animCounter_ = (loop) ? 0.0f : modelId.size() - 1;
+	}
+	DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2,
+		2, 0, modelId[(int)animCounter_], true, isLeft);
+}
+
+
+void Player::SetDrawPlayer(void)
+{
+	bool loop = true;
+	if (isJump_) {
+		//ジャンプ中
+		motionType_ = MOTION_TYPE::E_MOTION_JUMP;
+		if (unit_.yAccel_ > 0.0f)motionType_ = MOTION_TYPE::E_MOTION_FALL;
+	}
+	if (isEvasion_) {
+		motionType_ = MOTION_TYPE::E_MOTION_EVASION;
+		loop = false;
+	}
+	if (!(motionType_ == MOTION_TYPE::E_MOTION_DAMAGE)) {
+		//現在のモーション
+		int nowMotion = (int)motionType_;
+		DrawPlayer(image_[nowMotion],loop);
+	}
+}
 
 
 

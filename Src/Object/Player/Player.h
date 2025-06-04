@@ -11,8 +11,15 @@ public:
 	static constexpr int LOAD_SIZE_X = 120;		//画像サイズ
 	static constexpr int LOAD_SIZE_Y = 80;		//画像サイズ
 
-	static constexpr int SIZE_X = 32;
-	static constexpr int SIZE_Y = 128;
+	static constexpr int IDLE_LOAD_NUM = 10;
+	static constexpr int RUN_LOAD_NUM = 10;
+	static constexpr int JUMP_LOAD_NUM = 3;
+	static constexpr int FALL_LOAD_NUM = 3;
+	static constexpr int EVASION_LOAD_NUM = 12;
+
+
+	static constexpr int SIZE_X = 25;
+	static constexpr int SIZE_Y = 80;
 
 	static constexpr float RADIUS = 64.0f;
 
@@ -48,6 +55,7 @@ public:
 		E_MOTION_IDLE,		//待機モーション
 		E_MOTION_RUN,		//走りモーション
 		E_MOTION_JUMP,		//ジャンプモーション
+		E_MOTION_FALL,
 		E_MOTION_DAMAGE,	//被ダメージモーション
 		E_MOTION_EVASION,	//回避モーション
 
@@ -90,11 +98,20 @@ public:
 	void SetAliveOff(void) { unit_.isAlive_ = false; }
 
 private:
-	//プレイヤー画像のハンドル番号
-	int img[static_cast<int>(MOTION_TYPE::E_MOTION_MAX)][15];
+	//プレイヤー描画関係--------------------------------------------------
+	std::vector<int> image_[(int)MOTION_TYPE::E_MOTION_MAX];
 
-	//モーションタイプ
-	MOTION_TYPE motionType_;
+	float animCounter_;			//アニメーションカウンター
+
+	
+	MOTION_TYPE motionType_;	//モーションタイプ
+
+	//関数達
+	void LoadPlayerImage(void);		//プレイヤー画像の読み込み処理
+	void DrawPlayer(std::vector<int> modelId,bool loop=true);		//プレイヤーの描画
+	void SetDrawPlayer(void);		//描画するプレイヤーの設定
+
+	//--------------------------------------------------------------------
 
 	//移動処理--------------------------------------------------------------
 	void Move(void);	
@@ -149,10 +166,7 @@ private:
 	bool isEvasionInbincible_;	//回避時無敵フラグ(true=無敵/false=無敵じゃないよ)
 	AsoUtility::DIRECTION workDir_;	//一時退避用
 
-	float animCounter_;			//アニメーションカウンター
-	//void LoadPlayerImage(void);		//プレイヤー画像の読み込み処理
-	//void DrawPlayer(int modelId);		//プレイヤーの描画
-	//void SetDrawPlayer(void);		//描画するプレイヤーの設定
+
 
 
 	//ガード---------------------------------------------
