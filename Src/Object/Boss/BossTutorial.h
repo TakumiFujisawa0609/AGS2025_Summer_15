@@ -14,6 +14,15 @@ public:
 	static constexpr int SIZE_X = 240;
 	static constexpr int SIZE_Y = 249;
 
+
+	static constexpr int BOSS_HP = 100;						//ボスの最大体力
+	static constexpr int BOSS_HP_X = 5;					//ボスのHPゲージのX座標始点
+	static constexpr int BOSS_HP_Y = 15;						//ボスのHPゲージのY座標始点と描画距離
+	static constexpr int BOSS_HP_DISP_Y = 30;				//ボスのHPゲージのX座標の描画距離
+
+	static constexpr float HP_YABAI = 0.3f;			    	// 瀕死のしきい値（30%未満）
+	const int BLINK_FLAME = 60;				// 一回の点滅のフレーム（60フレーム＝1秒）
+
 	enum PATTERN
 	{
 		E_NON,
@@ -57,11 +66,15 @@ public:
 	void Draw()override;
 	void Release()override;
 
+	void DrawHP();
+
 	const bool GetEnCount(void)const { return encount_; }
 
 	const ATTACK GetAttack(void)const { return attackState_; }
 
 	const std::vector<Base> GetObjAttack(const ATTACK state)const;
+
+	void SetDamage(int dmg) { unit_.hp_ -= dmg; }
 
 private:
 	PATTERN pattaern_;
@@ -74,6 +87,8 @@ private:
 
 	int StartSlashtImg_;
 	int EndSlashImg_;
+
+	int frameCount;
 
 	bool encount_;
 
@@ -100,4 +115,6 @@ private:
 	Bullet* bullet_;
 	Blast* blast_;
 	Tackle* tackle_;
+
+	
 };

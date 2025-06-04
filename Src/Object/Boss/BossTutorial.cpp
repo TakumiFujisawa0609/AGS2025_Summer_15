@@ -22,6 +22,8 @@ void BossTutorial::Init()
 	unit_.radius_ = 0;
 	unit_.size_ = { 240, 249 };
 	unit_.speed_ = 10.0f;
+	unit_.hp_ = BOSS_HP;
+	frameCount = 0;
 
 	pattaern_ = E_NON;
 	attackState_ = NON;
@@ -45,39 +47,56 @@ void BossTutorial::Update()
 	if (encount_) {
 		PattaernManager();
 	}
+	
 
+	if (CheckHitKey(KEY_INPUT_0)) {
+		unit_.hp_ -= 5;
+	}
+
+	frameCount += 2;
 
 	EnemyBase::Update();
 }
 
 void BossTutorial::Draw()
 {
-	if (unit_.isDraw_)
+	if (encount_)
 	{
-		bullet_->Draw();
-		blast_->Draw();
+		DrawHP();
 
-		switch (DrawPat_)
-		{
-		case NORMAL:
-			// ’Êíó‘Ô
-			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, idolImg, true, bossDir_);
-			break;
-		case E_SLASH_START:
-			// Œ•‚ðU‚èã‚°‚é
-			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, StartSlashtImg_, true, bossDir_);
-			break;
-		case E_SLASH_END:
-			// Œ•‚ðU‚è‰º‚ë‚·
-			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y + 14, 1.0f, 0.0f, EndSlashImg_, true, bossDir_);
-			break;
-		}
-
-		slash_->Draw();
-
-		
-		//DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
 	}
+
+	if (unit_.isAlive_)
+	{
+		if (unit_.isDraw_)
+		{
+			bullet_->Draw();
+			blast_->Draw();
+
+			switch (DrawPat_)
+			{
+			case NORMAL:
+				// ’Êíó‘Ô
+				DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, idolImg, true, bossDir_);
+				break;
+			case E_SLASH_START:
+				// Œ•‚ðU‚èã‚°‚é
+				DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, StartSlashtImg_, true, bossDir_);
+				break;
+			case E_SLASH_END:
+				// Œ•‚ðU‚è‰º‚ë‚·
+				DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y + 14, 1.0f, 0.0f, EndSlashImg_, true, bossDir_);
+				break;
+			}
+
+			slash_->Draw();
+
+
+			//DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
+		}
+	}
+
+	
 	DrawFormatString(120, 120, 0x0fffff, "boss(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
 }
 
@@ -129,7 +148,6 @@ void BossTutorial::PattaernManager(void)
 		break;
 	}
 }
-
 
 bool BossTutorial::EnCount(void)
 {
@@ -203,7 +221,7 @@ void BossTutorial::Move()
 	if (GetDis(unit_.nextpos_, point) <= unit_.speed_) {
 		attackCounter_ = 0;
 		if (!(targetIndex_ == 1)) {
-			attackState_ = BossTutorial::TACKLE;//(ATTACK)GetRand(4);
+			attackState_ = BossTutorial::SLASH;//(ATTACK)GetRand(4);
 			pattaern_ = E_ATTACK;
 		}
 		else {
@@ -233,7 +251,7 @@ void BossTutorial::Attack()
 
 			if (target_.x <= unit_.pos_.x) {
 				dir = Slash::DIR::LEFT;
-				
+
 			}
 			else {
 				dir = Slash::DIR::RIGHT;
@@ -248,7 +266,7 @@ void BossTutorial::Attack()
 		}
 
 		if (attackCounter_ == Slash::CHARGE) {
-			panVec_ = GetMoveVec(unit_.pos_,target_, unit_.speed_ * 3.0f);
+			panVec_ = GetMoveVec(unit_.pos_, target_, unit_.speed_ * 3.0f);
 		}
 
 		if (!(panVec_.x == 0.0f && panVec_.y == 0.0f)) {
@@ -295,7 +313,7 @@ void BossTutorial::Attack()
 		attackState_ = NON;
 		break;
 	case BossTutorial::BLAST:
-		
+
 		if (attackCounter_ == 1) {
 			blast_->Init(&unit_.pos_);
 		}
@@ -313,38 +331,47 @@ void BossTutorial::Attack()
 		break;
 	case BossTutorial::TACKLE:
 
+		Tackle::MODE mode_;
+
+		Vector2 start;
+		start.x = (Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2;
+		start.y = (Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2;
+
 		if (attackCounter_ == 1) {
 			tackle_->Init(&unit_.pos_);
+			mode_ = Tackle::NON_MODE;
 		}
 
-		Tackle::MODE mode_ = Tackle::NON_MODE;
 
-		tackle_->SetTarget(player_->GetUnit().pos_);
-
-		if (attackCounter_ > Tackle::WAIT_TIME && mode_ == Tackle::NON_MODE)
+		if (attackCounter_ > Tackle::WAIT_TIME)
 		{
+			unit_.nextpos_.x = player_->GetUnit().nextpos_.x;
+
 			unit_.nextpos_.y -= 10;
 			if (attackCounter_ > Tackle::TACKLE_START && unit_.isGravity_ == true)
 			{
 				mode_ = Tackle::STANP_MODE;
+				unit_.isStageCollision_ = false;
 				unit_.isGravity_ = false;
 			}
 		}
 
-		if (mode_ == Tackle::STANP_MODE && unit_.nextpos_.y + SIZE_Y / 2 > 0)
+		if ( !unit_.isGravity_)
 		{
-			unit_.nextpos_.y -= 30;
+			if (unit_.nextpos_.y + SIZE_Y / 2 > start.y)
+			{
+				unit_.nextpos_.y -= 30;
+			}
+			else
+			{
+
+			}
+
+
 		}
+		tackle_->SetTarget(player_->GetUnit().pos_);
 
-		if (unit_.nextpos_.y + SIZE_Y / 2 < 0)
-		{
-			unit_.isGravity_ = true;
-		}
 
-			
-		
-
-		break;
 	}
 
 	if (CheckHitKey(KEY_INPUT_U) == 1) {
@@ -362,6 +389,7 @@ void BossTutorial::Attack()
 
 void BossTutorial::IsGround(Collision::DIR dir)
 {
+
 	switch (dir)
 	{
 	case Collision::UP:
@@ -429,4 +457,54 @@ void BossTutorial::TargetLook(void)
 {
 	if (player_->GetUnit().pos_.x <= unit_.pos_.x) bossDir_ = AttackBase::DIR::LEFT;
 	else										   bossDir_ = AttackBase::DIR::RIGHT;
+}
+
+void BossTutorial::DrawHP()
+{
+	Vector2 start;
+	start.x = (Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2;
+	start.y = (Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2;
+
+	// 1. HPƒo[‚Ì˜g‚ð•`‰æiHPƒo[‘S‘Ì‚ðˆÍ‚Þj
+	int barWidth = BOSS_HP * BOSS_HP_X;
+	int barHeight = BOSS_HP_DISP_Y;
+	int barStartX = start.x + (Application::SCREEN_SIZE_X / 2) - (barWidth / 2);
+	int barStartY = start.y + BOSS_HP_Y;
+
+	int frameLeft = barStartX - 1;
+	int frameTop = barStartY - 1;
+	int frameRight = barStartX + barWidth + 1;
+	int frameBottom = barStartY + barHeight + 1;
+
+	DrawBox(frameLeft, frameTop, frameRight, frameBottom, RGB(255, 255, 255), false);
+
+	
+	// 1. ‹ó‚ÌHPƒo[iŠDFj
+	for (int i = 0; i < BOSS_HP; ++i) {
+		int indexFromRight = BOSS_HP - 1 - i;
+		int left = barStartX + BOSS_HP_X * indexFromRight;
+		int right = left + (BOSS_HP_X - 1);
+		int top = barStartY;
+		int bottom = barStartY + BOSS_HP_DISP_Y;
+
+		DrawBox(left, top, right, bottom, RGB(80, 80, 80), true);
+	}
+
+	bool isCritical = (unit_.hp_ < BOSS_HP * HP_YABAI);
+	bool blinkOn = (frameCount % BLINK_FLAME) < (BLINK_FLAME / 2); 
+
+	for (int i = 0; i < unit_.hp_; ++i) {
+		if (isCritical && !blinkOn) {
+			continue;
+		}
+
+		int indexFromRight = BOSS_HP - 1 - i;
+		int left = barStartX + BOSS_HP_X * indexFromRight;
+		int right = left + (BOSS_HP_X - 1);
+		int top = barStartY;
+		int bottom = barStartY + BOSS_HP_DISP_Y;
+
+		COLORREF color = isCritical ? RGB(0, 0, 255) : RGB(0, 255, 0);
+		DrawBox(left, top, right, bottom, color, true);
+	}
 }
