@@ -33,6 +33,11 @@ public:
 	static constexpr int MAX_ANIM_NUM = 10;		//最大アニメーションパターン
 	static constexpr float ANIM_SPEED = 0.1f;	//アニメーションスピード
 
+	static constexpr int GUARD_TIME_MAX = 180;		//最大ガード時間
+	static constexpr int GUARD_PER_TIME = 5;		//前硬直時間
+	static constexpr int GUARD_POST_TIME = 10;		//後硬直時間
+	static constexpr int GUARD_JUST_TIME = 5;		//ジャストガード猶予時間
+
 	//モーションタイプ
 	enum class MOTION_TYPE
 	{
@@ -54,6 +59,15 @@ public:
 		E_ATTACK_STAT_MAX,
 	};
 
+	enum class GUARD_STAT
+	{
+		E_GUARD_NON,		//非ガード状態
+		E_GUARD_PER,		//前硬直
+		E_GUARD,			//ガード
+		E_GUARD_POST,		//後硬直
+
+		E_GUARD_MAX,
+	};
 
 	Player();
 	~Player();
@@ -145,14 +159,14 @@ private:
 	void JustGuard(void);
 	bool isGuard_;			//ガード中
 	int guardMaxCounter_;	//最大ガード時間
-	int perStiffness_;		//前硬直
-	bool isperStiffness_;	//前硬直フラグ
-	int postStiffness_;		//後硬直
+	int perStiffness_;		//前硬直カウンター
+	bool isPerStiffness_;	//前硬直フラグ
+	int postStiffness_;		//後硬直カウンター
 	bool isPostStiffness_;	//後硬直フラグ
-	int perGuardKey_;		//トリガーアップ用変数
-	int nowGuardKey_;		//トリガーアップ用変数
+	bool perGuardKey_;		//トリガーアップ用変数
+	bool nowGuardKey_;		//トリガーアップ用変数
 	int guardKeyUpBuffer_;	//後入力受付猶予カウンター
-
+	GUARD_STAT guardStat_;	
 
 };
 

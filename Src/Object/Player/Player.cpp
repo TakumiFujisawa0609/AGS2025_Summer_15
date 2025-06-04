@@ -60,15 +60,16 @@ void Player::Init()
 	evasionCoolDown_ = 0;
 
 	// ガード用変数の初期化
-    isGuard_ = false;           // ガード中
-    guardMaxCounter_ = 60;      // 最大ガード時間（例: 60フレーム）
-    perStiffness_ = 5;          // 前硬直（例: 5フレーム）
-    isperStiffness_ = false;    // 前硬直フラグ
-    postStiffness_ = 10;        // 後硬直（例: 10フレーム）
-    isPostStiffness_ = false;   // 後硬直フラグ
-    perGuardKey_ = 0;           // トリガーアップ用変数
-    nowGuardKey_ = 0;           // トリガーアップ用変数
-	guardKeyUpBuffer_=0;		//後入力受付猶予カウンター
+	isGuard_ = false;           // ガード中
+	guardMaxCounter_ = 0;      // 最大ガード時間
+	perStiffness_ = 0;          // 前硬直
+	isPerStiffness_ = false;    // 前硬直フラグ
+	postStiffness_ = 0;        // 後硬直
+	isPostStiffness_ = false;   // 後硬直フラグ
+	perGuardKey_ = false;           // トリガーアップ用変数
+	nowGuardKey_ = false;           // トリガーアップ用変数
+	guardKeyUpBuffer_ = 0;		//ジャストガード受付猶予カウンター
+	guardStat_ = GUARD_STAT::E_GUARD_NON;
 
 
 	arialSweep_ = new ArialSweep();
@@ -80,9 +81,9 @@ void Player::Init()
 void Player::Update()
 {
 	if (isMove_) {
-	Move();
-	ProcessEvasion();
-	ProcessJump();
+		Move();
+		ProcessEvasion();
+		ProcessJump();
 	}
 
 	ProcessAtatck();
@@ -109,11 +110,11 @@ void Player::Draw()
 	case Player::ATTACK_STAT::E_ATTACK_STAT_ARIALSWEEP:
 		break;
 	}
-		arialSweep_->Draw();
+	arialSweep_->Draw();
 
-		if (isGuard_) {
+	if (isGuard_) {
 
-			DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 50, 0x0000ff, false);
+		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 50, 0x0000ff, true);
 	}
 
 
@@ -453,53 +454,83 @@ void Player::ArialSweepAttack(void)
 	Vector2F vec = GetMoveVec(unit_.disppos_, { (float)mapMousePos_.x,(float)mapMousePos_.y });
 	arialSweepCounter_++;
 	if (arialSweepCounter_ < 15) {
-		unit_.nextpos_ += vec*2;
+		unit_.nextpos_ += vec * 2;
 	}
 	else {
-	unit_.yAccel_ = 0;		//かかりすぎている重力をなくす
-	//初期化
-	unit_.isGravity_ = true;
-	attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
-	arialSweepCounter_ = 0;
-	isMove_ = true;
+		unit_.yAccel_ = 0;		//かかりすぎている重力をなくす
+		//初期化
+		unit_.isGravity_ = true;
+		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
+		arialSweepCounter_ = 0;
+		isMove_ = true;
 	}
 }
 
 void Player::ProcessGuard(void)
 {
 	auto& ins = InputManager::GetInstance();
-	if (ins.IsClickMouseRight()) {
-		Guard();
-	}
-	else {
-		isGuard_ = false;
-
-	}
-
-	//トリガーアップ判定
-	if (perGuardKey_ && !nowGuardKey_) {
-		guardKeyUpBuffer_ = 5;		//例
-	}
-	//猶予カウント中
-	if (guardKeyUpBuffer_ > 0) {
-		JustGuard();
-		guardKeyUpBuffer_--;
-	}
-
 	perGuardKey_ = nowGuardKey_;
 	nowGuardKey_ = ins.IsClickMouseRight();
+	if (!perGuardKey_&&nowGuardKey_)guardStat_ = GUARD_STAT::E_GUARD_PER;
 
-	
+	switch (guardStat_)
+	{
+	case Player::GUARD_STAT::E_GUARD_PER:		//前硬直
+			isMove_ = false;					//ガード中は動けない
+		if (perStiffness_ < GUARD_PER_TIME) {				
+			perStiffness_++;
+		}
+		else {
+			guardStat_ = GUARD_STAT::E_GUARD;	//ガードに遷移
+		}
+		break;
+	case Player::GUARD_STAT::E_GUARD:	
+			Guard();
+		if (!nowGuardKey_&&isGuard_) {
+			guardStat_ = GUARD_STAT::E_GUARD_POST;		//後硬直へ遷移
+			isGuard_ = false;
+		}
+		else {	//ガード中
+		}
+		break;
+	case Player::GUARD_STAT::E_GUARD_POST:		//後硬直
+		//猶予カウント中
+		if (guardKeyUpBuffer_ <GUARD_JUST_TIME) {			//ジャストガード判定処理中
+			JustGuard();
+			guardKeyUpBuffer_++;
+		}
+		if (postStiffness_ <GUARD_POST_TIME) {				//後硬直中
+			postStiffness_++;
+		}
+		else {									//後硬直終了
+			//初期化
+			perStiffness_ = 0;
+			guardKeyUpBuffer_ = 0;
+			postStiffness_ = 0;
+			guardMaxCounter_ = 0;
+			isMove_ = true;
+			guardStat_ = GUARD_STAT::E_GUARD_NON;	//非ガード状態へ遷移
+		}
+		break;
+	}
 }
 
 void Player::Guard(void)
 {
+	guardMaxCounter_++;
 	isGuard_ = true;
+	if (guardMaxCounter_ > GUARD_TIME_MAX) {
+		guardStat_ = GUARD_STAT::E_GUARD_POST;
+		guardKeyUpBuffer_ = GUARD_JUST_TIME;//最大までガードした場合
+											//ジャストガードは発生しない
+		isGuard_ = false;
+	}
 }
 
 void Player::JustGuard(void)
 {
 	SceneManager::GetInstance().Slow();
+	postStiffness_ = 0;		//ジャストガード成功時後硬直削除
 }
 
 
