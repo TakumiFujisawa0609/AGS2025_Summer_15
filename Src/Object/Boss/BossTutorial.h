@@ -102,6 +102,7 @@ private:
 	void Attack();
 	void TargetLook(void);
 
+	void BossDeath();
 	void DrawHP();
 
 	// Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
