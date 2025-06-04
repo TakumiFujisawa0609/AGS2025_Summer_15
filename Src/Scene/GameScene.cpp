@@ -97,8 +97,8 @@ void GameScene::Update(void)
 	}
 
 	if (player_->IsEvasion()) {
-		SceneManager::GetInstance().ZoomPos(player_->GetUnit().disppos_);
-		SceneManager::GetInstance().ZoomScale(1.4f);
+		//SceneManager::GetInstance().ZoomPos(player_->GetUnit().disppos_);
+		//SceneManager::GetInstance().ZoomScale(1.4f);
 	}
 
 	if (ins.IsTrgDown(KEY_INPUT_Z)) {
