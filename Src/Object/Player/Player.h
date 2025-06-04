@@ -25,7 +25,7 @@ public:
 	static constexpr float EVASION_LENGTH = 10.0f;		//回避距離
 	static constexpr int EVASION_TIME = 10;				//回避時間
 	static constexpr int EVASION_INVINCIBLE = 5;		//回避無敵時間
-	static constexpr int EVASION_COOLDOWN = 60;		//回避クールタイム
+	static constexpr int EVASION_COOLDOWN = 18;		//回避クールタイム
 
 	static constexpr int ATTACK_TIME = 60;			//攻撃時間
 	static constexpr int ATTACK_COOLDOWN = 60;
@@ -34,7 +34,7 @@ public:
 	static constexpr float ANIM_SPEED = 0.1f;	//アニメーションスピード
 
 	static constexpr int GUARD_TIME_MAX = 180;		//最大ガード時間
-	static constexpr int GUARD_PER_TIME = 5;		//前硬直時間
+	static constexpr int GUARD_PER_TIME = 10;		//前硬直時間
 	static constexpr int GUARD_POST_TIME = 10;		//後硬直時間
 	static constexpr int GUARD_JUST_TIME = 5;		//ジャストガード猶予時間
 
@@ -143,6 +143,7 @@ private:
 	bool isEvasion_;			//回避フラグ(true=回避中/false=非回避中)
 	bool isEvasionCoolDown_;	//回避クールダウンフラグ(true=クールダウン中/false=非クールダウン中)
 	bool isEvasionInbincible_;	//回避時無敵フラグ(true=無敵/false=無敵じゃないよ)
+	AsoUtility::DIRECTION workDir_;	//一時退避用
 
 	float animCounter_;			//アニメーションカウンター
 	//void LoadPlayerImage(void);		//プレイヤー画像の読み込み処理
@@ -160,9 +161,7 @@ private:
 	bool isGuard_;			//ガード中
 	int guardMaxCounter_;	//最大ガード時間
 	int perStiffness_;		//前硬直カウンター
-	bool isPerStiffness_;	//前硬直フラグ
 	int postStiffness_;		//後硬直カウンター
-	bool isPostStiffness_;	//後硬直フラグ
 	bool perGuardKey_;		//トリガーアップ用変数
 	bool nowGuardKey_;		//トリガーアップ用変数
 	int guardKeyUpBuffer_;	//後入力受付猶予カウンター

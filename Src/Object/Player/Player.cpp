@@ -53,19 +53,19 @@ void Player::Init()
 	playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
 	isMove_ = true;
 
+	//回避
 	isEvasion_ = false;
 	isEvasionCoolDown_ = false;
 	isEvasionInbincible_ = false;
 	evasionCounter_ = 0;
 	evasionCoolDown_ = 0;
+	workDir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
 
 	// ガード用変数の初期化
 	isGuard_ = false;           // ガード中
 	guardMaxCounter_ = 0;      // 最大ガード時間
 	perStiffness_ = 0;          // 前硬直
-	isPerStiffness_ = false;    // 前硬直フラグ
 	postStiffness_ = 0;        // 後硬直
-	isPostStiffness_ = false;   // 後硬直フラグ
 	perGuardKey_ = false;           // トリガーアップ用変数
 	nowGuardKey_ = false;           // トリガーアップ用変数
 	guardKeyUpBuffer_ = 0;		//ジャストガード受付猶予カウンター
@@ -82,7 +82,6 @@ void Player::Update()
 {
 	if (isMove_) {
 		Move();
-		ProcessEvasion();
 		ProcessJump();
 	}
 
@@ -116,7 +115,12 @@ void Player::Draw()
 
 		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 50, 0x0000ff, true);
 	}
-
+	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
+		DrawCircle(unit_.disppos_.x-20, unit_.disppos_.y, 6, 0x00ff00);
+	}
+	else if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
+		DrawCircle(unit_.disppos_.x + 20, unit_.disppos_.y, 6, 0x00ff00);
+	}
 
 	//SetDrawPlayer();
 }
@@ -159,15 +163,31 @@ void Player::ProcessEvasion(void)
 {
 #pragma region	キーボード操作
 	//回避
-	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_S) ||
-		InputManager::GetInstance().IsTrgDown(KEY_INPUT_W) ||
-		InputManager::GetInstance().IsTrgDown(KEY_INPUT_LSHIFT) ||
-		InputManager::GetInstance().IsTrgDown(KEY_INPUT_LCONTROL)
-		&& !isEvasionCoolDown_) {
-		SceneManager::GetInstance().Slow();
+	auto& ins = InputManager::GetInstance();
+	if (ins.IsTrgDown(KEY_INPUT_A) && !isEvasionCoolDown_) {
 		isEvasion_ = true;
-		isEvasionCoolDown_ = true;
 		isEvasionInbincible_ = true;
+		playerDir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
+		workDir_ = playerDir_;
+	}
+	else
+	if (ins.IsTrgDown(KEY_INPUT_D) && !isEvasionCoolDown_) {
+		isEvasion_ = true;
+		isEvasionInbincible_ = true;
+		playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
+		workDir_ = playerDir_;
+	}
+	else
+	if (ins.IsTrgDown(KEY_INPUT_S) && !isEvasionCoolDown_) {
+		isEvasion_ = true;
+		isEvasionInbincible_ = true;
+		workDir_ = playerDir_;
+		if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
+			playerDir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
+		}
+		else if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
+			playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
+		}
 	}
 	//回避時の無敵時間
 	if (isEvasion_) {
@@ -175,12 +195,14 @@ void Player::ProcessEvasion(void)
 		Evasion();
 		//無敵処理
 		if (evasionCounter_ >= EVASION_INVINCIBLE) {
-			isEvasionInbincible_ = false;
+			isEvasionInbincible_ = false;		//無敵時間の終了
 		}
 		//回避処理
 		if (evasionCounter_ >= EVASION_TIME) {
 			evasionCounter_ = 0;
-			isEvasion_ = false;			//無敵時間の終了
+			isEvasion_ = false;				//回避の終了
+			playerDir_ = workDir_;
+			isEvasionCoolDown_ = true;	//回避のクールダウン突入
 		}
 	}
 	//回避のクールダウン
@@ -194,38 +216,38 @@ void Player::ProcessEvasion(void)
 #pragma endregion
 
 #pragma region コントローラー操作
-	auto& inpMng = InputManager::GetInstance();
-	inpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
-	//回避
-	if (inpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER)
-		&& !isEvasionCoolDown_) {
-		SceneManager::GetInstance().Slow();
-		isEvasion_ = true;
-		isEvasionCoolDown_ = true;
-		isEvasionInbincible_ = true;
-	}
-	//回避時の無敵時間
-	if (isEvasion_) {
-		evasionCounter_++;
-		Evasion();
-		//無敵処理
-		if (evasionCounter_ >= EVASION_INVINCIBLE) {
-			isEvasionInbincible_ = false;
-		}
-		//回避処理
-		if (evasionCounter_ >= EVASION_TIME) {
-			evasionCounter_ = 0;
-			isEvasion_ = false;			//無敵時間の終了
-		}
-	}
-	//回避のクールダウン
-	if (isEvasionCoolDown_) {
-		evasionCoolDown_++;
-		if (evasionCoolDown_ >= EVASION_COOLDOWN) {
-			evasionCoolDown_ = 0;
-			isEvasionCoolDown_ = false;		//クールタイムの終了
-		}
-	}
+	//auto& inpMng = InputManager::GetInstance();
+	//inpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+	////回避
+	//if (inpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER)
+	//	&& !isEvasionCoolDown_) {
+	////	SceneManager::GetInstance().Slow();
+	//	isEvasion_ = true;
+	//	isEvasionCoolDown_ = true;
+	//	isEvasionInbincible_ = true;
+	//}
+	////回避時の無敵時間
+	//if (isEvasion_) {
+	//	evasionCounter_++;
+	//	Evasion();
+	//	//無敵処理
+	//	if (evasionCounter_ >= EVASION_INVINCIBLE) {
+	//		isEvasionInbincible_ = false;
+	//	}
+	//	//回避処理
+	//	if (evasionCounter_ >= EVASION_TIME) {
+	//		evasionCounter_ = 0;
+	//		isEvasion_ = false;			//無敵時間の終了
+	//	}
+	//}
+	////回避のクールダウン
+	//if (isEvasionCoolDown_) {
+	//	evasionCoolDown_++;
+	//	if (evasionCoolDown_ >= EVASION_COOLDOWN) {
+	//		evasionCoolDown_ = 0;
+	//		isEvasionCoolDown_ = false;		//クールタイムの終了
+	//	}
+	//}
 #pragma endregion
 
 }
@@ -240,6 +262,8 @@ void Player::Evasion(void)
 		break;
 	case AsoUtility::DIRECTION::E_DIR_LEFT:
 		unit_.nextpos_.x -= EVASION_LENGTH;
+		break;
+	case AsoUtility::DIRECTION::E_DIR_DOWN:
 		break;
 	}
 }
@@ -471,35 +495,35 @@ void Player::ProcessGuard(void)
 	auto& ins = InputManager::GetInstance();
 	perGuardKey_ = nowGuardKey_;
 	nowGuardKey_ = ins.IsClickMouseRight();
-	if (!perGuardKey_&&nowGuardKey_)guardStat_ = GUARD_STAT::E_GUARD_PER;
+	if (!perGuardKey_ && nowGuardKey_)guardStat_ = GUARD_STAT::E_GUARD_PER;
 
 	switch (guardStat_)
 	{
 	case Player::GUARD_STAT::E_GUARD_PER:		//前硬直
-			isMove_ = false;					//ガード中は動けない
-		if (perStiffness_ < GUARD_PER_TIME) {				
+		isMove_ = false;					//ガード中は動けない
+		if (perStiffness_ <= GUARD_PER_TIME) {
 			perStiffness_++;
+			break;
 		}
 		else {
 			guardStat_ = GUARD_STAT::E_GUARD;	//ガードに遷移
 		}
-		break;
-	case Player::GUARD_STAT::E_GUARD:	
-			Guard();
-		if (!nowGuardKey_&&isGuard_) {
+	case Player::GUARD_STAT::E_GUARD:
+		if (!nowGuardKey_ && isGuard_) {
 			guardStat_ = GUARD_STAT::E_GUARD_POST;		//後硬直へ遷移
 			isGuard_ = false;
 		}
-		else {	//ガード中
+		else {
+			Guard();
+			break;
 		}
-		break;
 	case Player::GUARD_STAT::E_GUARD_POST:		//後硬直
 		//猶予カウント中
-		if (guardKeyUpBuffer_ <GUARD_JUST_TIME) {			//ジャストガード判定処理中
+		if (guardKeyUpBuffer_ < GUARD_JUST_TIME) {			//ジャストガード判定処理中
 			JustGuard();
 			guardKeyUpBuffer_++;
 		}
-		if (postStiffness_ <GUARD_POST_TIME) {				//後硬直中
+		if (postStiffness_ < GUARD_POST_TIME) {				//後硬直中
 			postStiffness_++;
 		}
 		else {									//後硬直終了
@@ -517,20 +541,24 @@ void Player::ProcessGuard(void)
 
 void Player::Guard(void)
 {
+	auto& ins = InputManager::GetInstance();
 	guardMaxCounter_++;
 	isGuard_ = true;
+	ProcessEvasion();
+
+
 	if (guardMaxCounter_ > GUARD_TIME_MAX) {
 		guardStat_ = GUARD_STAT::E_GUARD_POST;
 		guardKeyUpBuffer_ = GUARD_JUST_TIME;//最大までガードした場合
-											//ジャストガードは発生しない
+		//ジャストガードは発生しない
 		isGuard_ = false;
 	}
 }
 
 void Player::JustGuard(void)
 {
-	SceneManager::GetInstance().Slow();
-	postStiffness_ = 0;		//ジャストガード成功時後硬直削除
+	//	SceneManager::GetInstance().Slow();
+	postStiffness_ = GUARD_POST_TIME;		//ジャストガード成功時後硬直削除
 }
 
 
