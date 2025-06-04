@@ -130,8 +130,6 @@ void UnitBase::ChangeDispPos(void)
 }
 
 
-
-
 const Vector2F UnitBase::GetMoveVec(const Vector2F _start, const Vector2F _goal, const float _speed)const
 {
 	//スピードの設定
@@ -160,3 +158,47 @@ const float UnitBase::GetDis(const Vector2F _start, const Vector2F _goal) const
 	return dis;
 }
 
+/// <summary>
+/// HPバーの表示
+/// </summary>
+/// <param name="x1">左上座標</param>
+/// <param name="y1">左上座標</param>
+/// <param name="x2">右下座標</param>
+/// <param name="y2">右下座標</param>
+/// <param name="hp">現在</param>
+/// <param name="maxHp">最大</param>
+/// <param name="color">HP色</param>
+/// <param name="frameColor"></param>
+/// <param name="backColor"></param>
+void UnitBase::DrawHpBarFixedSize(
+	int x1, int y1,               
+	int x2, int y2,               
+	int hp, int maxHp,            
+	COLORREF color,               
+	COLORREF frameColor,
+	COLORREF backColor)
+{
+	int barWidth = x2 - x1;
+	int barHeight = y2 - y1;
+
+	if (maxHp <= 0) return; 
+
+	float blockWidth = static_cast<float>(barWidth) / maxHp;
+
+	// 外枠を描画
+	DrawBox(x1 - 1, y1 - 1, x2 + 1, y2 + 1, frameColor, false);
+
+	// 背景バー（空HP）
+	for (int i = 0; i < maxHp; ++i) {
+		int left = static_cast<int>(x1 + blockWidth * i);
+		int right = static_cast<int>(x1 + blockWidth * (i + 1));
+		DrawBox(left, y1, right - 1, y2, backColor, true);
+	}
+
+	// 現在HPの表示
+	for (int i = 0; i < hp; ++i) {
+		int left = static_cast<int>(x1 + blockWidth * i);
+		int right = static_cast<int>(x1 + blockWidth * (i + 1));
+		DrawBox(left, y1, right - 1, y2, color, true);
+	}
+}

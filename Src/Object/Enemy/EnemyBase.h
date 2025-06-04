@@ -22,6 +22,8 @@ public:
 
     void SetPlayer(UnitBase* p) { player_ = p; }
 
+
+
 protected:
     UnitBase* player_;
 
