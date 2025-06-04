@@ -55,14 +55,7 @@ void BossTutorial::Update()
 		unit_.hp_ -= 5;
 	}
 
-<<<<<<< HEAD
 	
-=======
-	if (unit_.hp_ < 0)
-	{
-		unit_.hp_--;
-	}
->>>>>>> de7c27b3dc95b6c80d588fec1c72f9e4910bee7a
 
 	frameCount += 2;
 
@@ -71,13 +64,9 @@ void BossTutorial::Update()
 
 void BossTutorial::Draw()
 {
-<<<<<<< HEAD
 	if (encount_) {
 		DrawHP();
 	}
-=======
-		DrawHP();
->>>>>>> de7c27b3dc95b6c80d588fec1c72f9e4910bee7a
 
 	if (unit_.isAlive_)
 	{
@@ -108,11 +97,6 @@ void BossTutorial::Draw()
 			//DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
 		}
 	}
-<<<<<<< HEAD
-=======
-	
-
->>>>>>> de7c27b3dc95b6c80d588fec1c72f9e4910bee7a
 	
 	DrawFormatString(120, 120, 0x0fffff, "boss(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
 }
@@ -135,10 +119,6 @@ void BossTutorial::Release()
 	delete slash_;
 	slash_ = nullptr;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> de7c27b3dc95b6c80d588fec1c72f9e4910bee7a
 	//画像の開放
 	DeleteGraph(idolImg);
 	DeleteGraph(StartSlashtImg_);
@@ -490,46 +470,31 @@ void BossTutorial::TargetLook(void)
 
 void BossTutorial::DrawHP()
 {
-<<<<<<< HEAD
 	//ボスが死んだらHPバーが揺れ続ける
 	if (unit_.hp_ < 0)unit_.hp_--;
 
 	//HPの変化を検出（減少時のみ揺らす）
-=======
-	// HPの変化を検出（減少時のみ揺らす）
->>>>>>> de7c27b3dc95b6c80d588fec1c72f9e4910bee7a
 	if (unit_.hp_ < prevHp_) {
 		hpShakeTimer_ = 10;
 	}
 	prevHp_ = unit_.hp_;
 
 	if (dispHp_ < unit_.hp_) {
-<<<<<<< HEAD
 		dispHp_ += 1;			//ボスがエンカウントしたら増える！！！！
 	}
 	if (dispHp_ > unit_.hp_) {
 		dispHp_ -= 3;			//HPをゆっくり減らすよ
-=======
-		dispHp_ += 1;
-	}
-	if (dispHp_ > unit_.hp_) {
-		dispHp_ -= 3;
->>>>>>> de7c27b3dc95b6c80d588fec1c72f9e4910bee7a
 	}
 
 	Vector2 start;
 	start.x = (Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2;
 	start.y = (Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2;
 
-<<<<<<< HEAD
 	//鮭鮭
-=======
->>>>>>> de7c27b3dc95b6c80d588fec1c72f9e4910bee7a
 	int shakeX = 0;
 	int shakeY = 0;
 	if (hpShakeTimer_ > 0) {
 		hpShakeTimer_--;
-<<<<<<< HEAD
 		shakeX = GetRand(4) - 2;  //-2〜+2のランダム値
 		shakeY = GetRand(2) - 1;  //-1〜+1のランダム値
 	}
@@ -556,26 +521,6 @@ void BossTutorial::SetDamage(int damage)
 {
 	unit_.hp_ -= damage;
 
-=======
-		shakeX = GetRand(4) - 2;  // -2〜+2のランダム値
-		shakeY = GetRand(2) - 1;  // -1〜+1のランダム値
-	}
-
-	// HPバーの描画
-	DrawHpBarFixedSize(
-		start.x + Application::SCREEN_SIZE_X / 4 + shakeX,
-		start.y + 10 + shakeY,
-		start.x + Application::SCREEN_SIZE_X / 4 * 3 + shakeX,
-		start.y + 40 + shakeY,
-		dispHp_, BOSS_HP, RGB(0, 0, 255)
-	);
-}
-
-void BossTutorial::SetDamage(int damage)
-{
-	unit_.hp_ -= damage;
-
->>>>>>> de7c27b3dc95b6c80d588fec1c72f9e4910bee7a
 	if (unit_.hp_ <= 0) {
 		unit_.isAlive_ = false;
 	}
