@@ -1,4 +1,4 @@
-#include"BossTutorial.h"
+ï»¿#include"BossTutorial.h"
 
 
 BossTutorial::BossTutorial()
@@ -23,6 +23,8 @@ void BossTutorial::Init()
 	unit_.size_ = { 240, 249 };
 	unit_.speed_ = 10.0f;
 	unit_.hp_ = BOSS_HP;
+	hpShakeTimer_ = 0;  // æºã‚Œæ™‚é–“ï¼ˆãƒ•ãƒ¬ãƒ¼ãƒ æ•°ï¼‰
+	prevHp_ = -1;       // ç›´å‰ã®HPï¼ˆå¤‰åŒ–æ¤œå‡ºç”¨ï¼‰
 	frameCount = 0;
 
 	pattaern_ = E_NON;
@@ -53,6 +55,11 @@ void BossTutorial::Update()
 		unit_.hp_ -= 5;
 	}
 
+	if (unit_.hp_ < 0)
+	{
+		unit_.hp_--;
+	}
+
 	frameCount += 2;
 
 	EnemyBase::Update();
@@ -60,11 +67,7 @@ void BossTutorial::Update()
 
 void BossTutorial::Draw()
 {
-	if (encount_)
-	{
 		DrawHP();
-
-	}
 
 	if (unit_.isAlive_)
 	{
@@ -76,15 +79,15 @@ void BossTutorial::Draw()
 			switch (DrawPat_)
 			{
 			case NORMAL:
-				// ’Êíó‘Ô
+				// é€šå¸¸çŠ¶æ…‹
 				DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, idolImg, true, bossDir_);
 				break;
 			case E_SLASH_START:
-				// Œ•‚ğU‚èã‚°‚é
+				// å‰£ã‚’æŒ¯ã‚Šä¸Šã’ã‚‹
 				DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, StartSlashtImg_, true, bossDir_);
 				break;
 			case E_SLASH_END:
-				// Œ•‚ğU‚è‰º‚ë‚·
+				// å‰£ã‚’æŒ¯ã‚Šä¸‹ã‚ã™
 				DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y + 14, 1.0f, 0.0f, EndSlashImg_, true, bossDir_);
 				break;
 			}
@@ -95,6 +98,7 @@ void BossTutorial::Draw()
 			//DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
 		}
 	}
+	
 
 	
 	DrawFormatString(120, 120, 0x0fffff, "boss(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
@@ -119,7 +123,7 @@ void BossTutorial::Release()
 	slash_ = nullptr;
 
 
-	//‰æ‘œ‚ÌŠJ•ú
+	//ç”»åƒã®é–‹æ”¾
 	DeleteGraph(idolImg);
 	DeleteGraph(StartSlashtImg_);
 	DeleteGraph(EndSlashImg_);
@@ -166,11 +170,11 @@ void BossTutorial::Idle(void)
 	{
 	case 0:
 	case 2:
-		targetIndex_ = 1;	//^‚ñ’†‚Ö
+		targetIndex_ = 1;	//çœŸã‚“ä¸­ã¸
 		break;
 	case 1:
 		targetIndex_ = GetRand(1);
-		targetIndex_ *= 2;	//‰E‚©¶‚Ö
+		targetIndex_ *= 2;	//å³ã‹å·¦ã¸
 		break;
 	}
 
@@ -394,13 +398,13 @@ void BossTutorial::IsGround(Collision::DIR dir)
 	{
 	case Collision::UP:
 
-		//“Vˆä‚ÉÕ“Ë‚µ‚Ä‚¢‚½‚çs‚¤ˆ—
+		//å¤©äº•ã«è¡çªã—ã¦ã„ãŸã‚‰è¡Œã†å‡¦ç†
 		unit_.yAccel_ = 0;
 
 		break;
 	case Collision::DOWN:
 
-		//’n–Ê‚ÉÚ’n‚µ‚Ä‚¢‚½‚çs‚¤ˆ—
+		//åœ°é¢ã«æ¥åœ°ã—ã¦ã„ãŸã‚‰è¡Œã†å‡¦ç†
 		unit_.yAccel_ = 0;
 
 		if (unit_.isGround_==false) {
@@ -412,13 +416,13 @@ void BossTutorial::IsGround(Collision::DIR dir)
 		break;
 	case Collision::LEFT:
 
-		//¶‘¤‚Ì•Ç‚ÉÕ“Ë‚µ‚Ä‚¢‚½‚çs‚¤ˆ—
+		//å·¦å´ã®å£ã«è¡çªã—ã¦ã„ãŸã‚‰è¡Œã†å‡¦ç†
 		unit_.xAccel_ = 0;
 		break;
 
 	case Collision::RIGHT:
 
-		//‰E‘¤‚Ì•Ç‚ÉÕ“Ë‚µ‚Ä‚¢‚½‚çs‚¤ˆ—
+		//å³å´ã®å£ã«è¡çªã—ã¦ã„ãŸã‚‰è¡Œã†å‡¦ç†
 		unit_.xAccel_ = 0;
 
 		break;
@@ -461,50 +465,46 @@ void BossTutorial::TargetLook(void)
 
 void BossTutorial::DrawHP()
 {
+	// HPã®å¤‰åŒ–ã‚’æ¤œå‡ºï¼ˆæ¸›å°‘æ™‚ã®ã¿æºã‚‰ã™ï¼‰
+	if (unit_.hp_ < prevHp_) {
+		hpShakeTimer_ = 10;
+	}
+	prevHp_ = unit_.hp_;
+
+	if (dispHp_ < unit_.hp_) {
+		dispHp_ += 1;
+	}
+	if (dispHp_ > unit_.hp_) {
+		dispHp_ -= 3;
+	}
+
 	Vector2 start;
 	start.x = (Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2;
 	start.y = (Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2;
 
-	// 1. HPƒo[‚Ì˜g‚ğ•`‰æiHPƒo[‘S‘Ì‚ğˆÍ‚Şj
-	int barWidth = BOSS_HP * BOSS_HP_X;
-	int barHeight = BOSS_HP_DISP_Y;
-	int barStartX = start.x + (Application::SCREEN_SIZE_X / 2) - (barWidth / 2);
-	int barStartY = start.y + BOSS_HP_Y;
-
-	int frameLeft = barStartX - 1;
-	int frameTop = barStartY - 1;
-	int frameRight = barStartX + barWidth + 1;
-	int frameBottom = barStartY + barHeight + 1;
-
-	DrawBox(frameLeft, frameTop, frameRight, frameBottom, RGB(255, 255, 255), false);
-
-	
-	// 1. ‹ó‚ÌHPƒo[iŠDFj
-	for (int i = 0; i < BOSS_HP; ++i) {
-		int indexFromRight = BOSS_HP - 1 - i;
-		int left = barStartX + BOSS_HP_X * indexFromRight;
-		int right = left + (BOSS_HP_X - 1);
-		int top = barStartY;
-		int bottom = barStartY + BOSS_HP_DISP_Y;
-
-		DrawBox(left, top, right, bottom, RGB(80, 80, 80), true);
+	int shakeX = 0;
+	int shakeY = 0;
+	if (hpShakeTimer_ > 0) {
+		hpShakeTimer_--;
+		shakeX = GetRand(4) - 2;  // -2ã€œ+2ã®ãƒ©ãƒ³ãƒ€ãƒ å€¤
+		shakeY = GetRand(2) - 1;  // -1ã€œ+1ã®ãƒ©ãƒ³ãƒ€ãƒ å€¤
 	}
 
-	bool isCritical = (unit_.hp_ < BOSS_HP * HP_YABAI);
-	bool blinkOn = (frameCount % BLINK_FLAME) < (BLINK_FLAME / 2); 
+	// HPãƒãƒ¼ã®æç”»
+	DrawHpBarFixedSize(
+		start.x + Application::SCREEN_SIZE_X / 4 + shakeX,
+		start.y + 10 + shakeY,
+		start.x + Application::SCREEN_SIZE_X / 4 * 3 + shakeX,
+		start.y + 40 + shakeY,
+		dispHp_, BOSS_HP, RGB(0, 0, 255)
+	);
+}
 
-	for (int i = 0; i < unit_.hp_; ++i) {
-		if (isCritical && !blinkOn) {
-			continue;
-		}
+void BossTutorial::SetDamage(int damage)
+{
+	unit_.hp_ -= damage;
 
-		int indexFromRight = BOSS_HP - 1 - i;
-		int left = barStartX + BOSS_HP_X * indexFromRight;
-		int right = left + (BOSS_HP_X - 1);
-		int top = barStartY;
-		int bottom = barStartY + BOSS_HP_DISP_Y;
-
-		COLORREF color = isCritical ? RGB(0, 0, 255) : RGB(0, 255, 0);
-		DrawBox(left, top, right, bottom, color, true);
+	if (unit_.hp_ <= 0) {
+		unit_.isAlive_ = false;
 	}
 }

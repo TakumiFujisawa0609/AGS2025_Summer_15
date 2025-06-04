@@ -15,7 +15,7 @@ public:
 	static constexpr int SIZE_Y = 249;
 
 
-	static constexpr int BOSS_HP = 100;						//ボスの最大体力
+	static constexpr int BOSS_HP = 150;						//ボスの最大体力
 	static constexpr int BOSS_HP_X = 5;					//ボスのHPゲージのX座標始点
 	static constexpr int BOSS_HP_Y = 15;						//ボスのHPゲージのY座標始点と描画距離
 	static constexpr int BOSS_HP_DISP_Y = 30;				//ボスのHPゲージのX座標の描画距離
@@ -66,7 +66,6 @@ public:
 	void Draw()override;
 	void Release()override;
 
-	void DrawHP();
 
 	const bool GetEnCount(void)const { return encount_; }
 
@@ -74,7 +73,7 @@ public:
 
 	const std::vector<Base> GetObjAttack(const ATTACK state)const;
 
-	void SetDamage(int dmg) { unit_.hp_ -= dmg; }
+	void SetDamage(int dmg);
 
 private:
 	PATTERN pattaern_;
@@ -92,6 +91,10 @@ private:
 
 	bool encount_;
 
+	int dispHp_;
+	int hpShakeTimer_;  // 揺れ時間（フレーム数）
+	int prevHp_;       // 直前のHP（変化検出用）
+
 	void PattaernManager(void);
 	bool EnCount(void);
 	void Idle(void);
@@ -99,6 +102,7 @@ private:
 	void Attack();
 	void TargetLook(void);
 
+	void DrawHP();
 
 	// 接地している時の数値の代入などをまとめた関数
 	void IsGround(Collision::DIR dir)override;
