@@ -101,7 +101,9 @@ public:
 	//ゲッター関数
 	bool IsEvasion(void) { return isEvasion_; }
 	bool IsInvincible(void) { return isEvasionInbincible_; }
-	
+	bool IsJustGuard(void) { return isJustGuard_; }
+
+
 	//セッター関数
 	void SetAliveOff(void) { unit_.isAlive_ = false; }
 	void SetHitOn(void) { unit_.isHit_ = true; }
