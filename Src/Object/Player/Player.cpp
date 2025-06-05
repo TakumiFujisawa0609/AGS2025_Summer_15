@@ -36,6 +36,8 @@ void Player::Init()
 
 	attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
 
+	animLoop_ = true;
+
 	//攻撃
 	isAttack_ = false;
 	attackCounter_ = 0;
@@ -92,6 +94,8 @@ void Player::Update()
 	ProcessAtatck();
 	ProcessGuard();
 	ProcessDamage();
+
+	AnimationUpdate();
 
 	UnitBase::Update();
 
@@ -629,6 +633,23 @@ void Player::HitCoolDown(void)
 
 
 
+void Player::AnimationUpdate(void)
+{
+	if (isJump_) {
+		//ジャンプ中
+		motionType_ = MOTION_TYPE::E_MOTION_JUMP;
+		if (unit_.yAccel_ > 0.0f)motionType_ = MOTION_TYPE::E_MOTION_FALL;
+	}
+	if (isEvasion_) {
+		motionType_ = MOTION_TYPE::E_MOTION_EVASION;
+	}
+
+	animCounter_ += 0.5;
+	if (animCounter_ >= image_[(int)motionType_].size()) {
+		animCounter_ = (animLoop_) ? 0.0f : image_[(int)motionType_].size() - 1;
+	}
+}
+
 void Player::LoadPlayerImage(void)
 {
 	std::string basePath = Application::PATH_PLAYER;
@@ -697,17 +718,14 @@ void Player::LoadPlayerImage(void)
 }
 
 
-void Player::DrawPlayer(std::vector<int> modelId, bool loop)
+void Player::DrawPlayer(std::vector<int> modelId)
 {
 	//プレイヤーの向き
 	bool isLeft = true;
 	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) isLeft = false;
 
 
-	animCounter_+=0.5;
-	if (animCounter_ >= modelId.size()) {
-		animCounter_ = (loop) ? 0.0f : modelId.size() - 1;
-	}
+
 	DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2,
 		SIZE_SCALE, 0, modelId[(int)animCounter_], true, isLeft);
 }
@@ -716,20 +734,18 @@ void Player::DrawPlayer(std::vector<int> modelId, bool loop)
 
 void Player::SetDrawPlayer(void)
 {
-	bool loop = true;
-	if (isJump_) {
-		//ジャンプ中
-		motionType_ = MOTION_TYPE::E_MOTION_JUMP;
-		if (unit_.yAccel_ > 0.0f)motionType_ = MOTION_TYPE::E_MOTION_FALL;
-	}
-	if (isEvasion_) {
-		motionType_ = MOTION_TYPE::E_MOTION_EVASION;
-		loop = false;
-	}
+	//if (isJump_) {
+	//	//ジャンプ中
+	//	motionType_ = MOTION_TYPE::E_MOTION_JUMP;
+	//	if (unit_.yAccel_ > 0.0f)motionType_ = MOTION_TYPE::E_MOTION_FALL;
+	//}
+	//if (isEvasion_) {
+	//	motionType_ = MOTION_TYPE::E_MOTION_EVASION;
+	//}
 	if (!(motionType_ == MOTION_TYPE::E_MOTION_DAMAGE)) {
 		//現在のモーション
 		int nowMotion = (int)motionType_;
-		DrawPlayer(image_[nowMotion],loop);
+		DrawPlayer(image_[nowMotion]);
 	}
 }
 

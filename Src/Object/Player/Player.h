@@ -114,13 +114,14 @@ private:
 	std::vector<int> image_[(int)MOTION_TYPE::E_MOTION_MAX];
 
 	float animCounter_;			//アニメーションカウンター
-
+	bool animLoop_;
 	
 	MOTION_TYPE motionType_;	//モーションタイプ
 
 	//関数達
+	void AnimationUpdate(void);
 	void LoadPlayerImage(void);		//プレイヤー画像の読み込み処理
-	void DrawPlayer(std::vector<int> modelId,bool loop=true);		//プレイヤーの描画
+	void DrawPlayer(std::vector<int> modelId);		//プレイヤーの描画
 	void SetDrawPlayer(void);		//描画するプレイヤーの設定
 
 	//--------------------------------------------------------------------
