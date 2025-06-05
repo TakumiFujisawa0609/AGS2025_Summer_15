@@ -38,6 +38,9 @@ public:
 	static constexpr int GUARD_POST_TIME = 10;		//後硬直時間
 	static constexpr int GUARD_JUST_TIME = 5;		//ジャストガード猶予時間
 
+	static constexpr int HIT_COOL_DOWN = 60;	//無敵時間
+	static constexpr float KNOCKBACK_Y_ACCEL = -2.0f;
+
 	//モーションタイプ
 	enum class MOTION_TYPE
 	{
@@ -84,6 +87,8 @@ public:
 	
 	//セッター関数
 	void SetAliveOff(void) { unit_.isAlive_ = false; }
+	void SetHitOn(void) { unit_.isHit_ = true; }
+	void SetXAccel(float xAccel) { unit_.xAccel_ = xAccel; }
 
 private:
 	//プレイヤー画像のハンドル番号
@@ -167,6 +172,20 @@ private:
 	int guardKeyUpBuffer_;	//後入力受付猶予カウンター
 	GUARD_STAT guardStat_;	
 
+
+	//-----------------------------------------------------
+	//ダメージ
+	//-----------------------------------------------------
+	//ダメージ処理
+	void ProcessDamage(void);
+	//HIT処理
+	void ProcessHit(void);
+	//ノックバック処理
+	void ProcessKnockback(void);
+	//無敵処理
+	void HitCoolDown(void);
+	int hitCoolDownCounter_;	//無敵時間用カウンター
+	float knockBackYAccel_;		//ノックバック用Y軸方向加速度
 };
 
 

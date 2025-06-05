@@ -71,6 +71,9 @@ void Player::Init()
 	guardKeyUpBuffer_ = 0;		//ジャストガード受付猶予カウンター
 	guardStat_ = GUARD_STAT::E_GUARD_NON;
 
+	//ダメージ処理
+	hitCoolDownCounter_ = 0;
+	knockBackYAccel_ = 0;
 
 	arialSweep_ = new ArialSweep();
 	arialSweep_->Init(&unit_.nextpos_, &unit_.disppos_);
@@ -87,8 +90,10 @@ void Player::Update()
 
 	ProcessAtatck();
 	ProcessGuard();
+	ProcessDamage();
 
 	UnitBase::Update();
+
 }
 
 void Player::Draw()
@@ -131,6 +136,8 @@ void Player::Release()
 	delete arialSweep_;
 	arialSweep_ = nullptr;
 }
+
+
 
 
 void Player::Move(void)
@@ -559,6 +566,46 @@ void Player::JustGuard(void)
 {
 	//	SceneManager::GetInstance().Slow();
 	postStiffness_ = GUARD_POST_TIME;		//ジャストガード成功時後硬直削除
+}
+
+void Player::ProcessDamage(void)
+{
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)) {
+		unit_.isHit_ = true;
+	}
+	if (unit_.isHit_ && !unit_.isInbincible_) {
+		ProcessHit();
+	}
+	if (unit_.isInbincible_) {
+		ProcessKnockback();
+		HitCoolDown();
+	}
+}
+
+void Player::ProcessHit(void)
+{
+	unit_.hp_ -= 10;
+	unit_.isInbincible_ = true;
+	unit_.yAccel_ -= 16;
+	SetXAccel(20.0f);
+}
+
+void Player::ProcessKnockback(void)
+{
+	isMove_ = false;
+}
+
+void Player::HitCoolDown(void)
+{
+	hitCoolDownCounter_++;
+	if (hitCoolDownCounter_ >= HIT_COOL_DOWN) {
+		unit_.isHit_ = false;
+		unit_.isInbincible_ = false;
+		hitCoolDownCounter_ = 0;
+		knockBackYAccel_ = 0;
+		unit_.yAccel_ = 0;
+  		isMove_ = true;
+	}
 }
 
 
