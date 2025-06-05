@@ -70,6 +70,7 @@ void Player::Init()
 	nowGuardKey_ = false;           // トリガーアップ用変数
 	guardKeyUpBuffer_ = 0;		//ジャストガード受付猶予カウンター
 	guardStat_ = GUARD_STAT::E_GUARD_NON;
+	isJustGuard_ = false;		//ジャストガード
 
 	//ダメージ処理
 	hitCoolDownCounter_ = 0;
@@ -120,12 +121,16 @@ void Player::Draw()
 
 		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 50, 0x0000ff, true);
 	}
-	//if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
-	//	DrawCircle(unit_.disppos_.x-20, unit_.disppos_.y, 6, 0x00ff00);
-	//}
-	//else if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
-	//	DrawCircle(unit_.disppos_.x + 20, unit_.disppos_.y, 6, 0x00ff00);
-	//}
+	if (isJustGuard_) {
+		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 40, 0x0fffff, true);
+	}
+
+	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
+		DrawCircle(unit_.disppos_.x-20, unit_.disppos_.y, 6, 0x00ff00);
+	}
+	else if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
+		DrawCircle(unit_.disppos_.x + 20, unit_.disppos_.y, 6, 0x00ff00);
+	}
 
 	SetDrawPlayer();
 }
@@ -539,6 +544,9 @@ void Player::ProcessGuard(void)
 			JustGuard();
 			guardKeyUpBuffer_++;
 		}
+		else {
+			isJustGuard_ = false;
+		}
 		if (postStiffness_ < GUARD_POST_TIME) {				//後硬直中
 			postStiffness_++;
 		}
@@ -574,7 +582,8 @@ void Player::Guard(void)
 void Player::JustGuard(void)
 {
 	//	SceneManager::GetInstance().Slow();
-	postStiffness_ = GUARD_POST_TIME;		//ジャストガード成功時後硬直削除
+	isJustGuard_ = true;
+	//postStiffness_ = GUARD_POST_TIME;		//ジャストガード成功時後硬直削除
 }
 
 void Player::ProcessDamage(void)

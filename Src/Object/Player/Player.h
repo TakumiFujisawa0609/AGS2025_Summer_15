@@ -194,6 +194,7 @@ private:
 	bool nowGuardKey_;		//トリガーアップ用変数
 	int guardKeyUpBuffer_;	//後入力受付猶予カウンター
 	GUARD_STAT guardStat_;	
+	bool isJustGuard_;		//ジャストガード中
 
 
 	//-----------------------------------------------------
