@@ -275,7 +275,6 @@ void Player::ProcessEvasion(void)
 
 }
 
-
 void Player::Evasion(void)
 {
 	switch (playerDir_)
@@ -290,9 +289,6 @@ void Player::Evasion(void)
 		break;
 	}
 }
-
-
-
 
 void Player::ProcessJump(void)
 {

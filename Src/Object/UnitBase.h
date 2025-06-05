@@ -87,4 +87,32 @@ protected:
 	/// <returns>始点と終点の間の距離（float型）。</returns>
 	const float GetDis(const Vector2F _start, const Vector2F _goal)const;
 
+	
+	/// <summary>
+	/// HPバーの表示
+	/// </summary>
+	/// <param name="centerX">	　	Xの中央座標</param>
+	/// <param name="y">　			Y座標</param>
+	/// <param name="currentHp">	現在のHP</param>
+	/// <param name="maxHp">　		最大体力</param>
+	/// <param name="color">　		体力の表示カラー</param>
+	/// <param name="frameColor">　	HPのフレームカラー</param>
+	/// <param name="backColor">　	HPの裏に表示されるやつの色</param>
+	//void DrawHpBar(
+	//	int centerX, int y,                         
+	//	int hp, int maxHp,
+	//	COLORREF color,
+	//	COLORREF frameColor = RGB(255, 255, 255),
+	//	COLORREF backColor = RGB(80, 80, 80)
+	//);
+
+	void DrawHpBarFixedSize(
+		int x1, int y1,                   // 左上座標
+		int x2, int y2,                   // 右下座標
+		int hp, int maxHp,               // 現在HP / 最大HP
+		COLORREF color,                 // HP色
+		COLORREF frameColor = RGB(255, 255, 255),
+		COLORREF backColor = RGB(80, 80, 80)
+	);
 };
+

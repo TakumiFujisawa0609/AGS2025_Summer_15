@@ -7,6 +7,15 @@ class Tackle : public AttackBase
 public:
 
 	static constexpr float TACKLE_SPEED = 20.0f;
+	static constexpr int WAIT_TIME = 60;
+	static constexpr int TACKLE_START = 180;
+
+	enum MODE
+	{
+		NON_MODE,
+		STANP_MODE,
+		TACKLE_MODE,
+	};
 
 	Tackle();
 	~Tackle();
@@ -16,6 +25,9 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
+	void SetTarget(Vector2F target) { target_ = target; }
+
 private:
 	VECTOR bPos_;
+	Vector2F target_;
 };

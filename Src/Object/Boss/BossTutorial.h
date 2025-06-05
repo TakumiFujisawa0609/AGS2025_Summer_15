@@ -14,6 +14,15 @@ public:
 	static constexpr int SIZE_X = 240;
 	static constexpr int SIZE_Y = 249;
 
+
+	static constexpr int BOSS_HP = 150;						//ボスの最大体力
+	static constexpr int BOSS_HP_X = 5;					//ボスのHPゲージのX座標始点
+	static constexpr int BOSS_HP_Y = 15;						//ボスのHPゲージのY座標始点と描画距離
+	static constexpr int BOSS_HP_DISP_Y = 30;				//ボスのHPゲージのX座標の描画距離
+
+	static constexpr float HP_YABAI = 0.3f;			    	// 瀕死のしきい値（30%未満）
+	const int BLINK_FLAME = 60;				// 一回の点滅のフレーム（60フレーム＝1秒）
+
 	enum PATTERN
 	{
 		E_NON,
@@ -29,7 +38,7 @@ public:
 		E_SLASH_START,
 		E_SLASH_END,
 	};
-
+	
 	enum ATTACK
 	{
 		NON = -1,
@@ -57,11 +66,14 @@ public:
 	void Draw()override;
 	void Release()override;
 
+
 	const bool GetEnCount(void)const { return encount_; }
 
 	const ATTACK GetAttack(void)const { return attackState_; }
 
 	const std::vector<Base> GetAttackObj()const;
+
+	void SetDamage(int dmg);
 
 private:
 	//画像
@@ -73,6 +85,17 @@ private:
 	//戦闘を行うか行わないか
 	bool encount_;
 	bool EnCount(void);
+
+	int dispHp_;
+	int hpShakeTimer_;  // 揺れ時間（フレーム数）
+	int prevHp_;       // 直前のHP（変化検出用）
+
+	bool isHit_;
+	int hitTimer_;
+	int flashInterval_;
+	int frameCounter_;
+
+	void BossDraw();
 
 	//ボスの立ち位置の振り分け
 	int targetIndex_;
@@ -88,6 +111,9 @@ private:
 	void Idle(void);
 	void Move();
 	void Attack();
+
+	void BossDeath();
+	void DrawHP();
 
 
 	//便利
