@@ -36,6 +36,7 @@ private:
 	void PlayerToBoss(void);
 	void PlayerToBossAttack(void);
 	void PlayerToEnemyBamboo(void);
+	void BossToPlayerAttack(void);
 
 	float x;
 

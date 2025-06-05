@@ -159,6 +159,7 @@ void GameScene::ObjCollision(void)
 {
 	PlayerToBoss();
 	PlayerToEnemyBamboo();
+	BossToPlayerAttack();
 }
 
 void GameScene::PlayerToBoss(void)
@@ -179,7 +180,12 @@ void GameScene::PlayerToBoss(void)
 		else if (!player_->IsInvincible())
 		{
 			player_->SetHitOn();
-			player_->SetXAccel(20.0f);
+			if (player_->GetUnit().pos_.x > boss_->GetUnit().pos_.x) {
+				player_->SetXAccel(20.0f);
+			}
+			else {
+				player_->SetXAccel(-20.0f);
+			}
 			mana.SHAKE();
 		}
 	}
@@ -208,7 +214,12 @@ void GameScene::PlayerToBossAttack(void)
 			else if(!player_->IsInvincible())
 			{
 				player_->SetHitOn();
-				player_->SetXAccel(20.0f);
+				if (player_->GetUnit().pos_.x > boss_->GetUnit().pos_.x) {
+					player_->SetXAccel(20.0f);
+				}
+				else {
+					player_->SetXAccel(-20.0f);
+				}
 				mana.SHAKE();
 			}
 			//mana.HitStop();
@@ -216,6 +227,16 @@ void GameScene::PlayerToBossAttack(void)
 	}
 }
 
+void GameScene::BossToPlayerAttack(void)
+{
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
+	for (auto obj : player_->GetAttackObj()) {
+		if (ins.CircleAndRect(obj, boss_->GetUnit())) {
+			mana.SHAKE();
+		}
+	}
+}
 void GameScene::PlayerToEnemyBamboo(void)
 {
 	auto& ins = Collision::GetInstance();
@@ -228,3 +249,4 @@ void GameScene::PlayerToEnemyBamboo(void)
 	}
 
 }
+

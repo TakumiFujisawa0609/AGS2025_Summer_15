@@ -4,6 +4,9 @@
 #include"../UnitBase.h"
 
 class ArialSweep;
+class AttackNormal;
+class AttackArial;
+
 
 class Player:public UnitBase
 {
@@ -23,6 +26,8 @@ public:
 	static constexpr int JUMP_LOAD_NUM = 3;
 	static constexpr int FALL_LOAD_NUM = 3;
 	static constexpr int EVASION_LOAD_NUM = 12;
+	static constexpr int ATTACK_NORMAL_LOAD_NUM = 4;
+	static constexpr int ATTACK_ARIAL_LOAD_NUM = 6;
 
 
 
@@ -43,8 +48,8 @@ public:
 	static constexpr int EVASION_INVINCIBLE = 5;		//回避無敵時間
 	static constexpr int EVASION_COOLDOWN = 18;		//回避クールタイム
 
-	static constexpr int ATTACK_TIME = 60;			//攻撃時間
-	static constexpr int ATTACK_COOLDOWN = 60;
+	static constexpr int ATTACK_TIME = 6;			//攻撃時間
+	static constexpr int ATTACK_COOLDOWN = 4;
 
 	static constexpr int MAX_ANIM_NUM = 10;		//最大アニメーションパターン
 	static constexpr float ANIM_SPEED = 0.1f;	//アニメーションスピード
@@ -65,6 +70,8 @@ public:
 		E_MOTION_RUN,		//走りモーション
 		E_MOTION_JUMP,		//ジャンプモーション
 		E_MOTION_FALL,
+		E_MOTION_ATTACK_NORMAL,	//通常攻撃モーション
+		E_MOTION_ATTCK_ARIAL,	//空中攻撃モーション
 		E_MOTION_DAMAGE,	//被ダメージモーション
 		E_MOTION_EVASION,	//回避モーション
 
@@ -74,7 +81,9 @@ public:
 	//攻撃ステータス
 	enum class ATTACK_STAT
 	{
-		E_ATTACK_STAT_NON,	//通常
+		E_ATTACK_STAT_NON,	//
+		E_ATTACK_STAT_NORMAL,	//通常攻撃
+		E_ATTACK_STAT_ARIAL,	//空中攻撃
 		E_ATTACK_STAT_ARIALSWEEP,
 
 		E_ATTACK_STAT_MAX,
@@ -107,6 +116,7 @@ public:
 	bool IsHit(void) { return unit_.isHit_; }
 	bool IsGuard(void) { return isGuard_; }
 	bool IsJustGuardInbincible(void) { return isJustGuardInbincible_; }
+	const std::vector<Base>GetAttackObj()const;
 
 	//セッター関数
 	void SetAliveOff(void) { unit_.isAlive_ = false; }
@@ -154,12 +164,19 @@ private:
 	int inputJumpKeyCounter_;	//ジャンプの入力時間カウンター
 
 	//攻撃---------------------------------------------------------------
-	//攻撃プロセス
-	void ProcessAtatck(void);
 	//攻撃更新処理
 	void Attack(void);
+	//攻撃プロセス
+	void ProcessAtatck(void);
+	//通常攻撃
+	void NormalAttack(void);
+	//空中攻撃
+	void ArialAttack(void);
 	//特殊攻撃
 	void ArialSweepAttack(void);
+	//エフェクト
+	void SetAttackEffect(void);
+
 	bool isAttack_;
 	bool isAttackCoolDown_;
 	int attackCounter_;			//攻撃時間
@@ -170,7 +187,11 @@ private:
 	Vector2F mapMousePos_;
 	//攻撃モーション
 	ATTACK_STAT attackStat_;
+	//攻撃クラスのインスタンス
+	AttackNormal* attackNormal_;
+	AttackArial* attackArial_;
 	ArialSweep* arialSweep_;
+	
 
 	//回避---------------------------------------------------------------------------------------------------
 	//回避発動処理

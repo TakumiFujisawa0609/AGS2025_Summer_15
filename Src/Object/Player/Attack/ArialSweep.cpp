@@ -28,6 +28,7 @@ void ArialSweep::Update(Vector2* mousePos)
 	worldMousePos_.y = mPos_.y + ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2);
 }
 
+
 void ArialSweep::Draw(void)
 {
 

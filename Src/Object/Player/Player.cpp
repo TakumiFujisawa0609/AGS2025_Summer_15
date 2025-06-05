@@ -9,6 +9,8 @@
 #include"../Stage/Stage.h"
 #include"../../Scene/GameScene.h"
 #include"Attack/ArialSweep.h"
+#include"Attack/AttackNormal.h"
+#include"Attack/AttackArial.h"
 
 Player::Player()
 {
@@ -81,22 +83,30 @@ void Player::Init()
 	hitCoolDownCounter_ = 0;
 	knockBackYAccel_ = 0;
 
+	//攻撃クラスのインスタンスの作成
+	attackNormal_ = new AttackNormal();
+
+	attackArial_ = new AttackArial();
+
 	arialSweep_ = new ArialSweep();
 	arialSweep_->Init(&unit_.nextpos_, &unit_.disppos_);
+	
 
 	Collision::CreateInstance();
 }
 
 void Player::Update()
 {
+
+
 	if (isMove_) {
 		Move();
 		ProcessJump();
 	}
-
-	ProcessAtatck();
 	ProcessGuard();
 	ProcessDamage();
+	ProcessAtatck();
+
 
 	AnimationUpdate();
 
@@ -142,10 +152,19 @@ void Player::Draw()
 	}
 
 	SetDrawPlayer();
+	SetAttackEffect();
 }
 
 void Player::Release()
 {
+	attackNormal_->Release();
+	delete attackNormal_;
+	attackNormal_ = nullptr;
+
+	attackArial_->Release();
+	delete attackArial_;
+	attackArial_ = nullptr;
+
 	arialSweep_->Release();
 	delete arialSweep_;
 	arialSweep_ = nullptr;
@@ -196,21 +215,19 @@ void Player::ProcessEvasion(void)
 	auto& ins = InputManager::GetInstance();
 	if (!isEvasionCoolDown_) {
 
-		if (ins.IsTrgDown(KEY_INPUT_A) ) {
-		isEvasion_ = true;
-		isEvasionInbincible_ = true;
-		playerDir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
-		workDir_ = playerDir_;
+		if (ins.IsTrgDown(KEY_INPUT_A)) {
+			isEvasion_ = true;
+			isEvasionInbincible_ = true;
+			playerDir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
+			workDir_ = playerDir_;
 		}
-		else
-		if (ins.IsTrgDown(KEY_INPUT_D) ) {
+		else if (ins.IsTrgDown(KEY_INPUT_D)) {
 			isEvasion_ = true;
 			isEvasionInbincible_ = true;
 			playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
 			workDir_ = playerDir_;
 		}
-		else
-		if (ins.IsTrgDown(KEY_INPUT_S) ) {
+		else if (ins.IsTrgDown(KEY_INPUT_S)) {
 			isEvasion_ = true;
 			isEvasionInbincible_ = true;
 			workDir_ = playerDir_;
@@ -455,37 +472,85 @@ void Player::IsGround(Collision::DIR dir)
 	}
 }
 
-
+void Player::Attack(void)
+{
+	auto& ins = InputManager::GetInstance();
+	//攻撃のクールダウンが終了している場合は攻撃可能
+	if (ins.IsClickMouseLeft()) {
+		isAttack_ = true;
+		GetMousePoint(&mPos_.x, &mPos_.y);
+	}
+	if (isAttack_) {
+		attackNormal_->Init(&unit_.nextpos_, &unit_.disppos_, &playerDir_);
+		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NORMAL;
+	}
+	if (isJump_ && isAttack_) {
+		attackArial_->Init(&unit_.nextpos_, &unit_.disppos_, &playerDir_);
+		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_ARIAL;
+	}
+}
 
 void Player::ProcessAtatck(void)
 {
-
 	auto& ins = InputManager::GetInstance();
-	if (ins.IsClickMouseLeft()) {
-		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_ARIALSWEEP;
-		GetMousePoint(&mPos_.x, &mPos_.y);
-	}
-
+		if (isAttackCoolDown_) {
+			if (attackCoolDown_ < ATTACK_COOLDOWN) {
+				attackCoolDown_++;
+			}
+			else {
+				isAttackCoolDown_ = false;	//攻撃のクールダウン終了
+				isMove_ = true;	//攻撃終了後は動けるようにする
+				attackCoolDown_ = 0;
+			}
+		}
+		else {
+			Attack();
+		}
 	switch (attackStat_)
 	{
-	case Player::ATTACK_STAT::E_ATTACK_STAT_NON:
-		Attack();
+	case::Player::ATTACK_STAT::E_ATTACK_STAT_NON:
 		break;
+	case Player::ATTACK_STAT::E_ATTACK_STAT_NORMAL:
+		NormalAttack();
+		break;
+	case Player::ATTACK_STAT::E_ATTACK_STAT_ARIAL:
+		ArialAttack();
 	case Player::ATTACK_STAT::E_ATTACK_STAT_ARIALSWEEP:
-		ArialSweepAttack();
+		//	ArialSweepAttack();
 		break;
 	}
 
 }
 
-void Player::Attack(void)
+void Player::NormalAttack(void)
 {
-
-
-
-
-
+	attackCounter_++;
+	attackNormal_->Update();
+	attackNormal_->SetAliveOn();
+	if (attackCounter_ > ATTACK_NORMAL_LOAD_NUM + 1)
+	{
+		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
+		attackCounter_ = 0;
+		isAttackCoolDown_ = true;	//攻撃のクールダウン突入
+		isAttack_ = false;	//攻撃終了
+		attackNormal_->SetAliveOff();
+	}
 }
+
+void Player::ArialAttack(void)
+{
+	attackCounter_++;
+	attackArial_->Update();
+	if (attackCounter_ > ATTACK_ARIAL_LOAD_NUM + 1)
+	{
+		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
+		attackCounter_ = 0;
+		isAttackCoolDown_ = true;	//攻撃のクールダウン突入
+		isAttack_ = false;	//攻撃終了
+
+	}
+}
+
 
 void Player::ArialSweepAttack(void)
 {
@@ -512,6 +577,21 @@ void Player::ArialSweepAttack(void)
 		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
 		arialSweepCounter_ = 0;
 		isMove_ = true;
+	}
+}
+
+void Player::SetAttackEffect(void)
+{
+	if (isAttack_) {
+		switch (attackStat_)
+		{
+		case Player::ATTACK_STAT::E_ATTACK_STAT_NORMAL:
+			attackNormal_->Draw();
+			break;
+		case Player::ATTACK_STAT::E_ATTACK_STAT_ARIAL:
+			attackArial_->Draw();
+			break;
+		}
 	}
 }
 
@@ -569,7 +649,7 @@ void Player::ProcessGuard(void)
 		break;
 	case Player::GUARD_STAT::E_GUARD_JUST:
 		if (unit_.isInbincible_) {
-		isJustGuard_ = false;
+			isJustGuard_ = false;
 			isMove_ = true;
 			justGuardCounter_++;
 			if (justGuardCounter_ >= JUST_GUARD_INVINCIBLE) {
@@ -632,12 +712,12 @@ void Player::ProcessHit(void)
 	unit_.hp_ -= 10;
 	unit_.isInbincible_ = true;
 	unit_.yAccel_ -= 16;
-	SetXAccel(20.0f);
+	//SetXAccel(20.0f);
 }
 
 void Player::ProcessKnockback(void)
 {
-//	isMove_ = false;
+	//	isMove_ = false;
 }
 
 void Player::HitCoolDown(void)
@@ -658,14 +738,31 @@ void Player::HitCoolDown(void)
 
 void Player::AnimationUpdate(void)
 {
+
 	if (isJump_) {
 		//ジャンプ中
-		motionType_ = MOTION_TYPE::E_MOTION_JUMP;
-		if (unit_.yAccel_ > 0.0f)motionType_ = MOTION_TYPE::E_MOTION_FALL;
+		if (!isAttack_) {
+			motionType_ = MOTION_TYPE::E_MOTION_JUMP;
+			if (unit_.yAccel_ > 0.0f)motionType_ = MOTION_TYPE::E_MOTION_FALL;
+		}
+		else {
+			//ジャンプ中に攻撃している場合は空中攻撃モーションへ
+			motionType_ = MOTION_TYPE::E_MOTION_ATTCK_ARIAL;
+		}
 	}
 	if (isEvasion_) {
 		motionType_ = MOTION_TYPE::E_MOTION_EVASION;
 	}
+	if (isAttack_) {
+		//攻撃中
+		if (attackStat_ == ATTACK_STAT::E_ATTACK_STAT_NORMAL) {
+			motionType_ = MOTION_TYPE::E_MOTION_ATTACK_NORMAL;
+		}
+		else if (attackStat_ == ATTACK_STAT::E_ATTACK_STAT_ARIAL) {
+			motionType_ = MOTION_TYPE::E_MOTION_ATTCK_ARIAL;
+		}
+	}
+
 
 	animCounter_ += 0.5;
 	if (animCounter_ >= image_[(int)motionType_].size()) {
@@ -689,6 +786,26 @@ void Player::LoadPlayerImage(void)
 		LOAD_SIZE_X, LOAD_SIZE_Y, idleLoad);
 
 	image_[motion].insert(image_[motion].end(), idleLoad, idleLoad + IDLE_LOAD_NUM);
+	//-----------------------------------------------------------------------
+
+	//攻撃状態の画像を読み込み-----------------------------------------------
+	//通常攻撃の画像を読み込み
+	motion = (int)MOTION_TYPE::E_MOTION_ATTACK_NORMAL;
+	int attackNormalLoad[ATTACK_NORMAL_LOAD_NUM];
+
+	LoadDivGraph((basePath + "Attack.png").c_str(),
+		ATTACK_NORMAL_LOAD_NUM, ATTACK_NORMAL_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, attackNormalLoad);
+
+	image_[motion].insert(image_[motion].end(), attackNormalLoad, attackNormalLoad + ATTACK_NORMAL_LOAD_NUM);
+	//空中攻撃の画像を読み込み---------------------------------
+	motion = (int)MOTION_TYPE::E_MOTION_ATTCK_ARIAL;
+	int attackArialLoad[ATTACK_ARIAL_LOAD_NUM];
+	LoadDivGraph((basePath + "Attack2.png").c_str(),
+		ATTACK_ARIAL_LOAD_NUM, ATTACK_ARIAL_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, attackArialLoad);
+	image_[motion].insert(image_[motion].end(), attackArialLoad, attackArialLoad + ATTACK_ARIAL_LOAD_NUM);
+
 	//-----------------------------------------------------------------------
 
 	//走り状態の画像を読み込み-----------------------------------------------
@@ -775,3 +892,21 @@ void Player::SetDrawPlayer(void)
 
 
 
+const std::vector<Base>Player::GetAttackObj()const
+{
+	std::vector<Base> ret;
+	switch (attackStat_)
+	{
+	case Player::ATTACK_STAT::E_ATTACK_STAT_NON:
+		break;
+	case Player::ATTACK_STAT::E_ATTACK_STAT_NORMAL:
+		ret = attackNormal_->Get();
+		break;
+	case Player::ATTACK_STAT::E_ATTACK_STAT_ARIAL:
+		ret = attackArial_->Get();
+		break;
+
+	}
+
+	return ret;
+}

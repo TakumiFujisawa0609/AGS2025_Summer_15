@@ -40,11 +40,11 @@ void PlayerAttackBase::Release(void)
 {
 }
 
-const std::vector<Base> PlayerAttackBase::GetStruct(void) const
+const std::vector<Base> PlayerAttackBase::Get(void) const
 {
 	std::vector<Base>ret;
 
-	ret.emplace_back(attackObj_);
+	ret.emplace_back(obj_);
 
 	return ret;
 }
