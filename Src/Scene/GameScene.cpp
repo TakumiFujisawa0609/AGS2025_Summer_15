@@ -168,7 +168,7 @@ void GameScene::PlayerToBoss(void)
 	if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
 		auto& mana = SceneManager::GetInstance().GetInstance();
 
-		mana.HitStop();
+		mana.Slow();
 
 
 	}
@@ -179,28 +179,12 @@ void GameScene::PlayerToBoss(void)
 void GameScene::PlayerToBossAttack(void)
 {
 	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
 
 	for (auto obj : boss_->GetAttackObj()) 
 	{
-
-		auto ba = boss_->GetAttack();
-		switch (ba)
-		{
-		case BossTutorial::SLASH:
-			if (ins.Ellipse(player_->GetUnit(), obj)) {
-
-			}
-			break;
-		case BossTutorial::BULLET:
-		case BossTutorial::BLAST:
-			if (ins.Circle(player_->GetUnit(), obj)) {
-
-			}
-			break;
-		case BossTutorial::TACKLE:
-		case BossTutorial::ROAR:
-		case BossTutorial::NON:
-			break;
+		if (ins.CircleAndRect(obj, player_->GetUnit())) {
+			mana.Slow();
 		}
 	}
 
@@ -209,5 +193,12 @@ void GameScene::PlayerToBossAttack(void)
 void GameScene::PlayerToEnemyBamboo(void)
 {
 	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
+
+	for (int i = 0; i < EnemyBamboo::ENEMY_MAX; i++) {
+		if (ins.Ellipse(player_->GetUnit(), enemy_->GetBamboo(i)->GetUnit())) {
+			mana.Slow();
+		}
+	}
 
 }

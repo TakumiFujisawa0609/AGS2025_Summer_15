@@ -106,7 +106,7 @@ void SceneManager::Update(void)
 		//ƒXƒ[--------------------------
 		if (slowCounter_ > 0) {
 			slowCounter_--;
-			if (slowCounter_ % 2 != 0) {
+			if (slowCounter_ % 5 != 0) {
 				return;
 			}
 		}

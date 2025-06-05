@@ -56,6 +56,7 @@ void Blast::Update(void)
 
 		if (dis < obj_.speed_) {
 			obj_.size_ = { (float)BLAST_SIZE,(float)BLAST_SIZE };
+			obj_.radius_ = (float)(BLAST_SIZE / 2);
 			lookOn_ = false;
 			blast_ = true;
 		}

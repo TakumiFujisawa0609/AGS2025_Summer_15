@@ -165,6 +165,7 @@ const bool Collision::CircleAndRect(const Base& circle, const Base& rect) const
 	//‚Ç‚¿‚ç‚©‚ª¶‘¶‚µ‚Ä‚¢‚È‚¯‚ê‚ÎA“–‚½‚Á‚Ä‚¢‚È‚¢(false)‚ğ•Ô‚µI—¹
 	if (!circle.isAlive_ || !rect.isAlive_) return false;
 
+
 	//Õ“Ë”»’è
 
 	RECT work;
