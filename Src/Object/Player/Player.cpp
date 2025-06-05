@@ -70,6 +70,7 @@ void Player::Init()
 	nowGuardKey_ = false;           // トリガーアップ用変数
 	guardKeyUpBuffer_ = 0;		//ジャストガード受付猶予カウンター
 	guardStat_ = GUARD_STAT::E_GUARD_NON;
+	isJustGuard_ = false;		//ジャストガード
 
 
 	arialSweep_ = new ArialSweep();
@@ -115,6 +116,10 @@ void Player::Draw()
 
 		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 50, 0x0000ff, true);
 	}
+	if (isJustGuard_) {
+		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 40, 0x0fffff, true);
+	}
+
 	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
 		DrawCircle(unit_.disppos_.x-20, unit_.disppos_.y, 6, 0x00ff00);
 	}
@@ -523,6 +528,9 @@ void Player::ProcessGuard(void)
 			JustGuard();
 			guardKeyUpBuffer_++;
 		}
+		else {
+			isJustGuard_ = false;
+		}
 		if (postStiffness_ < GUARD_POST_TIME) {				//後硬直中
 			postStiffness_++;
 		}
@@ -558,7 +566,8 @@ void Player::Guard(void)
 void Player::JustGuard(void)
 {
 	//	SceneManager::GetInstance().Slow();
-	postStiffness_ = GUARD_POST_TIME;		//ジャストガード成功時後硬直削除
+	isJustGuard_ = true;
+	//postStiffness_ = GUARD_POST_TIME;		//ジャストガード成功時後硬直削除
 }
 
 
