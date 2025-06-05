@@ -254,7 +254,7 @@ void BossTutorial::Move()
 		attackCounter_ = 0;
 		if (!(targetIndex_ == 1)) {
 			TargetLook(player_->GetUnit().pos_);
-			attackState_ = (ATTACK)/*GetRand((int)ATTACK::MAX-2)*/0;
+			attackState_ = BossTutorial::TACKLE;//(ATTACK)/*GetRand((int)ATTACK::MAX-2)*/0;
 			pattaern_ = E_ATTACK;
 		}
 		else {
@@ -371,35 +371,33 @@ void BossTutorial::Attack()
 
 		if (attackCounter_ < Tackle::TACKLE_START + 10 && attackCounter_ > Tackle::WAIT_TIME)
 		{
-			unit_.nextpos_.x = player_->GetUnit().nextpos_.x;
-
 			unit_.nextpos_.y -= 10;
 			if (attackCounter_ > Tackle::TACKLE_START)
 			{
-				unit_.isStageCollision_ = false;
-				unit_.isGravity_ = false;
-			}
-		}
-
-		if (!unit_.isGravity_)
-		{
-			if (unit_.nextpos_.y > start.y - SIZE_Y /2)
-			{
 				mode_ = Tackle::STANP_MODE;
-				unit_.nextpos_.y -= 120;
-			}
-			else
-			{
-
 			}
 		}
+
 
 		switch (mode_)
 		{
 		case Tackle::NON_MODE:
-
 			break;
 		case Tackle::STANP_MODE:
+
+			if (unit_.nextpos_.y + unit_.size_.y > start.y) {
+				unit_.isGravity_ = false;
+				unit_.isStageCollision_ = false;
+				unit_.nextpos_.y -= 120;
+			}
+			else {
+				if (unit_.isGravity_) {
+					unit_.nextpos_.x = player_->GetUnit().nextpos_.x;
+				}
+				unit_.isGravity_ = true;
+				unit_.isStageCollision_ = true;
+			}
+			
 
 			break;
 		case Tackle::TACKLE_MODE:
