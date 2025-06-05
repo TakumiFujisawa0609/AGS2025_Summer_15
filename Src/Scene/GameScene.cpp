@@ -72,7 +72,7 @@ void GameScene::Update(void)
 	//オブジェクト同士の当たり判定
 	ObjCollision();
 
-	 //シーン遷移
+	//シーン遷移
 	if (ins.IsTrgDown(KEY_INPUT_P))
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
@@ -112,13 +112,13 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
-	stage_->Draw(); 
+	stage_->Draw();
 	enemy_->Draw();
 	player_->Draw();
 	boss_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
-	
+
 	//std::vector<Vector2F>pos = ShapesPosition::GetPositionCircle(SceneManager::MAIN_SCREEN_SIZE_X/2, SceneManager::MAIN_SCREEN_SIZE_Y/2, x, x, 12);
 	//for (int i = 0; i < (int)pos.size(); i++) {
 	//	DrawCircle(pos[i].x, pos[i].y, 10, 0xff0000, true);
@@ -164,13 +164,19 @@ void GameScene::ObjCollision(void)
 void GameScene::PlayerToBoss(void)
 {
 	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
 
 	if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
-		auto& mana = SceneManager::GetInstance().GetInstance();
+		if (player_->IsInvincible()) {
+			mana.Slow();
 
-		mana.Slow();
-
-
+		}
+		else {
+			player_->SetHitOn();
+			player_->SetXAccel(20.0f);
+			mana.SHAKE();
+		}
+		//mana.HitStop();
 	}
 
 	PlayerToBossAttack();
@@ -181,13 +187,20 @@ void GameScene::PlayerToBossAttack(void)
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
 
-	for (auto obj : boss_->GetAttackObj()) 
+	for (auto obj : boss_->GetAttackObj())
 	{
 		if (ins.CircleAndRect(obj, player_->GetUnit())) {
-			mana.Slow();
+			if (player_->IsInvincible()) {
+				mana.Slow();
+			}
+			else {
+				player_->SetHitOn();
+				player_->SetXAccel(20.0f);
+				mana.SHAKE();
+			}
+			//mana.HitStop();
 		}
 	}
-
 }
 
 void GameScene::PlayerToEnemyBamboo(void)
