@@ -38,7 +38,7 @@ public:
 		E_SLASH_START,
 		E_SLASH_END,
 	};
-
+	
 	enum ATTACK
 	{
 		NON = -1,
@@ -87,13 +87,19 @@ private:
 	int StartSlashtImg_;
 	int EndSlashImg_;
 
-	int frameCount;
+	int frameCounter_;
 
 	bool encount_;
 
 	int dispHp_;
 	int hpShakeTimer_;  // 揺れ時間（フレーム数）
 	int prevHp_;       // 直前のHP（変化検出用）
+
+	bool isHit_;
+	int hitTimer_;
+	int flashInterval_;
+
+	void BossDraw();
 
 	void PattaernManager(void);
 	bool EnCount(void);

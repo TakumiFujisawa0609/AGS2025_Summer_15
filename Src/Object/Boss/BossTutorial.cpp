@@ -25,13 +25,16 @@ void BossTutorial::Init()
 	unit_.hp_ = BOSS_HP;
 	hpShakeTimer_ = 0;  // 揺れ時間（フレーム数）
 	prevHp_ = -1;       // 直前のHP（変化検出用）
-	frameCount = 0;
+	flashInterval_ = 20;
+	frameCounter_ = 0;
+	hitTimer_ = 0;
 
 	pattaern_ = E_NON;
 	attackState_ = NON;
 	attackCounter_ = 0;
 	targetIndex_ = 2;
 	encount_ = false;
+	isHit_ = false;
 
 	slash_ = new Slash();
 	bullet_ = new Bullet();
@@ -49,10 +52,9 @@ void BossTutorial::Update()
 	if (encount_) {
 		PattaernManager();
 	}
-	
 
 	if (CheckHitKey(KEY_INPUT_0)) {
-		unit_.hp_ -= 5;
+		SetDamage(1);
 	}
 
 	if (unit_.hp_ < 0)
@@ -60,46 +62,85 @@ void BossTutorial::Update()
 		unit_.hp_--;
 	}
 
-	frameCount += 2;
+	frameCounter_ += 2;
 
 	EnemyBase::Update();
 }
 
 void BossTutorial::Draw()
 {
-	DrawHP();
 
-	if (unit_.isAlive_)
+	if (hitTimer_ > 0)
 	{
-		if (unit_.isDraw_)
+		hitTimer_--;
+		frameCounter_++;
+	}
+	else
+	{
+		frameCounter_ = 0;
+	}
+
+	if (encount_) {
+		DrawHP();
+	}
+
+	if (unit_.isDraw_)
+	{
+		bullet_->Draw();
+		blast_->Draw();
+
+		BossDraw();
+
+		if (attackState_ == BossTutorial::SLASH)
 		{
-			bullet_->Draw();
-			blast_->Draw();
 
-			switch (DrawPat_)
-			{
-			case NORMAL:
-				// 通常状態
-				DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, idolImg, true, bossDir_);
-				break;
-			case E_SLASH_START:
-				// 剣を振り上げる
-				DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, StartSlashtImg_, true, bossDir_);
-				break;
-			case E_SLASH_END:
-				// 剣を振り下ろす
-				DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y + 14, 1.0f, 0.0f, EndSlashImg_, true, bossDir_);
-				break;
-			}
+			DrawHpBarFixedSize(
+				unit_.pos_.x - unit_.size_.x / 2,
+				unit_.pos_.y - unit_.size_.y / 2,
+				unit_.pos_.x + unit_.size_.x / 2,
+				unit_.pos_.y - unit_.size_.y / 2 + 15,
+				attackCounter_, Slash::CHARGE,
+				RGB(255, 0, 0, ));
+		}
+		slash_->Draw();
+	}
 
-			slash_->Draw();
+	DrawFormatString(120, 120, 0x0fffff, "boss(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
+}
 
+void BossTutorial::BossDraw()
+{
 
-			//DrawBox(unit_.disppos_.x - 70, unit_.disppos_.y - 120, unit_.disppos_.x + 70, unit_.disppos_.y + 120, 0xfffff0, true);
+	bool shouldFlash = false;
+
+	if (hitTimer_ > 0)
+	{
+		if ((frameCounter_ / (flashInterval_ / 2)) % 2 == 0)
+		{
+			shouldFlash = true;
+			SetDrawBright(255, 128, 128);                   // 明るく赤っぽく
+			SetDrawBlendMode(DX_BLENDMODE_ADD, 180);        // 加算ブレンド
 		}
 	}
-	
-	DrawFormatString(120, 120, 0x0fffff, "boss(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
+
+	switch (DrawPat_)
+	{
+	case NORMAL:
+		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, idolImg, true, bossDir_);
+		break;
+	case E_SLASH_START:
+		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, StartSlashtImg_, true, bossDir_);
+		break;
+	case E_SLASH_END:
+		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y + 14, 1.0f, 0.0f, EndSlashImg_, true, bossDir_);
+		break;
+	}
+
+	if (shouldFlash)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		SetDrawBright(255, 255, 255);
+	}
 }
 
 void BossTutorial::Release()
@@ -205,15 +246,6 @@ void BossTutorial::Move()
 
 	TargetLook();
 
-	//if (targetIndex_ == 0)
-	//{
-	//	bossDir_ = AttackBase::DIR::LEFT;
-	//}
-	//else if (targetIndex_ == 2)
-	//{
-	//	bossDir_ = AttackBase::DIR::RIGHT;
-	//}
-
 	attackCounter_++;
 
 	unit_.nextpos_.x += GetMoveVec(unit_.nextpos_, point, unit_.speed_).x;
@@ -222,13 +254,15 @@ void BossTutorial::Move()
 	if (GetDis(unit_.nextpos_, point) <= unit_.speed_) {
 		attackCounter_ = 0;
 		if (!(targetIndex_ == 1)) {
-			attackState_ = BossTutorial::TACKLE;//(ATTACK)GetRand(4);
+			attackState_ = BossTutorial::SLASH;//(ATTACK)GetRand(4);
 			pattaern_ = E_ATTACK;
 		}
 		else {
 			pattaern_ = E_NON;
 		}
 	}
+
+	
 }
 
 void BossTutorial::Attack()
@@ -263,6 +297,7 @@ void BossTutorial::Attack()
 
 		if (attackCounter_ < Slash::CHARGE)
 		{
+			
 			TargetLook();
 		}
 
@@ -471,21 +506,20 @@ void BossTutorial::TargetLook(void)
 
 void BossTutorial::DrawHP()
 {
-	//ボスが死んだらHPバーが揺れ続ける
-	if (unit_.hp_ < 0)unit_.hp_--;
+	//ボスが死んだらHPバーが揺れ続ける（ただの演出）
+	if (unit_.hp_ > -100) {
+		if (unit_.hp_ < 0)unit_.hp_--;
+	}
 
 	//HPの変化を検出（減少時のみ揺らす）
 	if (unit_.hp_ < prevHp_) {
 		hpShakeTimer_ = 10;
 	}
+
 	prevHp_ = unit_.hp_;
 
-	if (dispHp_ < unit_.hp_) {
-		dispHp_ += 1;			//ボスがエンカウントしたら増える！！！！
-	}
-	if (dispHp_ > unit_.hp_) {
-		dispHp_ -= 3;			//HPをゆっくり減らすよ
-	}
+	if (dispHp_ < unit_.hp_) dispHp_ += 1;			//ボスがエンカウントしたら増える！！！！
+	if (dispHp_ > unit_.hp_) dispHp_ -= 3;			//HPをゆっくり減らすよ
 
 	Vector2 start;
 	start.x = (Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2;
@@ -501,7 +535,7 @@ void BossTutorial::DrawHP()
 	}
 
 	bool isCritical = (unit_.hp_ < BOSS_HP * HP_YABAI);
-	bool blinkOn = (frameCount % BLINK_FLAME) < (BLINK_FLAME / 2);
+	bool blinkOn = (frameCounter_ % BLINK_FLAME) < (BLINK_FLAME / 2);
 
 	for (int i = 0; i < unit_.hp_; ++i) {
 		if (isCritical && !blinkOn) {
@@ -528,7 +562,10 @@ void BossTutorial::BossDeath()
 
 void BossTutorial::SetDamage(int damage)
 {
+	if (unit_.hp_ <= 0) return;
+
 	unit_.hp_ -= damage;
+	hitTimer_ = 10;
 
 	if (unit_.hp_ <= 0) {
 		unit_.isAlive_ = false;

@@ -41,7 +41,7 @@ void Slash::Update()
 			isTurn = false;
 			break;
 		}
-
+		
 		attackCounter_++;
 
 		// エフェクトを時間分表示
@@ -65,6 +65,7 @@ void Slash::Draw()
 {
 	if (obj_.isAlive_)
 	{
+		
 		if (obj_.isDraw_ && animCounter_ <= ANIM_ALL) {
 			animCounter_++;
 			DrawRotaGraph(obj_.disppos_.x += isTurn ? -(X_SIZE / 2) :  X_SIZE / 2, obj_.disppos_.y, 1.0f, 0.0f, img[animCounter_], true, isTurn);
