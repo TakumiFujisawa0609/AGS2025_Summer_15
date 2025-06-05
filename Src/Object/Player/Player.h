@@ -53,8 +53,9 @@ public:
 	static constexpr int GUARD_PER_TIME = 10;		//前硬直時間
 	static constexpr int GUARD_POST_TIME = 10;		//後硬直時間
 	static constexpr int GUARD_JUST_TIME = 9;		//ジャストガード猶予時間
+	static constexpr int JUST_GUARD_INVINCIBLE = 90;	//ジャストガード成功時無敵時間
 
-	static constexpr int HIT_COOL_DOWN = 60;	//無敵時間
+	static constexpr int HIT_COOL_DOWN = 60;	//被ダメージ時無敵時間
 	static constexpr float KNOCKBACK_Y_ACCEL = -2.0f;
 
 	//モーションタイプ
@@ -85,6 +86,7 @@ public:
 		E_GUARD_PER,		//前硬直
 		E_GUARD,			//ガード
 		E_GUARD_POST,		//後硬直
+		E_GUARD_JUST,		//ジャストガード
 
 		E_GUARD_MAX,
 	};
@@ -100,14 +102,17 @@ public:
 
 	//ゲッター関数
 	bool IsEvasion(void) { return isEvasion_; }
-	bool IsInvincible(void) { return isEvasionInbincible_; }
+	bool IsInvincible(void) { return unit_.isInbincible_; }
 	bool IsJustGuard(void) { return isJustGuard_; }
 	bool IsHit(void) { return unit_.isHit_; }
+	bool IsGuard(void) { return isGuard_; }
+	bool IsJustGuardInbincible(void) { return isJustGuardInbincible_; }
 
 	//セッター関数
 	void SetAliveOff(void) { unit_.isAlive_ = false; }
 	void SetHitOn(void) { unit_.isHit_ = true; }
 	void SetXAccel(float xAccel) { unit_.xAccel_ = xAccel; }
+	void SetSuccessJustGuard(void) { isSuccessJustGuard_ = true; }
 
 private:
 	//プレイヤー描画関係--------------------------------------------------
@@ -198,6 +203,9 @@ private:
 	int guardKeyUpBuffer_;	//後入力受付猶予カウンター
 	GUARD_STAT guardStat_;	
 	bool isJustGuard_;		//ジャストガード中
+	bool isSuccessJustGuard_;	//ジャストガード成功
+	bool isJustGuardInbincible_;	//ジャストガード成功時無敵
+	int justGuardCounter_;		//ジャストガード成功時用カウンター
 
 
 	//-----------------------------------------------------

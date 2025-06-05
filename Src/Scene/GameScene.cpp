@@ -167,16 +167,21 @@ void GameScene::PlayerToBoss(void)
 	auto& mana = SceneManager::GetInstance().GetInstance();
 
 	if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
-		if ((player_->IsInvincible() || player_->IsJustGuard())
-			&& !player_->IsHit()) {
+		if ((player_->IsJustGuard() || player_->IsEvasion()) && !player_->IsHit()) {
+			player_->SetSuccessJustGuard();
 			mana.Slow();
 		}
-		else {
+		else if (player_->IsJustGuard()) {
+
+		}
+		else if (player_->IsGuard()) {
+		}
+		else if (!player_->IsInvincible())
+		{
 			player_->SetHitOn();
 			player_->SetXAccel(20.0f);
 			mana.SHAKE();
 		}
-		//mana.HitStop();
 	}
 
 	PlayerToBossAttack();
@@ -190,11 +195,18 @@ void GameScene::PlayerToBossAttack(void)
 	for (auto obj : boss_->GetAttackObj())
 	{
 		if (ins.CircleAndRect(obj, player_->GetUnit())) {
-			if ((player_->IsInvincible() || player_->IsJustGuard())
-				&& !player_->IsHit()) {
+
+			if ((player_->IsJustGuard() || player_->IsEvasion()) && !player_->IsHit()) {
+				player_->SetSuccessJustGuard();
 				mana.Slow();
 			}
-			else {
+			else if (player_->IsJustGuard()) {
+
+			}
+			else if (player_->IsGuard()) {
+			}
+			else if(!player_->IsInvincible())
+			{
 				player_->SetHitOn();
 				player_->SetXAccel(20.0f);
 				mana.SHAKE();

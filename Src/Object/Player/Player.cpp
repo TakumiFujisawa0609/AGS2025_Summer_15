@@ -73,6 +73,9 @@ void Player::Init()
 	guardKeyUpBuffer_ = 0;		//ジャストガード受付猶予カウンター
 	guardStat_ = GUARD_STAT::E_GUARD_NON;
 	isJustGuard_ = false;		//ジャストガード
+	isSuccessJustGuard_ = false;
+	isJustGuardInbincible_ = false;	//ジャストガード成功時無敵
+	justGuardCounter_ = 0;		//ジャストガード成功時用カウンター
 
 	//ダメージ処理
 	hitCoolDownCounter_ = 0;
@@ -132,7 +135,7 @@ void Player::Draw()
 		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 40, 0x0fffff, true);
 	}
 	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
-		DrawCircle(unit_.disppos_.x-20, unit_.disppos_.y, 6, 0x00ff00);
+		DrawCircle(unit_.disppos_.x - 20, unit_.disppos_.y, 6, 0x00ff00);
 	}
 	else if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
 		DrawCircle(unit_.disppos_.x + 20, unit_.disppos_.y, 6, 0x00ff00);
@@ -191,41 +194,40 @@ void Player::ProcessEvasion(void)
 #pragma region	キーボード操作
 	//回避
 	auto& ins = InputManager::GetInstance();
-	if (ins.IsTrgDown(KEY_INPUT_A) && !isEvasionCoolDown_) {
+	if (!isEvasionCoolDown_) {
+
+		if (ins.IsTrgDown(KEY_INPUT_A) ) {
 		isEvasion_ = true;
 		isEvasionInbincible_ = true;
 		playerDir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
 		workDir_ = playerDir_;
-	}
-	else
-	if (ins.IsTrgDown(KEY_INPUT_D) && !isEvasionCoolDown_) {
-		isEvasion_ = true;
-		isEvasionInbincible_ = true;
-		playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
-		workDir_ = playerDir_;
-	}
-	else
-	if (ins.IsTrgDown(KEY_INPUT_S) && !isEvasionCoolDown_) {
-		isEvasion_ = true;
-		isEvasionInbincible_ = true;
-		workDir_ = playerDir_;
-		if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
-			playerDir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
 		}
-		else if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
+		else
+		if (ins.IsTrgDown(KEY_INPUT_D) ) {
+			isEvasion_ = true;
+			isEvasionInbincible_ = true;
 			playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
+			workDir_ = playerDir_;
+		}
+		else
+		if (ins.IsTrgDown(KEY_INPUT_S) ) {
+			isEvasion_ = true;
+			isEvasionInbincible_ = true;
+			workDir_ = playerDir_;
+			if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
+				playerDir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
+			}
+			else if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
+				playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
+			}
 		}
 	}
 	//回避時の無敵時間
 	if (isEvasion_) {
 		evasionCounter_++;
 		Evasion();
-		//無敵処理
-		if (evasionCounter_ >= EVASION_INVINCIBLE) {
-			isEvasionInbincible_ = false;		//無敵時間の終了
-		}
-		//回避処理
 		if (evasionCounter_ >= EVASION_TIME) {
+			isEvasionInbincible_ = false;		//無敵時間の終了
 			evasionCounter_ = 0;
 			isEvasion_ = false;				//回避の終了
 			playerDir_ = workDir_;
@@ -543,7 +545,10 @@ void Player::ProcessGuard(void)
 	case Player::GUARD_STAT::E_GUARD_POST:		//後硬直
 		//猶予カウント中
 		if (guardKeyUpBuffer_ < GUARD_JUST_TIME) {			//ジャストガード判定処理中
-			JustGuard();
+			isJustGuard_ = true;
+			if (isSuccessJustGuard_) {
+				JustGuard();
+			}
 			guardKeyUpBuffer_++;
 		}
 		else {
@@ -560,6 +565,19 @@ void Player::ProcessGuard(void)
 			guardMaxCounter_ = 0;
 			isMove_ = true;
 			guardStat_ = GUARD_STAT::E_GUARD_NON;	//非ガード状態へ遷移
+		}
+		break;
+	case Player::GUARD_STAT::E_GUARD_JUST:
+		if (unit_.isInbincible_) {
+		isJustGuard_ = false;
+			isMove_ = true;
+			justGuardCounter_++;
+			if (justGuardCounter_ >= JUST_GUARD_INVINCIBLE) {
+				unit_.isInbincible_ = false;
+				isSuccessJustGuard_ = false;
+				guardStat_ = GUARD_STAT::E_GUARD_NON;
+				justGuardCounter_ = 0;
+			}
 		}
 		break;
 	}
@@ -584,8 +602,15 @@ void Player::Guard(void)
 void Player::JustGuard(void)
 {
 	//	SceneManager::GetInstance().Slow();
-	isJustGuard_ = true;
-	//postStiffness_ = GUARD_POST_TIME;		//ジャストガード成功時後硬直削除
+	unit_.isInbincible_ = true;
+	postStiffness_ = GUARD_POST_TIME;		//ジャストガード成功時後硬直削除
+	guardStat_ = GUARD_STAT::E_GUARD_JUST;	//ジャストガードへ遷移
+	//初期化
+	perStiffness_ = 0;
+	guardKeyUpBuffer_ = 0;
+	postStiffness_ = 0;
+	guardMaxCounter_ = 0;
+	isMove_ = true;
 }
 
 void Player::ProcessDamage(void)
@@ -612,7 +637,7 @@ void Player::ProcessHit(void)
 
 void Player::ProcessKnockback(void)
 {
-	isMove_ = false;
+//	isMove_ = false;
 }
 
 void Player::HitCoolDown(void)
@@ -624,7 +649,7 @@ void Player::HitCoolDown(void)
 		hitCoolDownCounter_ = 0;
 		knockBackYAccel_ = 0;
 		unit_.yAccel_ = 0;
-  		isMove_ = true;
+		isMove_ = true;
 	}
 }
 
@@ -661,7 +686,7 @@ void Player::LoadPlayerImage(void)
 
 	LoadDivGraph((basePath + "Idle.png").c_str(),
 		IDLE_LOAD_NUM, IDLE_LOAD_NUM, 1,
-		LOAD_SIZE_X, LOAD_SIZE_Y,idleLoad);
+		LOAD_SIZE_X, LOAD_SIZE_Y, idleLoad);
 
 	image_[motion].insert(image_[motion].end(), idleLoad, idleLoad + IDLE_LOAD_NUM);
 	//-----------------------------------------------------------------------
@@ -698,7 +723,7 @@ void Player::LoadPlayerImage(void)
 	LoadDivGraph((basePath + "Fall.png").c_str(),
 		FALL_LOAD_NUM, FALL_LOAD_NUM, 1,
 		LOAD_SIZE_X, LOAD_SIZE_Y, fallLoad);
-		
+
 	image_[motion].insert(image_[motion].end(), fallLoad, fallLoad + JUMP_LOAD_NUM);
 	//-----------------------------------------------------------------------
 
