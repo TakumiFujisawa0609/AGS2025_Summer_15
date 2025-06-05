@@ -18,13 +18,12 @@ Slash::~Slash()
 
 void Slash::Init(const Vector2F* pos)
 {
-	//LoadDivGraph("Data/Image/Boss/SlashAnim.png", ANIM_ALL,
-	//	X_NUM, Y_NUM, X_SIZE, Y_SIZE, img);
-	
 
 	AttackBase::Init(pos);
-	obj_.radius_ = 120.0f;
-	obj_.size_ = { 240.0f,240.0f };
+	
+	obj_.size_ = { (float)X_SIZE,(float)Y_SIZE };
+	obj_.radius_ = obj_.size_.x;
+	
 	animCounter_ = 0;
 }
 
@@ -35,27 +34,27 @@ void Slash::Update()
 		switch (dir_)
 		{
 		case Slash::LEFT:
-			obj_.pos_ = { boss->x - 70.0f,boss->y };
+			obj_.pos_ = { boss->x - BossTutorial::SIZE_X / 2,boss->y };
 			isTurn = true;
 			break;
 		case Slash::RIGHT:
-			obj_.pos_ = { boss->x + 70.0f,boss->y };
+			obj_.pos_ = { boss->x + BossTutorial::SIZE_X / 2,boss->y };
 			isTurn = false;
 			break;
 		}
 
-		attackCounter_++;
+		animCounter_++;
 
-		// エフェクトを時間分表示
-		if (attackCounter_ > ATTACK_DRAW_TIME) {
-			obj_.isDraw_ = false;
-		}
-		
-		// 攻撃終了処理
-		if (attackCounter_ > ATTACK_TIME) {
-		
+		if (animCounter_ > ANIM_ALL) {
 			obj_.isAlive_ = false;
-			animCounter_ = 0;
+			animCounter_ = ANIM_ALL;
+		}
+	}
+	else if (animCounter_ > 0) {
+
+		attackCounter_++;
+		if (attackCounter_ > 120) {
+			attackCounter_ = 0;
 			end_ = true;
 		}
 	}
@@ -67,12 +66,8 @@ void Slash::Draw()
 {
 	if (obj_.isAlive_)
 	{
-		if (obj_.isDraw_ && animCounter_ <= ANIM_ALL) {
-			animCounter_++;
-			DrawRotaGraph(obj_.disppos_.x += isTurn ? -(X_SIZE / 2) :  X_SIZE / 2, obj_.disppos_.y, 1.0f, 0.0f, img[animCounter_], true, isTurn);
-			//DrawGraph(obj_.disppos_.x, obj_.disppos_.y - Y_SIZE / 2, img[animCounter_], true);
-		}
-		
+		float diff = (isTurn) ? -(X_SIZE / 2) : (X_SIZE / 2);
+		DrawRotaGraph(obj_.disppos_.x + diff, obj_.disppos_.y, 1.0f, 0.0f, img[animCounter_], true, isTurn);
 	}
 }
 

@@ -69,6 +69,9 @@ void GameScene::Update(void)
 		enemy_->GetBamboo(ii)->SetTargetPos(player_->GetUnit().pos_);
 	}
 
+	//オブジェクト同士の当たり判定
+	ObjCollision();
+
 	 //シーン遷移
 	if (ins.IsTrgDown(KEY_INPUT_P))
 	{
@@ -148,4 +151,54 @@ void GameScene::Release(void)
 	stage_ = nullptr;
 
 	Collision::DeleteInstance();
+}
+
+
+
+void GameScene::ObjCollision(void)
+{
+	PlayerToBoss();
+	PlayerToEnemyBamboo();
+}
+
+void GameScene::PlayerToBoss(void)
+{
+	auto& ins = Collision::GetInstance();
+
+	if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
+		auto& mana = SceneManager::GetInstance().GetInstance();
+
+		mana.Slow();
+
+
+	}
+
+	PlayerToBossAttack();
+}
+
+void GameScene::PlayerToBossAttack(void)
+{
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
+
+	for (auto obj : boss_->GetAttackObj()) 
+	{
+		if (ins.CircleAndRect(obj, player_->GetUnit())) {
+			mana.Slow();
+		}
+	}
+
+}
+
+void GameScene::PlayerToEnemyBamboo(void)
+{
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
+
+	for (int i = 0; i < EnemyBamboo::ENEMY_MAX; i++) {
+		if (ins.Ellipse(player_->GetUnit(), enemy_->GetBamboo(i)->GetUnit())) {
+			mana.Slow();
+		}
+	}
+
 }

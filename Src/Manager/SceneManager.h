@@ -62,7 +62,7 @@ public:
 	void SetController(const CNTL _cntl);
 
 
-	void Slow(void) { slowCounter_ = SLOW_TIME; }
+	void Slow(void) { if (slowCounter_ >= 0) { slowCounter_ = SLOW_TIME; } }
 	void HitStop(void) { hitStopCounter_ = HIT_STOP_TIME; }
 	void SHAKE(void) { shakeCounter_ = SHAKE_TIME; }
 

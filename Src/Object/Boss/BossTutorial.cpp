@@ -194,7 +194,7 @@ void BossTutorial::Move()
 		attackCounter_ = 0;
 		if (!(targetIndex_ == 1)) {
 			TargetLook(player_->GetUnit().pos_);
-			attackState_ = (ATTACK)GetRand(0);
+			attackState_ = (ATTACK)/*GetRand((int)ATTACK::MAX-2)*/0;
 			pattaern_ = E_ATTACK;
 		}
 		else {
@@ -239,7 +239,7 @@ void BossTutorial::Attack()
 
 			float dis = target_.x - unit_.nextpos_.x;
 			if (dis < 0)dis *= -1;
-			if (dis <= player_->GetUnit().size_.x / 2 + unit_.size_.x / 2) {
+			if (dis <= player_->GetUnit().size_.x + unit_.size_.x) {
 				panVec_ = { 0.0f,0.0f };
 				slash_->On();
 				DrawPat_ = E_SLASH_END;
