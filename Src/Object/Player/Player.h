@@ -53,7 +53,7 @@ public:
 	static constexpr int GUARD_PER_TIME = 10;		//前硬直時間
 	static constexpr int GUARD_POST_TIME = 10;		//後硬直時間
 	static constexpr int GUARD_JUST_TIME = 9;		//ジャストガード猶予時間
-	static constexpr int JUST_GUARD_INVINCIBLE = 60;	//ジャストガード成功時無敵時間
+	static constexpr int JUST_GUARD_INVINCIBLE = 90;	//ジャストガード成功時無敵時間
 
 	static constexpr int HIT_COOL_DOWN = 60;	//被ダメージ時無敵時間
 	static constexpr float KNOCKBACK_Y_ACCEL = -2.0f;
@@ -102,7 +102,7 @@ public:
 
 	//ゲッター関数
 	bool IsEvasion(void) { return isEvasion_; }
-	bool IsInvincible(void) { return isEvasionInbincible_; }
+	bool IsInvincible(void) { return unit_.isInbincible_; }
 	bool IsJustGuard(void) { return isJustGuard_; }
 	bool IsHit(void) { return unit_.isHit_; }
 	bool IsGuard(void) { return isGuard_; }
