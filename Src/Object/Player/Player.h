@@ -103,6 +103,7 @@ public:
 	bool IsInvincible(void) { return isEvasionInbincible_; }
 	bool IsJustGuard(void) { return isJustGuard_; }
 	bool IsHit(void) { return unit_.isHit_; }
+	bool IsGuard(void) { return isGuard_; }
 
 	//セッター関数
 	void SetAliveOff(void) { unit_.isAlive_ = false; }

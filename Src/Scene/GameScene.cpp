@@ -171,12 +171,13 @@ void GameScene::PlayerToBoss(void)
 			&& !player_->IsHit()) {
 			mana.Slow();
 		}
+		else if (player_->IsGuard()) {
+		}
 		else {
 			player_->SetHitOn();
 			player_->SetXAccel(20.0f);
 			mana.SHAKE();
 		}
-		//mana.HitStop();
 	}
 
 	PlayerToBossAttack();
@@ -193,6 +194,8 @@ void GameScene::PlayerToBossAttack(void)
 			if ((player_->IsInvincible() || player_->IsJustGuard())
 				&& !player_->IsHit()) {
 				mana.Slow();
+			}
+			else if (player_->IsGuard()) {
 			}
 			else {
 				player_->SetHitOn();
