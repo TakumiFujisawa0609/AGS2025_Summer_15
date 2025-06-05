@@ -52,7 +52,7 @@ public:
 	static constexpr int GUARD_TIME_MAX = 180;		//最大ガード時間
 	static constexpr int GUARD_PER_TIME = 10;		//前硬直時間
 	static constexpr int GUARD_POST_TIME = 10;		//後硬直時間
-	static constexpr int GUARD_JUST_TIME = 5;		//ジャストガード猶予時間
+	static constexpr int GUARD_JUST_TIME = 9;		//ジャストガード猶予時間
 
 	static constexpr int HIT_COOL_DOWN = 60;	//無敵時間
 	static constexpr float KNOCKBACK_Y_ACCEL = -2.0f;
@@ -102,7 +102,7 @@ public:
 	bool IsEvasion(void) { return isEvasion_; }
 	bool IsInvincible(void) { return isEvasionInbincible_; }
 	bool IsJustGuard(void) { return isJustGuard_; }
-
+	bool IsHit(void) { return unit_.isHit_; }
 
 	//セッター関数
 	void SetAliveOff(void) { unit_.isAlive_ = false; }

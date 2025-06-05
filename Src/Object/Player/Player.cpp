@@ -124,7 +124,9 @@ void Player::Draw()
 	if (isJustGuard_) {
 		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 40, 0x0fffff, true);
 	}
-
+	if (isEvasionInbincible_) {
+		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 40, 0x0fffff, true);
+	}
 	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
 		DrawCircle(unit_.disppos_.x-20, unit_.disppos_.y, 6, 0x00ff00);
 	}

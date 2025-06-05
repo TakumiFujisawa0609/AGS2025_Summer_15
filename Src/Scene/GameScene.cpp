@@ -167,9 +167,9 @@ void GameScene::PlayerToBoss(void)
 	auto& mana = SceneManager::GetInstance().GetInstance();
 
 	if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
-		if (player_->IsInvincible()) {
+		if ((player_->IsInvincible() || player_->IsJustGuard())
+			&& !player_->IsHit()) {
 			mana.Slow();
-
 		}
 		else {
 			player_->SetHitOn();
@@ -190,7 +190,8 @@ void GameScene::PlayerToBossAttack(void)
 	for (auto obj : boss_->GetAttackObj())
 	{
 		if (ins.CircleAndRect(obj, player_->GetUnit())) {
-			if (player_->IsInvincible()) {
+			if ((player_->IsInvincible() || player_->IsJustGuard())
+				&& !player_->IsHit()) {
 				mana.Slow();
 			}
 			else {
