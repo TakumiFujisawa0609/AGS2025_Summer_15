@@ -653,8 +653,9 @@ void Player::DrawPlayer(std::vector<int> modelId, bool loop)
 		animCounter_ = (loop) ? 0.0f : modelId.size() - 1;
 	}
 	DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2,
-		2, 0, modelId[(int)animCounter_], true, isLeft);
+		SIZE_SCALE, 0, modelId[(int)animCounter_], true, isLeft);
 }
+
 
 
 void Player::SetDrawPlayer(void)
