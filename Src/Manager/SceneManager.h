@@ -114,7 +114,7 @@ private:
 	const int SLOW_TIME = 40;
 	int slowCounter_;
 
-	const int HIT_STOP_TIME = 20;
+	const int HIT_STOP_TIME = 5;
 	int hitStopCounter_;
 
 	const int SHAKE_TIME = 30;

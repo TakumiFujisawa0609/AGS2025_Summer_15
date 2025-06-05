@@ -43,6 +43,9 @@ void Player::Init()
 	attackCounter_ = 0;
 	arialSweepCounter_ = 0;
 
+	defaAt_ = new DefaultAttack();
+	defaAt_->Init(&unit_.pos_,&playerDir_);
+
 	//ジャンプ
 	unit_.yAccel_ = 0;
 	jumpPower_ = 0;
@@ -78,13 +81,14 @@ void Player::Init()
 	justGuardCounter_ = 0;		//ジャストガード成功時用カウンター
 
 	//ダメージ処理
-	hitCoolDownCounter_ = 0;
-	knockBackYAccel_ = 0;
+	//hitCoolDownCounter_ = 0;
+	//knockBackYAccel_ = 0;
 
 	arialSweep_ = new ArialSweep();
 	arialSweep_->Init(&unit_.nextpos_, &unit_.disppos_);
 
-	Collision::CreateInstance();
+
+	mutekiCounter_ = 0;
 }
 
 void Player::Update()
@@ -93,10 +97,14 @@ void Player::Update()
 		Move();
 		ProcessJump();
 	}
-
-	ProcessAtatck();
+	if (mutekiCounter_ > 0)mutekiCounter_--;
+	//ProcessAtatck();
 	ProcessGuard();
-	ProcessDamage();
+	//ProcessDamage();
+
+	Attack();
+
+	if (unit_.hp_ < 0)unit_.isAlive_ = false;
 
 	AnimationUpdate();
 
@@ -122,7 +130,7 @@ void Player::Draw()
 	case Player::ATTACK_STAT::E_ATTACK_STAT_ARIALSWEEP:
 		break;
 	}
-	arialSweep_->Draw();
+	//arialSweep_->Draw();
 
 	if (isGuard_) {
 
@@ -131,21 +139,30 @@ void Player::Draw()
 	if (isJustGuard_) {
 		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 40, 0x0fffff, true);
 	}
-	if (isEvasionInbincible_) {
-		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 40, 0x0fffff, true);
-	}
-	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
-		DrawCircle(unit_.disppos_.x - 20, unit_.disppos_.y, 6, 0x00ff00);
-	}
-	else if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
-		DrawCircle(unit_.disppos_.x + 20, unit_.disppos_.y, 6, 0x00ff00);
+	//if (isEvasionInbincible_) {
+	//	DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 40, 0x0fffff, true);
+	//}
+	//if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
+	//	DrawCircle(unit_.disppos_.x-20, unit_.disppos_.y, 6, 0x00ff00);
+	//}
+	//else if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
+	//	DrawCircle(unit_.disppos_.x + 20, unit_.disppos_.y, 6, 0x00ff00);
+	//}
+
+	if (unit_.isAlive_ && (mutekiCounter_ / 10) % 2 == 0) {
+		DrawHpBarFixedSize(350, 300, 800, 330, unit_.hp_, HP_MAX, RGB(0, 255, 0));
+		defaAt_->Draw();
+		SetDrawPlayer();
 	}
 
-	SetDrawPlayer();
 }
 
 void Player::Release()
 {
+	defaAt_->Release();
+	delete defaAt_;
+	defaAt_ = nullptr;
+
 	arialSweep_->Release();
 	delete arialSweep_;
 	arialSweep_ = nullptr;
@@ -178,13 +195,13 @@ void Player::Move(void)
 		unit_.nextpos_.x += unit_.speed_;
 		playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
 		//モーションを変更
-		motionType_ = MOTION_TYPE::E_MOTION_RUN;
+		if (!(motionType_ == MOTION_TYPE::E_MOTION_ATTACK))motionType_ = MOTION_TYPE::E_MOTION_RUN;
 	}
 	if (InpMng.IsNew(KEY_INPUT_A) || padState.AKeyLX < -stickThreshold) {
 		unit_.nextpos_.x -= unit_.speed_;
 		playerDir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
 		//モーションを変更
-		motionType_ = MOTION_TYPE::E_MOTION_RUN;
+		if (!(motionType_ == MOTION_TYPE::E_MOTION_ATTACK))motionType_ = MOTION_TYPE::E_MOTION_RUN;
 	}
 }
 
@@ -480,8 +497,23 @@ void Player::ProcessAtatck(void)
 
 void Player::Attack(void)
 {
+	MOTION_TYPE prev = motionType_;
 
-
+	switch (defaAt_->Update())
+	{
+	case DefaultAttack::Nothing:
+		break;
+	case DefaultAttack::Action:
+		isAttack_ = true;
+		break;
+	case DefaultAttack::Already:
+		break;
+	case DefaultAttack::AttackEnd:
+		isAttack_ = false;
+		break;
+	case DefaultAttack::Recast:
+		break;
+	}
 
 
 
@@ -613,47 +645,59 @@ void Player::JustGuard(void)
 	isMove_ = true;
 }
 
-void Player::ProcessDamage(void)
-{
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)) {
-		unit_.isHit_ = true;
-	}
-	if (unit_.isHit_ && !unit_.isInbincible_) {
-		ProcessHit();
-	}
-	if (unit_.isInbincible_) {
-		ProcessKnockback();
-		HitCoolDown();
-	}
-}
-
-void Player::ProcessHit(void)
-{
-	unit_.hp_ -= 10;
-	unit_.isInbincible_ = true;
-	unit_.yAccel_ -= 16;
-	SetXAccel(20.0f);
-}
-
-void Player::ProcessKnockback(void)
-{
+//void Player::ProcessDamage(void)
+//{
+//	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)) {
+//		unit_.isHit_ = true;
+//	}
+//	if (unit_.isHit_ && !unit_.isInbincible_) {
+//		ProcessHit();
+//	}
+//	if (unit_.isInbincible_) {
+//		ProcessKnockback();
+//		HitCoolDown();
+//	}
+//}
+//
+//void Player::ProcessHit(void)
+//{
+//	unit_.hp_ -= 10;
+//	unit_.isInbincible_ = true;
+//	unit_.yAccel_ -= 16;
+//	SetXAccel(20.0f);
+//}
+//
+//void Player::ProcessKnockback(void)
+//{
 //	isMove_ = false;
-}
+//}
+//
+//void Player::HitCoolDown(void)
+//{
+//	hitCoolDownCounter_++;
+//	if (hitCoolDownCounter_ >= HIT_COOL_DOWN) {
+//		unit_.isHit_ = false;
+//		unit_.isInbincible_ = false;
+//		hitCoolDownCounter_ = 0;
+//		knockBackYAccel_ = 0;
+//		unit_.yAccel_ = 0;
+//  		isMove_ = true;
+//	}
+//}
 
-void Player::HitCoolDown(void)
+
+
+
+void Player::Damage(int damage,Vector2F pos)
 {
-	hitCoolDownCounter_++;
-	if (hitCoolDownCounter_ >= HIT_COOL_DOWN) {
-		unit_.isHit_ = false;
-		unit_.isInbincible_ = false;
-		hitCoolDownCounter_ = 0;
-		knockBackYAccel_ = 0;
-		unit_.yAccel_ = 0;
-		isMove_ = true;
-	}
+	unit_.hp_ -= damage;
+
+	mutekiCounter_ = 120;
+
+	unit_.xAccel_ += (unit_.pos_.x < pos.x) ? -10 : 10;
+	unit_.yAccel_ -= 10;
+
 }
-
-
 
 
 void Player::AnimationUpdate(void)
@@ -663,13 +707,12 @@ void Player::AnimationUpdate(void)
 		motionType_ = MOTION_TYPE::E_MOTION_JUMP;
 		if (unit_.yAccel_ > 0.0f)motionType_ = MOTION_TYPE::E_MOTION_FALL;
 	}
-	if (isEvasion_) {
-		motionType_ = MOTION_TYPE::E_MOTION_EVASION;
-	}
+
+	if (isAttack_) motionType_ = MOTION_TYPE::E_MOTION_ATTACK;
 
 	animCounter_ += 0.5;
 	if (animCounter_ >= image_[(int)motionType_].size()) {
-		animCounter_ = (animLoop_) ? 0.0f : image_[(int)motionType_].size() - 1;
+		animCounter_ = 0.0f;
 	}
 }
 
@@ -727,6 +770,18 @@ void Player::LoadPlayerImage(void)
 	image_[motion].insert(image_[motion].end(), fallLoad, fallLoad + JUMP_LOAD_NUM);
 	//-----------------------------------------------------------------------
 
+	//攻撃状態の画像を読み込み-----------------------------------------------
+	motion = (int)MOTION_TYPE::E_MOTION_ATTACK;
+
+	int AttaclLoad[ATTACK_LOAD_NUM];
+
+	LoadDivGraph((basePath + "Attack.png").c_str(),
+		ATTACK_LOAD_NUM, ATTACK_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, AttaclLoad);
+
+	image_[motion].insert(image_[motion].end(), AttaclLoad, AttaclLoad + ATTACK_LOAD_NUM);
+	//-----------------------------------------------------------------------
+
 	//回避状態の画像を読み込み-----------------------------------------------
 	motion = (int)MOTION_TYPE::E_MOTION_EVASION;
 
@@ -767,8 +822,7 @@ void Player::SetDrawPlayer(void)
 	//}
 	if (!(motionType_ == MOTION_TYPE::E_MOTION_DAMAGE)) {
 		//現在のモーション
-		int nowMotion = (int)motionType_;
-		DrawPlayer(image_[nowMotion]);
+		DrawPlayer(image_[(int)motionType_]);
 	}
 }
 

@@ -67,6 +67,7 @@ public:
 	void Release()override;
 
 
+
 	const bool GetEnCount(void)const { return encount_; }
 
 	const ATTACK GetAttack(void)const { return attackState_; }

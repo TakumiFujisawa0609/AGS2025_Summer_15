@@ -3,6 +3,8 @@
 #include"../../Utility/AsoUtility.h"
 #include"../UnitBase.h"
 
+#include"Attack/DefaultAttack.h"
+
 class ArialSweep;
 
 class Player:public UnitBase
@@ -22,13 +24,14 @@ public:
 	static constexpr int RUN_LOAD_NUM = 10;
 	static constexpr int JUMP_LOAD_NUM = 3;
 	static constexpr int FALL_LOAD_NUM = 3;
+	static constexpr int ATTACK_LOAD_NUM = 4;
 	static constexpr int EVASION_LOAD_NUM = 12;
 
 
 
 	static constexpr float RADIUS = 64.0f;
 
-	static constexpr int HP_MAX = 100;
+	static constexpr int HP_MAX = 50;
 
 	static constexpr float MOVE_POW = 10.0f;		//移動量
 
@@ -65,6 +68,7 @@ public:
 		E_MOTION_RUN,		//走りモーション
 		E_MOTION_JUMP,		//ジャンプモーション
 		E_MOTION_FALL,
+		E_MOTION_ATTACK,
 		E_MOTION_DAMAGE,	//被ダメージモーション
 		E_MOTION_EVASION,	//回避モーション
 
@@ -105,8 +109,8 @@ public:
 	bool IsInvincible(void) { return unit_.isInbincible_; }
 	bool IsJustGuard(void) { return isJustGuard_; }
 	bool IsHit(void) { return unit_.isHit_; }
-	bool IsGuard(void) { return isGuard_; }
-	bool IsJustGuardInbincible(void) { return isJustGuardInbincible_; }
+	Base GetAttack(void)const { return defaAt_->GetObj(); }
+
 
 	//セッター関数
 	void SetAliveOff(void) { unit_.isAlive_ = false; }
@@ -114,7 +118,10 @@ public:
 	void SetXAccel(float xAccel) { unit_.xAccel_ = xAccel; }
 	void SetSuccessJustGuard(void) { isSuccessJustGuard_ = true; }
 
+	void Damage(int damage,Vector2F pos);
+	bool Muteki(void) { return mutekiCounter_ > 0; }
 private:
+	int mutekiCounter_;
 	//プレイヤー描画関係--------------------------------------------------
 	std::vector<int> image_[(int)MOTION_TYPE::E_MOTION_MAX];
 
@@ -154,6 +161,8 @@ private:
 	int inputJumpKeyCounter_;	//ジャンプの入力時間カウンター
 
 	//攻撃---------------------------------------------------------------
+	
+	DefaultAttack* defaAt_;
 	//攻撃プロセス
 	void ProcessAtatck(void);
 	//攻撃更新処理
@@ -211,16 +220,16 @@ private:
 	//-----------------------------------------------------
 	//ダメージ
 	//-----------------------------------------------------
-	//ダメージ処理
-	void ProcessDamage(void);
-	//HIT処理
-	void ProcessHit(void);
-	//ノックバック処理
-	void ProcessKnockback(void);
-	//無敵処理
-	void HitCoolDown(void);
-	int hitCoolDownCounter_;	//無敵時間用カウンター
-	float knockBackYAccel_;		//ノックバック用Y軸方向加速度
+	////ダメージ処理
+	//void ProcessDamage(void);
+	////HIT処理
+	//void ProcessHit(void);
+	////ノックバック処理
+	//void ProcessKnockback(void);
+	////無敵処理
+	//void HitCoolDown(void);
+	//int hitCoolDownCounter_;	//無敵時間用カウンター
+	//float knockBackYAccel_;		//ノックバック用Y軸方向加速度
 };
 
 
