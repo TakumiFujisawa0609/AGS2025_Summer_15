@@ -26,4 +26,7 @@ struct Base
 
 	float radius_;		//”¼Œa
 	Vector2F size_;		//‘å‚«‚³
+	bool isHit_;		//“–‚½‚è”»’è
+	bool isInbincible_;		//–³“G
+
 };
