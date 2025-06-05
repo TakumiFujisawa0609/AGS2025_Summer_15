@@ -192,7 +192,9 @@ void GameScene::PlayerToBossAttack(void)
 	{
 		if (ins.CircleAndRect(obj, player_->GetUnit())) {
 			if ((player_->IsInvincible() || player_->IsJustGuard())
-				&& !player_->IsHit()) {
+				&&!player_->IsJustGuardInbincible()
+				&&!player_->IsHit()) {
+				player_->SetSuccessJustGuard();
 				mana.Slow();
 			}
 			else if (player_->IsGuard()) {

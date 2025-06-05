@@ -71,6 +71,9 @@ void Player::Init()
 	guardKeyUpBuffer_ = 0;		//ジャストガード受付猶予カウンター
 	guardStat_ = GUARD_STAT::E_GUARD_NON;
 	isJustGuard_ = false;		//ジャストガード
+	isSuccessJustGuard_ = false;
+	isJustGuardInbincible_ = false;	//ジャストガード成功時無敵
+	justGuardCounter_ = 0;		//ジャストガード成功時用カウンター
 
 	//ダメージ処理
 	hitCoolDownCounter_ = 0;
@@ -92,6 +95,7 @@ void Player::Update()
 	ProcessAtatck();
 	ProcessGuard();
 	ProcessDamage();
+
 
 	UnitBase::Update();
 
@@ -541,14 +545,6 @@ void Player::ProcessGuard(void)
 			break;
 		}
 	case Player::GUARD_STAT::E_GUARD_POST:		//後硬直
-		//猶予カウント中
-		if (guardKeyUpBuffer_ < GUARD_JUST_TIME) {			//ジャストガード判定処理中
-			JustGuard();
-			guardKeyUpBuffer_++;
-		}
-		else {
-			isJustGuard_ = false;
-		}
 		if (postStiffness_ < GUARD_POST_TIME) {				//後硬直中
 			postStiffness_++;
 		}
@@ -560,6 +556,28 @@ void Player::ProcessGuard(void)
 			guardMaxCounter_ = 0;
 			isMove_ = true;
 			guardStat_ = GUARD_STAT::E_GUARD_NON;	//非ガード状態へ遷移
+		}
+		break;
+		//猶予カウント中
+		if (guardKeyUpBuffer_ < GUARD_JUST_TIME) {			//ジャストガード判定処理中
+			isJustGuard_ = true;
+			if (isSuccessJustGuard_) {
+			JustGuard();
+			}
+			guardKeyUpBuffer_++;
+		}
+		else {
+			isJustGuard_ = false;
+		}
+	case Player::GUARD_STAT::E_GUARD_JUST:
+		isJustGuard_ = false;
+		if (isJustGuardInbincible_) {
+			justGuardCounter_++;
+			if (justGuardCounter_ >= JUST_GUARD_INVINCIBLE) {
+				isJustGuardInbincible_ = false;
+				isSuccessJustGuard_ = false;
+				guardStat_ = GUARD_STAT::E_GUARD_NON;
+			}
 		}
 		break;
 	}
@@ -584,8 +602,15 @@ void Player::Guard(void)
 void Player::JustGuard(void)
 {
 	//	SceneManager::GetInstance().Slow();
-	isJustGuard_ = true;
-	//postStiffness_ = GUARD_POST_TIME;		//ジャストガード成功時後硬直削除
+	isJustGuardInbincible_ = true;
+	postStiffness_ = GUARD_POST_TIME;		//ジャストガード成功時後硬直削除
+	guardStat_ = GUARD_STAT::E_GUARD_JUST;	//ジャストガードへ遷移
+	//初期化
+	perStiffness_ = 0;
+	guardKeyUpBuffer_ = 0;
+	postStiffness_ = 0;
+	guardMaxCounter_ = 0;
+	isMove_ = true;
 }
 
 void Player::ProcessDamage(void)
