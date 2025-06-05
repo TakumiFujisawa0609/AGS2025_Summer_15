@@ -101,7 +101,9 @@ public:
 	//ゲッター関数
 	bool IsEvasion(void) { return isEvasion_; }
 	bool IsInvincible(void) { return isEvasionInbincible_; }
-	
+	bool IsJustGuard(void) { return isJustGuard_; }
+
+
 	//セッター関数
 	void SetAliveOff(void) { unit_.isAlive_ = false; }
 	void SetHitOn(void) { unit_.isHit_ = true; }
@@ -194,6 +196,7 @@ private:
 	bool nowGuardKey_;		//トリガーアップ用変数
 	int guardKeyUpBuffer_;	//後入力受付猶予カウンター
 	GUARD_STAT guardStat_;	
+	bool isJustGuard_;		//ジャストガード中
 
 
 	//-----------------------------------------------------
