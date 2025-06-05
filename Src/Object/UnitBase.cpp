@@ -24,6 +24,10 @@ UnitBase::UnitBase()
 	unit_.isStageCollision_ = true;
 
 	gravity_ = GRAVITY;
+
+	unit_.isHit_=false;		//“–‚½‚è”»’è
+	unit_.isInbincible_=false;		//–³“G
+
 }
 
 UnitBase::~UnitBase()
@@ -35,6 +39,16 @@ void UnitBase::Update()
 {
 	unit_.nextpos_.y += unit_.yAccel_;
 	unit_.nextpos_.x += unit_.xAccel_;
+	if (unit_.xAccel_ > 1) {
+		unit_.xAccel_--;
+	}
+	else if(unit_.xAccel_ < -1){
+		unit_.xAccel_++;
+	}
+	else {
+		unit_.xAccel_ = 0;
+	}
+
 	StageCollision();
 
 	// ŽÀÛ‚ÉÀ•W‚ðXV
