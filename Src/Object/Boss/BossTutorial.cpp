@@ -374,7 +374,7 @@ void BossTutorial::Attack()
 			unit_.nextpos_.y -= 10;
 			if (attackCounter_ > Tackle::TACKLE_START)
 			{
-				mode_ = Tackle::STANP_MODE;
+				mode_ = Tackle::TACKLE_MODE;
 			}
 		}
 
@@ -382,25 +382,20 @@ void BossTutorial::Attack()
 		switch (mode_)
 		{
 		case Tackle::NON_MODE:
+
 			break;
-		case Tackle::STANP_MODE:
+		case Tackle::TACKLE_MODE:
 
 			if (unit_.nextpos_.y + unit_.size_.y > start.y) {
 				unit_.isGravity_ = false;
 				unit_.isStageCollision_ = false;
-				unit_.nextpos_.y -= 120;
-			}
-			else {
-				if (unit_.isGravity_) {
-					unit_.nextpos_.x = player_->GetUnit().nextpos_.x;
-				}
-				unit_.isGravity_ = true;
-				unit_.isStageCollision_ = true;
+				
+				unit_.nextpos_ = {
+					Application::SCREEN_SIZE_X + unit_.size_.x,
+					player_->GetUnit().nextpos_.y,
+				};
 			}
 			
-
-			break;
-		case Tackle::TACKLE_MODE:
 
 			break;
 		}
