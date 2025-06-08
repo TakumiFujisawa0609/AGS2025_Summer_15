@@ -23,409 +23,350 @@ Player::~Player()
 
 void Player::Init()
 {
+	// 定数値を設定
+	unit_.size_ = { SIZE_X,SIZE_Y };
 
+
+
+
+	// 変数の初期化
+	unit_.pos_ = { 500.0f,500.0f };
 	unit_.isAlive_ = true;
-	unit_.pos_ = { Application::MAIN_SCREEN_SIZE_X / 2,Application::MAIN_SCREEN_SIZE_Y / 2 };
-	unit_.nextpos_ = unit_.pos_;
-	unit_.size_ = { SIZE_X,SIZE_Y, };
-	unit_.radius_ = RADIUS;
-	unit_.hp_ = HP_MAX;
-	unit_.speed_ = MOVE_POW;
-	motionType_ = MOTION_TYPE::E_MOTION_IDLE;		//モーションタイプ
-	animCounter_ = 0.0f;
 
-	attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
+	//状態
+	ChangeState(Player::STATE::MOVE);
 
-	animLoop_ = true;
+	// モーション
+	ChangeMotion(MOTION::IDLE);
 
-	//攻撃
-	isAttack_ = false;
-	attackCounter_ = 0;
-	arialSweepCounter_ = 0;
+	// アニメーションカウンター
+	animeCounter_ = 0;
+	animeInterval_ = 0;
 
-	defaAt_ = new DefaultAttack();
-	defaAt_->Init(&unit_.pos_,&playerDir_);
 
-	//ジャンプ
-	unit_.yAccel_ = 0;
-	jumpPower_ = 0;
-	isJump_ = false;
-	firstJumpFlg_ = true;
-	secondJumpFlg_ = true;
-	thirdJumpFlg_ = true;
-	inputJumpKeyCounter_ = 0;
+	// 向き
+	dir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
 
-	playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
-	isMove_ = true;
+	// ジャンプ関係
+	for (int i = 0; i < JUMP_NUM; i++) {
+		isJump_[i] = false;
+		jumpKeyCounter_[i] = 0;
+	}
 
-	//回避
-	isEvasion_ = false;
-	isEvasionCoolDown_ = false;
-	isEvasionInbincible_ = false;
+	// 攻撃関係
+	for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; }
+	attack_ = NON;
+	attackKeyCounter_ = 0;
+
+
+	// 回避関係
 	evasionCounter_ = 0;
-	evasionCoolDown_ = 0;
-	workDir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
-
-	// ガード用変数の初期化
-	isGuard_ = false;           // ガード中
-	guardMaxCounter_ = 0;      // 最大ガード時間
-	perStiffness_ = 0;          // 前硬直
-	postStiffness_ = 0;        // 後硬直
-	perGuardKey_ = false;           // トリガーアップ用変数
-	nowGuardKey_ = false;           // トリガーアップ用変数
-	guardKeyUpBuffer_ = 0;		//ジャストガード受付猶予カウンター
-	guardStat_ = GUARD_STAT::E_GUARD_NON;
-	isJustGuard_ = false;		//ジャストガード
-
-	//ダメージ処理
-	//hitCoolDownCounter_ = 0;
-	//knockBackYAccel_ = 0;
-
-	arialSweep_ = new ArialSweep();
-	arialSweep_->Init(&unit_.nextpos_, &unit_.disppos_);
-
-
-	mutekiCounter_ = 0;
 }
 
 void Player::Update()
 {
-	if (isMove_) {
-		Move();
-		ProcessJump();
-	}
-	if (mutekiCounter_ > 0)mutekiCounter_--;
-	//ProcessAtatck();
-	ProcessGuard();
-	//ProcessDamage();
+	StateManager();
 
-	Attack();
+	Animation();
 
-	if (unit_.hp_ < 0)unit_.isAlive_ = false;
-
-	AnimationUpdate();
+	(this->*stateFuncPtr)();
 
 	UnitBase::Update();
-
 }
 
 void Player::Draw()
 {
-	//DrawOval(unit_.disppos_.x, unit_.disppos_.y, unit_.size_.x / 2, unit_.size_.y / 2, 0xff0000, true);
-
-	DrawFormatString(0, 64, 0x0000ff, "プレイヤー座標(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
-	DrawFormatString(0, 80, 0x0000ff, "プレイヤーの向き%d", playerDir_);
-	DrawFormatString(0, 96, 0x00ff00, "プレイヤーの攻撃%d", attackStat_);
-	//DrawFormatString(0.112, 0xff00ff, "プレイヤーのでぃすぷぽす(%.2f,%.2f)", unit_.disppos_.x,unit_.disppos_.y);
-	// 修正されたコード
-	DrawFormatString(0, 112, 0xff00ff, _T("プレイヤーのでぃすぷぽす(%.2f,%.2f)"), unit_.disppos_.x, unit_.disppos_.y);
-
-	switch (attackStat_)
-	{
-	case Player::ATTACK_STAT::E_ATTACK_STAT_NON:
-		break;
-	case Player::ATTACK_STAT::E_ATTACK_STAT_ARIALSWEEP:
-		break;
-	}
-	//arialSweep_->Draw();
-
-	if (isGuard_) {
-
-		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 50, 0x0000ff, true);
-	}
-	if (isJustGuard_) {
-		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 40, 0x0fffff, true);
-	}
-	//if (isEvasionInbincible_) {
-	//	DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 40, 0x0fffff, true);
-	//}
-	//if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
-	//	DrawCircle(unit_.disppos_.x-20, unit_.disppos_.y, 6, 0x00ff00);
-	//}
-	//else if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
-	//	DrawCircle(unit_.disppos_.x + 20, unit_.disppos_.y, 6, 0x00ff00);
-	//}
-
-	if (unit_.isAlive_ && (mutekiCounter_ / 10) % 2 == 0) {
-		DrawHpBarFixedSize(350, 300, 800, 330, unit_.hp_, HP_MAX, RGB(0, 255, 0));
-		defaAt_->Draw();
-		SetDrawPlayer();
-	}
+	DrawPlayer();
 
 }
 
 void Player::Release()
 {
-	defaAt_->Release();
-	delete defaAt_;
-	defaAt_ = nullptr;
-
-	arialSweep_->Release();
-	delete arialSweep_;
-	arialSweep_ = nullptr;
 
 	//画像解放
-	for (int i = 0; i < (int)MOTION_TYPE::E_MOTION_MAX; i++) {
+	for (int i = 0; i < (int)MOTION::MAX; i++) {
 		for (auto id : image_[i]) {
 			DeleteGraph(id);
 		}
 		image_[i].clear();
 	}
-
 }
 
 
 
-
-void Player::Move(void)
+// 状態遷移を一元管理する
+void Player::StateManager(void)
 {
-	auto& InpMng = InputManager::GetInstance();
-
-	//モーションタイプの初期化を行う
-	motionType_ = MOTION_TYPE::E_MOTION_IDLE;
-
-	// コントローラー（PAD1の左スティック
-	auto padState = InpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
-	const int stickThreshold = 500; // スティックのしきい値
-
-	if (InpMng.IsNew(KEY_INPUT_D) || padState.AKeyLX > stickThreshold) {
-		unit_.nextpos_.x += unit_.speed_;
-		playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
-		//モーションを変更
-		if (!(motionType_ == MOTION_TYPE::E_MOTION_ATTACK))motionType_ = MOTION_TYPE::E_MOTION_RUN;
-	}
-	if (InpMng.IsNew(KEY_INPUT_A) || padState.AKeyLX < -stickThreshold) {
-		unit_.nextpos_.x -= unit_.speed_;
-		playerDir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
-		//モーションを変更
-		if (!(motionType_ == MOTION_TYPE::E_MOTION_ATTACK))motionType_ = MOTION_TYPE::E_MOTION_RUN;
-	}
-}
-
-
-void Player::ProcessEvasion(void)
-{
-#pragma region	キーボード操作
-	//回避
-	auto& ins = InputManager::GetInstance();
-	if (ins.IsTrgDown(KEY_INPUT_A) && !isEvasionCoolDown_) {
-		isEvasion_ = true;
-		isEvasionInbincible_ = true;
-		playerDir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
-		workDir_ = playerDir_;
-	}
-	else
-	if (ins.IsTrgDown(KEY_INPUT_D) && !isEvasionCoolDown_) {
-		isEvasion_ = true;
-		isEvasionInbincible_ = true;
-		playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
-		workDir_ = playerDir_;
-	}
-	else
-	if (ins.IsTrgDown(KEY_INPUT_S) && !isEvasionCoolDown_) {
-		isEvasion_ = true;
-		isEvasionInbincible_ = true;
-		workDir_ = playerDir_;
-		if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) {
-			playerDir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
-		}
-		else if (playerDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) {
-			playerDir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
-		}
-	}
-	//回避時の無敵時間
-	if (isEvasion_) {
-		evasionCounter_++;
-		Evasion();
-		//無敵処理
-		if (evasionCounter_ >= EVASION_INVINCIBLE) {
-			isEvasionInbincible_ = false;		//無敵時間の終了
-		}
-		//回避処理
-		if (evasionCounter_ >= EVASION_TIME) {
-			evasionCounter_ = 0;
-			isEvasion_ = false;				//回避の終了
-			playerDir_ = workDir_;
-			isEvasionCoolDown_ = true;	//回避のクールダウン突入
-		}
-	}
-	//回避のクールダウン
-	if (isEvasionCoolDown_) {
-		evasionCoolDown_++;
-		if (evasionCoolDown_ >= EVASION_COOLDOWN) {
-			evasionCoolDown_ = 0;
-			isEvasionCoolDown_ = false;		//クールタイムの終了
-		}
-	}
-#pragma endregion
-
-#pragma region コントローラー操作
-	//auto& inpMng = InputManager::GetInstance();
-	//inpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
-	////回避
-	//if (inpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER)
-	//	&& !isEvasionCoolDown_) {
-	////	SceneManager::GetInstance().Slow();
-	//	isEvasion_ = true;
-	//	isEvasionCoolDown_ = true;
-	//	isEvasionInbincible_ = true;
-	//}
-	////回避時の無敵時間
-	//if (isEvasion_) {
-	//	evasionCounter_++;
-	//	Evasion();
-	//	//無敵処理
-	//	if (evasionCounter_ >= EVASION_INVINCIBLE) {
-	//		isEvasionInbincible_ = false;
-	//	}
-	//	//回避処理
-	//	if (evasionCounter_ >= EVASION_TIME) {
-	//		evasionCounter_ = 0;
-	//		isEvasion_ = false;			//無敵時間の終了
-	//	}
-	//}
-	////回避のクールダウン
-	//if (isEvasionCoolDown_) {
-	//	evasionCoolDown_++;
-	//	if (evasionCoolDown_ >= EVASION_COOLDOWN) {
-	//		evasionCoolDown_ = 0;
-	//		isEvasionCoolDown_ = false;		//クールタイムの終了
-	//	}
-	//}
-#pragma endregion
-
-}
-
-void Player::Evasion(void)
-{
-	switch (playerDir_)
+	//各状態から遷移可能にさせたい状態の、遷移条件関数 ( DoState～～() ) を呼び出す
+	switch (state_)
 	{
-	case AsoUtility::DIRECTION::E_DIR_RIGHT:
-		unit_.nextpos_.x += EVASION_LENGTH;
+	case Player::STATE::MOVE:
+		DoStateAttack();
+		DoStateEvasion();
 		break;
-	case AsoUtility::DIRECTION::E_DIR_LEFT:
-		unit_.nextpos_.x -= EVASION_LENGTH;
+	case Player::STATE::ATTACK:
 		break;
-	case AsoUtility::DIRECTION::E_DIR_DOWN:
+	case Player::STATE::GUARD:
+
+		break;
+	case Player::STATE::EVASION:
+
 		break;
 	}
+
 }
 
-void Player::ProcessJump(void)
+//各状態に遷移する条件--------------------------------------------------------------------------
+
+// それぞれの状態で使うキーの中のいずれかのダウントリガーでその状態に遷移
+
+//移動状態
+void Player::DoStateMove()
 {
-#pragma region キーボード操作
-	//ジャンプ判定
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE)) {
-		isJump_ = true;
-	}
-	//一回目のジャンプ
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE)
-		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
-		&& firstJumpFlg_) {
-		inputJumpKeyCounter_++;
-		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
+	auto& ins = InputManager::GetInstance();
 
-		Jump();
-	}
-	//二段ジャンプ
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE)
-		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
-		&& secondJumpFlg_) {
-		inputJumpKeyCounter_++;
-		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
+	if (ins.IsTrgDown(KEY_INPUT_W) ||
+		ins.IsTrgDown(KEY_INPUT_A) ||
+		ins.IsTrgDown(KEY_INPUT_S) ||
+		ins.IsTrgDown(KEY_INPUT_D) ||
+		ins.IsTrgDown(KEY_INPUT_SPACE)) {
 
-		Jump();
+		ChangeState(Player::STATE::MOVE);
 	}
-	//三弾ジャンプ
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE)
-		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
-		&& thirdJumpFlg_) {
-		inputJumpKeyCounter_++;
-		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
-		Jump();
-
-	}
-
-	//ジャンプキーを離したらカウンターをリセット
-	if (InputManager::GetInstance().IsTrgUp(KEY_INPUT_SPACE)) {
-		inputJumpKeyCounter_ = 0;
-		if (!secondJumpFlg_) {
-			thirdJumpFlg_ = false;
-		}
-		else if (!firstJumpFlg_) {
-			secondJumpFlg_ = false;
-			jumpPower_ = 0;
-		}
-		else {
-			firstJumpFlg_ = false;
-			jumpPower_ = 0;
-		}
-	}
-#pragma endregion
-
-
-#pragma region コントローラー操作
-	//ジャンプ判定
-	auto& InpMng = InputManager::GetInstance();
-	InpMng.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
-	if (InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
-		isJump_ = true;
-	}
-	//一回目のジャンプ
-	if (InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)
-		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
-		&& firstJumpFlg_) {
-		inputJumpKeyCounter_++;
-		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
-
-		Jump();
-	}
-	//二段ジャンプ
-	if (InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)
-		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
-		&& secondJumpFlg_) {
-		inputJumpKeyCounter_++;
-		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
-
-		Jump();
-	}
-	//三弾ジャンプ
-	if (InpMng.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)
-		&& inputJumpKeyCounter_ < INPUT_JUMPKEY_FRAME
-		&& thirdJumpFlg_) {
-		inputJumpKeyCounter_++;
-		jumpPower_ = jumpPower_ + (MAX_JUMP_POWER / static_cast<float>(INPUT_JUMPKEY_FRAME));
-		Jump();
-
-	}
-
-	//ジャンプキーを離したらカウンターをリセット
-	if (InpMng.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
-		inputJumpKeyCounter_ = 0;
-		if (!secondJumpFlg_) {
-			thirdJumpFlg_ = false;
-		}
-		else if (!firstJumpFlg_) {
-			secondJumpFlg_ = false;
-			jumpPower_ = 0;
-		}
-		else {
-			firstJumpFlg_ = false;
-			jumpPower_ = 0;
-		}
-	}
-#pragma endregion
 
 }
 
-
-void Player::Jump(void)
+// 攻撃状態
+void Player::DoStateAttack()
 {
-	//Y軸加速度にジャンプ力を加える
-	unit_.yAccel_ += jumpPower_;
-	//Y軸加速度が最大ジャンプ力を超えたら最大ジャンプ量に設定
-	unit_.yAccel_ = (unit_.yAccel_ < MAX_JUMP_POWER) ? MAX_JUMP_POWER : unit_.yAccel_;
+	auto& ins = InputManager::GetInstance();
+
+	if (!(ins.IsTrgDown(KEY_INPUT_J))) return;
+
+	// 攻撃状態に遷移する
+	ChangeState(Player::STATE::ATTACK);
+	
+	// 最終段までいっている または 前の段の攻撃から一定時間過ぎていたら フラグリセット
+	if ((isAttack_[ATTACK::MAX - 1])||(attackKeyCounter_>INPUT_ATTACK_FRAME)) { 
+		for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; } 
+	}
+
+	// １段目から探索して適切な段数をattack_に代入する
+	for (int i = 0; i < ATTACK::MAX; i++) {
+		if (!isAttack_[i]) {
+
+			isAttack_[i] = true;
+
+			attackKeyCounter_ = 0;
+
+			attack_ = (ATTACK)i;
+
+			break;
+		}
+	}
+	
 }
+
+// ガード状態
+void Player::DoStateGuard()
+{
+
+}
+
+// 回避状態
+void Player::DoStateEvasion()
+{
+	auto& ins = InputManager::GetInstance();
+
+	if (ins.IsTrgDown(KEY_INPUT_K)) {
+		ChangeState(Player::STATE::EVASION);
+	}
+}
+
+//----------------------------------------------------------------------------------------------
+
+// 状態変更
+void Player::ChangeState(STATE st)
+{
+	switch (st)
+	{
+	case Player::STATE::MOVE:
+		state_ = Player::STATE::MOVE;
+		stateFuncPtr = &Player::Move;
+		break;
+	case Player::STATE::ATTACK:
+		state_ = Player::STATE::ATTACK;
+		stateFuncPtr = &Player::Attack;
+		break;
+	case Player::STATE::GUARD:
+		state_ = Player::STATE::GUARD;
+		stateFuncPtr = &Player::Guard;
+		break;
+	case Player::STATE::EVASION:
+		state_ = Player::STATE::EVASION;
+		stateFuncPtr = &Player::Evasion;
+		break;
+	}
+}
+
+// 関数ポインタに格納する状態ごとの関数---------------------------------------------------------------
+
+//移動状態
+void Player::Move()
+{
+	Run();
+	Jump();
+	if (unit_.yAccel_ > 0.0f)ChangeMotion(MOTION::FALL);
+
+	if (attackKeyCounter_ <= INPUT_ATTACK_FRAME) attackKeyCounter_++;
+}
+
+// 攻撃状態
+void Player::Attack()
+{
+	switch (attack_)
+	{
+	case Player::FIRST:
+
+
+		// モーション更新
+		ChangeMotion(MOTION::FIRST_ATTACK, false);
+		break;
+	case Player::SECONDE:
+
+
+		// モーション更新
+		ChangeMotion(MOTION::SECOND_ATTACK, false);
+		break;
+	}
+
+
+}
+
+// ガード状態
+void Player::Guard()
+{
+
+}
+
+// 回避状態
+void Player::Evasion()
+{
+	ChangeMotion(MOTION::EVASION);
+
+	unit_.isGravity_ = false;
+
+	unit_.yAccel_ = 0.0f;
+	unit_.nextpos_.x += (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? -(EVASION_SPEED) : EVASION_SPEED;
+
+	evasionCounter_++;
+	if (evasionCounter_ > EVASION_TIME) {
+		evasionCounter_ = 0;
+		unit_.isGravity_ = true;
+		ChangeState(Player::STATE::MOVE);
+	}
+}
+
+//----------------------------------------------------------------------------------------------------
+
+
+
+
+//状態ごとの関数内で使う機能をまとめた関数---------------------------------------------------------------------------------------
+
+
+
+//移動処理関係----------------------------------------------------------------------
+void Player::Run()
+{
+	auto& ins = InputManager::GetInstance();
+
+	bool isMove = false;
+
+	if (ins.IsNew(KEY_INPUT_A)) {
+		unit_.nextpos_.x -= RUN_SPEED;
+		dir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
+		isMove = true;
+	}
+
+	if (ins.IsNew(KEY_INPUT_D)) {
+		unit_.nextpos_.x += RUN_SPEED;
+		dir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
+		isMove = true;
+	}
+
+	// モーション更新
+	if (isMove)ChangeMotion(MOTION::RUN);
+	else ChangeMotion(MOTION::IDLE);
+}
+
+void Player::Jump()
+{
+	auto& ins = InputManager::GetInstance();
+
+	for (int i = 0; i < JUMP_NUM; i++) {
+
+		// ダウントリガーでジャンプ開始
+		if (ins.IsTrgDown(KEY_INPUT_SPACE))isJump_[i] = true;
+
+		// ジャンプしていなかったらループから抜ける
+		if (!isJump_[i])break;
+
+		//ジャンプキーを離したら、ジャンプキー入力判定を終了
+		if (isJump_[i] && ins.IsTrgUp(KEY_INPUT_SPACE))jumpKeyCounter_[i] = INPUT_JUMPKEY_FRAME;
+
+		//入力時間に応じてジャンプ量を変更する
+		if (isJump_[i] && ins.IsNew(KEY_INPUT_SPACE) && jumpKeyCounter_[i] < INPUT_JUMPKEY_FRAME) {
+			//ジャンプキーの入力カウンターを増やす
+			jumpKeyCounter_[i]++;
+
+			//ジャンプ力を分配加算する
+			unit_.yAccel_ = -(MAX_JUMP_POWER / (float)INPUT_JUMPKEY_FRAME);
+
+			// その回のジャンプ処理をしたのでそれ以降のループに入らないようにする
+			break;
+		}
+	}
+
+	// モーション更新
+	if (isJump_[0])ChangeMotion(MOTION::JUMP);
+}
+
+
+//-------------------------------------------------------------------移動処理ここまで
+
+
+
+
+// 攻撃処理関係--------------------------------------------------------------------
+
+
+
+
+//-------------------------------------------------------------------攻撃処理ここまで
+
+
+
+
+
+// ガード処理関係--------------------------------------------------------------------
+
+//-------------------------------------------------------------------ガード処理ここまで
+
+
+
+
+
+// 回避処理関係--------------------------------------------------------------------
+
+//-------------------------------------------------------------------回避処理ここまで
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------
+
+
+
 
 
 // 接地している時の数値の代入などをまとめた関数
@@ -434,262 +375,39 @@ void Player::IsGround(Collision::DIR dir)
 	switch (dir)
 	{
 	case Collision::UP:
-
 		//天井に衝突していたら行う処理
-		inputJumpKeyCounter_ = INPUT_JUMPKEY_FRAME;
-		unit_.yAccel_ = 0;
+
+		unit_.yAccel_ = 0.0f;
 
 		break;
-
 	case Collision::DOWN:
-
 		//地面に接地していたら行う処理
-		unit_.yAccel_ = 0;
-		isJump_ = false;
-		firstJumpFlg_ = true;
-		secondJumpFlg_ = true;
-		thirdJumpFlg_ = true;
-		jumpPower_ = 0;
-		inputJumpKeyCounter_ = 0;
+
+		unit_.yAccel_ = 0.0f;
 		unit_.isGround_ = true;
+		//unit_.isGravity_ = false;
+
+		for (int i = 0; i < JUMP_NUM; i++) {
+			isJump_[i] = false;
+			jumpKeyCounter_[i] = 0;
+		}
 
 		break;
-
 	case Collision::LEFT:
-
 		//左側の壁に衝突していたら行う処理
 
+		unit_.xAccel_ = 0.0f;
+
 		break;
-
 	case Collision::RIGHT:
-
 		//右側の壁に衝突していたら行う処理
 
-		break;
+		unit_.xAccel_ = 0.0f;
 
-	}
-}
-
-
-
-void Player::ProcessAtatck(void)
-{
-
-	auto& ins = InputManager::GetInstance();
-	if (ins.IsClickMouseLeft()) {
-		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_ARIALSWEEP;
-		GetMousePoint(&mPos_.x, &mPos_.y);
-	}
-
-	switch (attackStat_)
-	{
-	case Player::ATTACK_STAT::E_ATTACK_STAT_NON:
-		Attack();
-		break;
-	case Player::ATTACK_STAT::E_ATTACK_STAT_ARIALSWEEP:
-		ArialSweepAttack();
-		break;
-	}
-
-}
-
-void Player::Attack(void)
-{
-	MOTION_TYPE prev = motionType_;
-
-	switch (defaAt_->Update())
-	{
-	case DefaultAttack::Nothing:
-		break;
-	case DefaultAttack::Action:
-		isAttack_ = true;
-		break;
-	case DefaultAttack::Already:
-		break;
-	case DefaultAttack::AttackEnd:
-		isAttack_ = false;
-		break;
-	case DefaultAttack::Recast:
-		break;
-	}
-
-
-
-}
-
-void Player::ArialSweepAttack(void)
-{
-	//重力を一時的になくす
-	unit_.isGravity_ = false;
-	unit_.yAccel_ = 0;
-	//移動できなくする
-	isMove_ = false;
-
-	arialSweep_->Update(&mPos_);
-	//描画時のずれを補正
-	mapMousePos_.x = mPos_.x + ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2);
-	mapMousePos_.y = mPos_.y + ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2);
-	//プレイヤーの描画座標とマウスのマップ座標とのベクトルを求める
-	Vector2F vec = GetMoveVec(unit_.disppos_, { (float)mapMousePos_.x,(float)mapMousePos_.y });
-	arialSweepCounter_++;
-	if (arialSweepCounter_ < 15) {
-		unit_.nextpos_ += vec * 2;
-	}
-	else {
-		unit_.yAccel_ = 0;		//かかりすぎている重力をなくす
-		//初期化
-		unit_.isGravity_ = true;
-		attackStat_ = ATTACK_STAT::E_ATTACK_STAT_NON;
-		arialSweepCounter_ = 0;
-		isMove_ = true;
-	}
-}
-
-void Player::ProcessGuard(void)
-{
-	auto& ins = InputManager::GetInstance();
-	perGuardKey_ = nowGuardKey_;
-	nowGuardKey_ = ins.IsClickMouseRight();
-	if (!perGuardKey_ && nowGuardKey_)guardStat_ = GUARD_STAT::E_GUARD_PER;
-
-	switch (guardStat_)
-	{
-	case Player::GUARD_STAT::E_GUARD_PER:		//前硬直
-		isMove_ = false;					//ガード中は動けない
-		if (perStiffness_ <= GUARD_PER_TIME) {
-			perStiffness_++;
-			break;
-		}
-		else {
-			guardStat_ = GUARD_STAT::E_GUARD;	//ガードに遷移
-		}
-	case Player::GUARD_STAT::E_GUARD:
-		if (!nowGuardKey_ && isGuard_) {
-			guardStat_ = GUARD_STAT::E_GUARD_POST;		//後硬直へ遷移
-			isGuard_ = false;
-		}
-		else {
-			Guard();
-			break;
-		}
-	case Player::GUARD_STAT::E_GUARD_POST:		//後硬直
-		//猶予カウント中
-		if (guardKeyUpBuffer_ < GUARD_JUST_TIME) {			//ジャストガード判定処理中
-			JustGuard();
-			guardKeyUpBuffer_++;
-		}
-		else {
-			isJustGuard_ = false;
-		}
-		if (postStiffness_ < GUARD_POST_TIME) {				//後硬直中
-			postStiffness_++;
-		}
-		else {									//後硬直終了
-			//初期化
-			perStiffness_ = 0;
-			guardKeyUpBuffer_ = 0;
-			postStiffness_ = 0;
-			guardMaxCounter_ = 0;
-			isMove_ = true;
-			guardStat_ = GUARD_STAT::E_GUARD_NON;	//非ガード状態へ遷移
-		}
 		break;
 	}
 }
 
-void Player::Guard(void)
-{
-	auto& ins = InputManager::GetInstance();
-	guardMaxCounter_++;
-	isGuard_ = true;
-	ProcessEvasion();
-
-
-	if (guardMaxCounter_ > GUARD_TIME_MAX) {
-		guardStat_ = GUARD_STAT::E_GUARD_POST;
-		guardKeyUpBuffer_ = GUARD_JUST_TIME;//最大までガードした場合
-		//ジャストガードは発生しない
-		isGuard_ = false;
-	}
-}
-
-void Player::JustGuard(void)
-{
-	//	SceneManager::GetInstance().Slow();
-	isJustGuard_ = true;
-	//postStiffness_ = GUARD_POST_TIME;		//ジャストガード成功時後硬直削除
-}
-
-//void Player::ProcessDamage(void)
-//{
-//	if (InputManager::GetInstance().IsNew(KEY_INPUT_J)) {
-//		unit_.isHit_ = true;
-//	}
-//	if (unit_.isHit_ && !unit_.isInbincible_) {
-//		ProcessHit();
-//	}
-//	if (unit_.isInbincible_) {
-//		ProcessKnockback();
-//		HitCoolDown();
-//	}
-//}
-//
-//void Player::ProcessHit(void)
-//{
-//	unit_.hp_ -= 10;
-//	unit_.isInbincible_ = true;
-//	unit_.yAccel_ -= 16;
-//	SetXAccel(20.0f);
-//}
-//
-//void Player::ProcessKnockback(void)
-//{
-//	isMove_ = false;
-//}
-//
-//void Player::HitCoolDown(void)
-//{
-//	hitCoolDownCounter_++;
-//	if (hitCoolDownCounter_ >= HIT_COOL_DOWN) {
-//		unit_.isHit_ = false;
-//		unit_.isInbincible_ = false;
-//		hitCoolDownCounter_ = 0;
-//		knockBackYAccel_ = 0;
-//		unit_.yAccel_ = 0;
-//  		isMove_ = true;
-//	}
-//}
-
-
-
-
-void Player::Damage(int damage,Vector2F pos)
-{
-	unit_.hp_ -= damage;
-
-	mutekiCounter_ = 120;
-
-	unit_.xAccel_ += (unit_.pos_.x < pos.x) ? -10 : 10;
-	unit_.yAccel_ -= 10;
-
-}
-
-
-void Player::AnimationUpdate(void)
-{
-	if (isJump_) {
-		//ジャンプ中
-		motionType_ = MOTION_TYPE::E_MOTION_JUMP;
-		if (unit_.yAccel_ > 0.0f)motionType_ = MOTION_TYPE::E_MOTION_FALL;
-	}
-
-	if (isAttack_) motionType_ = MOTION_TYPE::E_MOTION_ATTACK;
-
-	animCounter_ += 0.5;
-	if (animCounter_ >= image_[(int)motionType_].size()) {
-		animCounter_ = 0.0f;
-	}
-}
 
 void Player::LoadPlayerImage(void)
 {
@@ -698,7 +416,7 @@ void Player::LoadPlayerImage(void)
 	int motion = 0;
 
 	//待機状態の画像を読み込み-----------------------------------------------
-	motion = (int)MOTION_TYPE::E_MOTION_IDLE;
+	motion = (int)MOTION::IDLE;
 
 	int idleLoad[IDLE_LOAD_NUM];
 
@@ -710,7 +428,7 @@ void Player::LoadPlayerImage(void)
 	//-----------------------------------------------------------------------
 
 	//走り状態の画像を読み込み-----------------------------------------------
-	motion = (int)MOTION_TYPE::E_MOTION_RUN;
+	motion = (int)MOTION::RUN;
 
 	int runLoad[RUN_LOAD_NUM];
 
@@ -722,7 +440,7 @@ void Player::LoadPlayerImage(void)
 	//-----------------------------------------------------------------------
 
 	//ジャンプ状態の画像を読み込み-------------------------------------------
-	motion = (int)MOTION_TYPE::E_MOTION_JUMP;
+	motion = (int)MOTION::JUMP;
 
 	int jumpLoad[JUMP_LOAD_NUM];
 
@@ -733,8 +451,8 @@ void Player::LoadPlayerImage(void)
 	image_[motion].insert(image_[motion].end(), jumpLoad, jumpLoad + JUMP_LOAD_NUM);
 	//-----------------------------------------------------------------------
 
-	//落下状態の画像を読み込み-----------------------------------------------
-	motion = (int)MOTION_TYPE::E_MOTION_FALL;
+	//落下状態の画像を読み込み------------------------------------------------------
+	motion = (int)MOTION::FALL;
 
 	int fallLoad[FALL_LOAD_NUM];
 
@@ -743,26 +461,46 @@ void Player::LoadPlayerImage(void)
 		LOAD_SIZE_X, LOAD_SIZE_Y, fallLoad);
 		
 	image_[motion].insert(image_[motion].end(), fallLoad, fallLoad + JUMP_LOAD_NUM);
-	//-----------------------------------------------------------------------
+	//------------------------------------------------------------------------------
 
-	//攻撃状態の画像を読み込み-----------------------------------------------
-	motion = (int)MOTION_TYPE::E_MOTION_ATTACK;
+	//攻撃１段目状態の画像を読み込み-----------------------------------------------
+	motion = (int)MOTION::FIRST_ATTACK;
 
-	int AttaclLoad[ATTACK_LOAD_NUM];
+	int FirstAttaclLoad[FIRST_ATTACK_LOAD_NUM];
 
-	LoadDivGraph((basePath + "Attack.png").c_str(),
-		ATTACK_LOAD_NUM, ATTACK_LOAD_NUM, 1,
-		LOAD_SIZE_X, LOAD_SIZE_Y, AttaclLoad);
+	LoadDivGraph((basePath + "FirstAttack.png").c_str(),
+		FIRST_ATTACK_LOAD_NUM, FIRST_ATTACK_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, FirstAttaclLoad);
 
-	image_[motion].insert(image_[motion].end(), AttaclLoad, AttaclLoad + ATTACK_LOAD_NUM);
-	//-----------------------------------------------------------------------
+	image_[motion].insert(image_[motion].end(), FirstAttaclLoad, FirstAttaclLoad + FIRST_ATTACK_LOAD_NUM);
+	//-----------------------------------------------------------------------------
+
+	//攻撃２段目状態の画像を読み込み-----------------------------------------------
+	motion = (int)MOTION::SECOND_ATTACK;
+
+	int SecondeAttaclLoad[SECONDE_ATTACK_LOAD_NUM];
+
+	LoadDivGraph((basePath + "SecondeAttack.png").c_str(),
+		SECONDE_ATTACK_LOAD_NUM, SECONDE_ATTACK_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, SecondeAttaclLoad);
+
+	image_[motion].insert(image_[motion].end(), SecondeAttaclLoad, SecondeAttaclLoad + SECONDE_ATTACK_LOAD_NUM);
+	//-----------------------------------------------------------------------------
+
+	// ガード状態の画像を読み込み--------------------------------------------------
+	motion = (int)MOTION::GUARD;
+
+	int GuardLoad[1];
+
+	//-----------------------------------------------------------------------------
+
 
 	//回避状態の画像を読み込み-----------------------------------------------
-	motion = (int)MOTION_TYPE::E_MOTION_EVASION;
+	motion = (int)MOTION::EVASION;
 
 	int evasionlLoad[EVASION_LOAD_NUM];
 
-	LoadDivGraph((basePath + "Roll.png").c_str(),
+	LoadDivGraph((basePath + "Evasion.png").c_str(),
 		EVASION_LOAD_NUM, EVASION_LOAD_NUM, 1,
 		LOAD_SIZE_X, LOAD_SIZE_Y, evasionlLoad);
 
@@ -770,37 +508,41 @@ void Player::LoadPlayerImage(void)
 	//-----------------------------------------------------------------------
 }
 
-
-void Player::DrawPlayer(std::vector<int> modelId)
+void Player::Animation()
 {
-	//プレイヤーの向き
-	bool isLeft = true;
-	if (playerDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) isLeft = false;
+	animeInterval_++;
+	if (!(animeInterval_ > ANIMATION_SPEED))return;
+	else animeInterval_ = 0;
 
-
-
-	DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2,
-		SIZE_SCALE, 0, modelId[(int)animCounter_], true, isLeft);
-}
-
-
-
-void Player::SetDrawPlayer(void)
-{
-	//if (isJump_) {
-	//	//ジャンプ中
-	//	motionType_ = MOTION_TYPE::E_MOTION_JUMP;
-	//	if (unit_.yAccel_ > 0.0f)motionType_ = MOTION_TYPE::E_MOTION_FALL;
-	//}
-	//if (isEvasion_) {
-	//	motionType_ = MOTION_TYPE::E_MOTION_EVASION;
-	//}
-	if (!(motionType_ == MOTION_TYPE::E_MOTION_DAMAGE)) {
-		//現在のモーション
-		DrawPlayer(image_[(int)motionType_]);
+	animeCounter_++;
+	if (animeCounter_ >= image_[(int)motion_].size()) {
+		if (animeLoop_) {
+			animeCounter_ = 0;
+		}
+		else {
+			ChangeMotion(MOTION::IDLE);
+			ChangeState(Player::STATE::MOVE);
+		}
 	}
 }
 
+
+void Player::ChangeMotion(MOTION mo,bool loop)
+{
+	if (mo == motion_)return;
+
+	motion_ = mo;
+	animeCounter_ = 0;
+	animeLoop_ = loop;
+
+}
+
+
+void Player::DrawPlayer(void)
+{
+	bool Trance = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? true : false;
+	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true,Trance);
+}
 
 
 

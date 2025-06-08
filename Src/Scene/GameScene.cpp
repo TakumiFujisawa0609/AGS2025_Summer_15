@@ -133,25 +133,25 @@ void GameScene::Release(void)
 
 void GameScene::Scroll(void)
 {
-	auto& camera = Camera::GetInstance();
-	if (!boss_->GetEnCount()) {
-		if (player_->GetUnit().disppos_.x > Application::MAIN_SCREEN_SIZE_X / 7 * 4 &&
-			!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X) - ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) >= Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X)) {
-			camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
-			if (player_->IsEvasion())camera.Follow(Camera::dir::X, Player::EVASION_LENGTH);
-		}
+	//auto& camera = Camera::GetInstance();
+	//if (!boss_->GetEnCount()) {
+	//	if (player_->GetUnit().disppos_.x > Application::MAIN_SCREEN_SIZE_X / 7 * 4 &&
+	//		!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X) - ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) >= Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X)) {
+	//		camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
+	//		if (player_->IsEvasion())camera.Follow(Camera::dir::X, Player::EVASION_LENGTH);
+	//	}
 
-		if (player_->GetUnit().disppos_.x < Application::MAIN_SCREEN_SIZE_X / 7 * 3 &&
-			!(camera.GetPos().x <= -((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2))) {
-			camera.Follow(Camera::dir::X, -(player_->GetUnit().speed_));
-			if (player_->IsEvasion())camera.Follow(Camera::dir::X, -Player::EVASION_LENGTH);
-		}
-	}
-	else {
-		if (!camera.BossSet()) {
-			camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
-		}
-	}
+	//	if (player_->GetUnit().disppos_.x < Application::MAIN_SCREEN_SIZE_X / 7 * 3 &&
+	//		!(camera.GetPos().x <= -((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2))) {
+	//		camera.Follow(Camera::dir::X, -(player_->GetUnit().speed_));
+	//		if (player_->IsEvasion())camera.Follow(Camera::dir::X, -Player::EVASION_LENGTH);
+	//	}
+	//}
+	//else {
+	//	if (!camera.BossSet()) {
+	//		camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
+	//	}
+	//}
 }
 
 void GameScene::ObjCollision(void)
@@ -163,14 +163,14 @@ void GameScene::ObjCollision(void)
 
 void GameScene::PlayerToBoss(void)
 {
-	auto& ins = Collision::GetInstance();
-	auto& mana = SceneManager::GetInstance().GetInstance();
+	//auto& ins = Collision::GetInstance();
+	//auto& mana = SceneManager::GetInstance().GetInstance();
 
-	if (ins.Rect(player_->GetUnit(), boss_->GetUnit()) && !player_->Muteki()) {
-		player_->Damage(5,boss_->GetUnit().pos_);
-		mana.HitStop();
-		mana.SHAKE();
-	}
+	//if (ins.Rect(player_->GetUnit(), boss_->GetUnit()) && !player_->Muteki()) {
+	//	player_->Damage(5,boss_->GetUnit().pos_);
+	//	mana.HitStop();
+	//	mana.SHAKE();
+	//}
 
 	//if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
 	//	if ((player_->IsInvincible() || player_->IsJustGuard())
@@ -190,15 +190,15 @@ void GameScene::PlayerToBoss(void)
 
 void GameScene::PlayerToBossAttack(void)
 {
-	auto& ins = Collision::GetInstance();
-	auto& mana = SceneManager::GetInstance().GetInstance();
+	//auto& ins = Collision::GetInstance();
+	//auto& mana = SceneManager::GetInstance().GetInstance();
 
-	for (auto obj : boss_->GetAttackObj())
-	{
-		if (ins.CircleAndRect(obj, player_->GetUnit()) && !player_->Muteki()) {
-			player_->Damage(5, obj.pos_);
-			mana.HitStop();
-			mana.SHAKE();
+	//for (auto obj : boss_->GetAttackObj())
+	//{
+	//	if (ins.CircleAndRect(obj, player_->GetUnit()) && !player_->Muteki()) {
+	//		player_->Damage(5, obj.pos_);
+	//		mana.HitStop();
+	//		mana.SHAKE();
 			//if ((player_->IsInvincible() || player_->IsJustGuard())
 			//	&& !player_->IsHit()) {
 			//	mana.Slow();
@@ -209,32 +209,32 @@ void GameScene::PlayerToBossAttack(void)
 			//	mana.SHAKE();
 			//}
 			//mana.HitStop();
-		}
-	}
+	//	}
+	//}
 }
 
 void GameScene::PlayerToEnemyBamboo(void)
 {
-	auto& ins = Collision::GetInstance();
-	auto& mana = SceneManager::GetInstance().GetInstance();
+	//auto& ins = Collision::GetInstance();
+	//auto& mana = SceneManager::GetInstance().GetInstance();
 
-	for (int i = 0; i < EnemyBamboo::ENEMY_MAX; i++) {
-		if (ins.Ellipse(player_->GetUnit(), enemy_->GetBamboo(i)->GetUnit()) && !player_->Muteki()) {
-			player_->Damage(5, enemy_->GetBamboo(i)->GetUnit().pos_);
-			mana.HitStop();
-			mana.SHAKE();
-		}
-	}
+	//for (int i = 0; i < EnemyBamboo::ENEMY_MAX; i++) {
+	//	if (ins.Ellipse(player_->GetUnit(), enemy_->GetBamboo(i)->GetUnit()) && !player_->Muteki()) {
+	//		player_->Damage(5, enemy_->GetBamboo(i)->GetUnit().pos_);
+	//		mana.HitStop();
+	//		mana.SHAKE();
+	//	}
+	//}
 
 }
 
 void GameScene::PlayerAttackToBoss(void)
 {
-	auto& ins = Collision::GetInstance();
-	auto& mana = SceneManager::GetInstance().GetInstance();
-	if (ins.CircleAndRect(player_->GetAttack(), boss_->GetUnit())) {
-		//mana.Slow();
-		mana.HitStop();
-		boss_->SetDamage(5);
-	}
+	//auto& ins = Collision::GetInstance();
+	//auto& mana = SceneManager::GetInstance().GetInstance();
+	//if (ins.CircleAndRect(player_->GetAttack(), boss_->GetUnit())) {
+	//	//mana.Slow();
+	//	mana.HitStop();
+	//	boss_->SetDamage(5);
+	//}
 }

@@ -53,15 +53,18 @@ protected:
 	// 座標の更新に関する処理をまとめる関数
 	void StageCollision(void);
 
-	// 接地している時の数値の代入などをまとめた関数
-	// (それぞれの派生クラスでoverrideする必要がある)
-	virtual void IsGround(Collision::DIR dir);
+	// 座標に加速度を加える関数
+	void Accel(void);
+
+	// ワールド座標情報をマップ座標に変換する関数
+	void ChangeDispPos(void);
 
 	// 重力
 	void Gravity(void);
 
-	// ワールド座標情報をマップ座標に変換する関数
-	void ChangeDispPos(void);
+	// 接地している時の数値の代入などをまとめた関数
+	// (それぞれの派生クラスで必要に応じてoverride)
+	virtual void IsGround(Collision::DIR dir);
 
 	//----------------------------------------------------------------------------------------------
 

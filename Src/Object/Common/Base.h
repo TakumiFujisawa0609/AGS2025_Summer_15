@@ -21,12 +21,10 @@ struct Base
 
 	int hp_;				//ヒットポイント
 
+	bool isInvincible_;		//無敵
 	//パラメータ(定数扱い)
 	float speed_;		//移動速度
 
 	float radius_;		//半径
 	Vector2F size_;		//大きさ
-	bool isHit_;		//当たり判定
-	bool isInbincible_;		//無敵
-
 };
