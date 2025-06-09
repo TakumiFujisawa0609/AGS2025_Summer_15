@@ -25,8 +25,7 @@ UnitBase::UnitBase()
 
 	gravity_ = GRAVITY;
 
-	unit_.isHit_=false;		//当たり判定
-	unit_.isInbincible_=false;		//無敵
+	unit_.isInvincible_=false;		//無敵
 
 }
 
@@ -37,17 +36,7 @@ UnitBase::~UnitBase()
 
 void UnitBase::Update()
 {
-	unit_.nextpos_.y += unit_.yAccel_;
-	unit_.nextpos_.x += unit_.xAccel_;
-	if (unit_.xAccel_ > 1) {
-		unit_.xAccel_--;
-	}
-	else if(unit_.xAccel_ < -1){
-		unit_.xAccel_++;
-	}
-	else {
-		unit_.xAccel_ = 0;
-	}
+	Accel();
 
 	StageCollision();
 
@@ -55,6 +44,27 @@ void UnitBase::Update()
 	unit_.pos_ = unit_.nextpos_;
 
 	ChangeDispPos();
+}
+
+void UnitBase::Accel(void)
+{
+	unit_.nextpos_.y += unit_.yAccel_;
+	unit_.nextpos_.x += unit_.xAccel_;
+
+	// 横向きの加速度を減速させる
+
+	//減速度
+	const float decel = 5.0f;
+
+	if (unit_.xAccel_ > decel) {
+		unit_.xAccel_-= decel;
+	}
+	else if (unit_.xAccel_ < -decel) {
+		unit_.xAccel_+= decel;
+	}
+	else {
+		unit_.xAccel_ = 0;
+	}
 }
 
 
@@ -72,7 +82,7 @@ void UnitBase::StageCollision(void)
 	float upLine = col.GetStageLine(y, unit_.size_, Collision::UP);
 	if (unit_.nextpos_.y - unit_.size_.y / 2 <= upLine) {
 		unit_.nextpos_.y = upLine + unit_.size_.y / 2;
-		unit_.yAccel_ = 0;
+		unit_.yAccel_ = 0.0f;
 		IsGround(Collision::UP);
 	}
 
@@ -85,6 +95,7 @@ void UnitBase::StageCollision(void)
 	}
 	else {
 		// 空中なら重力を加える
+		//unit_.isGravity_ = true;
 		unit_.isGround_ = false;
 		Gravity();
 	}
@@ -106,7 +117,6 @@ void UnitBase::StageCollision(void)
 	}
 }
 
-
 void UnitBase::Gravity(void)
 {
 	//Y軸加速度に重力を加える
@@ -121,18 +131,21 @@ void UnitBase::IsGround(Collision::DIR dir)
 	{
 	case Collision::UP:
 		//天井に衝突していたら行う処理
+		unit_.yAccel_ = 0.0f;
 		break;
 	case Collision::DOWN:
 		//地面に接地していたら行う処理
-		unit_.yAccel_ = 0;
+		unit_.yAccel_ = 0.0f;
 		unit_.isGround_ = true;
 		unit_.isGravity_ = false;
 		break;
 	case Collision::LEFT:
 		//左側の壁に衝突していたら行う処理
+		unit_.xAccel_ = 0.0f;
 		break;
 	case Collision::RIGHT:
 		//右側の壁に衝突していたら行う処理
+		unit_.xAccel_ = 0.0f;
 		break;
 	}
 }
