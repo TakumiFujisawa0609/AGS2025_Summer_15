@@ -90,8 +90,8 @@ void GameScene::Draw(void)
 {
 	stage_->Draw();
 	enemy_->Draw();
-	player_->Draw();
 	boss_->Draw();
+	player_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 
@@ -133,25 +133,25 @@ void GameScene::Release(void)
 
 void GameScene::Scroll(void)
 {
-	//auto& camera = Camera::GetInstance();
-	//if (!boss_->GetEnCount()) {
-	//	if (player_->GetUnit().disppos_.x > Application::MAIN_SCREEN_SIZE_X / 7 * 4 &&
-	//		!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X) - ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) >= Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X)) {
-	//		camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
-	//		if (player_->IsEvasion())camera.Follow(Camera::dir::X, Player::EVASION_LENGTH);
-	//	}
+	auto& camera = Camera::GetInstance();
+	if (!boss_->GetEnCount()) {
+		if (player_->GetUnit().disppos_.x > Application::MAIN_SCREEN_SIZE_X / 7 * 4 &&
+			!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X) - ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) >= Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X)) {
+			camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
+			//if (player_->IsEvasion())camera.Follow(Camera::dir::X, Player::EVASION_LENGTH);
+		}
 
-	//	if (player_->GetUnit().disppos_.x < Application::MAIN_SCREEN_SIZE_X / 7 * 3 &&
-	//		!(camera.GetPos().x <= -((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2))) {
-	//		camera.Follow(Camera::dir::X, -(player_->GetUnit().speed_));
-	//		if (player_->IsEvasion())camera.Follow(Camera::dir::X, -Player::EVASION_LENGTH);
-	//	}
-	//}
-	//else {
-	//	if (!camera.BossSet()) {
-	//		camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
-	//	}
-	//}
+		if (player_->GetUnit().disppos_.x < Application::MAIN_SCREEN_SIZE_X / 7 * 3 &&
+			!(camera.GetPos().x <= -((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2))) {
+			camera.Follow(Camera::dir::X, -(player_->GetUnit().speed_));
+			//if (player_->IsEvasion())camera.Follow(Camera::dir::X, -Player::EVASION_LENGTH);
+		}
+	}
+	else {
+		if (!camera.BossSet()) {
+			camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
+		}
+	}
 }
 
 void GameScene::ObjCollision(void)
@@ -185,7 +185,7 @@ void GameScene::PlayerToBoss(void)
 	//	//mana.HitStop();
 	//}
 
-	PlayerToBossAttack();
+	//PlayerToBossAttack();
 }
 
 void GameScene::PlayerToBossAttack(void)
@@ -199,16 +199,16 @@ void GameScene::PlayerToBossAttack(void)
 	//		player_->Damage(5, obj.pos_);
 	//		mana.HitStop();
 	//		mana.SHAKE();
-			//if ((player_->IsInvincible() || player_->IsJustGuard())
-			//	&& !player_->IsHit()) {
-			//	mana.Slow();
-			//}
-			//else {
-			//	player_->SetHitOn();
-			//	//player_->SetXAccel(20.0f);
-			//	mana.SHAKE();
-			//}
-			//mana.HitStop();
+	//		if ((player_->IsInvincible() || player_->IsJustGuard())
+	//			&& !player_->IsHit()) {
+	//			mana.Slow();
+	//		}
+	//		else {
+	//			player_->SetHitOn();
+	//			//player_->SetXAccel(20.0f);
+	//			mana.SHAKE();
+	//		}
+	//		mana.HitStop();
 	//	}
 	//}
 }

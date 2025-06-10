@@ -109,7 +109,7 @@ protected:
 	//	COLORREF backColor = RGB(80, 80, 80)
 	//);
 
-	void DrawHpBarFixedSize(
+	void DrawBar(
 		int x1, int y1,                   // ç∂è„ç¿ïW
 		int x2, int y2,                   // âEâ∫ç¿ïW
 		int hp, int maxHp,               // åªç›HP / ç≈ëÂHP

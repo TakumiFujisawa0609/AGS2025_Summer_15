@@ -37,6 +37,8 @@ public:
 		NORMAL,
 		E_SLASH_START,
 		E_SLASH_END,
+
+		DRAW_MAX,
 	};
 	
 	enum ATTACK
@@ -80,7 +82,7 @@ private:
 	//‰æ‘œ
 	int idolImg;
 
-	int StartSlashtImg_;
+	int img_[DRAWPAT::DRAW_MAX];
 	int EndSlashImg_;
 
 	//í“¬‚ğs‚¤‚©s‚í‚È‚¢‚©
@@ -104,6 +106,7 @@ private:
 	//ó‘Ô
 	PATTERN pattaern_;
 	ATTACK attackState_;
+	Tackle::DIR tDir_;
 
 	//ó‘ÔŠÇ—
 	void PattaernManager(void);

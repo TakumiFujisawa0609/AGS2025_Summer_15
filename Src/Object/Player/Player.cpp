@@ -58,6 +58,8 @@ void Player::Init()
 	attack_ = NON;
 	attackKeyCounter_ = 0;
 
+	unit_.speed_ = RUN_SPEED;
+
 
 	// ‰ñ”ðŠÖŒW
 	evasionCounter_ = 0;

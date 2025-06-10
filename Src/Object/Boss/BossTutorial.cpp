@@ -11,9 +11,9 @@ BossTutorial::~BossTutorial()
 
 void BossTutorial::Init()
 {
-	idolImg = LoadGraph("Data/Image/Boss/TutrialBoss.png");
-	StartSlashtImg_ = LoadGraph("Data/Image/Boss/BossSlash.png");
-	EndSlashImg_ = LoadGraph("Data/Image/Boss/BossSlashEnd.png");
+	img_[DRAWPAT::NORMAL] = LoadGraph("Data/Image/Boss/TutrialBoss.png");
+	img_[DRAWPAT::E_SLASH_START] = LoadGraph("Data/Image/Boss/BossSlash.png");
+	img_[DRAWPAT::E_SLASH_END] = LoadGraph("Data/Image/Boss/BossSlashEnd.png");
 
 	unit_.isAlive_ = true;
 	unit_.isDraw_ = true;
@@ -35,6 +35,7 @@ void BossTutorial::Init()
 	targetIndex_ = 2;
 	encount_ = false;
 	isHit_ = false;
+	unit_.isGravity_ = true;
 
 	slash_ = new Slash();
 	bullet_ = new Bullet();
@@ -46,7 +47,8 @@ void BossTutorial::Init()
 
 void BossTutorial::Update()
 {
-	unit_.isGravity_ = true;
+	if (attackState_ != BossTutorial::TACKLE) unit_.isGravity_ = true;
+
 	if (EnCount())encount_ = true;
 
 	if (encount_) {
@@ -94,7 +96,7 @@ void BossTutorial::Draw()
 		if (attackState_ == BossTutorial::SLASH)
 		{
 
-			DrawHpBarFixedSize(
+			DrawBar(
 				unit_.pos_.x - unit_.size_.x / 2,
 				unit_.pos_.y - unit_.size_.y / 2,
 				unit_.pos_.x + unit_.size_.x / 2,
@@ -126,13 +128,13 @@ void BossTutorial::BossDraw()
 	switch (DrawPat_)
 	{
 	case NORMAL:
-		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, idolImg, true, bossDir_);
+		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, img_[DrawPat_], true, bossDir_);
 		break;
 	case E_SLASH_START:
-		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, StartSlashtImg_, true, bossDir_);
+		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, img_[DrawPat_], true, bossDir_);
 		break;
 	case E_SLASH_END:
-		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y + 14, 1.0f, 0.0f, EndSlashImg_, true, bossDir_);
+		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y + 14, 1.0f, 0.0f, img_[DrawPat_], true, bossDir_);
 		break;
 	}
 
@@ -162,9 +164,7 @@ void BossTutorial::Release()
 	slash_ = nullptr;
 
 	//画像の開放
-	DeleteGraph(idolImg);
-	DeleteGraph(StartSlashtImg_);
-	DeleteGraph(EndSlashImg_);
+	for (int ii = 0; ii < DRAWPAT::DRAW_MAX; ii++) DeleteGraph(img_[ii]);
 }
 
 void BossTutorial::PattaernManager(void)
@@ -254,7 +254,7 @@ void BossTutorial::Move()
 		attackCounter_ = 0;
 		if (!(targetIndex_ == 1)) {
 			TargetLook(player_->GetUnit().pos_);
-			attackState_ = (ATTACK)GetRand((int)ATTACK::MAX-2);
+			attackState_ = BossTutorial::TACKLE;//(ATTACK)GetRand((int)ATTACK::MAX-2);
 			pattaern_ = E_ATTACK;
 		}
 		else {
@@ -357,46 +357,41 @@ void BossTutorial::Attack()
 		break;
 	case BossTutorial::TACKLE:
 
-		Tackle::MODE mode_;
-
 		Vector2 start;
 		start.x = (Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2;
 		start.y = (Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2;
 
 		if (attackCounter_ == 1) {
 			tackle_->Init(&unit_.pos_);
-			mode_ = Tackle::NON_MODE;
 		}
 
+		unit_.isGravity_ = false;
+		unit_.isStageCollision_ = false;
 
-		if (attackCounter_ < Tackle::TACKLE_START + 10 && attackCounter_ > Tackle::WAIT_TIME)
+		tackle_->Update();
+		tDir_ = tackle_->GetDir();
+
+		switch (tDir_)
 		{
-			unit_.nextpos_.y -= 10;
-			if (attackCounter_ > Tackle::TACKLE_START)
+		case Tackle::DIR::STANDBY:
+
+			if (unit_.nextpos_.y > start.y)
 			{
-				mode_ = Tackle::TACKLE_MODE;
+				unit_.nextpos_.y -= 10;
 			}
-		}
-
-
-		switch (mode_)
-		{
-		case Tackle::NON_MODE:
+			else
+			{
+				unit_.nextpos_.x = Application::SCREEN_SIZE_X;
+				unit_.nextpos_.y = player_->GetUnit().nextpos_.y;
+			}
 
 			break;
-		case Tackle::TACKLE_MODE:
+		case Tackle::DIR::TACKLE_MODE:
 
-			if (unit_.nextpos_.y + unit_.size_.y > start.y) {
-				unit_.isGravity_ = false;
-				unit_.isStageCollision_ = false;
-				
-				unit_.nextpos_ = {
-					Application::SCREEN_SIZE_X + unit_.size_.x,
-					player_->GetUnit().nextpos_.y,
-				};
-			}
-			
+			unit_.nextpos_.x -= 20;
 
+			break;
+		case Tackle::DIR::END:
 			break;
 		}
 
@@ -512,8 +507,8 @@ void BossTutorial::DrawHP()
 	int shakeY = 0;
 	if (hpShakeTimer_ > 0) {
 		hpShakeTimer_--;
-		shakeX = GetRand(6) - 3;  //-2〜+2のランダム値
-		shakeY = GetRand(4) - 2;  //-1〜+1のランダム値
+		shakeX = GetRand(6) - 3;
+		shakeY = GetRand(4) - 2;
 	}
 
 	bool isCritical = (unit_.hp_ < BOSS_HP * HP_YABAI);
@@ -525,7 +520,7 @@ void BossTutorial::DrawHP()
 		}
 	}
 
-	DrawHpBarFixedSize(
+	DrawBar(
 		start.x + Application::SCREEN_SIZE_X / 4 + shakeX,
 		start.y + Application::SCREEN_SIZE_Y - 50 + shakeY,
 		start.x + Application::SCREEN_SIZE_X / 4 * 3 + shakeX,

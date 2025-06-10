@@ -7,14 +7,15 @@ class Tackle : public AttackBase
 public:
 
 	static constexpr float TACKLE_SPEED = 20.0f;
-	static constexpr int WAIT_TIME = 60;
+	static constexpr int NON_TIME = 180;
 	static constexpr int TACKLE_START = 180;
 
-	enum MODE
+	enum class DIR
 	{
-		NON_MODE,
-		STANP_MODE,
+		NON,
+		STANDBY,
 		TACKLE_MODE,
+		END,
 	};
 
 	Tackle();
@@ -26,8 +27,11 @@ public:
 	void Release(void)override;
 
 	void SetTarget(Vector2F target) { target_ = target; }
+	DIR GetDir() { return dir_; }
 
 private:
 	VECTOR bPos_;
 	Vector2F target_;
+
+	DIR dir_;
 };
