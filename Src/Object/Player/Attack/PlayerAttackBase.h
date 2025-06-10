@@ -1,38 +1,29 @@
 #pragma once
 #include <vector>
-#include "../../UnitBase.h"
+#include"../../Common/Base.h"
 
+#include"../../../Utility/AsoUtility.h"
 
-class PlayerAttackBase :
-    public UnitBase
+class PlayerAttackBase
 {
 public:
-	PlayerAttackBase();
-	~PlayerAttackBase();
+	PlayerAttackBase(Vector2F* pPos);
+	virtual ~PlayerAttackBase() = 0;
 
-	void Init(void)override;
-	virtual void Init(Vector2F* movePos,Vector2F*drawPos);
-	virtual void Update(void);
-	virtual void Draw(void);
-	virtual void Release(void);
+	virtual void Init(AsoUtility::DIRECTION dir);
+	virtual void Update(void) = 0;
+	virtual void Draw(void) = 0;
+	virtual void Release(void) = 0;
 
-	//派生クラスオブジェクトの構造体情報を取得
-	virtual const std::vector<Base> GetStruct(void)const;
-
+	const Base GetObj(void) { return obj_; }
 
 protected:
 
-	Base attackObj_;
+	Base obj_;
 
-	Vector2F* pMovePos_;
-	Vector2F* pDrawPos_;
-	float* pSpeed_;
+	Vector2F* pPos_;
 
-	//更新処理に使うカウンター
-	int attackCounter_;
-
-	//攻撃終了
-	bool isattackEnd_;
+	AsoUtility::DIRECTION dir_;
 
 
 };

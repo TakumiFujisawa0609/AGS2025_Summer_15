@@ -133,8 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Object\Player\Attack\ArialSweep.cpp" />
-    <ClCompile Include="Src\Object\Player\Attack\DefaultAttack.cpp" />
+    <ClCompile Include="Src\Object\Player\Attack\Default.cpp" />
     <ClCompile Include="Src\Object\Player\Attack\PlayerAttackBase.cpp" />
     <ClCompile Include="Src\Object\Boss\Attack\AttackBase.cpp" />
     <ClCompile Include="Src\Object\Boss\Attack\Blast.cpp" />
@@ -168,8 +167,7 @@
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Object\Player\Attack\ArialSweep.h" />
-    <ClInclude Include="Src\Object\Player\Attack\DefaultAttack.h" />
+    <ClInclude Include="Src\Object\Player\Attack\Default.h" />
     <ClInclude Include="Src\Object\Player\Attack\PlayerAttackBase.h" />
     <ClInclude Include="Src\Object\Boss\Attack\AttackBase.h" />
     <ClInclude Include="Src\Object\Boss\Attack\Blast.h" />
