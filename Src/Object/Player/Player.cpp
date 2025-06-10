@@ -57,7 +57,13 @@ void Player::Init()
 	for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; }
 	attack_ = NON;
 	attackKeyCounter_ = 0;
-
+	//ƒK[ƒhŠÖŒW
+	// ƒK[ƒhŠÖŒW
+	guardCounter_ = 0;
+	isGuard_ = false;
+	isJustGuard_ = false;
+	perGuardKey_ = false;
+	nowGuardKey_ = false;
 
 	// ‰ñ”ðŠÖŒW
 	evasionCounter_ = 0;
@@ -77,7 +83,6 @@ void Player::Update()
 void Player::Draw()
 {
 	DrawPlayer();
-
 }
 
 void Player::Release()
@@ -103,6 +108,7 @@ void Player::StateManager(void)
 	case Player::STATE::MOVE:
 		DoStateAttack();
 		DoStateEvasion();
+		DoStateGuard();
 		break;
 	case Player::STATE::ATTACK:
 		break;
@@ -145,10 +151,10 @@ void Player::DoStateAttack()
 
 	// UŒ‚ó‘Ô‚É‘JˆÚ‚·‚é
 	ChangeState(Player::STATE::ATTACK);
-	
+
 	// ÅI’i‚Ü‚Å‚¢‚Á‚Ä‚¢‚é ‚Ü‚½‚Í ‘O‚Ì’i‚ÌUŒ‚‚©‚çˆê’èŽžŠÔ‰ß‚¬‚Ä‚¢‚½‚ç ƒtƒ‰ƒOƒŠƒZƒbƒg
-	if ((isAttack_[ATTACK::MAX - 1])||(attackKeyCounter_>INPUT_ATTACK_FRAME)) { 
-		for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; } 
+	if ((isAttack_[ATTACK::MAX - 1]) || (attackKeyCounter_ > INPUT_ATTACK_FRAME)) {
+		for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; }
 	}
 
 	// ‚P’i–Ú‚©‚ç’Tõ‚µ‚Ä“KØ‚È’i”‚ðattack_‚É‘ã“ü‚·‚é
@@ -164,15 +170,22 @@ void Player::DoStateAttack()
 			break;
 		}
 	}
-	
+
 }
 
 // ƒK[ƒhó‘Ô
 void Player::DoStateGuard()
 {
-
+	auto& ins = InputManager::GetInstance();
+	perGuardKey_ = nowGuardKey_;
+	nowGuardKey_ = ins.IsClickMouseRight();
+	if (!isGuard_ && (perGuardKey_ != nowGuardKey_)) {
+		ChangeState(Player::STATE::GUARD);
+		ChangeMotion(MOTION::GUARD_PER,false);
+		guardState_ = Player::GUARD_STATE::GUARD_PER;
+		guardCounter_ = GUARD_PER_RECOVERY_FRAME;
+	}
 }
-
 // ‰ñ”ðó‘Ô
 void Player::DoStateEvasion()
 {
@@ -246,6 +259,65 @@ void Player::Attack()
 // ƒK[ƒhó‘Ô
 void Player::Guard()
 {
+	auto& ins = InputManager::GetInstance();
+	perGuardKey_ = nowGuardKey_;
+	nowGuardKey_ = ins.IsClickMouseRight();
+	guardCounter_--;
+	switch (guardState_)
+	{
+	case Player::GUARD_STATE::GUARD_PER:
+		//‘Od’¼‚ªI—¹‚µ‚½‚çƒK[ƒh‚É‘JˆÚ
+		if (guardCounter_ <= 0) {
+			isGuard_ = true;
+			guardCounter_ = GUARD_FRAME;
+			guardState_ = Player::GUARD_STATE::GUARD;
+			ChangeMotion(Player::MOTION::GUARD);
+		}
+		//ƒK[ƒhƒL[‚ð—£‚µ‚½‚çŒãd’¼‚É‘JˆÚ
+		if (perGuardKey_!=nowGuardKey_) {
+			isGuard_ = false;
+			guardCounter_ = GUARD_POST_RECOVERY_FRAME;
+			guardState_ = Player::GUARD_STATE::GUARD_POST;
+			ChangeMotion(MOTION::GUARD_POST,false);
+		}
+		break;
+	case Player::GUARD_STATE::GUARD:
+		//ƒK[ƒhŽžŠÔ‚ªI—¹‚µ‚½‚çŒãd’¼‚É‘JˆÚ
+		if (guardCounter_<=0) {
+			isGuard_ = false;
+			guardCounter_ = GUARD_POST_RECOVERY_FRAME;
+			guardState_ = Player::GUARD_STATE::GUARD_POST;
+			ChangeMotion(MOTION::GUARD_POST, false);
+		}
+		//ƒK[ƒhƒL[‚ð—£‚µ‚½‚çƒWƒƒƒXƒgƒK[ƒh‚É‘JˆÚ
+		if (perGuardKey_ != nowGuardKey_) {
+			isGuard_ = false;
+			isJustGuard_ = true;
+			guardCounter_ = GUARD_JUST_FRAME;
+			guardState_ = Player::GUARD_STATE::GUARD_JUST;
+		}
+		break;
+	case Player::GUARD_STATE::GUARD_JUST:
+		//ƒWƒƒƒXƒgƒK[ƒh‚ªI—¹‚µ‚½‚çŒãd’¼‚É‘JˆÚ
+		if (guardCounter_ <= 0) {
+			isJustGuard_ = false;
+			guardCounter_ = GUARD_POST_RECOVERY_FRAME;
+			guardState_ = Player::GUARD_STATE::GUARD_POST;
+			ChangeMotion(MOTION::GUARD_POST, false);
+		}
+		break;
+	case Player::GUARD_STATE::GUARD_POST:
+		//Œãd’¼‚ªI—¹‚µ‚½‚ç“®‚¯‚é‚æ‚¤‚É‚·‚é
+		if (guardCounter_ <= 0) {
+			//‰Šú‰»
+			guardCounter_ = 0;
+			isGuard_ = false;
+			isJustGuard_ = false;
+			guardState_ = Player::GUARD_STATE::GUARD_PER;
+			ChangeState(Player::STATE::MOVE);
+		}
+		break;
+	}
 
 }
 
@@ -488,10 +560,26 @@ void Player::LoadPlayerImage(void)
 	//-----------------------------------------------------------------------------
 
 	// ƒK[ƒhó‘Ô‚Ì‰æ‘œ‚ð“Ç‚Ýž‚Ý--------------------------------------------------
+	motion = (int)MOTION::GUARD_PER;
+	int guardPerLoad[GUARD_PER_LOAD_NUM];
+	LoadDivGraph((basePath+"GuardPer.png").c_str(),
+		GUARD_PER_LOAD_NUM, GUARD_PER_LOAD_NUM,1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, guardPerLoad);
+	image_[motion].insert(image_[motion].end(), guardPerLoad, guardPerLoad + GUARD_PER_LOAD_NUM);
+
 	motion = (int)MOTION::GUARD;
+	int GuardLoad[GUARD_LOAD_NUM];
+	LoadDivGraph((basePath + "Guard.png").c_str(),
+		GUARD_LOAD_NUM, GUARD_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, GuardLoad);
+	image_[motion].insert(image_[motion].end(), GuardLoad, GuardLoad + GUARD_LOAD_NUM);
 
-	int GuardLoad[1];
-
+	motion = (int)MOTION::GUARD_POST;
+	int guardPostLoad[GUARD_POST_LOAD_NUM];
+	LoadDivGraph((basePath+"GuardPost.png").c_str(),
+		GUARD_POST_LOAD_NUM, GUARD_POST_LOAD_NUM,1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, guardPostLoad);
+	image_[motion].insert(image_[motion].end(), guardPostLoad, guardPostLoad + GUARD_POST_LOAD_NUM);
 	//-----------------------------------------------------------------------------
 
 
@@ -527,7 +615,7 @@ void Player::Animation()
 }
 
 
-void Player::ChangeMotion(MOTION mo,bool loop)
+void Player::ChangeMotion(MOTION mo, bool loop)
 {
 	if (mo == motion_)return;
 
@@ -541,7 +629,7 @@ void Player::ChangeMotion(MOTION mo,bool loop)
 void Player::DrawPlayer(void)
 {
 	bool Trance = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? true : false;
-	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true,Trance);
+	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true, Trance);
 }
 
 

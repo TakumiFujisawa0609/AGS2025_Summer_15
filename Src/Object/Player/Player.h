@@ -30,6 +30,9 @@ public:
 	static constexpr int FIRST_ATTACK_LOAD_NUM = 4;
 	static constexpr int SECONDE_ATTACK_LOAD_NUM = 6;
 	static constexpr int EVASION_LOAD_NUM = 3;
+	static constexpr int GUARD_PER_LOAD_NUM = 3;
+	static constexpr int GUARD_LOAD_NUM = 1;
+	static constexpr int GUARD_POST_LOAD_NUM = 3;
 
 
 	//何フレームに１回アニメーションを動かすか
@@ -46,7 +49,9 @@ public:
 		SECOND_ATTACK,	//攻撃2段目
 		THURD_ATTACK,	//攻撃3段目
 		DAMAGE,			//被ダメージ
+		GUARD_PER,		//ガード前
 		GUARD,			//ガード
+		GUARD_POST,		//ガード解除
 		EVASION,		//回避
 
 		MAX,			//モーション最大数
@@ -94,7 +99,17 @@ public:
 
 
 	// ガード状態で使用する定数定義-----------------------------------------------------------------
-
+	static constexpr int GUARD_FRAME = 180;				//総ガードフレーム
+	static constexpr int GUARD_PER_RECOVERY_FRAME = 5;	//前硬直フレーム
+	static constexpr int GUARD_POST_RECOVERY_FRAME = 10;//後硬直フレーム
+	static constexpr int GUARD_JUST_FRAME = 5;			//ジャストガード猶予時間フレーム
+	enum class GUARD_STATE
+	{
+		GUARD_PER,
+		GUARD,
+		GUARD_JUST,
+		GUARD_POST,
+	};
 	//----------------------------------------------------------------------------------------------
 	 
 	
@@ -231,9 +246,15 @@ private:
 	// ガード処理関係------------------------
 
 	// 関数
-
+	bool IsGuard(void) { return isGuard_; }
+	bool IsJustGuard(void) { return isJustGuard_; }
 	// 変数
-
+	int guardCounter_;
+	bool isGuard_;
+	bool isJustGuard_;
+	bool perGuardKey_;
+	bool nowGuardKey_;
+	GUARD_STATE guardState_;
 	//---------------------------------------
 
 
