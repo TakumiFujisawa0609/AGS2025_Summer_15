@@ -19,15 +19,10 @@ Player::~Player()
 {
 }
 
-
-
 void Player::Init()
 {
 	// ’è”’l‚ğİ’è
 	unit_.size_ = { SIZE_X,SIZE_Y };
-
-
-
 
 	// •Ï”‚Ì‰Šú‰»
 	unit_.pos_ = { 500.0f,500.0f };
@@ -84,7 +79,7 @@ void Player::Draw()
 {
 	DrawPlayer();
 	if (isGuard_) {
-		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 30, 0x00ff00);
+		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 15, 0x00ff00);
 	}
 	if (isJustGuard_) {
 		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 15, 0x0000ff);
@@ -184,7 +179,6 @@ void Player::DoStateGuard()
 {
 	auto& ins = InputManager::GetInstance();
 	perGuardKey_ = nowGuardKey_;
-	nowGuardKey_ = ins.IsClickMouseRight();
 	nowGuardKey_ = ins.IsNew(KEY_INPUT_L);
 	if (!isGuard_ && (perGuardKey_ != nowGuardKey_)) {
 		ChangeState(Player::STATE::GUARD);
@@ -269,7 +263,6 @@ void Player::Guard()
 {
 	auto& ins = InputManager::GetInstance();
 	perGuardKey_ = nowGuardKey_;
-	nowGuardKey_ = ins.IsClickMouseRight();
 	nowGuardKey_ = ins.IsNew(KEY_INPUT_L);
 
 	guardCounter_--;
