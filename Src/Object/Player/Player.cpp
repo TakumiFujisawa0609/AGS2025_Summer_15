@@ -83,6 +83,12 @@ void Player::Update()
 void Player::Draw()
 {
 	DrawPlayer();
+	if (isGuard_) {
+		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 30, 0x00ff00);
+	}
+	if (isJustGuard_) {
+		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 15, 0x0000ff);
+	}
 }
 
 void Player::Release()
@@ -179,11 +185,13 @@ void Player::DoStateGuard()
 	auto& ins = InputManager::GetInstance();
 	perGuardKey_ = nowGuardKey_;
 	nowGuardKey_ = ins.IsClickMouseRight();
+	nowGuardKey_ = ins.IsNew(KEY_INPUT_L);
 	if (!isGuard_ && (perGuardKey_ != nowGuardKey_)) {
 		ChangeState(Player::STATE::GUARD);
 		ChangeMotion(MOTION::GUARD_PER,false);
 		guardState_ = Player::GUARD_STATE::GUARD_PER;
 		guardCounter_ = GUARD_PER_RECOVERY_FRAME;
+		isJustGuard_ = true;
 	}
 }
 // 回避状態
@@ -262,23 +270,26 @@ void Player::Guard()
 	auto& ins = InputManager::GetInstance();
 	perGuardKey_ = nowGuardKey_;
 	nowGuardKey_ = ins.IsClickMouseRight();
+	nowGuardKey_ = ins.IsNew(KEY_INPUT_L);
+
 	guardCounter_--;
 	switch (guardState_)
 	{
 	case Player::GUARD_STATE::GUARD_PER:
 		//前硬直が終了したらガードに遷移
 		if (guardCounter_ <= 0) {
+			isJustGuard_ = false;
 			isGuard_ = true;
 			guardCounter_ = GUARD_FRAME;
 			guardState_ = Player::GUARD_STATE::GUARD;
 			ChangeMotion(Player::MOTION::GUARD);
 		}
-		//ガードキーを離したら後硬直に遷移
-		if (perGuardKey_!=nowGuardKey_) {
+		//ガードキーを離したらジャストガードに遷移
+		if (perGuardKey_ != nowGuardKey_) {
 			isGuard_ = false;
-			guardCounter_ = GUARD_POST_RECOVERY_FRAME;
-			guardState_ = Player::GUARD_STATE::GUARD_POST;
-			ChangeMotion(MOTION::GUARD_POST,false);
+			isJustGuard_ = true;
+			guardCounter_ = GUARD_JUST_FRAME;
+			guardState_ = Player::GUARD_STATE::GUARD_JUST;
 		}
 		break;
 	case Player::GUARD_STATE::GUARD:
