@@ -8,7 +8,6 @@
 #include"../../Manager/SceneManager.h"
 #include"../Stage/Stage.h"
 #include"../../Scene/GameScene.h"
-#include"Attack/ArialSweep.h"
 
 Player::Player()
 {
@@ -23,6 +22,7 @@ void Player::Init()
 {
 	// 定数値を設定
 	unit_.size_ = { SIZE_X,SIZE_Y };
+	unit_.speed_ = RUN_SPEED;
 
 	// 変数の初期化
 	unit_.pos_ = { 500.0f,500.0f };
@@ -49,6 +49,9 @@ void Player::Init()
 	}
 
 	// 攻撃関係
+	defaultAttack_ = new Default(&unit_.pos_, &dir_);
+	defaultAttack_->Init();
+
 	for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; }
 	attack_ = NON;
 	attackKeyCounter_ = 0;
@@ -62,6 +65,8 @@ void Player::Init()
 
 	// 回避関係
 	evasionCounter_ = 0;
+
+	PossiFlg_ = true;
 }
 
 void Player::Update()
@@ -84,11 +89,14 @@ void Player::Draw()
 	if (isJustGuard_) {
 		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 15, 0x0000ff);
 	}
+
+	defaultAttack_->Draw();
 }
 
 void Player::Release()
 {
-
+	defaultAttack_->Release();
+	delete defaultAttack_;
 	//画像解放
 	for (int i = 0; i < (int)MOTION::MAX; i++) {
 		for (auto id : image_[i]) {
@@ -193,8 +201,9 @@ void Player::DoStateEvasion()
 {
 	auto& ins = InputManager::GetInstance();
 
-	if (ins.IsTrgDown(KEY_INPUT_K)) {
+	if (ins.IsTrgDown(KEY_INPUT_K)&&PossiFlg_) {
 		ChangeState(Player::STATE::EVASION);
+		PossiFlg_ = false;
 	}
 }
 
@@ -242,20 +251,22 @@ void Player::Attack()
 	switch (attack_)
 	{
 	case Player::FIRST:
-
-
 		// モーション更新
 		ChangeMotion(MOTION::FIRST_ATTACK, false);
 		break;
 	case Player::SECONDE:
-
-
 		// モーション更新
 		ChangeMotion(MOTION::SECOND_ATTACK, false);
 		break;
 	}
 
+	defaultAttack_->Off();
 
+	if (GetAnimeRatio() > 0.4f && GetAnimeRatio() < 0.6f) {
+		defaultAttack_->On();
+	}
+
+	defaultAttack_->Update();
 }
 
 // ガード状態
@@ -634,6 +645,11 @@ void Player::DrawPlayer(void)
 {
 	bool Trance = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? true : false;
 	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true, Trance);
+}
+
+const float Player::GetAnimeRatio(void) const
+{
+	return (float)((float)animeCounter_ / (float)image_[(int)motion_].size());
 }
 
 

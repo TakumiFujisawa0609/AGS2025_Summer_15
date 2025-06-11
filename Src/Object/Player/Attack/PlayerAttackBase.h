@@ -7,15 +7,17 @@
 class PlayerAttackBase
 {
 public:
-	PlayerAttackBase(Vector2F* pPos);
-	virtual ~PlayerAttackBase() = 0;
+	PlayerAttackBase();
+	PlayerAttackBase(Vector2F* pPos,AsoUtility::DIRECTION* dir);
+	~PlayerAttackBase();
 
-	virtual void Init(AsoUtility::DIRECTION dir);
+	virtual void Init(void) = 0;
 	virtual void Update(void) = 0;
 	virtual void Draw(void) = 0;
 	virtual void Release(void) = 0;
 
 	const Base GetObj(void) { return obj_; }
+
 
 protected:
 
@@ -23,8 +25,9 @@ protected:
 
 	Vector2F* pPos_;
 
-	AsoUtility::DIRECTION dir_;
+	AsoUtility::DIRECTION* dir_;
 
+	void ChangeDispPos(void);
 
 };
 

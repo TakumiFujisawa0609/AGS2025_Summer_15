@@ -3,9 +3,9 @@
 #include"../../Utility/AsoUtility.h"
 #include"../UnitBase.h"
 
-#include"Attack/DefaultAttack.h"
 
-class ArialSweep;
+#include"Attack/Default.h"
+
 
 class Player:public UnitBase
 {
@@ -95,6 +95,8 @@ public:
 
 	static constexpr int INPUT_ATTACK_FRAME = 20;		//Ÿ‚Ì’i‚É‚Â‚È‚ª‚éŠÔ(ƒtƒŒ[ƒ€”)
 
+	Base DefaultAtt(void) { return defaultAttack_->GetObj(); }
+
 	//----------------------------------------------------------------------------------------------
 
 
@@ -153,6 +155,8 @@ private:
 	int animeInterval_;
 
 	bool animeLoop_;
+
+	const float GetAnimeRatio(void)const;
 	//-----------------------------------------------------------------------------
 
 	//Œü‚«
@@ -237,6 +241,8 @@ private:
 	// ŠÖ”
 
 	// •Ï”
+	Default* defaultAttack_;
+
 	bool isAttack_[ATTACK::MAX];
 	ATTACK attack_;
 	int attackKeyCounter_;
@@ -264,6 +270,7 @@ private:
 
 	// •Ï”
 	int evasionCounter_;
+	bool PossiFlg_;
 	//--------------------------------------
 
 
