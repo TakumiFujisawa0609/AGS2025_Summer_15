@@ -197,8 +197,6 @@ void GameScene::PlayerToBossAttack(void)
 	{
 		if (ins.CircleAndRect(obj, player_->GetUnit())) {
 			player_->Hit(5, obj.pos_);
-			mana.HitStop();
-			mana.SHAKE();
 			//if ((player_->IsInvincible() || player_->IsJustGuard())
 			//	&& !player_->IsHit()) {
 			//	mana.Slow();
