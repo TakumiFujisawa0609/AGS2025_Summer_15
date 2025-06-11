@@ -195,6 +195,11 @@ void Player::DoStateAttack()
 
 }
 
+// 特殊攻撃状態
+void Player::DoStateBPAttack(void)
+{
+}
+
 // ガード状態
 void Player::DoStateGuard()
 {
@@ -290,6 +295,11 @@ void Player::Attack()
 	defaultAttack_->Update();
 }
 
+// 特殊攻撃状態
+void Player::BPAttack(void)
+{
+}
+
 // ガード状態
 void Player::Guard()
 {
@@ -379,6 +389,8 @@ void Player::Evasion()
 void Player::Damage(void)
 {
 	if (!knockBack_)ChangeState(Player::STATE::MOVE);
+
+	ChangeMotion(Player::MOTION::DAMAGE);
 
 	if (knockBackDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) 
 	{
@@ -615,6 +627,18 @@ void Player::LoadPlayerImage(void)
 		LOAD_SIZE_X, LOAD_SIZE_Y, SecondeAttaclLoad);
 
 	image_[motion].insert(image_[motion].end(), SecondeAttaclLoad, SecondeAttaclLoad + SECONDE_ATTACK_LOAD_NUM);
+	//-----------------------------------------------------------------------------
+
+	//被ダメ状態の画像を読み込み-----------------------------------------------
+	motion = (int)MOTION::DAMAGE;
+
+	int DamageLoad[DAMAGE_LOAD_NUM];
+
+	LoadDivGraph((basePath + "Damage.png").c_str(),
+		DAMAGE_LOAD_NUM, DAMAGE_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, DamageLoad);
+
+	image_[motion].insert(image_[motion].end(), DamageLoad, DamageLoad + DAMAGE_LOAD_NUM);
 	//-----------------------------------------------------------------------------
 
 	// ガード状態の画像を読み込み--------------------------------------------------

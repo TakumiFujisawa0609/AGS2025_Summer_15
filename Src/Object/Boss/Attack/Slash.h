@@ -33,6 +33,7 @@ public:
 
 	void SetTarget(const AttackBase::DIR dir) { dir_ = dir; }
 
+
 private:
 
 	bool isTurn;

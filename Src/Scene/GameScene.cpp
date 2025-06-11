@@ -193,19 +193,15 @@ void GameScene::PlayerToBossAttack(void)
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
 
+
+	for (int i = 0; i < boss_->GetAttackObj().size(); i++) {
+
+	}
+
 	for (auto obj : boss_->GetAttackObj())
 	{
 		if (ins.CircleAndRect(obj, player_->GetUnit())) {
 			player_->Hit(5, obj.pos_);
-			//if ((player_->IsInvincible() || player_->IsJustGuard())
-			//	&& !player_->IsHit()) {
-			//	mana.Slow();
-			//}
-			//else {
-			//	player_->SetHitOn();
-			//	//player_->SetXAccel(20.0f);
-			//	mana.SHAKE();
-			//}
 		}
 	}
 }

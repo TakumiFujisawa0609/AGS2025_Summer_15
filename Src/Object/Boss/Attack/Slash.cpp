@@ -25,6 +25,7 @@ void Slash::Init(const Vector2F* pos)
 	obj_.radius_ = obj_.size_.x;
 	
 	animCounter_ = 0;
+
 }
 
 void Slash::Update()
@@ -78,3 +79,4 @@ void Slash::Release()
 	}
 	DeleteGraph(image_);
 }
+

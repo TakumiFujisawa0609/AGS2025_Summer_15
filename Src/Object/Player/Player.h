@@ -30,6 +30,7 @@ public:
 	static constexpr int FIRST_ATTACK_LOAD_NUM = 4;
 	static constexpr int SECONDE_ATTACK_LOAD_NUM = 6;
 	static constexpr int EVASION_LOAD_NUM = 3;
+	static constexpr int DAMAGE_LOAD_NUM = 1;
 	static constexpr int GUARD_PER_LOAD_NUM = 3;
 	static constexpr int GUARD_LOAD_NUM = 1;
 	static constexpr int GUARD_POST_LOAD_NUM = 3;
@@ -47,7 +48,7 @@ public:
 		FALL,			//落下状態
 		FIRST_ATTACK,	//攻撃1段目
 		SECOND_ATTACK,	//攻撃2段目
-		THURD_ATTACK,	//攻撃3段目
+		SPECIAL_ATTACK,	//特殊攻撃
 		DAMAGE,			//被ダメージ
 		GUARD_PER,		//ガード前
 		GUARD,			//ガード
@@ -102,6 +103,9 @@ public:
 
 	//----------------------------------------------------------------------------------------------
 
+	// 特殊攻撃状態で使用する定数定義--------------------------------------------------------------
+
+	//---------------------------------------------------------------------------------------------
 
 	// ガード状態で使用する定数定義-----------------------------------------------------------------
 	static constexpr int GUARD_FRAME = 180;				//総ガードフレーム
@@ -196,6 +200,9 @@ private:
 	// 攻撃状態に遷移する条件
 	void DoStateAttack(void);
 
+	// 特殊攻撃状態に遷移する条件
+	void DoStateBPAttack(void);
+
 	// ガード状態に遷移する条件
 	void DoStateGuard(void);
 
@@ -216,6 +223,9 @@ private:
 
 	// 攻撃処理
 	void Attack(void);
+
+	// 特殊攻撃状態
+	void BPAttack(void);
 
 	// ガード処理
 	void Guard(void);
@@ -257,6 +267,15 @@ private:
 	bool isAttack_[ATTACK::MAX];
 	ATTACK attack_;
 	int attackKeyCounter_;
+	//---------------------------------------
+
+
+	// 特殊攻撃関係--------------------------
+
+	// 関数
+
+	// 変数
+
 	//---------------------------------------
 
 
