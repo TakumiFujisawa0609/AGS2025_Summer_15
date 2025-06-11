@@ -96,15 +96,12 @@ void Player::Draw()
 
 		DrawPlayer();
 
-		if (isGuard_) {
-			DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 15, 0x00ff00);
-		}
-		if (isJustGuard_) {
-			DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 15, 0x0000ff);
-		}
+
 
 		defaultAttack_->Draw();
 	}
+
+	DrawHpBarFixedSize(400, 300, 1000,350, unit_.hp_, HP_MAX,RGB(0,255,0));
 }
 
 void Player::Release()
@@ -204,7 +201,7 @@ void Player::DoStateGuard()
 	auto& ins = InputManager::GetInstance();
 	perGuardKey_ = nowGuardKey_;
 	nowGuardKey_ = ins.IsNew(KEY_INPUT_L);
-	if (!isGuard_ && (perGuardKey_ != nowGuardKey_)) {
+	if (nowGuardKey_ && (perGuardKey_ != nowGuardKey_)) {
 		ChangeState(Player::STATE::GUARD);
 		ChangeMotion(MOTION::GUARD_PER,false);
 		guardState_ = Player::GUARD_STATE::GUARD_PER;
@@ -229,7 +226,9 @@ void Player::DoStateEvasion()
 void Player::ChangeState(STATE st)
 {
 	unit_.isGravity_ = true;
-	defaultAttack_->Off();
+	defaultAttack_->Off();			
+	guardState_ = Player::GUARD_STATE::GUARD_POST; 
+
 	switch (st)
 	{
 	case Player::STATE::MOVE:
@@ -351,7 +350,7 @@ void Player::Guard()
 			isGuard_ = false;
 			isJustGuard_ = false;
 			guardState_ = Player::GUARD_STATE::GUARD_PER;
-			ChangeState(Player::STATE::MOVE);
+			//ChangeState(Player::STATE::MOVE);
 		}
 		break;
 	}
@@ -700,6 +699,18 @@ const float Player::GetAnimeRatio(void) const
 
 void Player::Hit(int damage, Vector2F bPos)
 {
+	if (guardState_ == GUARD_STATE::GUARD) {
+
+		return;
+	}
+	else if (guardState_ == GUARD_STATE::GUARD_JUST||guardState_==GUARD_STATE::GUARD_PER) {
+		SceneManager::GetInstance().SHAKE();
+		SceneManager::GetInstance().Slow();
+		unit_.inviCounter_ = 100;
+		return;
+	}
+
+
 	ChangeState(Player::STATE::DAMAGE);
 
 	unit_.hp_ -= damage;
