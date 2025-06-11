@@ -8,7 +8,8 @@
 #include"../../Manager/SceneManager.h"
 #include"../Stage/Stage.h"
 #include"../../Scene/GameScene.h"
-#include"Attack/ArialSweep.h"
+
+
 
 Player::Player()
 {
@@ -19,25 +20,18 @@ Player::~Player()
 {
 }
 
-
-
 void Player::Init()
 {
 	// 定数値を設定
 	unit_.size_ = { SIZE_X,SIZE_Y };
-
-
-
+	unit_.speed_ = RUN_SPEED;
 
 	// 変数の初期化
 	unit_.pos_ = { 500.0f,500.0f };
 	unit_.isAlive_ = true;
+	unit_.hp_ = HP_MAX;
 
-	//状態
-	ChangeState(Player::STATE::MOVE);
 
-	// モーション
-	ChangeMotion(MOTION::IDLE);
 
 	// アニメーションカウンター
 	animeCounter_ = 0;
@@ -54,17 +48,39 @@ void Player::Init()
 	}
 
 	// 攻撃関係
+	defaultAttack_ = new Default(&unit_.pos_, &dir_);
+	defaultAttack_->Init();
+
 	for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; }
 	attack_ = NON;
 	attackKeyCounter_ = 0;
-
+	//ガード関係
+	// ガード関係
+	guardCounter_ = 0;
+	isGuard_ = false;
+	isJustGuard_ = false;
+	perGuardKey_ = false;
+	nowGuardKey_ = false;
 
 	// 回避関係
 	evasionCounter_ = 0;
+
+	evasionPossiFlg_ = true;
+
+	// ダメージ関係
+	knockBack_ = false;
+
+	//状態
+	ChangeState(Player::STATE::MOVE);
+
+	// モーション
+	ChangeMotion(MOTION::IDLE);
 }
 
 void Player::Update()
 {
+	if (unit_.inviCounter_ > 0)unit_.inviCounter_--;
+
 	StateManager();
 
 	Animation();
@@ -76,13 +92,25 @@ void Player::Update()
 
 void Player::Draw()
 {
-	DrawPlayer();
+	if (unit_.isAlive_ && (unit_.inviCounter_ / 5) % 2 == 0) {
 
+		DrawPlayer();
+
+		if (isGuard_) {
+			DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 15, 0x00ff00);
+		}
+		if (isJustGuard_) {
+			DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 15, 0x0000ff);
+		}
+
+		defaultAttack_->Draw();
+	}
 }
 
 void Player::Release()
 {
-
+	defaultAttack_->Release();
+	delete defaultAttack_;
 	//画像解放
 	for (int i = 0; i < (int)MOTION::MAX; i++) {
 		for (auto id : image_[i]) {
@@ -103,6 +131,7 @@ void Player::StateManager(void)
 	case Player::STATE::MOVE:
 		DoStateAttack();
 		DoStateEvasion();
+		DoStateGuard();
 		break;
 	case Player::STATE::ATTACK:
 		break;
@@ -111,6 +140,8 @@ void Player::StateManager(void)
 		break;
 	case Player::STATE::EVASION:
 
+		break;
+	case Player::STATE::DAMAGE:
 		break;
 	}
 
@@ -145,10 +176,10 @@ void Player::DoStateAttack()
 
 	// 攻撃状態に遷移する
 	ChangeState(Player::STATE::ATTACK);
-	
+
 	// 最終段までいっている または 前の段の攻撃から一定時間過ぎていたら フラグリセット
-	if ((isAttack_[ATTACK::MAX - 1])||(attackKeyCounter_>INPUT_ATTACK_FRAME)) { 
-		for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; } 
+	if ((isAttack_[ATTACK::MAX - 1]) || (attackKeyCounter_ > INPUT_ATTACK_FRAME)) {
+		for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; }
 	}
 
 	// １段目から探索して適切な段数をattack_に代入する
@@ -164,22 +195,31 @@ void Player::DoStateAttack()
 			break;
 		}
 	}
-	
+
 }
 
 // ガード状態
 void Player::DoStateGuard()
 {
-
+	auto& ins = InputManager::GetInstance();
+	perGuardKey_ = nowGuardKey_;
+	nowGuardKey_ = ins.IsNew(KEY_INPUT_L);
+	if (!isGuard_ && (perGuardKey_ != nowGuardKey_)) {
+		ChangeState(Player::STATE::GUARD);
+		ChangeMotion(MOTION::GUARD_PER,false);
+		guardState_ = Player::GUARD_STATE::GUARD_PER;
+		guardCounter_ = GUARD_PER_RECOVERY_FRAME;
+		isJustGuard_ = true;
+	}
 }
-
 // 回避状態
 void Player::DoStateEvasion()
 {
 	auto& ins = InputManager::GetInstance();
 
-	if (ins.IsTrgDown(KEY_INPUT_K)) {
+	if (ins.IsTrgDown(KEY_INPUT_K)&&evasionPossiFlg_) {
 		ChangeState(Player::STATE::EVASION);
+		evasionPossiFlg_ = false;
 	}
 }
 
@@ -188,6 +228,8 @@ void Player::DoStateEvasion()
 // 状態変更
 void Player::ChangeState(STATE st)
 {
+	unit_.isGravity_ = true;
+	defaultAttack_->Off();
 	switch (st)
 	{
 	case Player::STATE::MOVE:
@@ -205,6 +247,10 @@ void Player::ChangeState(STATE st)
 	case Player::STATE::EVASION:
 		state_ = Player::STATE::EVASION;
 		stateFuncPtr = &Player::Evasion;
+		break;
+	case Player::STATE::DAMAGE:
+		state_ = Player::STATE::DAMAGE;
+		stateFuncPtr = &Player::Damage;
 		break;
 	}
 }
@@ -227,25 +273,88 @@ void Player::Attack()
 	switch (attack_)
 	{
 	case Player::FIRST:
-
-
 		// モーション更新
 		ChangeMotion(MOTION::FIRST_ATTACK, false);
 		break;
 	case Player::SECONDE:
-
-
 		// モーション更新
 		ChangeMotion(MOTION::SECOND_ATTACK, false);
 		break;
 	}
 
+	defaultAttack_->Off();
 
+	if (GetAnimeRatio() > 0.4f && GetAnimeRatio() < 0.6f) {
+		defaultAttack_->On();
+	}
+
+	defaultAttack_->Update();
 }
 
 // ガード状態
 void Player::Guard()
 {
+	auto& ins = InputManager::GetInstance();
+	perGuardKey_ = nowGuardKey_;
+	nowGuardKey_ = ins.IsNew(KEY_INPUT_L);
+
+	guardCounter_--;
+	switch (guardState_)
+	{
+	case Player::GUARD_STATE::GUARD_PER:
+		//前硬直が終了したらガードに遷移
+		if (guardCounter_ <= 0) {
+			isJustGuard_ = false;
+			isGuard_ = true;
+			guardCounter_ = GUARD_FRAME;
+			guardState_ = Player::GUARD_STATE::GUARD;
+			ChangeMotion(Player::MOTION::GUARD);
+		}
+		//ガードキーを離したらジャストガードに遷移
+		if (perGuardKey_ != nowGuardKey_) {
+			isGuard_ = false;
+			isJustGuard_ = true;
+			guardCounter_ = GUARD_JUST_FRAME;
+			guardState_ = Player::GUARD_STATE::GUARD_JUST;
+		}
+		break;
+	case Player::GUARD_STATE::GUARD:
+		//ガード時間が終了したら後硬直に遷移
+		if (guardCounter_<=0) {
+			isGuard_ = false;
+			guardCounter_ = GUARD_POST_RECOVERY_FRAME;
+			guardState_ = Player::GUARD_STATE::GUARD_POST;
+			ChangeMotion(MOTION::GUARD_POST, false);
+		}
+		//ガードキーを離したらジャストガードに遷移
+		if (perGuardKey_ != nowGuardKey_) {
+			isGuard_ = false;
+			isJustGuard_ = true;
+			guardCounter_ = GUARD_JUST_FRAME;
+			guardState_ = Player::GUARD_STATE::GUARD_JUST;
+		}
+		break;
+	case Player::GUARD_STATE::GUARD_JUST:
+		//ジャストガードが終了したら後硬直に遷移
+		if (guardCounter_ <= 0) {
+			isJustGuard_ = false;
+			guardCounter_ = GUARD_POST_RECOVERY_FRAME;
+			guardState_ = Player::GUARD_STATE::GUARD_POST;
+			ChangeMotion(MOTION::GUARD_POST, false);
+		}
+		break;
+	case Player::GUARD_STATE::GUARD_POST:
+		//後硬直が終了したら動けるようにする
+		if (guardCounter_ <= 0) {
+			//初期化
+			guardCounter_ = 0;
+			isGuard_ = false;
+			isJustGuard_ = false;
+			guardState_ = Player::GUARD_STATE::GUARD_PER;
+			ChangeState(Player::STATE::MOVE);
+		}
+		break;
+	}
 
 }
 
@@ -265,6 +374,22 @@ void Player::Evasion()
 		unit_.isGravity_ = true;
 		ChangeState(Player::STATE::MOVE);
 	}
+}
+
+// ダメージ処理
+void Player::Damage(void)
+{
+	if (!knockBack_)ChangeState(Player::STATE::MOVE);
+
+	if (knockBackDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) 
+	{
+		unit_.nextpos_.x -= KNOCK_SPEED;
+	}
+	else if (knockBackDir_==AsoUtility::DIRECTION::E_DIR_RIGHT)
+	{
+		unit_.nextpos_.x += KNOCK_SPEED;
+	}
+
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -362,6 +487,10 @@ void Player::Jump()
 //-------------------------------------------------------------------回避処理ここまで
 
 
+// ダメージ処理関係--------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------ダメージ処理ここまで
 
 //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -386,6 +515,8 @@ void Player::IsGround(Collision::DIR dir)
 		unit_.yAccel_ = 0.0f;
 		unit_.isGround_ = true;
 		//unit_.isGravity_ = false;
+		evasionPossiFlg_ = true;
+		knockBack_ = false;
 
 		for (int i = 0; i < JUMP_NUM; i++) {
 			isJump_[i] = false;
@@ -488,10 +619,26 @@ void Player::LoadPlayerImage(void)
 	//-----------------------------------------------------------------------------
 
 	// ガード状態の画像を読み込み--------------------------------------------------
+	motion = (int)MOTION::GUARD_PER;
+	int guardPerLoad[GUARD_PER_LOAD_NUM];
+	LoadDivGraph((basePath+"GuardPer.png").c_str(),
+		GUARD_PER_LOAD_NUM, GUARD_PER_LOAD_NUM,1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, guardPerLoad);
+	image_[motion].insert(image_[motion].end(), guardPerLoad, guardPerLoad + GUARD_PER_LOAD_NUM);
+
 	motion = (int)MOTION::GUARD;
+	int GuardLoad[GUARD_LOAD_NUM];
+	LoadDivGraph((basePath + "Guard.png").c_str(),
+		GUARD_LOAD_NUM, GUARD_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, GuardLoad);
+	image_[motion].insert(image_[motion].end(), GuardLoad, GuardLoad + GUARD_LOAD_NUM);
 
-	int GuardLoad[1];
-
+	motion = (int)MOTION::GUARD_POST;
+	int guardPostLoad[GUARD_POST_LOAD_NUM];
+	LoadDivGraph((basePath+"GuardPost.png").c_str(),
+		GUARD_POST_LOAD_NUM, GUARD_POST_LOAD_NUM,1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, guardPostLoad);
+	image_[motion].insert(image_[motion].end(), guardPostLoad, guardPostLoad + GUARD_POST_LOAD_NUM);
 	//-----------------------------------------------------------------------------
 
 
@@ -527,7 +674,7 @@ void Player::Animation()
 }
 
 
-void Player::ChangeMotion(MOTION mo,bool loop)
+void Player::ChangeMotion(MOTION mo, bool loop)
 {
 	if (mo == motion_)return;
 
@@ -541,8 +688,28 @@ void Player::ChangeMotion(MOTION mo,bool loop)
 void Player::DrawPlayer(void)
 {
 	bool Trance = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? true : false;
-	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true,Trance);
+	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true, Trance);
+}
+
+const float Player::GetAnimeRatio(void) const
+{
+	return ((float)animeCounter_ / (float)image_[(int)motion_].size());
 }
 
 
 
+void Player::Hit(int damage, Vector2F bPos)
+{
+	ChangeState(Player::STATE::DAMAGE);
+
+	unit_.hp_ -= damage;
+
+	if (unit_.hp_ <= 0)unit_.isAlive_ = false;
+
+	unit_.inviCounter_ = 100;
+
+	unit_.yAccel_ = -(KNOCK_POWER);
+
+	knockBack_ = true;
+	knockBackDir_ = (unit_.pos_.x < bPos.x) ? AsoUtility::DIRECTION::E_DIR_LEFT : AsoUtility::DIRECTION::E_DIR_RIGHT;
+}

@@ -3,9 +3,9 @@
 #include"../../Utility/AsoUtility.h"
 #include"../UnitBase.h"
 
-#include"Attack/DefaultAttack.h"
 
-class ArialSweep;
+#include"Attack/Default.h"
+
 
 class Player:public UnitBase
 {
@@ -30,6 +30,9 @@ public:
 	static constexpr int FIRST_ATTACK_LOAD_NUM = 4;
 	static constexpr int SECONDE_ATTACK_LOAD_NUM = 6;
 	static constexpr int EVASION_LOAD_NUM = 3;
+	static constexpr int GUARD_PER_LOAD_NUM = 3;
+	static constexpr int GUARD_LOAD_NUM = 1;
+	static constexpr int GUARD_POST_LOAD_NUM = 3;
 
 
 	//何フレームに１回アニメーションを動かすか
@@ -46,12 +49,16 @@ public:
 		SECOND_ATTACK,	//攻撃2段目
 		THURD_ATTACK,	//攻撃3段目
 		DAMAGE,			//被ダメージ
+		GUARD_PER,		//ガード前
 		GUARD,			//ガード
+		GUARD_POST,		//ガード解除
 		EVASION,		//回避
 
 		MAX,			//モーション最大数
 	};
 
+
+	static constexpr int HP_MAX = 100;
 
 	//プレイヤーの状態
 	enum class STATE
@@ -60,6 +67,7 @@ public:
 		ATTACK,
 		GUARD,
 		EVASION,
+		DAMAGE,
 	};
 
 	// 移動状態で使用する定数定義-------------------------------------------------------------------
@@ -90,11 +98,23 @@ public:
 
 	static constexpr int INPUT_ATTACK_FRAME = 20;		//次の段につながる時間(フレーム数)
 
+	Base DefaultAtt(void) { return defaultAttack_->GetObj(); }
+
 	//----------------------------------------------------------------------------------------------
 
 
 	// ガード状態で使用する定数定義-----------------------------------------------------------------
-
+	static constexpr int GUARD_FRAME = 180;				//総ガードフレーム
+	static constexpr int GUARD_PER_RECOVERY_FRAME = 5;	//前硬直フレーム
+	static constexpr int GUARD_POST_RECOVERY_FRAME = 10;//後硬直フレーム
+	static constexpr int GUARD_JUST_FRAME = 5;			//ジャストガード猶予時間フレーム
+	enum class GUARD_STATE
+	{
+		GUARD_PER,
+		GUARD,
+		GUARD_JUST,
+		GUARD_POST,
+	};
 	//----------------------------------------------------------------------------------------------
 	 
 	
@@ -106,6 +126,11 @@ public:
 
 	//----------------------------------------------------------------------------------------------
 
+	// ダメージ状態で使用する定数定義---------------------------------------------------------------
+	static constexpr float KNOCK_SPEED = 5.0f;
+	static constexpr float KNOCK_POWER = 10.0f;
+	void Hit(int damage, Vector2F bPos);
+	//----------------------------------------------------------------------------------------------
 
 
 
@@ -138,6 +163,8 @@ private:
 	int animeInterval_;
 
 	bool animeLoop_;
+
+	const float GetAnimeRatio(void)const;
 	//-----------------------------------------------------------------------------
 
 	//向き
@@ -196,6 +223,9 @@ private:
 	// 回避処理
 	void Evasion(void);
 
+	// ダメージ処理
+	void Damage(void);
+
 	//---------------------------------------------
 
 
@@ -222,6 +252,8 @@ private:
 	// 関数
 
 	// 変数
+	Default* defaultAttack_;
+
 	bool isAttack_[ATTACK::MAX];
 	ATTACK attack_;
 	int attackKeyCounter_;
@@ -231,9 +263,15 @@ private:
 	// ガード処理関係------------------------
 
 	// 関数
-
+	bool IsGuard(void) { return isGuard_; }
+	bool IsJustGuard(void) { return isJustGuard_; }
 	// 変数
-
+	int guardCounter_;
+	bool isGuard_;
+	bool isJustGuard_;
+	bool perGuardKey_;
+	bool nowGuardKey_;
+	GUARD_STATE guardState_;
 	//---------------------------------------
 
 
@@ -243,6 +281,16 @@ private:
 
 	// 変数
 	int evasionCounter_;
+	bool evasionPossiFlg_;
+	//--------------------------------------
+
+	// ダメージ処理関係---------------------
+	
+	// 関数
+	
+	// 変数
+	bool knockBack_;
+	AsoUtility::DIRECTION knockBackDir_;
 	//--------------------------------------
 
 

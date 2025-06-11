@@ -1,50 +1,23 @@
-#include<DxLib.h>
 #include "PlayerAttackBase.h"
+#include"../../../Manager/Camera.h"
 
 
 PlayerAttackBase::PlayerAttackBase()
 {
 }
 
-
-PlayerAttackBase::~PlayerAttackBase()
+PlayerAttackBase::PlayerAttackBase(Vector2F* pPos, AsoUtility::DIRECTION* dir)
 {
+	pPos_ = pPos;
+	dir_ = dir;
+	obj_.isAlive_ = false;
 }
 
+PlayerAttackBase::~PlayerAttackBase(){}
 
-void PlayerAttackBase::Init(void)
+void PlayerAttackBase::ChangeDispPos(void)
 {
+	obj_.disppos_.x = obj_.pos_.x - Camera::GetInstance().GetPos().x;
+	obj_.disppos_.y = obj_.pos_.y - Camera::GetInstance().GetPos().y;
 }
 
-void PlayerAttackBase::Init(Vector2F* movePos, Vector2F* drawPos)
-{
-	unit_.isAlive_ = false;
-	pMovePos_= movePos;
-	pDrawPos_ = drawPos;
-	isattackEnd_ = false;
-	attackCounter_ = 0;
-
-}
-
-void PlayerAttackBase::Update(void)
-{
-	ChangeDispPos();
-
-}
-
-void PlayerAttackBase::Draw(void)
-{
-}
-
-void PlayerAttackBase::Release(void)
-{
-}
-
-const std::vector<Base> PlayerAttackBase::GetStruct(void) const
-{
-	std::vector<Base>ret;
-
-	ret.emplace_back(attackObj_);
-
-	return ret;
-}

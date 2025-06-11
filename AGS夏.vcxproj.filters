@@ -102,16 +102,13 @@
     <ClCompile Include="Src\Object\Boss\Attack\Slash.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Player\Attack\ArialSweep.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Object\Player\Attack\PlayerAttackBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Boss\Attack\Blast.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Player\Attack\DefaultAttack.cpp">
+    <ClCompile Include="Src\Object\Player\Attack\Default.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -206,16 +203,13 @@
     <ClInclude Include="Src\Object\Boss\Attack\Slash.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Player\Attack\ArialSweep.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Object\Player\Attack\PlayerAttackBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Boss\Attack\Blast.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Player\Attack\DefaultAttack.h">
+    <ClInclude Include="Src\Object\Player\Attack\Default.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
