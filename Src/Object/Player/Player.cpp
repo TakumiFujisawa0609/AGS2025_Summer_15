@@ -9,6 +9,8 @@
 #include"../Stage/Stage.h"
 #include"../../Scene/GameScene.h"
 
+
+
 Player::Player()
 {
 	LoadPlayerImage();
@@ -27,6 +29,7 @@ void Player::Init()
 	// 変数の初期化
 	unit_.pos_ = { 500.0f,500.0f };
 	unit_.isAlive_ = true;
+	unit_.hp_ = HP_MAX;
 
 	//状態
 	ChangeState(Player::STATE::MOVE);
@@ -66,7 +69,10 @@ void Player::Init()
 	// 回避関係
 	evasionCounter_ = 0;
 
-	PossiFlg_ = true;
+	evasionPossiFlg_ = true;
+
+	// ダメージ関係
+	knockBack_ = false;
 }
 
 void Player::Update()
@@ -126,6 +132,8 @@ void Player::StateManager(void)
 		break;
 	case Player::STATE::EVASION:
 
+		break;
+	case Player::STATE::DAMAGE:
 		break;
 	}
 
@@ -201,9 +209,9 @@ void Player::DoStateEvasion()
 {
 	auto& ins = InputManager::GetInstance();
 
-	if (ins.IsTrgDown(KEY_INPUT_K)&&PossiFlg_) {
+	if (ins.IsTrgDown(KEY_INPUT_K)&&evasionPossiFlg_) {
 		ChangeState(Player::STATE::EVASION);
-		PossiFlg_ = false;
+		evasionPossiFlg_ = false;
 	}
 }
 
@@ -229,6 +237,10 @@ void Player::ChangeState(STATE st)
 	case Player::STATE::EVASION:
 		state_ = Player::STATE::EVASION;
 		stateFuncPtr = &Player::Evasion;
+		break;
+	case Player::STATE::DAMAGE:
+		state_ = Player::STATE::DAMAGE;
+		stateFuncPtr = &Player::Damage;
 		break;
 	}
 }
@@ -354,6 +366,22 @@ void Player::Evasion()
 	}
 }
 
+// ダメージ処理
+void Player::Damage(void)
+{
+	if (!knockBack_)ChangeState(Player::STATE::MOVE);
+
+	if (knockBackDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) 
+	{
+		unit_.nextpos_.x -= KNOCK_SPEED;
+	}
+	else if (knockBackDir_==AsoUtility::DIRECTION::E_DIR_RIGHT)
+	{
+		unit_.nextpos_.x += KNOCK_SPEED;
+	}
+
+}
+
 //----------------------------------------------------------------------------------------------------
 
 
@@ -449,6 +477,10 @@ void Player::Jump()
 //-------------------------------------------------------------------回避処理ここまで
 
 
+// ダメージ処理関係--------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------ダメージ処理ここまで
 
 //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -473,6 +505,8 @@ void Player::IsGround(Collision::DIR dir)
 		unit_.yAccel_ = 0.0f;
 		unit_.isGround_ = true;
 		//unit_.isGravity_ = false;
+		evasionPossiFlg_ = true;
+		knockBack_ = false;
 
 		for (int i = 0; i < JUMP_NUM; i++) {
 			isJump_[i] = false;
@@ -654,3 +688,13 @@ const float Player::GetAnimeRatio(void) const
 
 
 
+void Player::Hit(int damage, Vector2F bPos)
+{
+	ChangeState(Player::STATE::DAMAGE);
+	unit_.hp_ -= damage;
+
+	unit_.yAccel_ = -(KNOCK_POWER);
+
+	knockBack_ = true;
+	knockBackDir_ = (unit_.pos_.x < bPos.x) ? AsoUtility::DIRECTION::E_DIR_LEFT : AsoUtility::DIRECTION::E_DIR_RIGHT;
+}

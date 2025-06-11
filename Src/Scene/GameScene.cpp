@@ -163,14 +163,14 @@ void GameScene::ObjCollision(void)
 
 void GameScene::PlayerToBoss(void)
 {
-	//auto& ins = Collision::GetInstance();
-	//auto& mana = SceneManager::GetInstance().GetInstance();
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
 
-	//if (ins.Rect(player_->GetUnit(), boss_->GetUnit()) && !player_->Muteki()) {
-	//	player_->Damage(5,boss_->GetUnit().pos_);
-	//	mana.HitStop();
-	//	mana.SHAKE();
-	//}
+	if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
+		player_->Hit(5,boss_->GetUnit().pos_);
+		/*mana.HitStop();
+		mana.SHAKE();*/
+	}
 
 	//if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
 	//	if ((player_->IsInvincible() || player_->IsJustGuard())

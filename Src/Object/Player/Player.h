@@ -58,6 +58,8 @@ public:
 	};
 
 
+	static constexpr int HP_MAX = 100;
+
 	//プレイヤーの状態
 	enum class STATE
 	{
@@ -65,6 +67,7 @@ public:
 		ATTACK,
 		GUARD,
 		EVASION,
+		DAMAGE,
 	};
 
 	// 移動状態で使用する定数定義-------------------------------------------------------------------
@@ -123,6 +126,11 @@ public:
 
 	//----------------------------------------------------------------------------------------------
 
+	// ダメージ状態で使用する定数定義---------------------------------------------------------------
+	static constexpr float KNOCK_SPEED = 5.0f;
+	static constexpr float KNOCK_POWER = 10.0f;
+	void Hit(int damage, Vector2F bPos);
+	//----------------------------------------------------------------------------------------------
 
 
 
@@ -215,6 +223,9 @@ private:
 	// 回避処理
 	void Evasion(void);
 
+	// ダメージ処理
+	void Damage(void);
+
 	//---------------------------------------------
 
 
@@ -270,7 +281,16 @@ private:
 
 	// 変数
 	int evasionCounter_;
-	bool PossiFlg_;
+	bool evasionPossiFlg_;
+	//--------------------------------------
+
+	// ダメージ処理関係---------------------
+	
+	// 関数
+	
+	// 変数
+	bool knockBack_;
+	AsoUtility::DIRECTION knockBackDir_;
 	//--------------------------------------
 
 
