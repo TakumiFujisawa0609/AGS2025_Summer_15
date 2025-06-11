@@ -22,6 +22,7 @@ struct Base
 	int hp_;				//ヒットポイント
 
 	bool isInvincible_;		//無敵
+	int inviCounter_;
 	//パラメータ(定数扱い)
 	float speed_;		//移動速度
 

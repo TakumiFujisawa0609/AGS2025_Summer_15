@@ -31,11 +31,7 @@ void Player::Init()
 	unit_.isAlive_ = true;
 	unit_.hp_ = HP_MAX;
 
-	//状態
-	ChangeState(Player::STATE::MOVE);
 
-	// モーション
-	ChangeMotion(MOTION::IDLE);
 
 	// アニメーションカウンター
 	animeCounter_ = 0;
@@ -73,10 +69,18 @@ void Player::Init()
 
 	// ダメージ関係
 	knockBack_ = false;
+
+	//状態
+	ChangeState(Player::STATE::MOVE);
+
+	// モーション
+	ChangeMotion(MOTION::IDLE);
 }
 
 void Player::Update()
 {
+	if (unit_.inviCounter_ > 0)unit_.inviCounter_--;
+
 	StateManager();
 
 	Animation();
@@ -88,15 +92,19 @@ void Player::Update()
 
 void Player::Draw()
 {
-	DrawPlayer();
-	if (isGuard_) {
-		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 15, 0x00ff00);
-	}
-	if (isJustGuard_) {
-		DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 15, 0x0000ff);
-	}
+	if (unit_.isAlive_ && (unit_.inviCounter_ / 5) % 2 == 0) {
 
-	defaultAttack_->Draw();
+		DrawPlayer();
+
+		if (isGuard_) {
+			DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 15, 0x00ff00);
+		}
+		if (isJustGuard_) {
+			DrawCircle(unit_.disppos_.x, unit_.disppos_.y, 15, 0x0000ff);
+		}
+
+		defaultAttack_->Draw();
+	}
 }
 
 void Player::Release()
@@ -220,6 +228,8 @@ void Player::DoStateEvasion()
 // 状態変更
 void Player::ChangeState(STATE st)
 {
+	unit_.isGravity_ = true;
+	defaultAttack_->Off();
 	switch (st)
 	{
 	case Player::STATE::MOVE:
@@ -683,7 +693,7 @@ void Player::DrawPlayer(void)
 
 const float Player::GetAnimeRatio(void) const
 {
-	return (float)((float)animeCounter_ / (float)image_[(int)motion_].size());
+	return ((float)animeCounter_ / (float)image_[(int)motion_].size());
 }
 
 
@@ -691,7 +701,12 @@ const float Player::GetAnimeRatio(void) const
 void Player::Hit(int damage, Vector2F bPos)
 {
 	ChangeState(Player::STATE::DAMAGE);
+
 	unit_.hp_ -= damage;
+
+	if (unit_.hp_ <= 0)unit_.isAlive_ = false;
+
+	unit_.inviCounter_ = 100;
 
 	unit_.yAccel_ = -(KNOCK_POWER);
 

@@ -26,6 +26,7 @@ UnitBase::UnitBase()
 	gravity_ = GRAVITY;
 
 	unit_.isInvincible_=false;		//–³“G
+	unit_.inviCounter_ = 0;
 
 }
 

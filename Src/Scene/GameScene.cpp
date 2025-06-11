@@ -190,15 +190,15 @@ void GameScene::PlayerToBoss(void)
 
 void GameScene::PlayerToBossAttack(void)
 {
-	//auto& ins = Collision::GetInstance();
-	//auto& mana = SceneManager::GetInstance().GetInstance();
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
 
-	//for (auto obj : boss_->GetAttackObj())
-	//{
-	//	if (ins.CircleAndRect(obj, player_->GetUnit()) && !player_->Muteki()) {
-	//		player_->Damage(5, obj.pos_);
-	//		mana.HitStop();
-	//		mana.SHAKE();
+	for (auto obj : boss_->GetAttackObj())
+	{
+		if (ins.CircleAndRect(obj, player_->GetUnit())) {
+			player_->Hit(5, obj.pos_);
+			mana.HitStop();
+			mana.SHAKE();
 			//if ((player_->IsInvincible() || player_->IsJustGuard())
 			//	&& !player_->IsHit()) {
 			//	mana.Slow();
@@ -208,9 +208,8 @@ void GameScene::PlayerToBossAttack(void)
 			//	//player_->SetXAccel(20.0f);
 			//	mana.SHAKE();
 			//}
-			//mana.HitStop();
-	//	}
-	//}
+		}
+	}
 }
 
 void GameScene::PlayerToEnemyBamboo(void)
@@ -234,6 +233,6 @@ void GameScene::PlayerAttackToBoss(void)
 	auto& mana = SceneManager::GetInstance().GetInstance();
 	if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {
 		mana.HitStop();
-		boss_->SetDamage(5);
+		boss_->SetDamage(1);
 	}
 }
