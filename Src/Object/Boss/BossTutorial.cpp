@@ -59,10 +59,7 @@ void BossTutorial::Update()
 		SetDamage(1);
 	}
 
-	if (unit_.hp_ < 0)
-	{
-		unit_.hp_--;
-	}
+	Hp();
 
 	frameCounter_ += 2;
 
@@ -81,6 +78,7 @@ void BossTutorial::Draw()
 	{
 		frameCounter_ = 0;
 	}
+
 
 	if (encount_) {
 		DrawHP();
@@ -481,11 +479,11 @@ void BossTutorial::TargetLook(Vector2F target)
 	else							bossDir_ = AttackBase::DIR::RIGHT;
 }
 
-void BossTutorial::DrawHP()
+void BossTutorial::Hp()
 {
 	//ボスが死んだらHPバーが揺れ続ける（ただの演出）
-	if (unit_.hp_ > -100) {
-		if (unit_.hp_ < 0)unit_.hp_--;
+	if (unit_.hp_ == 0) {
+		hpShakeTimer_ = 10;
 	}
 
 	//HPの変化を検出（減少時のみ揺らす）
@@ -497,7 +495,10 @@ void BossTutorial::DrawHP()
 
 	if (dispHp_ < unit_.hp_) dispHp_ += 1;			//ボスがエンカウントしたら増える！！！！
 	if (dispHp_ > unit_.hp_) dispHp_ -= 3;			//HPをゆっくり減らすよ
+}
 
+void BossTutorial::DrawHP()
+{
 	Vector2 start;
 	start.x = (Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2;
 	start.y = (Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2;
@@ -511,14 +512,14 @@ void BossTutorial::DrawHP()
 		shakeY = GetRand(4) - 2;
 	}
 
-	bool isCritical = (unit_.hp_ < BOSS_HP * HP_YABAI);
-	bool blinkOn = (frameCounter_ % BLINK_FLAME) < (BLINK_FLAME / 2);
+	//bool isCritical = (unit_.hp_ < BOSS_HP * HP_YABAI);
+	//bool blinkOn = (frameCounter_ % BLINK_FLAME) < (BLINK_FLAME / 2);
 
-	for (int i = 0; i < unit_.hp_; ++i) {
-		if (isCritical && !blinkOn) {
-			continue;
-		}
-	}
+	//for (int i = 0; i < unit_.hp_; ++i) {
+	//	if (isCritical && !blinkOn) {
+	//		continue;
+	//	}
+	//}
 
 	DrawBar(
 		start.x + Application::SCREEN_SIZE_X / 4 + shakeX,
