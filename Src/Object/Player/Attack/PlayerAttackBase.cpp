@@ -4,6 +4,7 @@
 
 PlayerAttackBase::PlayerAttackBase()
 {
+	obj_.isAlive_ = false;
 }
 
 PlayerAttackBase::PlayerAttackBase(Vector2F* pPos, AsoUtility::DIRECTION* dir)

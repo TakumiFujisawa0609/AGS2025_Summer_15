@@ -200,13 +200,6 @@ void GameScene::PlayerToBossAttack(void)
 			boss_->ObjHit(i);
 		}
 	}
-
-	//for (auto obj : boss_->GetAttackObj())
-	//{
-	//	if (ins.CircleAndRect(obj, player_->GetUnit())) {
-	//		player_->Hit(5, obj.pos_);
-	//	}
-	//}
 }
 
 void GameScene::PlayerToEnemyBamboo(void)
@@ -230,6 +223,20 @@ void GameScene::PlayerAttackToBoss(void)
 	auto& mana = SceneManager::GetInstance().GetInstance();
 	if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {
 		mana.HitStop();
-		boss_->SetDamage(1);
+		boss_->SetDamage(0);
+		player_->BpOptain(10);
+	}
+
+	for (auto& bpAtt : player_->GetBpAtt()) {
+		if (ins.CircleAndRect(bpAtt->GetObj(), boss_->GetUnit())) {
+			if (bpAtt->GetBp() > 25) {
+				mana.SHAKE();
+				mana.Slow();
+			}
+			else {
+				mana.HitStop();
+			}
+			boss_->SetDamage(bpAtt->GetDamage());
+		}
 	}
 }

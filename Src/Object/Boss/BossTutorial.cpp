@@ -46,6 +46,8 @@ void BossTutorial::Init()
 
 void BossTutorial::Update()
 {
+	if (unit_.inviCounter_ > 0)unit_.inviCounter_--;
+
 	unit_.isGravity_ = true;
 	if (EnCount())encount_ = true;
 
@@ -604,6 +606,7 @@ void BossTutorial::SetDamage(int damage)
 
 	unit_.hp_ -= damage;
 	hitTimer_ = 10;
+	unit_.inviCounter_ = 5;
 
 	if (unit_.hp_ <= 0) {
 		unit_.isAlive_ = false;

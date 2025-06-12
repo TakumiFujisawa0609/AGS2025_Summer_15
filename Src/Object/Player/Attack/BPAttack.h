@@ -5,7 +5,13 @@
 class BPAttack : public PlayerAttackBase
 {
 public:
-	BPAttack(Vector2F* pPos, AsoUtility::DIRECTION* dir);
+	static constexpr float DEFAULT_SIZE = 30.0f;
+
+	static constexpr int DEFAULT_DAMAGE = 3;
+
+	static constexpr float DEFAULT_SPEED = 60.0f;
+
+	BPAttack();
 	~BPAttack();
 
 	void Init(void)override;
@@ -13,11 +19,16 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
-	void On(void);
+	void On(Vector2F pPos, AsoUtility::DIRECTION dir, int bp);
 	void Off(void) { obj_.isAlive_ = false; }
 
+	int GetBp(void) { return bp_; }
+
+	int GetDamage(void) { return (int)((float)DEFAULT_DAMAGE * ((float)bp_ / 10.0f)); }
 
 private:
+	int bp_;
 
+	AsoUtility::DIRECTION dir_;
 };
 

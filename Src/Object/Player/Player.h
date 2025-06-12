@@ -113,6 +113,8 @@ public:
 	// 関数
 	void BpOptain(int bp) { this->bp_ += bp; if (this->bp_ > BP_MAX) { this->bp_ = BP_MAX; } }
 
+	std::vector<BPAttack*> GetBpAtt(void) { return BpAtIns_; }
+
 	//---------------------------------------------------------------------------------------------
 
 	// ガード状態で使用する定数定義-----------------------------------------------------------------
@@ -153,6 +155,7 @@ public:
 	void Update(void)override;
 	void Draw(void)override;
 	void Release(void)override;
+
 
 
 private:

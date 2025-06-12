@@ -56,7 +56,7 @@ void Player::Init()
 	attackKeyCounter_ = 0;
 
 	// “ÁŽêUŒ‚ŠÖŒW
-	bp_ = 50;
+	bp_ = 100;
 	bpConsCounter_ = 0;
 
 	//ƒK[ƒhŠÖŒW
@@ -92,6 +92,10 @@ void Player::Update()
 
 	(this->*stateFuncPtr)();
 
+	for (auto t : BpAtIns_) {
+		t->Update();
+	}
+
 	UnitBase::Update();
 }
 
@@ -101,9 +105,10 @@ void Player::Draw()
 
 		DrawPlayer();
 
-
-
 		defaultAttack_->Draw();
+	}
+	for (auto t : BpAtIns_) {
+		t->Draw();
 	}
 
 	DrawHpBarFixedSize(330, 290, 800,330, unit_.hp_, HP_MAX,RGB(0,255,0));
@@ -133,6 +138,7 @@ void Player::StateManager(void)
 	{
 	case Player::STATE::MOVE:
 		DoStateAttack();
+		DoStateBPAttack();
 		DoStateEvasion();
 		DoStateGuard();
 		break;
@@ -320,7 +326,20 @@ void Player::BambooAttack(void)
 {
 	bp_ -= bpConsCounter_;
 
+	bool recycll = false;
+
+	for (int i = 0; i < BpAtIns_.size(); i++) {
+		if (!BpAtIns_[i]->GetObj().isAlive_) {
+			BpAtIns_[i]->On(unit_.pos_, dir_, bpConsCounter_);
+			recycll = true;
+			break;
+		}
+	}
 	
+	if (!recycll) {
+		BpAtIns_.emplace_back(new BPAttack());
+		BpAtIns_[BpAtIns_.size() - 1]->On(unit_.pos_, dir_, bpConsCounter_);
+	}
 
 	bpConsCounter_ = 0;
 
