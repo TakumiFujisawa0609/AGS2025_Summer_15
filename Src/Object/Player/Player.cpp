@@ -54,6 +54,11 @@ void Player::Init()
 	for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; }
 	attack_ = NON;
 	attackKeyCounter_ = 0;
+
+	// ì¡éÍçUåÇä÷åW
+	bp_ = 50;
+	bpConsCounter_ = 0;
+
 	//ÉKÅ[Éhä÷åW
 	// ÉKÅ[Éhä÷åW
 	guardCounter_ = 0;
@@ -101,7 +106,8 @@ void Player::Draw()
 		defaultAttack_->Draw();
 	}
 
-	DrawHpBarFixedSize(400, 300, 1000,350, unit_.hp_, HP_MAX,RGB(0,255,0));
+	DrawHpBarFixedSize(330, 290, 800,330, unit_.hp_, HP_MAX,RGB(0,255,0));
+	DrawHpBarFixedSize(330, 335, 500, 350, bp_, BP_MAX, RGB(0, 0, 255));
 }
 
 void Player::Release()
@@ -198,6 +204,16 @@ void Player::DoStateAttack()
 // ì¡éÍçUåÇèÛë‘
 void Player::DoStateBPAttack(void)
 {
+	auto& ins = InputManager::GetInstance();
+	if (ins.IsNew(KEY_INPUT_H)) {
+		bpConsCounter_++;
+		if (bpConsCounter_ > bp_)bpConsCounter_ = bp_;
+		if (bpConsCounter_ > MAX_BP_CONS)bpConsCounter_ = MAX_BP_CONS;
+	}
+
+	if (ins.IsTrgUp(KEY_INPUT_H)) {
+		ChangeState(Player::STATE::BP_ATTACK);
+	}
 }
 
 // ÉKÅ[ÉhèÛë‘
@@ -243,6 +259,10 @@ void Player::ChangeState(STATE st)
 	case Player::STATE::ATTACK:
 		state_ = Player::STATE::ATTACK;
 		stateFuncPtr = &Player::Attack;
+		break;
+	case Player::STATE::BP_ATTACK:
+		state_ = Player::STATE::BP_ATTACK;
+		stateFuncPtr = &Player::BambooAttack;
 		break;
 	case Player::STATE::GUARD:
 		state_ = Player::STATE::GUARD;
@@ -296,8 +316,15 @@ void Player::Attack()
 }
 
 // ì¡éÍçUåÇèÛë‘
-void Player::BPAttack(void)
+void Player::BambooAttack(void)
 {
+	bp_ -= bpConsCounter_;
+
+	
+
+	bpConsCounter_ = 0;
+
+	ChangeState(Player::STATE::MOVE);
 }
 
 // ÉKÅ[ÉhèÛë‘

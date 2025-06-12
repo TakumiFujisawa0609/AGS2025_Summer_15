@@ -5,7 +5,7 @@
 
 
 #include"Attack/Default.h"
-
+#include"Attack/BPAttack.h"
 
 class Player:public UnitBase
 {
@@ -66,6 +66,7 @@ public:
 	{
 		MOVE,
 		ATTACK,
+		BP_ATTACK,
 		GUARD,
 		EVASION,
 		DAMAGE,
@@ -99,11 +100,18 @@ public:
 
 	static constexpr int INPUT_ATTACK_FRAME = 20;		//次の段につながる時間(フレーム数)
 
+	// 関数
 	Base DefaultAtt(void) { return defaultAttack_->GetObj(); }
 
 	//----------------------------------------------------------------------------------------------
 
 	// 特殊攻撃状態で使用する定数定義--------------------------------------------------------------
+	static constexpr int BP_MAX = 100;
+
+	static constexpr int MAX_BP_CONS = 30;
+
+	// 関数
+	void BpOptain(int bp) { this->bp_ += bp; if (this->bp_ > BP_MAX) { this->bp_ = BP_MAX; } }
 
 	//---------------------------------------------------------------------------------------------
 
@@ -225,7 +233,7 @@ private:
 	void Attack(void);
 
 	// 特殊攻撃状態
-	void BPAttack(void);
+	void BambooAttack(void);
 
 	// ガード処理
 	void Guard(void);
@@ -275,7 +283,9 @@ private:
 	// 関数
 
 	// 変数
-
+	std::vector<BPAttack*> BpAtIns_;
+	int bp_;
+	int bpConsCounter_;
 	//---------------------------------------
 
 

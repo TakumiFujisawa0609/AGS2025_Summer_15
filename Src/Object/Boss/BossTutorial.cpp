@@ -487,6 +487,31 @@ const std::vector<Base> BossTutorial::GetAttackObj() const
 	return ret;
 }
 
+void BossTutorial::ObjHit(int i)
+{
+	switch (attackState_)
+	{
+	case BossTutorial::NON:
+		break;
+	case BossTutorial::SLASH:
+		break;
+	case BossTutorial::BULLET:
+		bullet_->Hit(i);
+		break;
+	case BossTutorial::ROAR:
+		break;
+	case BossTutorial::BLAST:
+		
+		break;
+	case BossTutorial::TACKLE:
+		break;
+	case BossTutorial::MAX:
+		break;
+	default:
+		break;
+	}
+}
+
 AttackBase* BossTutorial::GetAttackIns(void)
 {
 	switch (attackState_)

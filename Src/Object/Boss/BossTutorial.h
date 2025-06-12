@@ -73,6 +73,7 @@ public:
 	const ATTACK GetAttack(void)const { return attackState_; }
 
 	const std::vector<Base> GetAttackObj()const;
+	void ObjHit(int i);
 
 	AttackBase* GetAttackIns(void);
 

@@ -195,15 +195,18 @@ void GameScene::PlayerToBossAttack(void)
 
 
 	for (int i = 0; i < boss_->GetAttackObj().size(); i++) {
-
-	}
-
-	for (auto obj : boss_->GetAttackObj())
-	{
-		if (ins.CircleAndRect(obj, player_->GetUnit())) {
-			player_->Hit(5, obj.pos_);
+		if (ins.CircleAndRect(boss_->GetAttackObj()[i], player_->GetUnit())) {
+			player_->Hit(5, boss_->GetAttackObj()[i].pos_);
+			boss_->ObjHit(i);
 		}
 	}
+
+	//for (auto obj : boss_->GetAttackObj())
+	//{
+	//	if (ins.CircleAndRect(obj, player_->GetUnit())) {
+	//		player_->Hit(5, obj.pos_);
+	//	}
+	//}
 }
 
 void GameScene::PlayerToEnemyBamboo(void)
