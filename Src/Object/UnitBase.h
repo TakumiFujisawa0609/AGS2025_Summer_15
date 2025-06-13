@@ -4,6 +4,7 @@
 #include"Common/Base.h"
 #include"../Manager/Collision.h"
 #include"../Manager/SceneManager.h"
+#include"../Manager/Camera.h"
 
 class UnitBase
 {
@@ -32,7 +33,15 @@ public:
 
 
 	//ゲッター関数
-	const Base& GetUnit(void)const { return unit_; }
+	const Base GetUnit(void)const { return unit_; }
+
+	Vector2F GetStartPos(void)
+	{
+		startPos_.x = ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) + Camera::GetInstance().GetPos().x;
+		startPos_.y = ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2) + Camera::GetInstance().GetPos().y;
+
+		return startPos_; 
+	}
 
 	//セッタ関数ー---------------------------------------------------
 
@@ -71,6 +80,7 @@ protected:
 
 	//重力
 	float gravity_;
+	Vector2F startPos_;
 
 
 	/// <summary>

@@ -78,6 +78,7 @@ public:
 
 	void SetDamage(int dmg);
 
+
 private:
 	//‰æ‘œ
 	int idolImg;

@@ -1,5 +1,7 @@
 #pragma once
 #include"AttackBase.h"
+#include"../../UnitBase.h"
+#include"../../../Application.h"
 #include<DxLib.h>
 
 class Tackle : public AttackBase
@@ -13,8 +15,10 @@ public:
 	enum class DIR
 	{
 		NON,
+		JUMP,
 		STANDBY,
-		TACKLE_MODE,
+		TACKLE_RIGHT,
+		TACKLE_LEFT,
 		END,
 	};
 
@@ -26,12 +30,13 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
-	void SetTarget(Vector2F target) { target_ = target; }
+	void SetTarget(Base target) { target_ = target; }
 	DIR GetDir() { return dir_; }
 
+	void CollisionLenDraw(Vector2F startPos, float radius);
+
 private:
-	VECTOR bPos_;
-	Vector2F target_;
+	Base target_;
 
 	DIR dir_;
 };

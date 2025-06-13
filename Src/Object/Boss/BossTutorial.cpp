@@ -1,5 +1,7 @@
 ﻿#include"BossTutorial.h"
+#include"../Player/Player.h"
 
+#include"../../Manager/Camera.h"
 
 BossTutorial::BossTutorial()
 {
@@ -355,45 +357,80 @@ void BossTutorial::Attack()
 		break;
 	case BossTutorial::TACKLE:
 
-		Vector2 start;
-		start.x = (Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2;
-		start.y = (Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2;
+		Vector2F start = UnitBase::GetStartPos();
+
 
 		if (attackCounter_ == 1) {
 			tackle_->Init(&unit_.pos_);
 		}
 
-		unit_.isGravity_ = false;
-		unit_.isStageCollision_ = false;
-
 		tackle_->Update();
+		tackle_->SetTarget(player_->GetUnit());
 		tDir_ = tackle_->GetDir();
 
 		switch (tDir_)
 		{
-		case Tackle::DIR::STANDBY:
+		case Tackle::DIR::JUMP:
 
 			if (unit_.nextpos_.y > start.y)
 			{
+				unit_.isGravity_ = true;
+				unit_.isStageCollision_ = true;
 				unit_.nextpos_.y -= 10;
 			}
-			else
+
+			break;
+		case Tackle::DIR::STANDBY:
+
+			unit_.isGravity_ = false;
+			unit_.isStageCollision_ = false;
+
+			unit_.nextpos_.y -= 20;
+
+
+			if (unit_.nextpos_.y < start.y)
 			{
-				unit_.nextpos_.x = Application::SCREEN_SIZE_X;
-				unit_.nextpos_.y = player_->GetUnit().nextpos_.y;
+				unit_.nextpos_.x = (start.x + Application::SCREEN_SIZE_X);
+				unit_.nextpos_.y = player_->GetUnit().pos_.y;
+				tDir_ = Tackle::DIR::TACKLE_LEFT;
 			}
 
 			break;
-		case Tackle::DIR::TACKLE_MODE:
+		case Tackle::DIR::TACKLE_RIGHT:
 
-			unit_.nextpos_.x -= 20;
+			unit_.isGravity_ = false;
+			unit_.isStageCollision_ = false;
+
+			if (unit_.nextpos_.x > start.x) 
+			{
+				unit_.nextpos_.x -= Tackle::TACKLE_SPEED;
+			}
+			else 
+			{
+				tDir_ = Tackle::DIR::TACKLE_LEFT;
+			}
 
 			break;
+		case Tackle::DIR::TACKLE_LEFT:
+
+			unit_.isGravity_ = false;
+			unit_.isStageCollision_ = false;
+
+			if (unit_.nextpos_.x < start.x + Application::SCREEN_SIZE_X) 
+			{
+				unit_.nextpos_.x += Tackle::TACKLE_SPEED;
+			}
+			else 
+			{
+				tDir_ = Tackle::DIR::END;
+			}
+			break;
 		case Tackle::DIR::END:
+			tackle_->End();
 			break;
 		}
 
-		tackle_->SetTarget(player_->GetUnit().pos_);
+		tackle_->SetTarget(player_->GetUnit());
 	}
 
 	if (CheckHitKey(KEY_INPUT_U) == 1) {
