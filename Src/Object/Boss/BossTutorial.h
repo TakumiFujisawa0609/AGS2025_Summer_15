@@ -15,7 +15,7 @@ public:
 	static constexpr int SIZE_Y = 249;
 
 
-	static constexpr int BOSS_HP = 150;						//ボスの最大体力
+	static constexpr int BOSS_HP = 500;						//ボスの最大体力
 	static constexpr int BOSS_HP_X = 5;					//ボスのHPゲージのX座標始点
 	static constexpr int BOSS_HP_Y = 15;						//ボスのHPゲージのY座標始点と描画距離
 	static constexpr int BOSS_HP_DISP_Y = 30;				//ボスのHPゲージのX座標の描画距離

@@ -28,9 +28,9 @@ void GameScene::Init(void)
 	stage_ = new Stage();
 	stage_->Init();
 
-
 	enemy_ = new EnemyManager();
 	enemy_->Init();
+
 	player_ = new Player();
 	player_->Init();
 
@@ -94,26 +94,6 @@ void GameScene::Draw(void)
 	boss_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
-
-	int input = GetJoypadInputState(DX_INPUT_PAD1);
-
-	//for (int i = 0; i < 32; ++i) {
-	//	if (input & (1 << i)) {
-	//		printfDx("PAD_INPUT_%d ‚ª ON\n", i);
-	//	}
-	//}
-
-	//std::vector<Vector2F>pos = ShapesPosition::GetPositionCircle(SceneManager::MAIN_SCREEN_SIZE_X/2, SceneManager::MAIN_SCREEN_SIZE_Y/2, x, x, 12);
-	//for (int i = 0; i < (int)pos.size(); i++) {
-	//	DrawCircle(pos[i].x, pos[i].y, 10, 0xff0000, true);
-	//}
-
-	//
-	//x += 0.05f;
-	// pos=ShapesPosition::GetPositionWave(x, SceneManager::MAIN_SCREEN_SIZE_Y/2, 200.0f, 1000.0f, x, 20, 100.0f);
-	//for (int i = 0; i <(int) pos.size(); i++) {
-	//	DrawCircle(pos[i].x, pos[i].y,10,0x00ff00, true);
-	//}
 }
 
 void GameScene::Release(void)
@@ -146,13 +126,11 @@ void GameScene::Scroll(void)
 		if (player_->GetUnit().disppos_.x > Application::MAIN_SCREEN_SIZE_X / 7 * 4 &&
 			!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X) - ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) >= Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X)) {
 			camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
-			//if (player_->IsEvasion())camera.Follow(Camera::dir::X, Player::EVASION_LENGTH);
 		}
 
 		if (player_->GetUnit().disppos_.x < Application::MAIN_SCREEN_SIZE_X / 7 * 3 &&
 			!(camera.GetPos().x <= -((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2))) {
 			camera.Follow(Camera::dir::X, -(player_->GetUnit().speed_));
-			//if (player_->IsEvasion())camera.Follow(Camera::dir::X, -Player::EVASION_LENGTH);
 		}
 	}
 	else {
