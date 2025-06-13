@@ -185,6 +185,13 @@ private:
 	//向き
 	AsoUtility::DIRECTION dir_;
 
+	// コントローラーの入力状況管理
+	void JoyPadInputManager(void);
+	bool nowJumpKey_, prevJumpKey_;
+	bool nowLeftKey_, prevLeftKey_;
+	bool nowRightKey_, prevRightKey_;
+	bool nowAttackKey_, prevAttackKey_;
+	bool nowBambooKey_, prevBambooKey_;
 
 	//状態管理--------------------------------------------------------------------------------------
 	

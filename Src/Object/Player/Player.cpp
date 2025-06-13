@@ -89,6 +89,8 @@ void Player::Update()
 {
 	if (unit_.inviCounter_ > 0)unit_.inviCounter_--;
 
+	JoyPadInputManager();
+
 	StateManager();
 
 	Animation();
@@ -175,6 +177,7 @@ void Player::DoStateMove()
 {
 	auto& ins = InputManager::GetInstance();
 
+
 	if (ins.IsTrgDown(KEY_INPUT_W) ||
 		ins.IsTrgDown(KEY_INPUT_A) ||
 		ins.IsTrgDown(KEY_INPUT_S) ||
@@ -184,14 +187,22 @@ void Player::DoStateMove()
 		ChangeState(Player::STATE::MOVE);
 	}
 
+	if ((!prevLeftKey_ && nowLeftKey_) ||
+		(!prevRightKey_ && nowRightKey_) ||
+		(!prevJumpKey_ && nowJumpKey_)) {
+		ChangeState(Player::STATE::MOVE);
+	}
+
 }
 
 // 攻撃状態
 void Player::DoStateAttack()
 {
 	auto& ins = InputManager::GetInstance();
+	int input = GetJoypadInputState(DX_INPUT_PAD1);
 
-	if (!(ins.IsTrgDown(KEY_INPUT_J))) return;
+
+	if (!(ins.IsTrgDown(KEY_INPUT_J))&& !(!prevAttackKey_ && nowAttackKey_)) return;
 
 	// 攻撃状態に遷移する
 	ChangeState(Player::STATE::ATTACK);
@@ -221,13 +232,13 @@ void Player::DoStateAttack()
 void Player::DoStateBPAttack(void)
 {
 	auto& ins = InputManager::GetInstance();
-	if (ins.IsNew(KEY_INPUT_H)) {
+	if (ins.IsNew(KEY_INPUT_H)||nowBambooKey_) {
 		bpConsCounter_+=0.25;
 		if (bpConsCounter_ > bp_)bpConsCounter_ = bp_;
 		if (bpConsCounter_ > MAX_BP_CONS)bpConsCounter_ = MAX_BP_CONS;
 	}
 
-	if (ins.IsTrgUp(KEY_INPUT_H)) {
+	if ((ins.IsTrgUp(KEY_INPUT_H)) || (prevBambooKey_ && !nowBambooKey_)) {
 		ChangeState(Player::STATE::BP_ATTACK);
 	}
 }
@@ -476,13 +487,12 @@ void Player::Run()
 
 	bool isMove = false;
 
-	if (ins.IsNew(KEY_INPUT_A)) {
+	if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_LEFT) || nowLeftKey_) {
 		unit_.nextpos_.x -= RUN_SPEED;
 		dir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
 		isMove = true;
 	}
-
-	if (ins.IsNew(KEY_INPUT_D)) {
+	if (ins.IsNew(KEY_INPUT_D) || ins.IsNew(KEY_INPUT_RIGHT) || nowRightKey_) {
 		unit_.nextpos_.x += RUN_SPEED;
 		dir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
 		isMove = true;
@@ -497,19 +507,21 @@ void Player::Jump()
 {
 	auto& ins = InputManager::GetInstance();
 
+
 	for (int i = 0; i < JUMP_NUM; i++) {
 
 		// ダウントリガーでジャンプ開始
-		if (ins.IsTrgDown(KEY_INPUT_SPACE))isJump_[i] = true;
+		if ((ins.IsTrgDown(KEY_INPUT_SPACE)) || (!prevJumpKey_ && nowJumpKey_))isJump_[i] = true;
 
 		// ジャンプしていなかったらループから抜ける
 		if (!isJump_[i])break;
 
 		//ジャンプキーを離したら、ジャンプキー入力判定を終了
-		if (isJump_[i] && ins.IsTrgUp(KEY_INPUT_SPACE))jumpKeyCounter_[i] = INPUT_JUMPKEY_FRAME;
+		if ((isJump_[i] && ins.IsTrgUp(KEY_INPUT_SPACE)) ||
+			(prevJumpKey_ && !nowJumpKey_))jumpKeyCounter_[i] = INPUT_JUMPKEY_FRAME;
 
 		//入力時間に応じてジャンプ量を変更する
-		if (isJump_[i] && ins.IsNew(KEY_INPUT_SPACE) && jumpKeyCounter_[i] < INPUT_JUMPKEY_FRAME) {
+		if (isJump_[i] && (ins.IsNew(KEY_INPUT_SPACE) || nowJumpKey_) && jumpKeyCounter_[i] < INPUT_JUMPKEY_FRAME) {
 			//ジャンプキーの入力カウンターを増やす
 			jumpKeyCounter_[i]++;
 
@@ -774,6 +786,26 @@ void Player::DrawPlayer(void)
 const float Player::GetAnimeRatio(void) const
 {
 	return ((float)animeCounter_ / (float)image_[(int)motion_].size());
+}
+
+void Player::JoyPadInputManager(void)
+{
+	int input = GetJoypadInputState(DX_INPUT_PAD1);
+
+	prevJumpKey_ = nowJumpKey_;
+	nowJumpKey_ = ((input & PAD_INPUT_A) == 0) ? false : true;
+
+	prevLeftKey_ = nowLeftKey_;
+	nowLeftKey_ = ((input & PAD_INPUT_LEFT) == 0) ? false : true;
+
+	prevRightKey_ = nowRightKey_;
+	nowRightKey_ = ((input & PAD_INPUT_RIGHT) == 0) ? false : true;
+
+	prevAttackKey_ = nowAttackKey_;
+	nowAttackKey_ = ((input & 0x40) == 0) ? false : true;
+
+	prevBambooKey_ = nowBambooKey_;
+	nowBambooKey_ = ((input & 0x200) == 0) ? false : true;
 }
 
 

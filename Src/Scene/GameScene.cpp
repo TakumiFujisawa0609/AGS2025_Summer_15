@@ -95,6 +95,14 @@ void GameScene::Draw(void)
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 
+	int input = GetJoypadInputState(DX_INPUT_PAD1);
+
+	//for (int i = 0; i < 32; ++i) {
+	//	if (input & (1 << i)) {
+	//		printfDx("PAD_INPUT_%d ‚ª ON\n", i);
+	//	}
+	//}
+
 	//std::vector<Vector2F>pos = ShapesPosition::GetPositionCircle(SceneManager::MAIN_SCREEN_SIZE_X/2, SceneManager::MAIN_SCREEN_SIZE_Y/2, x, x, 12);
 	//for (int i = 0; i < (int)pos.size(); i++) {
 	//	DrawCircle(pos[i].x, pos[i].y, 10, 0xff0000, true);
