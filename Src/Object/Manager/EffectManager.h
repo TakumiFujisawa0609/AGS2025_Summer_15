@@ -16,7 +16,7 @@ public:
     void AddEffect(int id, std::shared_ptr<EffectBase> effect);
 
     // 全エフェクトの更新・描画・解放
-    void Init();
+    void Init(EffectBase::EFFECT_TYPE type);
     void Update();
     void Draw();
     void Release();
@@ -26,4 +26,5 @@ public:
 
 private:
     std::map<int, std::shared_ptr<EffectBase>> effects_;
+    EffectTakeDrop* takeDrop_;
 };

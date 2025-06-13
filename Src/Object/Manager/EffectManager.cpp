@@ -14,8 +14,15 @@ void EffectManager::AddEffect(int id, std::shared_ptr<EffectBase> effect)
     effects_[id] = effect;
 }
 
-void EffectManager::Init()
+
+void EffectManager::Init(EffectBase::EFFECT_TYPE type)
 {
+    for (auto& pair : effects_)
+    {
+        if (pair.second)
+            
+            pair.second->Init(type);
+    }
 }
 
 void EffectManager::Update()

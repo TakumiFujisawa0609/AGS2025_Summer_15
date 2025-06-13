@@ -21,7 +21,7 @@ public:
      void Init(void);
      void Init(EFFECT_TYPE type);
     // XV
-     void Update(void);
+    virtual void Update(void);
     // •`‰æ
     virtual void Draw(void);
     // ‰ğ•ú

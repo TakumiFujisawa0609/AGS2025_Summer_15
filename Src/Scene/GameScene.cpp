@@ -248,9 +248,25 @@ void GameScene::PlayerAttackToBoss(void)
 	auto& mana = SceneManager::GetInstance().GetInstance();
 	if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {
 		mana.HitStop();
-		boss_->SetDamage(1);
-        effects_.push_back(std::make_shared<EffectTakeDrop>());
-		efctMng_->Init();
-		efctMng_->AddEffect(1, effects_.back());
+		boss_->SetDamage(0);
+		player_->BpOptain(10);
+	}
+
+	for (auto& bpAtt : player_->GetBpAtt()) {
+		if (ins.Rect(bpAtt->GetObj(), boss_->GetUnit())) {
+			if (bpAtt->GetBp() > 25) {
+				mana.SHAKE();
+				mana.Slow();
+			}
+			else {
+				mana.HitStop();
+			}
+			boss_->SetDamage(bpAtt->GetDamage());
+			auto effect = std::make_shared<EffectTakeDrop>();
+			efctMng_->AddEffect(1, effect);
+			efctMng_->Init(EffectBase::EFFECT_TYPE::TAKE_DROP);
+			effects_.push_back(effect);
+
+		}
 	}
 }
