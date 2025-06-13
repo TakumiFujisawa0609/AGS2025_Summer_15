@@ -16,6 +16,10 @@ PlayerAttackBase::PlayerAttackBase(Vector2F* pPos, AsoUtility::DIRECTION* dir)
 
 PlayerAttackBase::~PlayerAttackBase(){}
 
+void PlayerAttackBase::Init(void)
+{
+}
+
 void PlayerAttackBase::ChangeDispPos(void)
 {
 	obj_.disppos_.x = obj_.pos_.x - Camera::GetInstance().GetPos().x;

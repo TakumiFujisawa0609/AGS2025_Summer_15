@@ -287,8 +287,10 @@ private:
 
 	// •Ï”
 	std::vector<BPAttack*> BpAtIns_;
+	int BambooImg_;
+
 	int bp_;
-	int bpConsCounter_;
+	float bpConsCounter_;
 	//---------------------------------------
 
 

@@ -10,8 +10,9 @@ BPAttack::~BPAttack()
 {
 }
 
-void BPAttack::Init(void)
+void BPAttack::Init(int image)
 {
+	this->image_ = image;
 }
 
 void BPAttack::Update(void)
@@ -21,7 +22,7 @@ void BPAttack::Update(void)
 	switch (dir_)
 	{
 	case AsoUtility::DIRECTION::E_DIR_RIGHT:
-		obj_.pos_.x += DEFAULT_SPEED / ((float)bp_ / 10.0f);
+		obj_.pos_.x += DEFAULT_SPEED / ((float)bp_ / 20.0f);
 		break;
 	case AsoUtility::DIRECTION::E_DIR_LEFT:
 		obj_.pos_.x -= DEFAULT_SPEED / ((float)bp_ / 10.0f);
@@ -33,14 +34,15 @@ void BPAttack::Update(void)
 
 void BPAttack::Draw(void)
 {
-	DrawCircleAA(obj_.disppos_.x, obj_.disppos_.y, obj_.radius_, 30, RGB(0, 200, 0));
+	if (!obj_.isAlive_)return;
+	DrawRotaGraph(obj_.disppos_.x, obj_.disppos_.y, bp_/10.0f, 0, image_, true);
 }
 
 void BPAttack::Release(void)
 {
 }
 
-void BPAttack::On(Vector2F pPos, AsoUtility::DIRECTION dir,int bp)
+void BPAttack::On(Vector2F pPos, AsoUtility::DIRECTION dir,float bp)
 {
 	obj_.isAlive_ = true;
 
@@ -52,10 +54,7 @@ void BPAttack::On(Vector2F pPos, AsoUtility::DIRECTION dir,int bp)
 
 	this->bp_ = bp;
 
-	obj_.radius_ = DEFAULT_SIZE * ((float)bp / 10.0f);
+	obj_.radius_ = DEFAULT_RADIUS * (bp / 10.0f);
 
-	obj_.size_ = { obj_.radius_,obj_.radius_ };
-
-
-
+	obj_.size_ = { DEFAULT_SIZE_X * (bp / 10.0f),DEFAULT_SIZE_Y * (bp / 10.0f) };
 }

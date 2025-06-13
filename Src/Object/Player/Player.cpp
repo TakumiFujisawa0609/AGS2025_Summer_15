@@ -56,8 +56,11 @@ void Player::Init()
 	attackKeyCounter_ = 0;
 
 	// “ÁŽêUŒ‚ŠÖŒW
+	BambooImg_ = LoadGraph("Data/Image/Player/The_Bamboo.png");
+
+
 	bp_ = 100;
-	bpConsCounter_ = 0;
+	bpConsCounter_ = 10.0f;
 
 	//ƒK[ƒhŠÖŒW
 	// ƒK[ƒhŠÖŒW
@@ -117,6 +120,13 @@ void Player::Draw()
 
 void Player::Release()
 {
+	for (auto b : BpAtIns_) {
+		b->Release();
+		delete b;
+	}
+	BpAtIns_.clear();
+	DeleteGraph(BambooImg_);
+
 	defaultAttack_->Release();
 	delete defaultAttack_;
 	//‰æ‘œ‰ð•ú
@@ -212,7 +222,7 @@ void Player::DoStateBPAttack(void)
 {
 	auto& ins = InputManager::GetInstance();
 	if (ins.IsNew(KEY_INPUT_H)) {
-		bpConsCounter_++;
+		bpConsCounter_+=0.25;
 		if (bpConsCounter_ > bp_)bpConsCounter_ = bp_;
 		if (bpConsCounter_ > MAX_BP_CONS)bpConsCounter_ = MAX_BP_CONS;
 	}
@@ -324,7 +334,7 @@ void Player::Attack()
 // “ÁŽêUŒ‚ó‘Ô
 void Player::BambooAttack(void)
 {
-	bp_ -= bpConsCounter_;
+	bp_ -= (int)bpConsCounter_;
 
 	bool recycll = false;
 
@@ -338,10 +348,11 @@ void Player::BambooAttack(void)
 	
 	if (!recycll) {
 		BpAtIns_.emplace_back(new BPAttack());
+		BpAtIns_[BpAtIns_.size()-1]->Init(BambooImg_);
 		BpAtIns_[BpAtIns_.size() - 1]->On(unit_.pos_, dir_, bpConsCounter_);
 	}
 
-	bpConsCounter_ = 0;
+	bpConsCounter_ = 10.0f;
 
 	ChangeState(Player::STATE::MOVE);
 }

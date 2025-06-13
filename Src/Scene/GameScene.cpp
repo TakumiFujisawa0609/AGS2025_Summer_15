@@ -156,9 +156,11 @@ void GameScene::Scroll(void)
 
 void GameScene::ObjCollision(void)
 {
-	PlayerToBoss();
 	PlayerToEnemyBamboo();
-	PlayerAttackToBoss();
+	if (boss_->GetEnCount()) {
+		PlayerToBoss();
+		PlayerAttackToBoss();
+	}
 }
 
 void GameScene::PlayerToBoss(void)
@@ -228,7 +230,7 @@ void GameScene::PlayerAttackToBoss(void)
 	}
 
 	for (auto& bpAtt : player_->GetBpAtt()) {
-		if (ins.CircleAndRect(bpAtt->GetObj(), boss_->GetUnit())) {
+		if (ins.Rect(bpAtt->GetObj(), boss_->GetUnit())) {
 			if (bpAtt->GetBp() > 25) {
 				mana.SHAKE();
 				mana.Slow();
