@@ -10,8 +10,9 @@
 #include"../Application.h"
 #include "GameScene.h"
 #include"../Utility/ShapesPosition.h"
-
-
+#include"../Object/Manager/EffectManager.h"
+#include"../Object/Effect/EffectBase.h"
+#include"../Object/Effect/EffectTakeDrop.h"
 
 GameScene::GameScene(void)
 {
@@ -38,6 +39,8 @@ void GameScene::Init(void)
 	boss_->Init();
 	boss_->SetPlayer(player_);
 
+	efctMng_ = new EffectManager();
+
 	Camera::GetInstance().Init();
 	for (int y = 0; y < Stage::STAGE_NUM_Y; y++) {
 		for (int x = 0; x < Stage::STAGE_NUM_X; x++) {
@@ -57,6 +60,7 @@ void GameScene::Update(void)
 	stage_->Update();
 	enemy_->Update();
 	boss_->Update();
+	efctMng_->Update();
 
 	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
 	{
@@ -92,6 +96,7 @@ void GameScene::Draw(void)
 	enemy_->Draw();
 	player_->Draw();
 	boss_->Draw();
+	efctMng_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 
@@ -108,25 +113,35 @@ void GameScene::Draw(void)
 	//}
 }
 
-void GameScene::Release(void)
-{
-	boss_->Release();
-	delete boss_;
-	boss_ = nullptr;
+void GameScene::Release(void)  
+{  
+   boss_->Release();  
+   delete boss_;  
+   boss_ = nullptr;  
 
-	enemy_->Relese();
-	delete enemy_;
-	enemy_ = nullptr;
+   enemy_->Relese();  
+   delete enemy_;  
+   enemy_ = nullptr;  
 
-	player_->Release();
-	delete player_;
-	player_ = nullptr;
+   player_->Release();  
+   delete player_;  
+   player_ = nullptr;  
 
-	stage_->Release();
-	delete stage_;
-	stage_ = nullptr;
+   stage_->Release();  
+   delete stage_;  
+   stage_ = nullptr;  
 
-	Collision::DeleteInstance();
+   efctMng_->Release();  
+   delete efctMng_;  
+   efctMng_ = nullptr;  
+
+   // efects_ ‚Ì delete  
+   for (auto& effect : effects_) {  
+       effect.reset(); 
+   }  
+   effects_.clear();  
+
+   Collision::DeleteInstance();  
 }
 
 
@@ -234,5 +249,8 @@ void GameScene::PlayerAttackToBoss(void)
 	if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {
 		mana.HitStop();
 		boss_->SetDamage(1);
+        effects_.push_back(std::make_shared<EffectTakeDrop>());
+		efctMng_->Init();
+		efctMng_->AddEffect(1, effects_.back());
 	}
 }

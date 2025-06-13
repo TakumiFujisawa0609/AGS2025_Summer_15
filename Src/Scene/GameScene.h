@@ -1,11 +1,14 @@
 #pragma once
 #include<memory>
+#include <vector> 
 #include "SceneBase.h"
 
 class Player;
 class Stage;
 class EnemyManager;
 class BossTutorial;
+class EffectManager;
+class EffectBase;
 
 class GameScene :
     public SceneBase
@@ -30,6 +33,8 @@ private:
 	Stage* stage_;
 	EnemyManager* enemy_ ;
 	BossTutorial* boss_;
+	EffectManager*efctMng_; // エフェクト管理用
+	std::vector<std::shared_ptr<EffectBase>>effects_;
 
 	void Scroll(void);
 
