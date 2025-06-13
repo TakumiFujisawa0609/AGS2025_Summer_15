@@ -19,8 +19,8 @@ void BossTutorial::Init()
 	unit_.isDraw_ = true;
 	unit_.pos_ = { 4500,250 };
 	unit_.nextpos_ = unit_.pos_;
-	unit_.radius_ = 0;
-	unit_.size_ = { 240, 249 };
+	unit_.size_ = { SIZE_X, SIZE_Y };
+	unit_.radius_ = unit_.size_.x;
 	unit_.speed_ = 10.0f;
 	unit_.hp_ = BOSS_HP;
 	hpShakeTimer_ = 0;  // 揺れ時間（フレーム数）
@@ -46,6 +46,8 @@ void BossTutorial::Init()
 
 void BossTutorial::Update()
 {
+	if (unit_.inviCounter_ > 0)unit_.inviCounter_--;
+
 	unit_.isGravity_ = true;
 	if (EnCount())encount_ = true;
 
@@ -480,6 +482,55 @@ const std::vector<Base> BossTutorial::GetAttackObj() const
 	return ret;
 }
 
+void BossTutorial::ObjHit(int i)
+{
+	switch (attackState_)
+	{
+	case BossTutorial::NON:
+		break;
+	case BossTutorial::SLASH:
+		break;
+	case BossTutorial::BULLET:
+		bullet_->Hit(i);
+		break;
+	case BossTutorial::ROAR:
+		break;
+	case BossTutorial::BLAST:
+		
+		break;
+	case BossTutorial::TACKLE:
+		break;
+	case BossTutorial::MAX:
+		break;
+	default:
+		break;
+	}
+}
+
+AttackBase* BossTutorial::GetAttackIns(void)
+{
+	switch (attackState_)
+	{
+	case BossTutorial::NON:
+		break;
+	case BossTutorial::SLASH:
+		return slash_;
+	case BossTutorial::BULLET:
+		return bullet_;
+	case BossTutorial::ROAR:
+		break;
+	case BossTutorial::BLAST:
+		return blast_;
+	case BossTutorial::TACKLE:
+		break;
+	case BossTutorial::MAX:
+		break;
+	default:
+		break;
+	}
+	return nullptr;
+}
+
 void BossTutorial::TargetLook(Vector2F target)
 {
 	if (target.x <= unit_.pos_.x)	bossDir_ = AttackBase::DIR::LEFT;
@@ -548,6 +599,7 @@ void BossTutorial::SetDamage(int damage)
 
 	unit_.hp_ -= damage;
 	hitTimer_ = 10;
+	unit_.inviCounter_ = 5;
 
 	if (unit_.hp_ <= 0) {
 		unit_.isAlive_ = false;

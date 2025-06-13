@@ -11,7 +11,7 @@ class BossTutorial : public EnemyBase
 {
 public:
 
-	static constexpr int SIZE_X = 240;
+	static constexpr int SIZE_X = 200;
 	static constexpr int SIZE_Y = 249;
 
 
@@ -73,6 +73,9 @@ public:
 	const ATTACK GetAttack(void)const { return attackState_; }
 
 	const std::vector<Base> GetAttackObj()const;
+	void ObjHit(int i);
+
+	AttackBase* GetAttackIns(void);
 
 	void SetDamage(int dmg);
 

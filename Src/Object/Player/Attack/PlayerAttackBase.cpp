@@ -4,6 +4,7 @@
 
 PlayerAttackBase::PlayerAttackBase()
 {
+	obj_.isAlive_ = false;
 }
 
 PlayerAttackBase::PlayerAttackBase(Vector2F* pPos, AsoUtility::DIRECTION* dir)
@@ -14,6 +15,10 @@ PlayerAttackBase::PlayerAttackBase(Vector2F* pPos, AsoUtility::DIRECTION* dir)
 }
 
 PlayerAttackBase::~PlayerAttackBase(){}
+
+void PlayerAttackBase::Init(void)
+{
+}
 
 void PlayerAttackBase::ChangeDispPos(void)
 {

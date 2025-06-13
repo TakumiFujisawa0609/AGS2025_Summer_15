@@ -54,6 +54,14 @@ void Player::Init()
 	for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; }
 	attack_ = NON;
 	attackKeyCounter_ = 0;
+
+	// 特殊攻撃関係
+	BambooImg_ = LoadGraph("Data/Image/Player/The_Bamboo.png");
+
+
+	bp_ = 100;
+	bpConsCounter_ = 10.0f;
+
 	//ガード関係
 	// ガード関係
 	guardCounter_ = 0;
@@ -81,11 +89,17 @@ void Player::Update()
 {
 	if (unit_.inviCounter_ > 0)unit_.inviCounter_--;
 
+	JoyPadInputManager();
+
 	StateManager();
 
 	Animation();
 
 	(this->*stateFuncPtr)();
+
+	for (auto t : BpAtIns_) {
+		t->Update();
+	}
 
 	UnitBase::Update();
 }
@@ -96,16 +110,25 @@ void Player::Draw()
 
 		DrawPlayer();
 
-
-
 		defaultAttack_->Draw();
 	}
+	for (auto t : BpAtIns_) {
+		t->Draw();
+	}
 
-	DrawHpBarFixedSize(400, 300, 1000,350, unit_.hp_, HP_MAX,RGB(0,255,0));
+	DrawHpBarFixedSize(330, 290, 800,330, unit_.hp_, HP_MAX,RGB(0,255,0));
+	DrawHpBarFixedSize(330, 335, 500, 350, bp_, BP_MAX, RGB(0, 0, 255));
 }
 
 void Player::Release()
 {
+	for (auto b : BpAtIns_) {
+		b->Release();
+		delete b;
+	}
+	BpAtIns_.clear();
+	DeleteGraph(BambooImg_);
+
 	defaultAttack_->Release();
 	delete defaultAttack_;
 	//画像解放
@@ -127,6 +150,7 @@ void Player::StateManager(void)
 	{
 	case Player::STATE::MOVE:
 		DoStateAttack();
+		DoStateBPAttack();
 		DoStateEvasion();
 		DoStateGuard();
 		break;
@@ -153,6 +177,7 @@ void Player::DoStateMove()
 {
 	auto& ins = InputManager::GetInstance();
 
+
 	if (ins.IsTrgDown(KEY_INPUT_W) ||
 		ins.IsTrgDown(KEY_INPUT_A) ||
 		ins.IsTrgDown(KEY_INPUT_S) ||
@@ -162,14 +187,22 @@ void Player::DoStateMove()
 		ChangeState(Player::STATE::MOVE);
 	}
 
+	if ((!prevLeftKey_ && nowLeftKey_) ||
+		(!prevRightKey_ && nowRightKey_) ||
+		(!prevJumpKey_ && nowJumpKey_)) {
+		ChangeState(Player::STATE::MOVE);
+	}
+
 }
 
 // 攻撃状態
 void Player::DoStateAttack()
 {
 	auto& ins = InputManager::GetInstance();
+	int input = GetJoypadInputState(DX_INPUT_PAD1);
 
-	if (!(ins.IsTrgDown(KEY_INPUT_J))) return;
+
+	if (!(ins.IsTrgDown(KEY_INPUT_J))&& !(!prevAttackKey_ && nowAttackKey_)) return;
 
 	// 攻撃状態に遷移する
 	ChangeState(Player::STATE::ATTACK);
@@ -193,6 +226,21 @@ void Player::DoStateAttack()
 		}
 	}
 
+}
+
+// 特殊攻撃状態
+void Player::DoStateBPAttack(void)
+{
+	auto& ins = InputManager::GetInstance();
+	if (ins.IsNew(KEY_INPUT_H)||nowBambooKey_) {
+		bpConsCounter_+=0.25;
+		if (bpConsCounter_ > bp_)bpConsCounter_ = bp_;
+		if (bpConsCounter_ > MAX_BP_CONS)bpConsCounter_ = MAX_BP_CONS;
+	}
+
+	if ((ins.IsTrgUp(KEY_INPUT_H)) || (prevBambooKey_ && !nowBambooKey_)) {
+		ChangeState(Player::STATE::BP_ATTACK);
+	}
 }
 
 // ガード状態
@@ -238,6 +286,10 @@ void Player::ChangeState(STATE st)
 	case Player::STATE::ATTACK:
 		state_ = Player::STATE::ATTACK;
 		stateFuncPtr = &Player::Attack;
+		break;
+	case Player::STATE::BP_ATTACK:
+		state_ = Player::STATE::BP_ATTACK;
+		stateFuncPtr = &Player::BambooAttack;
 		break;
 	case Player::STATE::GUARD:
 		state_ = Player::STATE::GUARD;
@@ -288,6 +340,32 @@ void Player::Attack()
 	}
 
 	defaultAttack_->Update();
+}
+
+// 特殊攻撃状態
+void Player::BambooAttack(void)
+{
+	bp_ -= (int)bpConsCounter_;
+
+	bool recycll = false;
+
+	for (int i = 0; i < BpAtIns_.size(); i++) {
+		if (!BpAtIns_[i]->GetObj().isAlive_) {
+			BpAtIns_[i]->On(unit_.pos_, dir_, bpConsCounter_);
+			recycll = true;
+			break;
+		}
+	}
+	
+	if (!recycll) {
+		BpAtIns_.emplace_back(new BPAttack());
+		BpAtIns_[BpAtIns_.size()-1]->Init(BambooImg_);
+		BpAtIns_[BpAtIns_.size() - 1]->On(unit_.pos_, dir_, bpConsCounter_);
+	}
+
+	bpConsCounter_ = 10.0f;
+
+	ChangeState(Player::STATE::MOVE);
 }
 
 // ガード状態
@@ -380,6 +458,8 @@ void Player::Damage(void)
 {
 	if (!knockBack_)ChangeState(Player::STATE::MOVE);
 
+	ChangeMotion(Player::MOTION::DAMAGE);
+
 	if (knockBackDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) 
 	{
 		unit_.nextpos_.x -= KNOCK_SPEED;
@@ -407,13 +487,12 @@ void Player::Run()
 
 	bool isMove = false;
 
-	if (ins.IsNew(KEY_INPUT_A)) {
+	if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_LEFT) || nowLeftKey_) {
 		unit_.nextpos_.x -= RUN_SPEED;
 		dir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
 		isMove = true;
 	}
-
-	if (ins.IsNew(KEY_INPUT_D)) {
+	if (ins.IsNew(KEY_INPUT_D) || ins.IsNew(KEY_INPUT_RIGHT) || nowRightKey_) {
 		unit_.nextpos_.x += RUN_SPEED;
 		dir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
 		isMove = true;
@@ -428,19 +507,21 @@ void Player::Jump()
 {
 	auto& ins = InputManager::GetInstance();
 
+
 	for (int i = 0; i < JUMP_NUM; i++) {
 
 		// ダウントリガーでジャンプ開始
-		if (ins.IsTrgDown(KEY_INPUT_SPACE))isJump_[i] = true;
+		if ((ins.IsTrgDown(KEY_INPUT_SPACE)) || (!prevJumpKey_ && nowJumpKey_))isJump_[i] = true;
 
 		// ジャンプしていなかったらループから抜ける
 		if (!isJump_[i])break;
 
 		//ジャンプキーを離したら、ジャンプキー入力判定を終了
-		if (isJump_[i] && ins.IsTrgUp(KEY_INPUT_SPACE))jumpKeyCounter_[i] = INPUT_JUMPKEY_FRAME;
+		if ((isJump_[i] && ins.IsTrgUp(KEY_INPUT_SPACE)) ||
+			(prevJumpKey_ && !nowJumpKey_))jumpKeyCounter_[i] = INPUT_JUMPKEY_FRAME;
 
 		//入力時間に応じてジャンプ量を変更する
-		if (isJump_[i] && ins.IsNew(KEY_INPUT_SPACE) && jumpKeyCounter_[i] < INPUT_JUMPKEY_FRAME) {
+		if (isJump_[i] && (ins.IsNew(KEY_INPUT_SPACE) || nowJumpKey_) && jumpKeyCounter_[i] < INPUT_JUMPKEY_FRAME) {
 			//ジャンプキーの入力カウンターを増やす
 			jumpKeyCounter_[i]++;
 
@@ -617,6 +698,18 @@ void Player::LoadPlayerImage(void)
 	image_[motion].insert(image_[motion].end(), SecondeAttaclLoad, SecondeAttaclLoad + SECONDE_ATTACK_LOAD_NUM);
 	//-----------------------------------------------------------------------------
 
+	//被ダメ状態の画像を読み込み-----------------------------------------------
+	motion = (int)MOTION::DAMAGE;
+
+	int DamageLoad[DAMAGE_LOAD_NUM];
+
+	LoadDivGraph((basePath + "Damage.png").c_str(),
+		DAMAGE_LOAD_NUM, DAMAGE_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, DamageLoad);
+
+	image_[motion].insert(image_[motion].end(), DamageLoad, DamageLoad + DAMAGE_LOAD_NUM);
+	//-----------------------------------------------------------------------------
+
 	// ガード状態の画像を読み込み--------------------------------------------------
 	motion = (int)MOTION::GUARD_PER;
 	int guardPerLoad[GUARD_PER_LOAD_NUM];
@@ -693,6 +786,26 @@ void Player::DrawPlayer(void)
 const float Player::GetAnimeRatio(void) const
 {
 	return ((float)animeCounter_ / (float)image_[(int)motion_].size());
+}
+
+void Player::JoyPadInputManager(void)
+{
+	int input = GetJoypadInputState(DX_INPUT_PAD1);
+
+	prevJumpKey_ = nowJumpKey_;
+	nowJumpKey_ = ((input & PAD_INPUT_A) == 0) ? false : true;
+
+	prevLeftKey_ = nowLeftKey_;
+	nowLeftKey_ = ((input & PAD_INPUT_LEFT) == 0) ? false : true;
+
+	prevRightKey_ = nowRightKey_;
+	nowRightKey_ = ((input & PAD_INPUT_RIGHT) == 0) ? false : true;
+
+	prevAttackKey_ = nowAttackKey_;
+	nowAttackKey_ = ((input & 0x40) == 0) ? false : true;
+
+	prevBambooKey_ = nowBambooKey_;
+	nowBambooKey_ = ((input & 0x200) == 0) ? false : true;
 }
 
 
