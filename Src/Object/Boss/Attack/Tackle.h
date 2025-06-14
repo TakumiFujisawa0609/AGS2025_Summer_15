@@ -9,7 +9,6 @@ class Tackle : public AttackBase
 public:
 
 	static constexpr float TACKLE_SPEED = 20.0f;
-	static constexpr int NON_TIME = 180;
 	static constexpr int TACKLE_START = 180;
 
 	enum class DIR
@@ -17,8 +16,8 @@ public:
 		NON,
 		JUMP,
 		STANDBY,
-		TACKLE_RIGHT,
 		TACKLE_LEFT,
+		TACKLE_RIGHT,
 		END,
 	};
 
@@ -30,13 +29,18 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
-	void SetTarget(Base target) { target_ = target; }
-	DIR GetDir() { return dir_; }
+	DIR GetDir(void) { return dir_; }
 
-	void CollisionLenDraw(Vector2F startPos, float radius);
+	void SetEndPos(Vector2F end) { endPos = end; }
+	Vector2F GetEndPos(void) { return endPos; }
+	int GetCounter(void) { return counter_; }
+	void SetStandBy(bool flg) { isStandby_ = flg; }
 
 private:
-	Base target_;
 
 	DIR dir_;
+	int counter_;
+	bool isStandby_;
+
+	Vector2F endPos;
 };

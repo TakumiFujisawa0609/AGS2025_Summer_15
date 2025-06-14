@@ -116,7 +116,7 @@ private:
 	void Idle(void);
 	void Move();
 	void Attack();
-	void Hp();
+	void HpUpdate();
 
 	void BossDeath();
 	void DrawHP();

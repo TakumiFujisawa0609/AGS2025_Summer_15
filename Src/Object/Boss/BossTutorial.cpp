@@ -25,6 +25,7 @@ void BossTutorial::Init()
 	unit_.size_ = { 240, 249 };
 	unit_.speed_ = 10.0f;
 	unit_.hp_ = BOSS_HP;
+	dispHp_ = 0.0f;
 	hpShakeTimer_ = 0;  // 揺れ時間（フレーム数）
 	prevHp_ = -1;       // 直前のHP（変化検出用）
 	flashInterval_ = 20;
@@ -61,7 +62,7 @@ void BossTutorial::Update()
 		SetDamage(1);
 	}
 
-	Hp();
+	HpUpdate();
 
 	frameCounter_ += 2;
 
@@ -113,15 +114,15 @@ void BossTutorial::Draw()
 void BossTutorial::BossDraw()
 {
 
-	bool shouldFlash = false;
+	bool isFlash = false;
 
 	if (hitTimer_ > 0)
 	{
 		if ((frameCounter_ / (flashInterval_ / 2)) % 2 == 0)
 		{
-			shouldFlash = true;
-			SetDrawBright(255, 128, 128);                   // 明るく赤っぽく
-			SetDrawBlendMode(DX_BLENDMODE_ADD, 180);        // 加算ブレンド
+			isFlash = true;
+			SetDrawBright(255, 128, 128);                   
+			SetDrawBlendMode(DX_BLENDMODE_ADD, 180);        
 		}
 	}
 
@@ -138,7 +139,7 @@ void BossTutorial::BossDraw()
 		break;
 	}
 
-	if (shouldFlash)
+	if (isFlash)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		SetDrawBright(255, 255, 255);
@@ -362,16 +363,18 @@ void BossTutorial::Attack()
 
 		if (attackCounter_ == 1) {
 			tackle_->Init(&unit_.pos_);
+
+			tackle_->SetEndPos(unit_.nextpos_);
 		}
 
 		tackle_->Update();
-		tackle_->SetTarget(player_->GetUnit());
 		tDir_ = tackle_->GetDir();
 
 		switch (tDir_)
 		{
 		case Tackle::DIR::JUMP:
 
+			//地団駄
 			if (unit_.nextpos_.y > start.y)
 			{
 				unit_.isGravity_ = true;
@@ -383,32 +386,18 @@ void BossTutorial::Attack()
 		case Tackle::DIR::STANDBY:
 
 			unit_.isGravity_ = false;
-			unit_.isStageCollision_ = false;
 
+
+			//画面上に消える
 			unit_.nextpos_.y -= 20;
 
-
-			if (unit_.nextpos_.y < start.y)
+			if (unit_.nextpos_.y < start.y - 100)
 			{
-				unit_.nextpos_.x = (start.x + Application::SCREEN_SIZE_X);
-				unit_.nextpos_.y = player_->GetUnit().pos_.y;
-				tDir_ = Tackle::DIR::TACKLE_LEFT;
+				unit_.nextpos_.x = (start.x + Application::MAIN_SCREEN_SIZE_X);
+				unit_.nextpos_.y = player_->GetUnit().disppos_.y - unit_.radius_;
+				tackle_->SetStandBy(true);
 			}
 
-			break;
-		case Tackle::DIR::TACKLE_RIGHT:
-
-			unit_.isGravity_ = false;
-			unit_.isStageCollision_ = false;
-
-			if (unit_.nextpos_.x > start.x) 
-			{
-				unit_.nextpos_.x -= Tackle::TACKLE_SPEED;
-			}
-			else 
-			{
-				tDir_ = Tackle::DIR::TACKLE_LEFT;
-			}
 
 			break;
 		case Tackle::DIR::TACKLE_LEFT:
@@ -416,21 +405,37 @@ void BossTutorial::Attack()
 			unit_.isGravity_ = false;
 			unit_.isStageCollision_ = false;
 
-			if (unit_.nextpos_.x < start.x + Application::SCREEN_SIZE_X) 
-			{
-				unit_.nextpos_.x += Tackle::TACKLE_SPEED;
-			}
-			else 
-			{
-				tDir_ = Tackle::DIR::END;
-			}
+			//左に向かってタックル
+			unit_.nextpos_.x -= Tackle::TACKLE_SPEED;
+
+			break;
+		case Tackle::DIR::TACKLE_RIGHT:
+
+			unit_.isGravity_ = false;
+
+			//右に向かってタックル
+			unit_.nextpos_.x += Tackle::TACKLE_SPEED;
+			
 			break;
 		case Tackle::DIR::END:
-			tackle_->End();
+
+			if (unit_.nextpos_.x > start.x + Application::SCREEN_SIZE_X) {
+				unit_.nextpos_.y = start.y - 100;
+				unit_.nextpos_.x = tackle_->GetEndPos().x;
+
+			}
+
+			unit_.isGravity_ = true;
+			unit_.isStageCollision_ = true;
+
+			int cnt = tackle_->GetCounter();
+
+			if (cnt > 120) {
+				attackState_ = BossTutorial::ATTACK::NON;
+			}
 			break;
 		}
 
-		tackle_->SetTarget(player_->GetUnit());
 	}
 
 	if (CheckHitKey(KEY_INPUT_U) == 1) {
@@ -516,22 +521,26 @@ void BossTutorial::TargetLook(Vector2F target)
 	else							bossDir_ = AttackBase::DIR::RIGHT;
 }
 
-void BossTutorial::Hp()
+void BossTutorial::HpUpdate()
 {
-	//ボスが死んだらHPバーが揺れ続ける（ただの演出）
-	if (unit_.hp_ == 0) {
-		hpShakeTimer_ = 10;
+	if (encount_)
+	{
+		//ボスが死んだらHPバーが揺れ続ける（ただの演出）
+		if (unit_.hp_ == 0) {
+			hpShakeTimer_ = 10;
+		}
+
+		//HPの変化を検出（減少時のみ揺らす）
+		if (unit_.hp_ < prevHp_) {
+			hpShakeTimer_ = 10;
+		}
+
+		prevHp_ = unit_.hp_;
+
+		if (dispHp_ < unit_.hp_) dispHp_ += 3;			//ボスがエンカウントしたら増える！！！！
+		if (dispHp_ > unit_.hp_) dispHp_ -= 1;			//HPをゆっくり減らすよ
 	}
 
-	//HPの変化を検出（減少時のみ揺らす）
-	if (unit_.hp_ < prevHp_) {
-		hpShakeTimer_ = 10;
-	}
-
-	prevHp_ = unit_.hp_;
-
-	if (dispHp_ < unit_.hp_) dispHp_ += 1;			//ボスがエンカウントしたら増える！！！！
-	if (dispHp_ > unit_.hp_) dispHp_ -= 3;			//HPをゆっくり減らすよ
 }
 
 void BossTutorial::DrawHP()
