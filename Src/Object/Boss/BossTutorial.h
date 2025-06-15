@@ -1,5 +1,6 @@
 #pragma once
 #include"../Enemy/EnemyBase.h"
+#include<map>
 
 #include"Attack/Slash.h"
 #include"Attack/Bullet.h"
@@ -78,8 +79,11 @@ public:
 
 	void SetDamage(int dmg);
 
+	//攻撃パターンの関数ポインタ
+	using AttackFunc = void(BossTutorial::*)();
 
 private:
+
 	//画像
 	int idolImg;
 
@@ -105,7 +109,7 @@ private:
 	int targetIndex_;
 
 	//状態
-	PATTERN pattaern_;
+	PATTERN pattern_;
 	ATTACK attackState_;
 	Tackle::DIR tDir_;
 
@@ -121,6 +125,16 @@ private:
 	void BossDeath();
 	void DrawHP();
 
+	//Attackの状態別の関数
+	void SlashUpdate(void);
+	void BulletUpdate(void);
+	void RoarUpdate(void);
+	void BlastUpdate(void);
+	void TackleUpdate(void);
+
+	//攻撃パターンの関数ポインタをmapで管理
+	std::map<ATTACK, AttackFunc> attackUpdateFuncs_;
+
 
 	//便利
 	int attackCounter_;
@@ -128,6 +142,7 @@ private:
 	Vector2F panVec_;
 	Vector2F target_;
 
+	//描画パターン
 	DRAWPAT DrawPat_;
 
 	AttackBase::DIR bossDir_;
