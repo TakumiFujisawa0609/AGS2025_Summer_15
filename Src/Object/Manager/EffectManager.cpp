@@ -1,57 +1,50 @@
 #include "EffectManager.h"
 
-EffectManager::EffectManager()
-{
-}
+EffectManager* EffectManager::instance_ = nullptr;
 
-EffectManager::~EffectManager()
-{
-}
+EffectManager::EffectManager(void) {}
+EffectManager::~EffectManager(void) {}
 
-
-void EffectManager::AddEffect(int id, std::shared_ptr<EffectBase> effect)
+void EffectManager::AddEffect( std::unique_ptr<EffectBase> effect, const Vector2F* generatePos)
 {
-    effects_[id] = effect;
+    effect->SetPos(*generatePos);
+    effects_.emplace_back(std::move(effect));
 }
 
 
-void EffectManager::Init(EffectBase::EFFECT_TYPE type)
+void EffectManager::Init()
 {
-    for (auto& pair : effects_)
-    {
-        if (pair.second)
-            
-            pair.second->Init(type);
+    for (auto& effect : effects_) {
+        effect->Init();
     }
 }
 
-void EffectManager::Update()
+void EffectManager::Update(void)
 {
-    for (auto& pair : effects_)
-    {
-        if (pair.second) 
-            pair.second->Update();
+    for (auto& effect : effects_) {
+        effect->Update();
     }
+    // isActive_がfalseのエフェクトを削除
+    effects_.erase(
+        std::remove_if(effects_.begin(), effects_.end(),
+            [](const std::unique_ptr<EffectBase>& effect) {
+                return !effect->IsActive();
+            }),
+        effects_.end()
+    );
 }
 
 void EffectManager::Draw()
 {
-    for (auto& pair : effects_)
-    {
-        if (pair.second) pair.second->Draw();
+    for (auto& effect : effects_) {
+        effect->Draw();
     }
 }
 
 void EffectManager::Release()
 {
-    for (auto& pair : effects_)
-    {
-        if (pair.second) pair.second->Release();
+    for (auto& effect : effects_) {
+        effect->Release();
     }
     effects_.clear();
-}
-
-void EffectManager::RemoveEffect(int id)
-{
-    effects_.erase(id);
 }

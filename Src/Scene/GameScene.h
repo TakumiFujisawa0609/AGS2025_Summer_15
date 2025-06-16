@@ -33,8 +33,6 @@ private:
 	Stage* stage_;
 	EnemyManager* enemy_ ;
 	BossTutorial* boss_;
-	EffectManager*efctMng_; // エフェクト管理用
-	std::vector<std::shared_ptr<EffectBase>>effects_;
 
 	void Scroll(void);
 

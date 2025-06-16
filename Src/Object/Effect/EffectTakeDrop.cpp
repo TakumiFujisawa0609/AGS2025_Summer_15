@@ -6,30 +6,31 @@ EffectTakeDrop::EffectTakeDrop()
 {
 }
 
+EffectTakeDrop::EffectTakeDrop(Vector2F* generation)
+{
+	unit_.pos_ = *generation;
+}
+
 EffectTakeDrop::~EffectTakeDrop()
 {
+
+}
+
+void EffectTakeDrop::Init(void)
+{
+	EffectBase::Init();
 }
 
 
-void EffectTakeDrop::Update(Vector2F* playerPos, Vector2F* generatePos)
+void EffectTakeDrop::Update(void)
 {
 	EffectBase::Update();
-	if (!isActive_)return;
-	unit_.pos_ = *generatePos;
-	if (currentFrame_<= SHOW_TIME) {
-		unit_.pos_.y += 1;
-	}
-	else {
-	Vector2F pPos = *playerPos;
-	Vector2F v = GetMoveVec(unit_.pos_, pPos, 1);
-	unit_.pos_.x += v.x;
-	unit_.pos_.y += v.y;
-	}
 }
 
 void EffectTakeDrop::Draw(void)
 {
-	std::vector<Vector2F>tPos=ShapesPosition::GetPositionCircle(unit_.pos_.x, unit_.pos_.y, 30.0f, 0, 5);
+	EffectBase::Draw();
+	std::vector<Vector2F>tPos = ShapesPosition::GetPositionCircle(unit_.pos_.x, unit_.pos_.y, 300.0f, 0, 5);
 	for (auto& p : tPos) {
 		DrawCircle(p.x, p.y, 10, 0x0000ff, true);
 	}
@@ -41,6 +42,7 @@ void EffectTakeDrop::Release(void)
 
 void EffectTakeDrop::Load(void)
 {
+	int a = 0;
 }
 
 void EffectTakeDrop::SetParam(void)

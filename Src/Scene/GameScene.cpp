@@ -39,7 +39,8 @@ void GameScene::Init(void)
 	boss_->Init();
 	boss_->SetPlayer(player_);
 
-	efctMng_ = new EffectManager();
+	EffectManager::CreateInstance();
+	EffectManager::GetInstance()->Init();
 
 	Camera::GetInstance().Init();
 	for (int y = 0; y < Stage::STAGE_NUM_Y; y++) {
@@ -60,7 +61,7 @@ void GameScene::Update(void)
 	stage_->Update();
 	enemy_->Update();
 	boss_->Update();
-	efctMng_->Update();
+	EffectManager::GetInstance()->Update();
 
 	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
 	{
@@ -96,8 +97,7 @@ void GameScene::Draw(void)
 	enemy_->Draw();
 	player_->Draw();
 	boss_->Draw();
-	efctMng_->Draw();
-
+	EffectManager::GetInstance()->Draw();
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 
 	int input = GetJoypadInputState(DX_INPUT_PAD1);
@@ -139,15 +139,10 @@ void GameScene::Release(void)
    delete stage_;  
    stage_ = nullptr;  
 
-   efctMng_->Release();  
-   delete efctMng_;  
-   efctMng_ = nullptr;  
+   EffectManager::GetInstance()->Release();
+   EffectManager::DeleteInstance();
 
-   // efects_ ‚Ì delete  
-   for (auto& effect : effects_) {  
-       effect.reset(); 
-   }  
-   effects_.clear();  
+   
 
    Collision::DeleteInstance();  
 }
@@ -250,6 +245,9 @@ void GameScene::PlayerAttackToBoss(void)
 		mana.HitStop();
 		boss_->SetDamage(0);
 		player_->BpOptain(10);
+			auto pos = boss_->GetUnit().disppos_;
+            EffectManager::GetInstance()->AddEffect(std::make_unique<EffectTakeDrop>(&pos), &pos);
+			EffectManager::GetInstance()->Init();
 	}
 
 	for (auto& bpAtt : player_->GetBpAtt()) {
@@ -262,11 +260,6 @@ void GameScene::PlayerAttackToBoss(void)
 				mana.HitStop();
 			}
 			boss_->SetDamage(bpAtt->GetDamage());
-			auto effect = std::make_shared<EffectTakeDrop>();
-			efctMng_->AddEffect(1, effect);
-			efctMng_->Init(EffectBase::EFFECT_TYPE::TAKE_DROP);
-			effects_.push_back(effect);
-
 		}
 	}
 }

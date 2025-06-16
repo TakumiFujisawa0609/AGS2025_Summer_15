@@ -4,17 +4,17 @@ EffectBase::EffectBase()
 {
 }
 
+EffectBase::EffectBase(Vector2F* generation)
+{
+    unit_.pos_ = *generation;
+}
+
 EffectBase::~EffectBase()
 {
 }
 
-void EffectBase::Init(void)
+void EffectBase::Init()
 {
-}
-
-void EffectBase::Init(EFFECT_TYPE type)
-{
-    type_ = type;
     isActive_ = true;
     // 画像やモデルなどのロード
     Load();
@@ -25,12 +25,11 @@ void EffectBase::Init(EFFECT_TYPE type)
 void EffectBase::Update(void)
 {
     // エフェクトが無効なら何もしない
-    if (!isActive_) return;
-
+    if (isActive_==false) return;
 
     // 寿命が設定されていて、経過フレームが寿命を超えたら無効化
-    if (lifeTime_ > 0 && currentFrame_ >= lifeTime_) {
-        isActive_ = false;
+    if (currentFrame_ >= lifeTime_) {
+         isActive_ = false;
     }
     // 経過フレームをカウント
     currentFrame_++;
@@ -38,6 +37,7 @@ void EffectBase::Update(void)
 
 void EffectBase::Draw(void)
 {
+    if (!isActive_)return;
 }
 
 void EffectBase::Release(void)

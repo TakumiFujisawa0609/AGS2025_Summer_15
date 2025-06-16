@@ -14,21 +14,21 @@ public:
 
     // コンストラクタ
     EffectBase();
+    EffectBase(Vector2F* generation);
     // デストラクタ
     virtual ~EffectBase();
 
     // 初期化
      void Init(void);
-     void Init(EFFECT_TYPE type);
     // 更新
     virtual void Update(void);
     // 描画
     virtual void Draw(void);
     // 解放
     virtual void Release(void);
+    bool IsActive() const { return isActive_; }  
 
 protected:
-    EFFECT_TYPE type_;
 
     // エフェクトの寿命（フレーム数）
     int lifeTime_ = 0;

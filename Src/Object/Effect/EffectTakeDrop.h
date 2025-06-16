@@ -4,14 +4,15 @@ class EffectTakeDrop :
     public EffectBase
 {
 public:
-    static constexpr int LIFE_TIME = 120;        //生存フレーム
-    static constexpr int SHOW_TIME = 60;        //エフェクトを見せるフレーム
-
+    static constexpr int LIFE_TIME = 60;        //生存フレーム
+    //static constexpr int SHOW_TIME = 60;        //エフェクトを見せるフレーム
     EffectTakeDrop();
-    ~EffectTakeDrop();
+    EffectTakeDrop(Vector2F* generation);
+    ~EffectTakeDrop()override;
 
+    void Init(void);
     // 更新
-    void Update(Vector2F* playerPos, Vector2F* generatePos);
+    void Update(void);
     // 描画
     void Draw(void) override;
     // 解放
