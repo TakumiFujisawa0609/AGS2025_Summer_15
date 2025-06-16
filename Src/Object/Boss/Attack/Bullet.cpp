@@ -55,11 +55,11 @@ void Bullet::Update()
 	//弾全部なくなるか、半径が上限に達していたら攻撃終了
 	bool allAlive = true;
 	for (int i = 0; i < BULLET_NUM; i++) {
-		if (bullets[i].isAlive_)continue;
+		if (!bullets[i].isAlive_)continue;
 		allAlive = false;
 	}
-	if (radius_ > RADIUS_MAX)allAlive = false;
-	if (!allAlive)end_ = true;
+	if (radius_ > RADIUS_MAX)allAlive = true;
+	if (allAlive)end_ = true;
 
 	AttackBase::Update();
 }

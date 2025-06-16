@@ -100,6 +100,14 @@ void GameScene::Draw(void)
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 
+	int input = GetJoypadInputState(DX_INPUT_PAD1);
+
+	//for (int i = 0; i < 32; ++i) {
+	//	if (input & (1 << i)) {
+	//		printfDx("PAD_INPUT_%d ‚ª ON\n", i);
+	//	}
+	//}
+
 	//std::vector<Vector2F>pos = ShapesPosition::GetPositionCircle(SceneManager::MAIN_SCREEN_SIZE_X/2, SceneManager::MAIN_SCREEN_SIZE_Y/2, x, x, 12);
 	//for (int i = 0; i < (int)pos.size(); i++) {
 	//	DrawCircle(pos[i].x, pos[i].y, 10, 0xff0000, true);
@@ -171,9 +179,11 @@ void GameScene::Scroll(void)
 
 void GameScene::ObjCollision(void)
 {
-	PlayerToBoss();
 	PlayerToEnemyBamboo();
-	PlayerAttackToBoss();
+	if (boss_->GetEnCount()) {
+		PlayerToBoss();
+		PlayerAttackToBoss();
+	}
 }
 
 void GameScene::PlayerToBoss(void)
@@ -208,21 +218,11 @@ void GameScene::PlayerToBossAttack(void)
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
 
-	for (auto obj : boss_->GetAttackObj())
-	{
-		if (ins.CircleAndRect(obj, player_->GetUnit())) {
-			player_->Hit(5, obj.pos_);
-			mana.HitStop();
-			mana.SHAKE();
-			//if ((player_->IsInvincible() || player_->IsJustGuard())
-			//	&& !player_->IsHit()) {
-			//	mana.Slow();
-			//}
-			//else {
-			//	player_->SetHitOn();
-			//	//player_->SetXAccel(20.0f);
-			//	mana.SHAKE();
-			//}
+
+	for (int i = 0; i < boss_->GetAttackObj().size(); i++) {
+		if (ins.CircleAndRect(boss_->GetAttackObj()[i], player_->GetUnit())) {
+			player_->Hit(5, boss_->GetAttackObj()[i].pos_);
+			boss_->ObjHit(i);
 		}
 	}
 }

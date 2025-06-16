@@ -27,6 +27,7 @@ public:
 
 	virtual void On(void) { obj_.isAlive_ = true; }
 
+	virtual void Off() { obj_.isAlive_ = false; }
 
 protected:
 	//画像ハンドル
@@ -43,6 +44,7 @@ protected:
 
 	//更新処理に使うカウンター
 	int attackCounter_;
+
 
 	//攻撃終了
 	bool end_;

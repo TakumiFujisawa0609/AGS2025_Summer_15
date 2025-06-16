@@ -5,7 +5,7 @@
 
 
 #include"Attack/Default.h"
-
+#include"Attack/BPAttack.h"
 
 class Player:public UnitBase
 {
@@ -30,6 +30,7 @@ public:
 	static constexpr int FIRST_ATTACK_LOAD_NUM = 4;
 	static constexpr int SECONDE_ATTACK_LOAD_NUM = 6;
 	static constexpr int EVASION_LOAD_NUM = 3;
+	static constexpr int DAMAGE_LOAD_NUM = 1;
 	static constexpr int GUARD_PER_LOAD_NUM = 3;
 	static constexpr int GUARD_LOAD_NUM = 1;
 	static constexpr int GUARD_POST_LOAD_NUM = 3;
@@ -47,7 +48,7 @@ public:
 		FALL,			//落下状態
 		FIRST_ATTACK,	//攻撃1段目
 		SECOND_ATTACK,	//攻撃2段目
-		THURD_ATTACK,	//攻撃3段目
+		SPECIAL_ATTACK,	//特殊攻撃
 		DAMAGE,			//被ダメージ
 		GUARD_PER,		//ガード前
 		GUARD,			//ガード
@@ -65,6 +66,7 @@ public:
 	{
 		MOVE,
 		ATTACK,
+		BP_ATTACK,
 		GUARD,
 		EVASION,
 		DAMAGE,
@@ -98,10 +100,22 @@ public:
 
 	static constexpr int INPUT_ATTACK_FRAME = 20;		//次の段につながる時間(フレーム数)
 
+	// 関数
 	Base DefaultAtt(void) { return defaultAttack_->GetObj(); }
 
 	//----------------------------------------------------------------------------------------------
 
+	// 特殊攻撃状態で使用する定数定義--------------------------------------------------------------
+	static constexpr int BP_MAX = 100;
+
+	static constexpr int MAX_BP_CONS = 30;
+
+	// 関数
+	void BpOptain(int bp) { this->bp_ += bp; if (this->bp_ > BP_MAX) { this->bp_ = BP_MAX; } }
+
+	std::vector<BPAttack*> GetBpAtt(void) { return BpAtIns_; }
+
+	//---------------------------------------------------------------------------------------------
 
 	// ガード状態で使用する定数定義-----------------------------------------------------------------
 	static constexpr int GUARD_FRAME = 180;				//総ガードフレーム
@@ -143,6 +157,7 @@ public:
 	void Release(void)override;
 
 
+
 private:
 
 	//プレイヤー描画関係-----------------------------------------------------------
@@ -170,6 +185,13 @@ private:
 	//向き
 	AsoUtility::DIRECTION dir_;
 
+	// コントローラーの入力状況管理
+	void JoyPadInputManager(void);
+	bool nowJumpKey_, prevJumpKey_;
+	bool nowLeftKey_, prevLeftKey_;
+	bool nowRightKey_, prevRightKey_;
+	bool nowAttackKey_, prevAttackKey_;
+	bool nowBambooKey_, prevBambooKey_;
 
 	//状態管理--------------------------------------------------------------------------------------
 	
@@ -196,6 +218,9 @@ private:
 	// 攻撃状態に遷移する条件
 	void DoStateAttack(void);
 
+	// 特殊攻撃状態に遷移する条件
+	void DoStateBPAttack(void);
+
 	// ガード状態に遷移する条件
 	void DoStateGuard(void);
 
@@ -216,6 +241,9 @@ private:
 
 	// 攻撃処理
 	void Attack(void);
+
+	// 特殊攻撃状態
+	void BambooAttack(void);
 
 	// ガード処理
 	void Guard(void);
@@ -257,6 +285,19 @@ private:
 	bool isAttack_[ATTACK::MAX];
 	ATTACK attack_;
 	int attackKeyCounter_;
+	//---------------------------------------
+
+
+	// 特殊攻撃関係--------------------------
+
+	// 関数
+
+	// 変数
+	std::vector<BPAttack*> BpAtIns_;
+	int BambooImg_;
+
+	int bp_;
+	float bpConsCounter_;
 	//---------------------------------------
 
 

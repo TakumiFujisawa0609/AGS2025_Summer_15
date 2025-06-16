@@ -11,7 +11,7 @@ public:
 	PlayerAttackBase(Vector2F* pPos,AsoUtility::DIRECTION* dir);
 	~PlayerAttackBase();
 
-	virtual void Init(void) = 0;
+	virtual void Init(void);
 	virtual void Update(void) = 0;
 	virtual void Draw(void) = 0;
 	virtual void Release(void) = 0;

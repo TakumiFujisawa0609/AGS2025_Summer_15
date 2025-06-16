@@ -21,6 +21,8 @@ public:
 
 	const std::vector<Base> Get(void)const override;
 
+	void Hit(int i) { bullets[i].isAlive_ = false; }
+
 private:
 	Base bullets[BULLET_NUM];
 
