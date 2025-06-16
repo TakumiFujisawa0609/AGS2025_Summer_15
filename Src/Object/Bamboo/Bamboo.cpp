@@ -22,7 +22,7 @@ void Bamboo::Set(Vector2F pos)
 	unit_.isAlive_ = true;
 
 	unit_.radius_ = (float)(GetRand(20) + 10);
-	unit_.size_ = { unit_.radius_,unit_.radius_ };
+	unit_.size_ = { unit_.radius_ * 2.0f,unit_.radius_ * 2.0f };
 }
 
 void Bamboo::Update(void)
