@@ -6,6 +6,7 @@ class Player;
 class Stage;
 class EnemyManager;
 class BossTutorial;
+class BambooManager;
 
 class GameScene :
     public SceneBase
@@ -30,6 +31,7 @@ private:
 	Stage* stage_;
 	EnemyManager* enemy_ ;
 	BossTutorial* boss_;
+	BambooManager* bamboo_;
 
 	void Scroll(void);
 

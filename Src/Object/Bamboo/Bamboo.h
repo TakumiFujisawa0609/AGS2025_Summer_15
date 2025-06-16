@@ -9,6 +9,7 @@ public:
 	~Bamboo();
 
 	void Init(void)override;
+	void Set(Vector2F pos);
 	void Update(void)override;
 	void Draw(void)override;
 	void Release(void)override;

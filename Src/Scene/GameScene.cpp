@@ -1,15 +1,21 @@
+#include "GameScene.h"
+
 #include<DxLib.h>
+
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/Camera.h"
 #include"../Manager/Collision.h"
+
+#include"../Application.h"
+#include"../Utility/ShapesPosition.h"
+
 #include"../Object/Player/Player.h"
 #include"../Object/Manager/EnemyManager.h"
 #include"../Object/Boss/BossTutorial.h"
 #include"../Object/Stage/Stage.h"
-#include"../Application.h"
-#include "GameScene.h"
-#include"../Utility/ShapesPosition.h"
+#include"../Object/Bamboo/BambooManager.h"
+
 
 
 
@@ -45,6 +51,10 @@ void GameScene::Init(void)
 		}
 	}
 
+	bamboo_ = new BambooManager();
+	bamboo_->Init();
+
+
 	x = 0;
 
 }
@@ -57,6 +67,7 @@ void GameScene::Update(void)
 	stage_->Update();
 	enemy_->Update();
 	boss_->Update();
+	bamboo_->Update();
 
 	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
 	{
@@ -92,12 +103,17 @@ void GameScene::Draw(void)
 	enemy_->Draw();
 	player_->Draw();
 	boss_->Draw();
+	bamboo_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 }
 
 void GameScene::Release(void)
 {
+	bamboo_->Release();
+	delete bamboo_;
+	bamboo_ = nullptr;
+
 	boss_->Release();
 	delete boss_;
 	boss_ = nullptr;
@@ -213,6 +229,7 @@ void GameScene::PlayerAttackToBoss(void)
 		mana.HitStop();
 		boss_->SetDamage(0);
 		player_->BpOptain(10);
+		bamboo_->Create(boss_->GetUnit().pos_, 3);
 	}
 
 	for (auto& bpAtt : player_->GetBpAtt()) {
