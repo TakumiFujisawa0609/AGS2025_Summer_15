@@ -805,7 +805,7 @@ void Player::JoyPadInputManager(void)
 	nowAttackKey_ = ((input & 0x40) == 0) ? false : true;
 
 	prevBambooKey_ = nowBambooKey_;
-	nowBambooKey_ = ((input & 0x200) == 0) ? false : true;
+	nowBambooKey_ = (((input & 0x200) == 0) && ((input & 0x80)==0)) ? false : true;
 }
 
 
