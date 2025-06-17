@@ -23,13 +23,17 @@ void Slash::Init(const Vector2F* pos)
 	
 	obj_.size_ = { (float)X_SIZE,(float)Y_SIZE };
 	obj_.radius_ = obj_.size_.x;
+	obj_.isDraw_ = false;
 	
 	animCounter_ = 0;
+	startCnt = CHARGE;
 
 }
 
 void Slash::Update()
 {
+	startCnt--;
+	obj_.isDraw_ = true;
 
 	if (obj_.isAlive_) {
 		switch (dir_)
@@ -52,10 +56,10 @@ void Slash::Update()
 		}
 	}
 	else if (animCounter_ > 0) {
-
 		attackCounter_++;
 		if (attackCounter_ > 120) {
 			attackCounter_ = 0;
+			startCnt = CHARGE;
 			end_ = true;
 		}
 	}
@@ -70,6 +74,20 @@ void Slash::Draw()
 		float diff = (isTurn) ? -(X_SIZE / 2) : (X_SIZE / 2);
 		DrawRotaGraph(obj_.disppos_.x + diff, obj_.disppos_.y, 1.0f, 0.0f, img[animCounter_], true, isTurn);
 	}
+
+
+	SetDrawBright(255, 128, 128);
+	SetDrawBlendMode(DX_BLENDMODE_ADD, 180);
+
+	float dir = ((bool)dir_) ? bUnit_.disppos_.x - bUnit_.size_.x / 2 : bUnit_.disppos_.x + bUnit_.size_.x / 2;
+	DrawBox(dir,
+		(bUnit_.disppos_.y - bUnit_.size_.y / 2) + 50,
+		target_.disppos_.x,
+		bUnit_.disppos_.y + bUnit_.size_.y / 2, RGB(0, 0, 255), true);
+
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	SetDrawBright(255, 255, 255);
+
 }
 
 void Slash::Release()

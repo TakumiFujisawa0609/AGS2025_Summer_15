@@ -16,7 +16,7 @@ public:
 	static constexpr int SIZE_Y = 249;
 
 
-	static constexpr int BOSS_HP = 150;						//ボスの最大体力
+	static constexpr int BOSS_HP = 400;						//ボスの最大体力
 	static constexpr int BOSS_HP_X = 5;					//ボスのHPゲージのX座標始点
 	static constexpr int BOSS_HP_Y = 15;						//ボスのHPゲージのY座標始点と描画距離
 	static constexpr int BOSS_HP_DISP_Y = 30;				//ボスのHPゲージのX座標の描画距離
@@ -30,6 +30,7 @@ public:
 		E_IDLE,
 		E_MOVE,
 		E_ATTACK,
+		E_DEATH,
 
 	};
 
@@ -91,7 +92,6 @@ private:
 	int idolImg;
 
 	int img_[DRAWPAT::DRAW_MAX];
-	int EndSlashImg_;
 
 	//戦闘を行うか行わないか
 	bool encount_;
@@ -106,12 +106,16 @@ private:
 	int flashInterval_;
 	int frameCounter_;
 
+	int diedCounter;
+	int slashCnt_;
+
 	void BossDraw();
 
 	//ボスの立ち位置の振り分け
 	int targetIndex_;
 
 	//状態
+	//攻撃
 	PATTERN pattern_;
 	ATTACK attackState_;
 	Tackle::DIR tDir_;
@@ -125,7 +129,7 @@ private:
 	void Attack();
 	void HpUpdate();
 
-	void BossDeath();
+	void Death();
 	void DrawHP();
 
 	//Attackの状態別の関数
@@ -148,6 +152,7 @@ private:
 	//描画パターン
 	DRAWPAT DrawPat_;
 
+	//右か左のどちらを向いているかの状態
 	AttackBase::DIR bossDir_;
 
 
