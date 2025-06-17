@@ -91,12 +91,13 @@ const float Collision::GetStageLine(const Vector2F& pos, const Vector2F& size , 
 
 
 
-const bool Collision::Circle(const Base& u1, const Base& u2) const
+const bool Collision::Circle(const Base& u1, const Base& u2, bool invici) const
 {
 	//どちらかが生存していなければ、当たっていない(false)を返し終了
 	if (!u1.isAlive_ || !u2.isAlive_) return false;
-	if (u1.inviCounter_ > 0 || u2.inviCounter_ > 0)return false;
-
+	if (invici) {
+		if (u1.inviCounter_ > 0 || u2.inviCounter_ > 0)return false;
+	}
 	//2点間のベクトルを作成
 	Vector2F vec = { u1.pos_.x - u2.pos_.x,u1.pos_.y - u2.pos_.y };
 
@@ -110,12 +111,13 @@ const bool Collision::Circle(const Base& u1, const Base& u2) const
 	return false;
 }
 
-const bool Collision::Rect(const Base& u1, const Base& u2) const
+const bool Collision::Rect(const Base& u1, const Base& u2, bool invici) const
 {
 	//どちらかが生存していなければ、当たっていない(false)を返し終了
 	if (!u1.isAlive_ || !u2.isAlive_) return false;
-	if (u1.inviCounter_ > 0 || u2.inviCounter_ > 0)return false;
-
+	if (invici) {
+		if (u1.inviCounter_ > 0 || u2.inviCounter_ > 0)return false;
+	}
 
 	//衝突判定に必要な情報をまとめる
 	struct rec
@@ -142,12 +144,13 @@ const bool Collision::Rect(const Base& u1, const Base& u2) const
 	return false;
 }
 
-const bool Collision::Ellipse(const Base& u1, const Base& u2) const
+const bool Collision::Ellipse(const Base& u1, const Base& u2, bool invici) const
 {
 	//どちらかが生存していなければ、当たっていない(false)を返し終了
 	if (!u1.isAlive_ || !u2.isAlive_) return false;
-	if (u1.inviCounter_ > 0 || u2.inviCounter_ > 0)return false;
-
+	if (invici) {
+		if (u1.inviCounter_ > 0 || u2.inviCounter_ > 0)return false;
+	}
 	//2点間のベクトルを作成
 	Vector2F vec = { u1.pos_.x - u2.pos_.x,u1.pos_.y - u2.pos_.y };
 
@@ -163,11 +166,13 @@ const bool Collision::Ellipse(const Base& u1, const Base& u2) const
 
 
 
-const bool Collision::CircleAndRect(const Base& circle, const Base& rect) const
+const bool Collision::CircleAndRect(const Base& circle, const Base& rect, bool invici) const
 {
 	//どちらかが生存していなければ、当たっていない(false)を返し終了
 	if (!circle.isAlive_ || !rect.isAlive_) return false;
-	if (circle.inviCounter_ > 0 || rect.inviCounter_ > 0)return false;
+	if (invici) {
+		if (circle.inviCounter_ > 0 || rect.inviCounter_ > 0)return false;
+	}
 
 
 	//衝突判定

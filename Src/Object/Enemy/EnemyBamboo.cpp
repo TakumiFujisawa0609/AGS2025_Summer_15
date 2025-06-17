@@ -28,6 +28,7 @@ void EnemyBamboo::Init()
 
 void EnemyBamboo::Update()
 {
+	if (unit_.inviCounter_ > 0)unit_.inviCounter_--;
 	Move();
 	UnitBase::Update();
 
@@ -35,7 +36,7 @@ void EnemyBamboo::Update()
 
 void EnemyBamboo::Draw()
 {
-	if (unit_.isDraw_)
+	if (unit_.isDraw_ && (unit_.inviCounter_ / 10) % 2 == 0)
 	{
 		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, EX_SIZE, rotate_, modelId_, true, move_);
 	}
@@ -60,6 +61,9 @@ void EnemyBamboo::SetDmg(int damage)
 	{
 		unit_.isAlive_ = false;
 	}
+
+	unit_.inviCounter_ = 50;
+
 }
 
 

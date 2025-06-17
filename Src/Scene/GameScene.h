@@ -36,9 +36,14 @@ private:
 	void Scroll(void);
 
 	void ObjCollision(void);
+
+	void PlayerToBamboo(void);
+
+	void PlayerToEnemyBamboo(void);
+	void PlayerAttackToEnemyBamboo(void);
+
 	void PlayerToBoss(void);
 	void PlayerToBossAttack(void);
-	void PlayerToEnemyBamboo(void);
 	void PlayerAttackToBoss(void);
 
 	float x;

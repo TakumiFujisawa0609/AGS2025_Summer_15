@@ -8,8 +8,14 @@ BambooManager::~BambooManager()
 {
 }
 
-void BambooManager::Init(void)
+void BambooManager::Init(Vector2F* pPos)
 {
+	this->pPos_ = pPos;
+
+	image_ = LoadGraph("Data/Image/DropBamboo.png");
+	if (image_ == -1) {
+		return;
+	}
 }
 
 void BambooManager::Update(void)
@@ -31,6 +37,7 @@ void BambooManager::Release(void)
 	for (auto b : bamboos_) {
 		b->Release();
 	}
+	DeleteGraph(image_);
 }
 
 void BambooManager::Create(Vector2F pos, int num)
@@ -49,7 +56,7 @@ void BambooManager::Create(Vector2F pos, int num)
 		if (reciycle)continue;
 
 		bamboos_.emplace_back(new Bamboo());
-		bamboos_[bamboos_.size() - 1]->Set(pos);
+		bamboos_[bamboos_.size() - 1]->Set(pos,pPos_,image_);
 	}
 }
 

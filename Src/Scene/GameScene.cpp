@@ -52,7 +52,7 @@ void GameScene::Init(void)
 	}
 
 	bamboo_ = new BambooManager();
-	bamboo_->Init();
+	bamboo_->Init((Vector2F*)&player_->GetUnit().pos_);
 
 
 	x = 0;
@@ -158,12 +158,72 @@ void GameScene::Scroll(void)
 
 void GameScene::ObjCollision(void)
 {
+	PlayerToBamboo();
+
 	PlayerToEnemyBamboo();
-	if (boss_->GetEnCount()) {
-		PlayerToBoss();
-		PlayerAttackToBoss();
+
+	if (boss_->GetEnCount()) PlayerToBoss();
+}
+
+void GameScene::PlayerToBamboo(void)
+{
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
+
+	for (auto& b : bamboo_->GetBamboos()) {
+		if (ins.CircleAndRect(b->GetUnit(),player_->GetUnit(),false)) {
+			b->Collect();
+			player_->BpOptain(b->GetUnit().radius_ / 5.0f);
+		}
 	}
 }
+
+
+
+void GameScene::PlayerToEnemyBamboo(void)
+{
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
+
+	for (int i = 0; i < EnemyBamboo::ENEMY_MAX; i++) {
+		if (ins.Ellipse(player_->GetUnit(), enemy_->GetBamboo(i)->GetUnit())) {
+			player_->Hit(5, enemy_->GetBamboo(i)->GetUnit().pos_);
+			mana.HitStop();
+		}
+	}
+
+	PlayerAttackToEnemyBamboo();
+}
+
+void GameScene::PlayerAttackToEnemyBamboo(void)
+{
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
+
+	for (int i = 0; i < EnemyBamboo::ENEMY_MAX; i++) {
+		if (ins.CircleAndRect(player_->DefaultAtt(), enemy_->GetBamboo(i)->GetUnit())) {
+			enemy_->GetBamboo(i)->SetDmg(0);
+			bamboo_->Create(enemy_->GetBamboo(i)->GetUnit().pos_, 2);
+		}
+		for (auto& bpAtt : player_->GetBpAtt()) {
+			if (ins.Rect(bpAtt->GetObj(), enemy_->GetBamboo(i)->GetUnit())) {
+				if (bpAtt->GetBp() > 25) {
+					mana.SHAKE();
+					mana.Slow();
+				}
+				else {
+					mana.HitStop();
+				}
+				enemy_->GetBamboo(i)->SetDmg(5);
+			}
+		}
+	}
+
+
+}
+
+
+
 
 void GameScene::PlayerToBoss(void)
 {
@@ -172,24 +232,11 @@ void GameScene::PlayerToBoss(void)
 
 	if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
 		player_->Hit(5,boss_->GetUnit().pos_);
-		/*mana.HitStop();
-		mana.SHAKE();*/
 	}
 
-	//if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
-	//	if ((player_->IsInvincible() || player_->IsJustGuard())
-	//		&& !player_->IsHit()) {
-	//		mana.Slow();
-	//	}
-	//	else {
-	//		player_->SetHitOn();
-	//		player_->SetXAccel(20.0f);
-	//		mana.SHAKE();
-	//	}
-	//	//mana.HitStop();
-	//}
-
 	PlayerToBossAttack();
+
+	PlayerAttackToBoss();
 }
 
 void GameScene::PlayerToBossAttack(void)
@@ -206,20 +253,7 @@ void GameScene::PlayerToBossAttack(void)
 	}
 }
 
-void GameScene::PlayerToEnemyBamboo(void)
-{
-	//auto& ins = Collision::GetInstance();
-	//auto& mana = SceneManager::GetInstance().GetInstance();
 
-	//for (int i = 0; i < EnemyBamboo::ENEMY_MAX; i++) {
-	//	if (ins.Ellipse(player_->GetUnit(), enemy_->GetBamboo(i)->GetUnit()) && !player_->Muteki()) {
-	//		player_->Damage(5, enemy_->GetBamboo(i)->GetUnit().pos_);
-	//		mana.HitStop();
-	//		mana.SHAKE();
-	//	}
-	//}
-
-}
 
 void GameScene::PlayerAttackToBoss(void)
 {
@@ -228,7 +262,6 @@ void GameScene::PlayerAttackToBoss(void)
 	if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {
 		mana.HitStop();
 		boss_->SetDamage(0);
-		player_->BpOptain(10);
 		bamboo_->Create(boss_->GetUnit().pos_, 3);
 	}
 
