@@ -41,7 +41,7 @@ public:
 	/// <param name="u1"></param>
 	/// <param name="u2"></param>
 	/// <returns></returns>
-	const bool Circle(const Base& u1, const Base& u2)const;
+	const bool Circle(const Base& u1, const Base& u2, bool invici = true)const;
 
 	/// <summary>
 	/// ‹éŒ`“¯Žm‚Ì“–‚½‚è”»’è
@@ -49,7 +49,7 @@ public:
 	/// <param name="u1"></param>
 	/// <param name="u2"></param>
 	/// <returns></returns>
-	const bool Rect(const Base& u1, const Base& u2)const;
+	const bool Rect(const Base& u1, const Base& u2, bool invici = true)const;
 
 	/// <summary>
 	/// ‘È‰~“¯Žm‚Ì“–‚½‚è”»’è
@@ -57,7 +57,7 @@ public:
 	/// <param name="u1"></param>
 	/// <param name="u2"></param>
 	/// <returns></returns>
-	const bool Ellipse(const Base& u1, const Base& u2) const;
+	const bool Ellipse(const Base& u1, const Base& u2, bool invici = true) const;
 
 	/// <summary>
 	/// ‰~Œ`‚Æ‹éŒ`‚Ì“–‚½‚è”»’è
@@ -65,7 +65,7 @@ public:
 	/// <param name="circle">‰~Œ`</param>
 	/// <param name="rect">‹éŒ`</param>
 	/// <returns></returns>
-	const bool CircleAndRect(const Base& circle, const Base& rect)const;
+	const bool CircleAndRect(const Base& circle, const Base& rect, bool invici = true)const;
 
 private:
 	static Collision* instance;

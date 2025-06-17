@@ -9,6 +9,7 @@ class EnemyManager;
 class BossTutorial;
 class EffectManager;
 class EffectBase;
+class BambooManager;
 
 class GameScene :
     public SceneBase
@@ -33,13 +34,19 @@ private:
 	Stage* stage_;
 	EnemyManager* enemy_ ;
 	BossTutorial* boss_;
+	BambooManager* bamboo_;
 
 	void Scroll(void);
 
 	void ObjCollision(void);
+
+	void PlayerToBamboo(void);
+
+	void PlayerToEnemyBamboo(void);
+	void PlayerAttackToEnemyBamboo(void);
+
 	void PlayerToBoss(void);
 	void PlayerToBossAttack(void);
-	void PlayerToEnemyBamboo(void);
 	void PlayerAttackToBoss(void);
 
 	float x;

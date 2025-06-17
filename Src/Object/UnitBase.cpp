@@ -55,7 +55,7 @@ void UnitBase::Accel(void)
 	// ‰¡Œü‚«‚Ì‰Á‘¬“x‚ðŒ¸‘¬‚³‚¹‚é
 
 	//Œ¸‘¬“x
-	const float decel = 5.0f;
+	const float decel = gravity_;
 
 	if (unit_.xAccel_ > decel) {
 		unit_.xAccel_-= decel;

@@ -1,8 +1,15 @@
+#include "GameScene.h"
+
 #include<DxLib.h>
+
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/Camera.h"
 #include"../Manager/Collision.h"
+
+#include"../Application.h"
+#include"../Utility/ShapesPosition.h"
+
 #include"../Object/Player/Player.h"
 #include"../Object/Manager/EnemyManager.h"
 #include"../Object/Boss/BossTutorial.h"
@@ -13,6 +20,7 @@
 #include"../Object/Manager/EffectManager.h"
 #include"../Object/Effect/EffectBase.h"
 #include"../Object/Effect/EffectTakeDrop.h"
+#include"../Object/Bamboo/BambooManager.h"
 
 GameScene::GameScene(void)
 {
@@ -29,9 +37,9 @@ void GameScene::Init(void)
 	stage_ = new Stage();
 	stage_->Init();
 
-
 	enemy_ = new EnemyManager();
 	enemy_->Init();
+
 	player_ = new Player();
 	player_->Init();
 
@@ -49,6 +57,10 @@ void GameScene::Init(void)
 		}
 	}
 
+	bamboo_ = new BambooManager();
+	bamboo_->Init((Vector2F*)&player_->GetUnit().pos_);
+
+
 	x = 0;
 
 }
@@ -61,6 +73,7 @@ void GameScene::Update(void)
 	stage_->Update();
 	enemy_->Update();
 	boss_->Update();
+	bamboo_->Update();
 	EffectManager::GetInstance()->Update();
 
 	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
@@ -97,36 +110,21 @@ void GameScene::Draw(void)
 	enemy_->Draw();
 	boss_->Draw();
 	player_->Draw();
+	bamboo_->Draw();
 	EffectManager::GetInstance()->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
-
-	int input = GetJoypadInputState(DX_INPUT_PAD1);
-
-	//for (int i = 0; i < 32; ++i) {
-	//	if (input & (1 << i)) {
-	//		printfDx("PAD_INPUT_%d ‚ª ON\n", i);
-	//	}
-	//}
-
-	//std::vector<Vector2F>pos = ShapesPosition::GetPositionCircle(SceneManager::MAIN_SCREEN_SIZE_X/2, SceneManager::MAIN_SCREEN_SIZE_Y/2, x, x, 12);
-	//for (int i = 0; i < (int)pos.size(); i++) {
-	//	DrawCircle(pos[i].x, pos[i].y, 10, 0xff0000, true);
-	//}
-
-	//
-	//x += 0.05f;
-	// pos=ShapesPosition::GetPositionWave(x, SceneManager::MAIN_SCREEN_SIZE_Y/2, 200.0f, 1000.0f, x, 20, 100.0f);
-	//for (int i = 0; i <(int) pos.size(); i++) {
-	//	DrawCircle(pos[i].x, pos[i].y,10,0x00ff00, true);
-	//}
 }
 
-void GameScene::Release(void)  
-{  
-   boss_->Release();  
-   delete boss_;  
-   boss_ = nullptr;  
+void GameScene::Release(void)
+{
+	bamboo_->Release();
+	delete bamboo_;
+	bamboo_ = nullptr;
+
+	boss_->Release();
+	delete boss_;
+	boss_ = nullptr;
 
    enemy_->Relese();  
    delete enemy_;  
@@ -157,13 +155,11 @@ void GameScene::Scroll(void)
 		if (player_->GetUnit().disppos_.x > Application::MAIN_SCREEN_SIZE_X / 7 * 4 &&
 			!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X) - ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) >= Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X)) {
 			camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
-			//if (player_->IsEvasion())camera.Follow(Camera::dir::X, Player::EVASION_LENGTH);
 		}
 
 		if (player_->GetUnit().disppos_.x < Application::MAIN_SCREEN_SIZE_X / 7 * 3 &&
 			!(camera.GetPos().x <= -((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2))) {
 			camera.Follow(Camera::dir::X, -(player_->GetUnit().speed_));
-			//if (player_->IsEvasion())camera.Follow(Camera::dir::X, -Player::EVASION_LENGTH);
 		}
 	}
 	else {
@@ -175,12 +171,72 @@ void GameScene::Scroll(void)
 
 void GameScene::ObjCollision(void)
 {
+	PlayerToBamboo();
+
 	PlayerToEnemyBamboo();
-	if (boss_->GetEnCount()) {
-		PlayerToBoss();
-		PlayerAttackToBoss();
+
+	if (boss_->GetEnCount()) PlayerToBoss();
+}
+
+void GameScene::PlayerToBamboo(void)
+{
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
+
+	for (auto& b : bamboo_->GetBamboos()) {
+		if (ins.CircleAndRect(b->GetUnit(),player_->GetUnit(),false)) {
+			b->Collect();
+			player_->BpOptain(b->GetUnit().radius_ / 5.0f);
+		}
 	}
 }
+
+
+
+void GameScene::PlayerToEnemyBamboo(void)
+{
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
+
+	for (int i = 0; i < EnemyBamboo::ENEMY_MAX; i++) {
+		if (ins.Ellipse(player_->GetUnit(), enemy_->GetBamboo(i)->GetUnit())) {
+			player_->Hit(5, enemy_->GetBamboo(i)->GetUnit().pos_);
+			mana.HitStop();
+		}
+	}
+
+	PlayerAttackToEnemyBamboo();
+}
+
+void GameScene::PlayerAttackToEnemyBamboo(void)
+{
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
+
+	for (int i = 0; i < EnemyBamboo::ENEMY_MAX; i++) {
+		if (ins.CircleAndRect(player_->DefaultAtt(), enemy_->GetBamboo(i)->GetUnit())) {
+			enemy_->GetBamboo(i)->SetDmg(0);
+			bamboo_->Create(enemy_->GetBamboo(i)->GetUnit().pos_, 2);
+		}
+		for (auto& bpAtt : player_->GetBpAtt()) {
+			if (ins.Rect(bpAtt->GetObj(), enemy_->GetBamboo(i)->GetUnit())) {
+				if (bpAtt->GetBp() > 25) {
+					mana.SHAKE();
+					mana.Slow();
+				}
+				else {
+					mana.HitStop();
+				}
+				enemy_->GetBamboo(i)->SetDmg(5);
+			}
+		}
+	}
+
+
+}
+
+
+
 
 void GameScene::PlayerToBoss(void)
 {
@@ -189,24 +245,11 @@ void GameScene::PlayerToBoss(void)
 
 	if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
 		player_->Hit(5,boss_->GetUnit().pos_);
-		/*mana.HitStop();
-		mana.SHAKE();*/
 	}
 
-	//if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
-	//	if ((player_->IsInvincible() || player_->IsJustGuard())
-	//		&& !player_->IsHit()) {
-	//		mana.Slow();
-	//	}
-	//	else {
-	//		player_->SetHitOn();
-	//		player_->SetXAccel(20.0f);
-	//		mana.SHAKE();
-	//	}
-	//	//mana.HitStop();
-	//}
+	PlayerToBossAttack();
 
-	//PlayerToBossAttack();
+	PlayerAttackToBoss();
 }
 
 void GameScene::PlayerToBossAttack(void)
@@ -223,20 +266,7 @@ void GameScene::PlayerToBossAttack(void)
 	}
 }
 
-void GameScene::PlayerToEnemyBamboo(void)
-{
-	//auto& ins = Collision::GetInstance();
-	//auto& mana = SceneManager::GetInstance().GetInstance();
 
-	//for (int i = 0; i < EnemyBamboo::ENEMY_MAX; i++) {
-	//	if (ins.Ellipse(player_->GetUnit(), enemy_->GetBamboo(i)->GetUnit()) && !player_->Muteki()) {
-	//		player_->Damage(5, enemy_->GetBamboo(i)->GetUnit().pos_);
-	//		mana.HitStop();
-	//		mana.SHAKE();
-	//	}
-	//}
-
-}
 
 void GameScene::PlayerAttackToBoss(void)
 {
@@ -245,10 +275,7 @@ void GameScene::PlayerAttackToBoss(void)
 	if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {
 		mana.HitStop();
 		boss_->SetDamage(0);
-		player_->BpOptain(10);
-			auto pos = boss_->GetUnit().disppos_;
-            EffectManager::GetInstance()->AddEffect(std::make_unique<EffectTakeDrop>(&pos), &pos);
-			EffectManager::GetInstance()->Init();
+		bamboo_->Create(boss_->GetUnit().pos_, 3);
 	}
 
 	for (auto& bpAtt : player_->GetBpAtt()) {
