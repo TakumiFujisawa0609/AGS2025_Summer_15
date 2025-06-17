@@ -116,8 +116,8 @@ void Player::Draw()
 		t->Draw();
 	}
 
-	DrawHpBarFixedSize(330, 290, 800,330, unit_.hp_, HP_MAX,RGB(0,255,0));
-	DrawHpBarFixedSize(330, 335, 500, 350, bp_, BP_MAX, RGB(0, 0, 255));
+	DrawBar(330, 290, 800,330, unit_.hp_, HP_MAX,RGB(0,255,0));
+	DrawBar(330, 335, 500, 350, bp_, BP_MAX, RGB(0, 0, 255));
 }
 
 void Player::Release()

@@ -267,7 +267,7 @@ void BossTutorial::Move()
 		attackCounter_ = 0;
 		if (!(targetIndex_ == 1)) {
 			TargetLook(player_->GetUnit().pos_);
-			attackState_ = BossTutorial::SLASH;//(ATTACK)GetRand((int)ATTACK::MAX - 1);
+			attackState_ = (ATTACK)GetRand((int)ATTACK::MAX - 1);
 			pattern_ = E_ATTACK;
 		}
 		else {
@@ -563,6 +563,23 @@ void BossTutorial::TackleUpdate(void)
 		//右に向かってタックル
 		unit_.nextpos_.x += Tackle::TACKLE_SPEED;
 
+		if (unit_.nextpos_.x > start.x + Application::SCREEN_SIZE_X) {
+			unit_.nextpos_.y = start.y - 100;
+			unit_.nextpos_.x = tackle_->GetEndPos().x;
+
+		}
+
+		unit_.isGravity_ = true;
+		unit_.isStageCollision_ = true;
+
+		int cnt = tackle_->GetCounter();
+
+		if (cnt > 120) {
+			attackState_ = BossTutorial::ATTACK::NON;
+		}
+		break;
+	}
+}
 
 
 void BossTutorial::ObjHit(int i)
@@ -614,29 +631,6 @@ AttackBase* BossTutorial::GetAttackIns(void)
 	return nullptr;
 }
 
-void BossTutorial::TargetLook(Vector2F target)
-{
-	if (target.x <= unit_.pos_.x)	bossDir_ = AttackBase::DIR::LEFT;
-	else							bossDir_ = AttackBase::DIR::RIGHT;
-}
-
-		if (unit_.nextpos_.x > start.x + Application::SCREEN_SIZE_X) {
-			unit_.nextpos_.y = start.y - 100;
-			unit_.nextpos_.x = tackle_->GetEndPos().x;
-
-		}
-
-		unit_.isGravity_ = true;
-		unit_.isStageCollision_ = true;
-
-		int cnt = tackle_->GetCounter();
-
-		if (cnt > 120) {
-			attackState_ = BossTutorial::ATTACK::NON;
-		}
-		break;
-	}
-}
 
 void BossTutorial::BossDeath()
 {
