@@ -95,9 +95,10 @@ void GameScene::Draw(void)
 {
 	stage_->Draw();
 	enemy_->Draw();
-	player_->Draw();
 	boss_->Draw();
+	player_->Draw();
 	EffectManager::GetInstance()->Draw();
+
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 
 	int input = GetJoypadInputState(DX_INPUT_PAD1);
@@ -205,7 +206,7 @@ void GameScene::PlayerToBoss(void)
 	//	//mana.HitStop();
 	//}
 
-	PlayerToBossAttack();
+	//PlayerToBossAttack();
 }
 
 void GameScene::PlayerToBossAttack(void)

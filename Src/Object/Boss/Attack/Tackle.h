@@ -1,5 +1,7 @@
 #pragma once
 #include"AttackBase.h"
+#include"../../UnitBase.h"
+#include"../../../Application.h"
 #include<DxLib.h>
 
 class Tackle : public AttackBase
@@ -7,14 +9,16 @@ class Tackle : public AttackBase
 public:
 
 	static constexpr float TACKLE_SPEED = 20.0f;
-	static constexpr int WAIT_TIME = 60;
 	static constexpr int TACKLE_START = 180;
 
-	enum MODE
+	enum class DIR
 	{
-		NON_MODE,
-		STANP_MODE,
-		TACKLE_MODE,
+		NON,
+		JUMP,
+		STANDBY,
+		TACKLE_LEFT,
+		TACKLE_RIGHT,
+		END,
 	};
 
 	Tackle();
@@ -25,9 +29,18 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
-	void SetTarget(Vector2F target) { target_ = target; }
+	DIR GetDir(void) { return dir_; }
+
+	void SetEndPos(Vector2F end) { endPos = end; }
+	Vector2F GetEndPos(void) { return endPos; }
+	int GetCounter(void) { return counter_; }
+	void SetStandBy(bool flg) { isStandby_ = flg; }
 
 private:
-	VECTOR bPos_;
-	Vector2F target_;
+
+	DIR dir_;
+	int counter_;
+	bool isStandby_;
+
+	Vector2F endPos;
 };

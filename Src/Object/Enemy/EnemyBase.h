@@ -1,6 +1,8 @@
 #pragma once
 #include"../UnitBase.h"
 
+class Player;
+
 class EnemyBase : public UnitBase
 {
 public:
@@ -20,12 +22,12 @@ public:
     virtual void Draw()override;
     virtual void Release()override;
 
-    void SetPlayer(UnitBase* p) { player_ = p; }
+    void SetPlayer(Player* p) { player_ = p; }
 
 
 
 protected:
-    UnitBase* player_;
+    Player* player_;
 
     void Move(Vector2F targetpos, float moveSpeed);
 

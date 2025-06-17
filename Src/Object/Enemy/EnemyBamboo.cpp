@@ -30,11 +30,12 @@ void EnemyBamboo::Update()
 {
 	Move();
 	UnitBase::Update();
-
 }
 
 void EnemyBamboo::Draw()
 {
+	DrawHp();
+
 	if (unit_.isDraw_)
 	{
 		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, EX_SIZE, rotate_, modelId_, true, move_);
@@ -66,26 +67,44 @@ void EnemyBamboo::SetDmg(int damage)
 void EnemyBamboo::Move()
 {
 
-	// ターゲットが近くにいるかどうかを判別
-	if (unit_.nextpos_.x - 250 <= targetPos_.x && unit_.nextpos_.x + 250 >= targetPos_.x)
-	{
-		// ターゲットの近くにいる場合その方向に向かって進む
-		move_ = unit_.nextpos_.x <= targetPos_.x ? RIGHT : LEFT;
+	/*if (unit_.pos_.x < targetPos_.x - 50) {
+		move_ = MOVE::RIGHT;
 	}
+	else if (unit_.pos_.x > targetPos_.x + 50) {
+		move_ = MOVE::LEFT;
+	}
+	else {
+		move_ = MOVE::IDOL;
+	}*/
+
+	//float dx = targetPos_.x - unit_.pos_.x;
+	//if (std::abs(dx) > 50) {
+	//	move_ = (dx > 0) ? MOVE::RIGHT : MOVE::LEFT;
+	//}
+	//else {
+	//	move_ = MOVE::IDOL;
+	//}
 
 	switch (move_)
 	{
-	case EnemyBamboo::RIGHT:
-		unit_.nextpos_.x += MOVE_SPEED;
+	case MOVE::RIGHT:
+		unit_.pos_.x += MOVE_SPEED;
 		break;
-	case EnemyBamboo::LEFT:
-		unit_.nextpos_.x -= MOVE_SPEED;
+	case MOVE::LEFT:
+		unit_.pos_.x -= MOVE_SPEED;
 		break;
-	case EnemyBamboo::IDOL:
+	case MOVE::IDOL:
 		break;
 	}
+}
 
-
+void EnemyBamboo::DrawHp()
+{
+	int x1 = unit_.disppos_.x - 50;
+	int y1 = unit_.disppos_.y - All_SIZE_Y + 10;
+	int x2 = unit_.disppos_.x + 50;
+	int y2 = unit_.disppos_.y - All_SIZE_Y + 20;
+	DrawBar(x1, y1, x2, y2, unit_.hp_, HP_MAX, RGB(0, 0, 255));
 }
 
 // 接地している時の数値の代入などをまとめた関数
