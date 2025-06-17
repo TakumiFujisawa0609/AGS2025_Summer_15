@@ -33,7 +33,7 @@ public:
 
 
 	//ƒQƒbƒ^[ŠÖ”
-	const Base GetUnit(void)const { return unit_; }
+	const Base& GetUnit(void)const { return unit_; }
 
 	Vector2F GetStartPos(void)
 	{
