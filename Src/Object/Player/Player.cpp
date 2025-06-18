@@ -7,7 +7,7 @@
 #include"../../Manager/Collision.h"
 #include"../../Manager/SceneManager.h"
 #include"../Stage/Stage.h"
-#include"../../Scene/GameScene.h"
+#include"../../Scene/TutorialScene.h"
 
 
 

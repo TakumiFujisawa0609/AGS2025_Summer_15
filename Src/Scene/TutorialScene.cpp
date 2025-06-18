@@ -1,4 +1,4 @@
-#include "GameScene.h"
+#include "TutorialScene.h"
 
 #include<DxLib.h>
 
@@ -19,15 +19,15 @@
 
 
 
-GameScene::GameScene(void)
+TutorialScene::TutorialScene(void)
 {
 }
 
-GameScene::~GameScene(void)
+TutorialScene::~TutorialScene(void)
 {
 }
 
-void GameScene::Init(void)
+void TutorialScene::Init(void)
 {
 	Collision::CreateInstance();
 
@@ -59,7 +59,7 @@ void GameScene::Init(void)
 
 }
 
-void GameScene::Update(void)
+void TutorialScene::Update(void)
 {
 	auto& ins = InputManager::GetInstance();
 
@@ -97,7 +97,7 @@ void GameScene::Update(void)
 
 }
 
-void GameScene::Draw(void)
+void TutorialScene::Draw(void)
 {
 	stage_->Draw();
 	enemy_->Draw();
@@ -108,7 +108,7 @@ void GameScene::Draw(void)
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 }
 
-void GameScene::Release(void)
+void TutorialScene::Release(void)
 {
 	bamboo_->Release();
 	delete bamboo_;
@@ -135,7 +135,7 @@ void GameScene::Release(void)
 
 
 
-void GameScene::Scroll(void)
+void TutorialScene::Scroll(void)
 {
 	auto& camera = Camera::GetInstance();
 	if (!boss_->GetEnCount()) {
@@ -156,7 +156,7 @@ void GameScene::Scroll(void)
 	}
 }
 
-void GameScene::ObjCollision(void)
+void TutorialScene::ObjCollision(void)
 {
 	PlayerToBamboo();
 
@@ -165,7 +165,7 @@ void GameScene::ObjCollision(void)
 	if (boss_->GetEnCount()) PlayerToBoss();
 }
 
-void GameScene::PlayerToBamboo(void)
+void TutorialScene::PlayerToBamboo(void)
 {
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
@@ -180,7 +180,7 @@ void GameScene::PlayerToBamboo(void)
 
 
 
-void GameScene::PlayerToEnemyBamboo(void)
+void TutorialScene::PlayerToEnemyBamboo(void)
 {
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
@@ -195,7 +195,7 @@ void GameScene::PlayerToEnemyBamboo(void)
 	PlayerAttackToEnemyBamboo();
 }
 
-void GameScene::PlayerAttackToEnemyBamboo(void)
+void TutorialScene::PlayerAttackToEnemyBamboo(void)
 {
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
@@ -225,7 +225,7 @@ void GameScene::PlayerAttackToEnemyBamboo(void)
 
 
 
-void GameScene::PlayerToBoss(void)
+void TutorialScene::PlayerToBoss(void)
 {
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
@@ -239,7 +239,7 @@ void GameScene::PlayerToBoss(void)
 	PlayerAttackToBoss();
 }
 
-void GameScene::PlayerToBossAttack(void)
+void TutorialScene::PlayerToBossAttack(void)
 {
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
@@ -255,7 +255,7 @@ void GameScene::PlayerToBossAttack(void)
 
 
 
-void GameScene::PlayerAttackToBoss(void)
+void TutorialScene::PlayerAttackToBoss(void)
 {
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();

@@ -1,7 +1,7 @@
 #include <chrono>
 #include "../Common/Fader.h"
 #include "../Scene/TitleScene.h"
-#include "../Scene/GameScene.h"
+#include "../Scene/TutorialScene.h"
 #include "../Scene/GameClear.h"
 #include "../Scene/GameOverScene.h"
 #include "Camera.h"
@@ -26,7 +26,7 @@ SceneManager& SceneManager::GetInstance(void)
 void SceneManager::Init(void)
 {
 
-	sceneId_ = SCENE_ID::GAME;
+	sceneId_ = SCENE_ID::TUTORIAL;
 	waitSceneId_ = SCENE_ID::NONE;
 	cntl_ = CNTL::NONE;
 
@@ -50,7 +50,7 @@ void SceneManager::Init(void)
 	Init3D();
 
 	// èâä˙ÉVÅ[ÉìÇÃê›íË
-	DoChangeScene(SCENE_ID::GAME);
+	DoChangeScene(SCENE_ID::TUTORIAL);
 
 }
 
@@ -257,8 +257,8 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		scene_ = new TitleScene();
 		break;
 
-	case SCENE_ID::GAME:
-		scene_ = new GameScene();
+	case SCENE_ID::TUTORIAL:
+		scene_ = new TutorialScene();
 		break;
 
 	case SCENE_ID::CLEAR:

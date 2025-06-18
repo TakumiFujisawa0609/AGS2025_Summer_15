@@ -8,15 +8,15 @@ class EnemyManager;
 class BossTutorial;
 class BambooManager;
 
-class GameScene :
+class TutorialScene :
     public SceneBase
 {
 public:
 	// コンストラクタ
-	GameScene(void);
+	TutorialScene(void);
 
 	// デストラクタ
-	~GameScene(void);
+	~TutorialScene(void);
 
 	void Init(void) override;
 	void Update(void) override;
