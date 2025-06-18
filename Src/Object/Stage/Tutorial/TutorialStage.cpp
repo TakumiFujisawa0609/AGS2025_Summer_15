@@ -1,24 +1,24 @@
-#include "Stage.h"
+#include "TutorialStage.h"
 #include<sstream>
 #include<fstream>
 #include<iostream>
 #include<vector>
 #include<string>
 
-#include"../../Utility/AsoUtility.h"
-#include"../../Application.h"
-#include"../../Manager/Camera.h"
+#include"../../../Utility/AsoUtility.h"
+#include"../../../Application.h"
+#include"../../../Manager/Camera.h"
 
-Stage::Stage()
+TutorialStage::TutorialStage()
 {
 
 }
 
-Stage::~Stage()
+TutorialStage::~TutorialStage()
 {
 }
 
-bool Stage::Load(void)
+bool TutorialStage::Load(void)
 {
 	if (LoadMapData() == false)return false;
 
@@ -33,7 +33,7 @@ bool Stage::Load(void)
 }
 
 //‰Šú‰»ˆ—
-void Stage::Init()
+void TutorialStage::Init()
 {
 	Camera& camera = Camera::GetInstance();
 
@@ -43,12 +43,12 @@ void Stage::Init()
 }
 
 //XVˆ—
-void Stage::Update()
+void TutorialStage::Update()
 {
 
 }
 //•`‰æˆ—
-void Stage::Draw()
+void TutorialStage::Draw()
 {
 	DrawBox(0, 0, Application::MAIN_SCREEN_SIZE_X, Application::MAIN_SCREEN_SIZE_Y, GetColor(70, 70, 255), true);
 	
@@ -75,7 +75,7 @@ void Stage::Draw()
 }
 
 //‰ğ•úˆ—
-bool Stage::Release()
+bool TutorialStage::Release()
 {
 	if (DeleteGraph(haikei_) == -1) {
 		return false;
@@ -87,11 +87,12 @@ bool Stage::Release()
 			return false;
 	}
 
+
 	return true;
 }
 
 
-bool Stage::LoadMapData()
+bool TutorialStage::LoadMapData()
 {
 	memset((int*)&mapDataArray[0], -1, sizeof(int) * STAGE_NUM_MAX);
 

@@ -321,8 +321,8 @@ void SceneManager::ZoomCtr(void)
 		zoomPos_.x -= (worldZoomPos.x - drawRange.x);
 	}
 
-	if (worldZoomPos.x + drawRange.x >= Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X) {
-		zoomPos_.x -= ((worldZoomPos.x + drawRange.x) - (Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X));
+	if (worldZoomPos.x + drawRange.x >= TutorialStage::STAGE_CHIP_SIZE * TutorialStage::STAGE_NUM_X) {
+		zoomPos_.x -= ((worldZoomPos.x + drawRange.x) - (TutorialStage::STAGE_CHIP_SIZE * TutorialStage::STAGE_NUM_X));
 	}
 
 }

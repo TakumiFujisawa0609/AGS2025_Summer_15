@@ -75,7 +75,7 @@
     <ClCompile Include="Src\Object\UnitBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Stage\Stage.cpp">
+    <ClCompile Include="Src\Object\Stage\Tutorial\TutorialStage.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Manager\Collision.cpp">
@@ -120,7 +120,7 @@
     <ClCompile Include="Src\Object\Bamboo\BambooManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Scene\BattledoneScene.cpp">
+    <ClCompile Include="Src\Scene\BattledomeScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -188,7 +188,7 @@
     <ClInclude Include="Src\Object\UnitBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Stage\Stage.h">
+    <ClInclude Include="Src\Object\Stage\Tutorial\TutorialStage.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Manager\Collision.h">
@@ -233,7 +233,7 @@
     <ClInclude Include="Src\Object\Bamboo\BambooManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Scene\BattledoneScene.h">
+    <ClInclude Include="Src\Scene\BattledomeScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

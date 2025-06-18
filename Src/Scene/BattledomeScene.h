@@ -2,11 +2,11 @@
 
 #include"SceneBase.h"
 
-class BattledoneScene : public SceneBase
+class BattledomeScene : public SceneBase
 {
 public:
-	BattledoneScene();
-	~BattledoneScene();
+	BattledomeScene();
+	~BattledomeScene();
 
 	void Init(void) override;
 	void Update(void) override;

@@ -39,17 +39,17 @@ const float Collision::GetStageLine(const Vector2F& pos, const Vector2F& size , 
 	}
 
 	// 座標をチップ配列番号に変換
-	int pX = static_cast<int>(work.x / Stage::STAGE_CHIP_SIZE);
-	int pY = static_cast<int>(work.y / Stage::STAGE_CHIP_SIZE);
+	int pX = static_cast<int>(work.x / TutorialStage::STAGE_CHIP_SIZE);
+	int pY = static_cast<int>(work.y / TutorialStage::STAGE_CHIP_SIZE);
 
 	int searchRange = 1;
 	int sizePix = (dir == UP || dir == DOWN) ? (int)size.x : (int)size.y;
 	int offsetPix = (dir == UP || dir == DOWN) ? (int)work.x : (int)work.y;
 
-	searchRange += sizePix / Stage::STAGE_CHIP_SIZE;
-	if (sizePix % Stage::STAGE_CHIP_SIZE == 0) searchRange--;
-	if (offsetPix % Stage::STAGE_CHIP_SIZE > Stage::STAGE_CHIP_SIZE - (sizePix % Stage::STAGE_CHIP_SIZE)) searchRange++;
-	if (sizePix % Stage::STAGE_CHIP_SIZE == 0 && offsetPix % Stage::STAGE_CHIP_SIZE > 0) searchRange++;
+	searchRange += sizePix / TutorialStage::STAGE_CHIP_SIZE;
+	if (sizePix % TutorialStage::STAGE_CHIP_SIZE == 0) searchRange--;
+	if (offsetPix % TutorialStage::STAGE_CHIP_SIZE > TutorialStage::STAGE_CHIP_SIZE - (sizePix % TutorialStage::STAGE_CHIP_SIZE)) searchRange++;
+	if (sizePix % TutorialStage::STAGE_CHIP_SIZE == 0 && offsetPix % TutorialStage::STAGE_CHIP_SIZE > 0) searchRange++;
 
 	int line = (dir == UP || dir == DOWN) ? pY : pX;
 	int step = (dir == UP || dir == LEFT) ? -1 : 1;
@@ -60,12 +60,12 @@ const float Collision::GetStageLine(const Vector2F& pos, const Vector2F& size , 
 			int x = (dir == UP || dir == DOWN) ? pX + i : line;
 			int y = (dir == LEFT || dir == RIGHT) ? pY + i : line;
 
-			if (x < 0 || x >= Stage::STAGE_NUM_X || y < 0 || y >= Stage::STAGE_NUM_Y) {
+			if (x < 0 || x >= TutorialStage::STAGE_NUM_X || y < 0 || y >= TutorialStage::STAGE_NUM_Y) {
 				bre = true;
 				break;
 			}
 
-			if (mapData_[y][x] != (int)Stage::TILE::WHITE) {
+			if (mapData_[y][x] != (int)TutorialStage::TILE::WHITE) {
 				bre = true;
 				break;
 			}
@@ -76,7 +76,7 @@ const float Collision::GetStageLine(const Vector2F& pos, const Vector2F& size , 
 		// ステージの端に到達してたら終了
 		if (step == -1 && line <= 0) break;
 
-		int limit = (dir == UP || dir == DOWN) ? Stage::STAGE_NUM_Y : Stage::STAGE_NUM_X;
+		int limit = (dir == UP || dir == DOWN) ? TutorialStage::STAGE_NUM_Y : TutorialStage::STAGE_NUM_X;
 		if (step == 1 && line>=limit) break;
 
 		// 到達していなかったら1つ先をチェックしにいく
@@ -86,7 +86,7 @@ const float Collision::GetStageLine(const Vector2F& pos, const Vector2F& size , 
 	// 1つ手前に戻る（UP/LEFT時）(ただし、ステージの端に到達していた場合戻らない)
 	if (step == -1 && line > 0) line++;
 
-	return static_cast<float>(line * Stage::STAGE_CHIP_SIZE);
+	return static_cast<float>(line * TutorialStage::STAGE_CHIP_SIZE);
 }
 
 

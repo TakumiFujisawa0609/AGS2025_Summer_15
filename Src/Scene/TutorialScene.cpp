@@ -13,7 +13,7 @@
 #include"../Object/Player/Player.h"
 #include"../Object/Manager/EnemyManager.h"
 #include"../Object/Boss/BossTutorial.h"
-#include"../Object/Stage/Stage.h"
+#include"../Object/Stage/Tutorial/TutorialStage.h"
 #include"../Object/Bamboo/BambooManager.h"
 
 
@@ -31,7 +31,7 @@ void TutorialScene::Init(void)
 {
 	Collision::CreateInstance();
 
-	stage_ = new Stage();
+	stage_ = new TutorialStage();
 	stage_->Init();
 
 	enemy_ = new EnemyManager();
@@ -45,8 +45,8 @@ void TutorialScene::Init(void)
 	boss_->SetPlayer(player_);
 
 	Camera::GetInstance().Init();
-	for (int y = 0; y < Stage::STAGE_NUM_Y; y++) {
-		for (int x = 0; x < Stage::STAGE_NUM_X; x++) {
+	for (int y = 0; y < TutorialStage::STAGE_NUM_Y; y++) {
+		for (int x = 0; x < TutorialStage::STAGE_NUM_X; x++) {
 			Collision::GetInstance().SetStage(stage_->GetMapData(y, x), y, x);
 		}
 	}
@@ -140,7 +140,7 @@ void TutorialScene::Scroll(void)
 	auto& camera = Camera::GetInstance();
 	if (!boss_->GetEnCount()) {
 		if (player_->GetUnit().disppos_.x > Application::MAIN_SCREEN_SIZE_X / 7 * 4 &&
-			!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X) - ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) >= Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X)) {
+			!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X) - ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) >= TutorialStage::STAGE_CHIP_SIZE * TutorialStage::STAGE_NUM_X)) {
 			camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
 		}
 

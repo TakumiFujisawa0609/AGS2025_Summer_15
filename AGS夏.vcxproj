@@ -145,7 +145,7 @@
     <ClCompile Include="Src\Object\Boss\Attack\Tackle.cpp" />
     <ClCompile Include="Src\Object\Boss\BossTutorial.cpp" />
     <ClCompile Include="Src\Object\Enemy\EnemyBase.cpp" />
-    <ClCompile Include="Src\Scene\BattledoneScene.cpp" />
+    <ClCompile Include="Src\Scene\BattledomeScene.cpp" />
     <ClCompile Include="Src\Utility\ShapesPosition.cpp" />
     <ClCompile Include="Src\Manager\Collision.cpp" />
     <ClCompile Include="Src\Object\Manager\EnemyManager.cpp" />
@@ -168,7 +168,7 @@
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
-    <ClCompile Include="Src\Object\Stage\Stage.cpp" />
+    <ClCompile Include="Src\Object\Stage\Tutorial\TutorialStage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Bamboo\Bamboo.h" />
@@ -183,7 +183,7 @@
     <ClInclude Include="Src\Object\Boss\Attack\Tackle.h" />
     <ClInclude Include="Src\Object\Boss\BossTutorial.h" />
     <ClInclude Include="Src\Object\Enemy\EnemyBase.h" />
-    <ClInclude Include="Src\Scene\BattledoneScene.h" />
+    <ClInclude Include="Src\Scene\BattledomeScene.h" />
     <ClInclude Include="Src\Utility\ShapesPosition.h" />
     <ClInclude Include="Src\Manager\Collision.h" />
     <ClInclude Include="Src\Object\Manager\EnemyManager.h" />
@@ -207,7 +207,7 @@
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\TitleScene.h" />
     <ClInclude Include="Src\Utility\AsoUtility.h" />
-    <ClInclude Include="Src\Object\Stage\Stage.h" />
+    <ClInclude Include="Src\Object\Stage\Tutorial\TutorialStage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

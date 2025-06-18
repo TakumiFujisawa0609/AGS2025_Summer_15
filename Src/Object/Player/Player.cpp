@@ -6,7 +6,7 @@
 #include"../../Manager/Camera.h"
 #include"../../Manager/Collision.h"
 #include"../../Manager/SceneManager.h"
-#include"../Stage/Stage.h"
+#include"../Stage/Tutorial/TutorialStage.h"
 #include"../../Scene/TutorialScene.h"
 
 

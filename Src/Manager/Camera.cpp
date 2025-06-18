@@ -2,7 +2,7 @@
 
 
 #include"../Application.h"
-#include"../Object/Stage/Stage.h"
+#include"../Object/Stage/Tutorial/TutorialStage.h"
 
 Camera* Camera::instance = nullptr;
 
@@ -41,7 +41,7 @@ void Camera::Follow(dir xy, float move)
 
 bool Camera::BossSet()
 {
-	return cameraPos.x == (Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X)-(Application::MAIN_SCREEN_SIZE_X-((Application::MAIN_SCREEN_SIZE_X-Application::SCREEN_SIZE_X)/2));
+	return cameraPos.x == (TutorialStage::STAGE_CHIP_SIZE * TutorialStage::STAGE_NUM_X)-(Application::MAIN_SCREEN_SIZE_X-((Application::MAIN_SCREEN_SIZE_X-Application::SCREEN_SIZE_X)/2));
 }
 
 

@@ -1,6 +1,6 @@
 #pragma once
 #include"../Utility/AsoUtility.h"
-#include"../Object/Stage/Stage.h"
+#include"../Object/Stage/Tutorial/TutorialStage.h"
 #include"../Object/Common/Base.h"
 
 class Collision
@@ -70,7 +70,7 @@ public:
 private:
 	static Collision* instance;
 
-	int mapData_[Stage::STAGE_NUM_Y][Stage::STAGE_NUM_X];
+	int mapData_[TutorialStage::STAGE_NUM_Y][TutorialStage::STAGE_NUM_X];
 
 
 

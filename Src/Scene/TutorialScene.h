@@ -3,7 +3,7 @@
 #include "SceneBase.h"
 
 class Player;
-class Stage;
+class TutorialStage;
 class EnemyManager;
 class BossTutorial;
 class BambooManager;
@@ -28,7 +28,7 @@ public:
 private:
 	//プレイヤークラスのインスタンス
 	Player* player_;
-	Stage* stage_;
+	TutorialStage* stage_;
 	EnemyManager* enemy_ ;
 	BossTutorial* boss_;
 	BambooManager* bamboo_;

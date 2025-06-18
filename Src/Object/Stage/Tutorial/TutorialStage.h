@@ -1,8 +1,8 @@
 #pragma once
 #include<DxLib.h>
-#include"../../Utility/AsoUtility.h"
+#include"../../../Utility/AsoUtility.h"
 
-class Stage
+class TutorialStage
 {
 public:
 
@@ -24,8 +24,8 @@ public:
 		BLACK,
 	};
 
-	Stage();
-	~Stage();
+	TutorialStage();
+	~TutorialStage();
 	bool Load(void);
 	void Init(void);
 	void Update(void);
