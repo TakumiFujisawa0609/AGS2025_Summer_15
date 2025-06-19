@@ -12,22 +12,17 @@ Stage1::Stage1()
 Stage1::~Stage1()
 {
 }
+
+void Stage1::Draw(void)
+{
+
+	StageBase::Draw();
+}
+
 void Stage1::Load(void)
 {
-	int load[STAGE_CHIP_ALL];
 
-	int err = LoadDivGraph("Data/Image/Stage/ForestTile.png", STAGE_CHIP_ALL,
-		STAGE_CHIP_X, STAGE_CHIP_Y,
-		STAGE_CHIP_SIZE, STAGE_CHIP_SIZE, load);
-	if (err == -1) {
-		return;
-	}
-
-	chipId_.insert(chipId_.end(), load, load + STAGE_CHIP_ALL);
-
-	if (!LoadMapData()) {
-		return;
-	}
+	LoadMapData();
 }
 
 bool Stage1::LoadMapData(void)

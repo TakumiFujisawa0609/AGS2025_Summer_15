@@ -2,11 +2,12 @@
 #include<DxLib.h>
 #include"../../../Utility/AsoUtility.h"
 
-class TutorialStage
+#include"../StageBase.h"
+
+class TutorialStage : public StageBase
 {
 public:
 
-	static constexpr int STAGE_CHIP_SIZE = 32;		//ステージのマップチップのサイズ
 	static constexpr int STAGE_CHIP_X = 10;		//ステージのマップチップの幅
 	static constexpr int STAGE_CHIP_Y = 6;		//ステージのマップチップの高さ
 	static constexpr int STAGE_CHIP_ALL = STAGE_CHIP_X * STAGE_CHIP_Y;		//ステージのマップチップの数
@@ -26,21 +27,10 @@ public:
 
 	TutorialStage();
 	~TutorialStage();
-	bool Load(void);
-	void Init(void);
-	void Update(void);
-	void Draw(void);
-	bool Release(void);
 
-
-	int GetMapData(int y, int x) { return mapDataArray[y][x]; }
+	void Draw(void)override;
 
 private:
-
-	bool LoadMapData(void);
-	int haikei_;
-
-
-	int stageArrayId[STAGE_CHIP_ALL];	//ステージのマップチップのハンドル番号
-	int mapDataArray[STAGE_NUM_Y][STAGE_NUM_X];
+	void Load(void)override;
+	bool LoadMapData(void)override;
 };

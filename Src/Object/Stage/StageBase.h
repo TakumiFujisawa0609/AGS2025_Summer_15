@@ -3,17 +3,19 @@
 #include<vector>
 #include<map>
 
-class BossStageBase
+class StageBase
 {
 public:
 	static constexpr int STAGE_CHIP_SIZE = 32;		//ステージのマップチップのサイズ
 
-	BossStageBase();
-	~BossStageBase();
+	StageBase();
+	~StageBase();
 
 	void Init(void);
-	void Draw(void);
+	virtual void Draw(void);
 	void Release(void);
+
+	std::map<int, std::map<int, int>> GetMapData(void) { return mapData_; }
 
 protected:
 	virtual void Load(void) = 0;

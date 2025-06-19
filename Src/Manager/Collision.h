@@ -1,6 +1,7 @@
 #pragma once
 #include"../Utility/AsoUtility.h"
 #include"../Object/Stage/Tutorial/TutorialStage.h"
+#include"../Object/Stage/BossStage/Stage1.h"
 #include"../Object/Common/Base.h"
 
 #include<map>

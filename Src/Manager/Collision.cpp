@@ -60,12 +60,11 @@ const float Collision::GetStageLine(const Vector2F& pos, const Vector2F& size , 
 			int x = (dir == UP || dir == DOWN) ? pX + i : line;
 			int y = (dir == LEFT || dir == RIGHT) ? pY + i : line;
 
-			if (x < 0 || x >= TutorialStage::STAGE_NUM_X || y < 0 || y >= TutorialStage::STAGE_NUM_Y) {
+			if (x < 0 || x >= mapData.at(0).size() || y < 0 || y >= mapData.size()) {
 				bre = true;
 				break;
 			}
-
-			if (mapData_[y][x] != (int)TutorialStage::TILE::WHITE) {
+			if (mapData.at(y).at(x) != 0) {
 				bre = true;
 				break;
 			}
@@ -76,7 +75,7 @@ const float Collision::GetStageLine(const Vector2F& pos, const Vector2F& size , 
 		// ステージの端に到達してたら終了
 		if (step == -1 && line <= 0) break;
 
-		int limit = (dir == UP || dir == DOWN) ? TutorialStage::STAGE_NUM_Y : TutorialStage::STAGE_NUM_X;
+		int limit = (dir == UP || dir == DOWN) ? mapData.size() : mapData.at(0).size();
 		if (step == 1 && line>=limit) break;
 
 		// 到達していなかったら1つ先をチェックしにいく

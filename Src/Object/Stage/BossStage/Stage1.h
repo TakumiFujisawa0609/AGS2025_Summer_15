@@ -1,8 +1,8 @@
 #pragma once
 
-#include"BossStageBase.h"
+#include"../StageBase.h"
 
-class Stage1 :public BossStageBase
+class Stage1 :public StageBase
 {
 public:
 	static constexpr int STAGE_CHIP_X = 10;		//ステージのマップチップの幅
@@ -12,7 +12,7 @@ public:
 	Stage1();
 	~Stage1();
 
-
+	void Draw(void)override;
 
 private:
 	void Load(void)override;

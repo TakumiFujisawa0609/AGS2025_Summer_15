@@ -45,11 +45,7 @@ void TutorialScene::Init(void)
 	boss_->SetPlayer(player_);
 
 	Camera::GetInstance().Init();
-	for (int y = 0; y < TutorialStage::STAGE_NUM_Y; y++) {
-		for (int x = 0; x < TutorialStage::STAGE_NUM_X; x++) {
-			Collision::GetInstance().SetStage(stage_->GetMapData(y, x), y, x);
-		}
-	}
+	Collision::GetInstance().SetStage(stage_->GetMapData());
 
 	bamboo_ = new BambooManager();
 	bamboo_->Init((Vector2F*)&player_->GetUnit().pos_);
@@ -64,7 +60,6 @@ void TutorialScene::Update(void)
 	auto& ins = InputManager::GetInstance();
 
 	player_->Update();
-	stage_->Update();
 	enemy_->Update();
 	boss_->Update();
 	bamboo_->Update();

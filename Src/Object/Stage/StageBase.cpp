@@ -1,30 +1,33 @@
-#include"BossStageBase.h"
+#include"StageBase.h"
 
 #include<DxLib.h>
 
-#include"../../../Manager/Camera.h"
+#include"../../Manager/Camera.h"
+#include"../../Application.h"
 
-BossStageBase::BossStageBase()
+StageBase::StageBase()
 {
 }
 
-BossStageBase::~BossStageBase()
+StageBase::~StageBase()
 {
 }
 
-void BossStageBase::Init(void)
+void StageBase::Init(void)
 {
 	Load();
 }
 
-void BossStageBase::Draw(void)
+void StageBase::Draw(void)
 {
+
+
 	//マップチップ画像を表示
 	for (int yy = 0; yy < mapData_.size(); yy++) {
 		for (int xx = 0; xx < mapData_[yy].size(); xx++) {
 
 			int chip = mapData_[yy][xx];
-
+			
 			int dx = STAGE_CHIP_SIZE * xx - Camera::GetInstance().GetPos().x;
 			int dy = STAGE_CHIP_SIZE * yy - Camera::GetInstance().GetPos().y;
 
@@ -33,7 +36,7 @@ void BossStageBase::Draw(void)
 	}
 }
 
-void BossStageBase::Release(void)
+void StageBase::Release(void)
 {
 	for (int i = 0; i < mapData_.size(); i++) {
 		mapData_[i].clear();
