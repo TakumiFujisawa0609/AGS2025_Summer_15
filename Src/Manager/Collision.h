@@ -3,6 +3,8 @@
 #include"../Object/Stage/Tutorial/TutorialStage.h"
 #include"../Object/Common/Base.h"
 
+#include<map>
+
 class Collision
 {
 private:
@@ -15,6 +17,7 @@ public:
 
 	void Init();
 	void SetStage(int map,int y,int x){ mapData_[y][x] = map; }
+	void SetStage(std::map<int, std::map<int, int>> map) { mapData = map; }
 
 	enum DIR {
 		UP,
@@ -72,8 +75,7 @@ private:
 
 	int mapData_[TutorialStage::STAGE_NUM_Y][TutorialStage::STAGE_NUM_X];
 
-
-
+	std::map<int, std::map<int, int>> mapData;
 
 
 	//‰~Œ`‚Ìî•ñ‚ğ‚Ü‚Æ‚ß‚é\‘¢‘Ì(ˆø”‚Åg‚¤)
