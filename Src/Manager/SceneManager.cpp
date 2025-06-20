@@ -1,4 +1,5 @@
 #include <chrono>
+#include"UiManager.h"
 #include "../Common/Fader.h"
 #include "../Scene/TitleScene.h"
 #include "../Scene/TutorialScene.h"
@@ -26,7 +27,7 @@ SceneManager& SceneManager::GetInstance(void)
 void SceneManager::Init(void)
 {
 
-	sceneId_ = SCENE_ID::TUTORIAL;
+	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
 	cntl_ = CNTL::NONE;
 
@@ -35,7 +36,8 @@ void SceneManager::Init(void)
 
 	// カメラ
 	Camera::CreateInstance();
-
+	//Ui
+	UiManager::CreateInstance();
 
 	isSceneChanging_ = false;
 
@@ -50,7 +52,9 @@ void SceneManager::Init(void)
 	Init3D();
 
 	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::TUTORIAL);
+	DoChangeScene(SCENE_ID::TITLE);
+	//初期シーン用Uiのせて地
+	UiManager::GetInstance()->ChangeSceneUi();
 
 }
 
@@ -115,10 +119,8 @@ void SceneManager::Update(void)
 		scale_ = 1.0f;
 		//--------------------------------
 		scene_->Update();
+		UiManager::GetInstance()->Update();
 	}
-
-
-
 }
 
 void SceneManager::Draw(void)
@@ -136,7 +138,7 @@ void SceneManager::Draw(void)
 
 	// 描画
 	scene_->Draw();
-
+	UiManager::GetInstance()->Draw();
 
 	SetDrawScreen(DX_SCREEN_BACK);
 	ClearDrawScreen();
@@ -178,7 +180,7 @@ void SceneManager::Destroy(void)
 	delete instance_;
 
 	Camera::DeleteInstance();
-
+	UiManager::DeleteInstance();
 }
 
 void SceneManager::ChangeScene(SCENE_ID nextId)
@@ -271,7 +273,8 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	}
 
 	scene_->Init();
-
+	UiManager::GetInstance()->ChangeSceneUi();
+	UiManager::GetInstance()->Init();
 	ResetDeltaTime();
 
 	waitSceneId_ = SCENE_ID::NONE;

@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\UiManager.cpp" />
     <ClCompile Include="Src\Object\Effect\EffectTakeDrop.cpp" />
     <ClCompile Include="Src\Object\Effect\EffectBase.cpp" />
     <ClCompile Include="Src\Object\Manager\EffectManager.cpp" />
@@ -151,6 +152,7 @@
     <ClCompile Include="Src\Object\Enemy\EnemyBase.cpp" />
     <ClCompile Include="Src\Object\Stage\StageBase.cpp" />
     <ClCompile Include="Src\Object\Stage\BossStage\Stage1.cpp" />
+    <ClCompile Include="Src\Object\Ui\UiBase.cpp" />
     <ClCompile Include="Src\Scene\BattledomeScene.cpp" />
     <ClCompile Include="Src\Utility\ShapesPosition.cpp" />
     <ClCompile Include="Src\Manager\Collision.cpp" />
@@ -177,6 +179,7 @@
     <ClCompile Include="Src\Object\Stage\Tutorial\TutorialStage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\UiManager.h" />
     <ClInclude Include="Src\Object\Effect\EffectTakeDrop.h" />
     <ClInclude Include="Src\Object\Effect\EffectBase.h" />
     <ClInclude Include="Src\Object\Manager\EffectManager.h" />
@@ -195,6 +198,7 @@
     <ClInclude Include="Src\Object\Enemy\EnemyBase.h" />
     <ClInclude Include="Src\Object\Stage\StageBase.h" />
     <ClInclude Include="Src\Object\Stage\BossStage\Stage1.h" />
+    <ClInclude Include="Src\Object\Ui\UiBase.h" />
     <ClInclude Include="Src\Scene\BattledomeScene.h" />
     <ClInclude Include="Src\Utility\ShapesPosition.h" />
     <ClInclude Include="Src\Manager\Collision.h" />
