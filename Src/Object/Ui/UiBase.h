@@ -26,4 +26,5 @@ protected:
     virtual void Load(void) = 0;
     // パラメータ設定(純粋仮想関数)
     virtual void SetParam(void) = 0;
+    int modelId = 0;
 };

@@ -177,6 +177,7 @@
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
     <ClCompile Include="Src\Object\Stage\Tutorial\TutorialStage.cpp" />
+    <ClCompile Include="Src\Object\Ui\UiTitle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Manager\UiManager.h" />
@@ -224,6 +225,7 @@
     <ClInclude Include="Src\Scene\TitleScene.h" />
     <ClInclude Include="Src\Utility\AsoUtility.h" />
     <ClInclude Include="Src\Object\Stage\Tutorial\TutorialStage.h" />
+    <ClInclude Include="Src\Object\Ui\UiTitle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

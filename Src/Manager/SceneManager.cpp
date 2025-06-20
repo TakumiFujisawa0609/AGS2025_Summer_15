@@ -7,6 +7,7 @@
 #include "../Scene/GameOverScene.h"
 #include "Camera.h"
 #include "SceneManager.h"
+#include"UiManager.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
 
@@ -53,9 +54,6 @@ void SceneManager::Init(void)
 
 	// 初期シーンの設定
 	DoChangeScene(SCENE_ID::TITLE);
-	//初期シーン用Uiのせて地
-	UiManager::GetInstance()->ChangeSceneUi();
-
 }
 
 void SceneManager::Init3D(void)
@@ -119,7 +117,6 @@ void SceneManager::Update(void)
 		scale_ = 1.0f;
 		//--------------------------------
 		scene_->Update();
-		UiManager::GetInstance()->Update();
 	}
 }
 
@@ -138,7 +135,6 @@ void SceneManager::Draw(void)
 
 	// 描画
 	scene_->Draw();
-	UiManager::GetInstance()->Draw();
 
 	SetDrawScreen(DX_SCREEN_BACK);
 	ClearDrawScreen();
@@ -273,8 +269,6 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	}
 
 	scene_->Init();
-	UiManager::GetInstance()->ChangeSceneUi();
-	UiManager::GetInstance()->Init();
 	ResetDeltaTime();
 
 	waitSceneId_ = SCENE_ID::NONE;

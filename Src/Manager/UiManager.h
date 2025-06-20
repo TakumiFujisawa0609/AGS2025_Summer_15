@@ -14,7 +14,7 @@ public:
     static void DeleteInstance(void) { if (instance_ != nullptr) { delete instance_; instance_ = nullptr; } }
 
     // エフェクト追加（ID指定）
-    void AddEffect(std::unique_ptr<UiBase>ui, const Vector2F* generatePos);
+    void AddUi(std::unique_ptr<UiBase>ui);
 
     // 全エフェクトの更新・描画・解放
     void Init(void);
@@ -22,7 +22,6 @@ public:
     void Draw(void);
     void Release(void);
 
-    void ChangeSceneUi(void);
 private:
     // デフォルトコンストラクタをprivateにして、外部から生成できない様にする
     UiManager(void);
