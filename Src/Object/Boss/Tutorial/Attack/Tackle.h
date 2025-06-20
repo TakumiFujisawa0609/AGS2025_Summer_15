@@ -1,7 +1,7 @@
 #pragma once
 #include"AttackBase.h"
-#include"../../UnitBase.h"
-#include"../../../Application.h"
+#include"../../../UnitBase.h"
+#include"../../../../Application.h"
 #include<DxLib.h>
 
 class Tackle : public AttackBase

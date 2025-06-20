@@ -48,7 +48,7 @@
     <ClCompile Include="Src\Scene\GameOverScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Scene\GameScene.cpp">
+    <ClCompile Include="Src\Scene\TutorialScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Scene\SceneBase.cpp">
@@ -75,7 +75,7 @@
     <ClCompile Include="Src\Object\UnitBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Stage\Stage.cpp">
+    <ClCompile Include="Src\Object\Stage\Tutorial\TutorialStage.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Manager\Collision.cpp">
@@ -87,25 +87,25 @@
     <ClCompile Include="Src\Object\Enemy\EnemyBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Boss\BossTutorial.cpp">
+    <ClCompile Include="Src\Object\Boss\Tutorial\BossTutorial.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Boss\Attack\Tackle.cpp">
+    <ClCompile Include="Src\Object\Boss\Tutorial\Attack\Tackle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Boss\Attack\AttackBase.cpp">
+    <ClCompile Include="Src\Object\Boss\Tutorial\Attack\AttackBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Boss\Attack\Bullet.cpp">
+    <ClCompile Include="Src\Object\Boss\Tutorial\Attack\Bullet.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Boss\Attack\Slash.cpp">
+    <ClCompile Include="Src\Object\Boss\Tutorial\Attack\Slash.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Player\Attack\PlayerAttackBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Boss\Attack\Blast.cpp">
+    <ClCompile Include="Src\Object\Boss\Tutorial\Attack\Blast.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Player\Attack\Default.cpp">
@@ -121,6 +121,24 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Player\Attack\BPAttack.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Bamboo\Bamboo.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Bamboo\BambooManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Scene\BattledomeScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Stage\StageBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Stage\BossStage\Stage1.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Boss\BigBoss\BossBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -158,7 +176,7 @@
     <ClInclude Include="Src\Scene\GameOverScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Scene\GameScene.h">
+    <ClInclude Include="Src\Scene\TutorialScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Scene\SceneBase.h">
@@ -188,7 +206,7 @@
     <ClInclude Include="Src\Object\UnitBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Stage\Stage.h">
+    <ClInclude Include="Src\Object\Stage\Tutorial\TutorialStage.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Manager\Collision.h">
@@ -200,25 +218,25 @@
     <ClInclude Include="Src\Object\Enemy\EnemyBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Boss\BossTutorial.h">
+    <ClInclude Include="Src\Object\Boss\Tutorial\BossTutorial.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Boss\Attack\Tackle.h">
+    <ClInclude Include="Src\Object\Boss\Tutorial\Attack\Tackle.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Boss\Attack\AttackBase.h">
+    <ClInclude Include="Src\Object\Boss\Tutorial\Attack\AttackBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Boss\Attack\Bullet.h">
+    <ClInclude Include="Src\Object\Boss\Tutorial\Attack\Bullet.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Boss\Attack\Slash.h">
+    <ClInclude Include="Src\Object\Boss\Tutorial\Attack\Slash.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Player\Attack\PlayerAttackBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Boss\Attack\Blast.h">
+    <ClInclude Include="Src\Object\Boss\Tutorial\Attack\Blast.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Player\Attack\Default.h">
@@ -234,6 +252,24 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Player\Attack\BPAttack.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Bamboo\Bamboo.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Bamboo\BambooManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Scene\BattledomeScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Stage\StageBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Stage\BossStage\Stage1.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Boss\BigBoss\BossBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

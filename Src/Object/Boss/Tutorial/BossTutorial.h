@@ -1,5 +1,5 @@
 #pragma once
-#include"../Enemy/EnemyBase.h"
+#include"../../Enemy/EnemyBase.h"
 #include<map>
 
 #include"Attack/Slash.h"
@@ -85,6 +85,8 @@ public:
 	//攻撃パターンの関数ポインタ
 	using AttackFunc = void(BossTutorial::*)();
 
+
+
 private:
 
 	//画像
@@ -107,6 +109,7 @@ private:
 	int frameCounter_;
 
 	void BossDraw();
+
 
 	//ボスの立ち位置の振り分け
 	int targetIndex_;

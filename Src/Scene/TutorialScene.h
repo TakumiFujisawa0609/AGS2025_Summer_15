@@ -4,22 +4,22 @@
 #include "SceneBase.h"
 
 class Player;
-class Stage;
+class TutorialStage;
 class EnemyManager;
 class BossTutorial;
 class EffectManager;
 class EffectBase;
 class BambooManager;
 
-class GameScene :
+class TutorialScene :
     public SceneBase
 {
 public:
 	// コンストラクタ
-	GameScene(void);
+	TutorialScene(void);
 
 	// デストラクタ
-	~GameScene(void);
+	~TutorialScene(void);
 
 	void Init(void) override;
 	void Update(void) override;
@@ -31,7 +31,7 @@ public:
 private:
 	//プレイヤークラスのインスタンス
 	Player* player_;
-	Stage* stage_;
+	TutorialStage* stage_;
 	EnemyManager* enemy_ ;
 	BossTutorial* boss_;
 	BambooManager* bamboo_;

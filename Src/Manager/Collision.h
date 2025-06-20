@@ -1,7 +1,10 @@
 #pragma once
 #include"../Utility/AsoUtility.h"
-#include"../Object/Stage/Stage.h"
+#include"../Object/Stage/Tutorial/TutorialStage.h"
+#include"../Object/Stage/BossStage/Stage1.h"
 #include"../Object/Common/Base.h"
+
+#include<map>
 
 class Collision
 {
@@ -15,6 +18,7 @@ public:
 
 	void Init();
 	void SetStage(int map,int y,int x){ mapData_[y][x] = map; }
+	void SetStage(std::map<int, std::map<int, int>> map) { mapData = map; }
 
 	enum DIR {
 		UP,
@@ -70,10 +74,9 @@ public:
 private:
 	static Collision* instance;
 
-	int mapData_[Stage::STAGE_NUM_Y][Stage::STAGE_NUM_X];
+	int mapData_[TutorialStage::STAGE_NUM_Y][TutorialStage::STAGE_NUM_X];
 
-
-
+	std::map<int, std::map<int, int>> mapData;
 
 
 	//‰~Œ`‚Ìî•ñ‚ğ‚Ü‚Æ‚ß‚é\‘¢‘Ì(ˆø”‚Åg‚¤)

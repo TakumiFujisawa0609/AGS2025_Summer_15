@@ -2,8 +2,8 @@
 
 #include<DxLib.h>
 
-#include"../../../Utility/ShapesPosition.h"
-#include"../../../Manager/Camera.h"
+#include"../../../../Utility/ShapesPosition.h"
+#include"../../../../Manager/Camera.h"
 
 
 Bullet::Bullet()

@@ -1,7 +1,7 @@
 ﻿#include"BossTutorial.h"
-#include"../Player/Player.h"
+#include"../../Player/Player.h"
 
-#include"../../Manager/Camera.h"
+#include"../../../Manager/Camera.h"
 
 BossTutorial::BossTutorial()
 {

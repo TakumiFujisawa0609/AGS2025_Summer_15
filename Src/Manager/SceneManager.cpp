@@ -1,7 +1,7 @@
 #include <chrono>
 #include "../Common/Fader.h"
 #include "../Scene/TitleScene.h"
-#include "../Scene/GameScene.h"
+#include "../Scene/TutorialScene.h"
 #include "../Scene/GameClear.h"
 #include "../Scene/GameOverScene.h"
 #include "Camera.h"
@@ -26,7 +26,7 @@ SceneManager& SceneManager::GetInstance(void)
 void SceneManager::Init(void)
 {
 
-	sceneId_ = SCENE_ID::GAME;
+	sceneId_ = SCENE_ID::TUTORIAL;
 	waitSceneId_ = SCENE_ID::NONE;
 	cntl_ = CNTL::NONE;
 
@@ -50,7 +50,7 @@ void SceneManager::Init(void)
 	Init3D();
 
 	// ‰ŠúƒV[ƒ“‚ÌÝ’è
-	DoChangeScene(SCENE_ID::GAME);
+	DoChangeScene(SCENE_ID::TUTORIAL);
 
 }
 
@@ -257,8 +257,8 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		scene_ = new TitleScene();
 		break;
 
-	case SCENE_ID::GAME:
-		scene_ = new GameScene();
+	case SCENE_ID::TUTORIAL:
+		scene_ = new TutorialScene();
 		break;
 
 	case SCENE_ID::CLEAR:
@@ -321,8 +321,8 @@ void SceneManager::ZoomCtr(void)
 		zoomPos_.x -= (worldZoomPos.x - drawRange.x);
 	}
 
-	if (worldZoomPos.x + drawRange.x >= Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X) {
-		zoomPos_.x -= ((worldZoomPos.x + drawRange.x) - (Stage::STAGE_CHIP_SIZE * Stage::STAGE_NUM_X));
+	if (worldZoomPos.x + drawRange.x >= TutorialStage::STAGE_CHIP_SIZE * TutorialStage::STAGE_NUM_X) {
+		zoomPos_.x -= ((worldZoomPos.x + drawRange.x) - (TutorialStage::STAGE_CHIP_SIZE * TutorialStage::STAGE_NUM_X));
 	}
 
 }
