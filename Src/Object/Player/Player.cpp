@@ -60,8 +60,9 @@ void Player::Init()
 	BambooPowerImg_ = LoadGraph("Data/Image/Player/BambooBar.png");
 
 
-	bp_ = 100;
-	bpConsCounter_ = 10.0f;
+	bp_ = BP_MAX;
+	bpConsCounter_ = 1;
+	chargeTime_ = 0;
 
 	//ÉKÅ[Éhä÷åW
 	// ÉKÅ[Éhä÷åW
@@ -118,14 +119,14 @@ void Player::Draw()
 	}
 
 	DrawBar(330, 290, 800, 330, unit_.hp_, HP_MAX, RGB(0, 255, 0));
-	DrawBar(330, 335, 500, 350, bp_, BP_MAX, RGB(0, 0, 255));
-	for (int i = 0; i < bp_/ 10; i++) {
+	//DrawBar(330, 335, 500, 350, bp_, BP_MAX, RGB(0, 0, 255));
+	for (int i = 0; i < bp_; i++) {
 		Vector2F bPos = { 330,320 };
-		if (i < 5) {
+		if (i < 10) {
 			DrawGraph(bPos.x + i * BAMBOO_SIZE_X, bPos.y, BambooPowerImg_, true);
 		}
 		else {
-			DrawGraph(bPos.x + (i - 5) * BAMBOO_SIZE_X, bPos.y + BAMBOO_SIZE_Y / 2, BambooPowerImg_, true);
+			DrawGraph(bPos.x + (i - 10) * BAMBOO_SIZE_X, bPos.y + BAMBOO_SIZE_Y / 2, BambooPowerImg_, true);
 		}
 	}
 }
@@ -242,14 +243,20 @@ void Player::DoStateAttack()
 void Player::DoStateBPAttack(void)
 {
 	auto& ins = InputManager::GetInstance();
-	if (ins.IsNew(KEY_INPUT_H) || nowBambooKey_) {
-		bpConsCounter_ += 0.25;
-		if (bpConsCounter_ > bp_)bpConsCounter_ = bp_;
-		if (bpConsCounter_ > MAX_BP_CONS)bpConsCounter_ = MAX_BP_CONS;
+	if ((ins.IsNew(KEY_INPUT_H) || nowBambooKey_) && bp_ > 0) {
+		chargeTime_++;
+		if (chargeTime_ > CHARGE_TIME) {
+			chargeTime_ = 0;
+
+			bpConsCounter_++;
+			if (bpConsCounter_ > bp_)bpConsCounter_ = bp_;
+			if (bpConsCounter_ > MAX_BP_CONS)bpConsCounter_ = MAX_BP_CONS;
+		}
 	}
 
-	if ((ins.IsTrgUp(KEY_INPUT_H)) || (prevBambooKey_ && !nowBambooKey_)) {
+	if (((ins.IsTrgUp(KEY_INPUT_H)) || (prevBambooKey_ && !nowBambooKey_)) && bp_ > 0) {
 		ChangeState(Player::STATE::BP_ATTACK);
+		chargeTime_ = 0;
 	}
 }
 
@@ -355,7 +362,7 @@ void Player::Attack()
 // ì¡éÍçUåÇèÛë‘
 void Player::BambooAttack(void)
 {
-	bp_ -= (int)bpConsCounter_;
+	bp_ -= bpConsCounter_;
 
 	bool recycll = false;
 
@@ -373,7 +380,7 @@ void Player::BambooAttack(void)
 		BpAtIns_[BpAtIns_.size() - 1]->On(unit_.pos_, dir_, bpConsCounter_);
 	}
 
-	bpConsCounter_ = 10.0f;
+	bpConsCounter_ = 1;
 
 	ChangeState(Player::STATE::MOVE);
 }

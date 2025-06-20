@@ -110,9 +110,11 @@ public:
 	//----------------------------------------------------------------------------------------------
 
 	// “ÁŽêUŒ‚ó‘Ô‚ÅŽg—p‚·‚é’è”’è‹`--------------------------------------------------------------
-	static constexpr int BP_MAX = 100;
+	static constexpr int BP_MAX = 20;
 
-	static constexpr int MAX_BP_CONS = 30;
+	static constexpr int MAX_BP_CONS = 3;
+
+	static constexpr int CHARGE_TIME = 60;
 
 	// ŠÖ”
 	void BpOptain(int bp) { this->bp_ += bp; if (this->bp_ > BP_MAX) { this->bp_ = BP_MAX; } }
@@ -150,6 +152,8 @@ public:
 	void Hit(int damage, Vector2F bPos);
 	//----------------------------------------------------------------------------------------------
 
+
+	void SetInvici(int time) { unit_.inviCounter_ = time; }
 
 
 	Player();
@@ -302,7 +306,8 @@ private:
 	int BambooPowerImg_;
 
 	int bp_;
-	float bpConsCounter_;
+	int chargeTime_;
+	int bpConsCounter_;
 	//---------------------------------------
 
 

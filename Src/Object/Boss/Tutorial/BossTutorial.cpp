@@ -207,6 +207,9 @@ void BossTutorial::PattaernManager(void)
 	case BossTutorial::E_ATTACK:
 		Attack();
 		break;
+	case BossTutorial::E_DOWN:
+		Down();
+		break;
 	case BossTutorial::E_DEATH:
 		Death();
 		break;
@@ -276,7 +279,7 @@ void BossTutorial::Move()
 		attackCounter_ = 0;
 		if (!(targetIndex_ == 1)) {
 			TargetLook(player_->GetUnit().pos_);
-			attackState_ = BossTutorial::SLASH;// (ATTACK)GetRand((int)ATTACK::MAX - 1);
+			attackState_ = (ATTACK)GetRand((int)ATTACK::MAX - 1);
 			pattern_ = E_ATTACK;
 		}
 		else {
@@ -306,6 +309,24 @@ void BossTutorial::Attack()
 		attackCounter_ = 0;
 		pattern_ = E_IDLE;
 		attackState_ = NON;
+	}
+}
+
+void BossTutorial::Down()
+{
+	unit_.isGravity_ = true;
+
+	if (bossDir_ == AttackBase::DIR::LEFT) {
+		unit_.nextpos_.x += 10.0f;
+	}
+	else
+	{
+		unit_.nextpos_.x -= 10.0f;
+	}
+
+
+	if (unit_.isGround_) {
+		pattern_ = PATTERN::E_IDLE;
 	}
 }
 
@@ -615,7 +636,7 @@ void BossTutorial::ObjHit(int i)
 	case BossTutorial::ROAR:
 		break;
 	case BossTutorial::BLAST:
-		
+		blast_->Hit();
 		break;
 	case BossTutorial::TACKLE:
 		break;
@@ -684,4 +705,17 @@ void BossTutorial::SetDamage(int damage)
 	if (unit_.hp_ <= 0) {
 		unit_.isAlive_ = false;
 	}
+}
+
+void BossTutorial::SetDown(Vector2F pos)
+{
+	if (unit_.pos_.x < pos.x) {
+		bossDir_ = AttackBase::DIR::RIGHT;
+	}
+	else {
+		bossDir_ = AttackBase::DIR::LEFT;
+	}
+	unit_.yAccel_ = -30.0f;
+
+	pattern_ = PATTERN::E_DOWN;
 }

@@ -20,6 +20,8 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
+	float GetScale(void) { return scale_; }
+
 	void Collect(void) { unit_.isAlive_ = false; }
 private:
 	Vector2F* pPos_;

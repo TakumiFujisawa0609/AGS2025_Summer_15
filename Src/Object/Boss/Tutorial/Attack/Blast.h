@@ -21,6 +21,13 @@ public:
 
 	void LookOn(Vector2F pos) { target_ = pos; lookOn_ = true; }
 
+	void Hit(void) {
+		obj_.size_ = { (float)BLAST_SIZE,(float)BLAST_SIZE };
+		obj_.radius_ = (float)(BLAST_SIZE / 2);
+		lookOn_ = false;
+		blast_ = true;
+	}
+
 private:
 	int reticleImg_;
 	int blastImg_[BLAST_NUM_MAX];

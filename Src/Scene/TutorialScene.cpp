@@ -183,7 +183,7 @@ void TutorialScene::PlayerToBamboo(void)
 	for (auto& b : bamboo_->GetBamboos()) {
 		if (ins.CircleAndRect(b->GetUnit(),player_->GetUnit(),false)) {
 			b->Collect();
-			player_->BpOptain(b->GetUnit().radius_ / 5.0f);
+			player_->BpOptain((int)b->GetScale());
 		}
 	}
 }
@@ -213,7 +213,7 @@ void TutorialScene::PlayerAttackToEnemyBamboo(void)
 	for (int i = 0; i < EnemyBamboo::ENEMY_MAX; i++) {
 		if (ins.CircleAndRect(player_->DefaultAtt(), enemy_->GetBamboo(i)->GetUnit())) {
 			enemy_->GetBamboo(i)->SetDmg(0);
-			bamboo_->Create(enemy_->GetBamboo(i)->GetUnit().pos_, 2);
+			bamboo_->Create(enemy_->GetBamboo(i)->GetUnit().pos_, 1);
 		}
 		for (auto& bpAtt : player_->GetBpAtt()) {
 			if (ins.Rect(bpAtt->GetObj(), enemy_->GetBamboo(i)->GetUnit())) {
@@ -241,12 +241,16 @@ void TutorialScene::PlayerToBoss(void)
 	auto& mana = SceneManager::GetInstance().GetInstance();
 
 	if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
-		player_->Hit(5,boss_->GetUnit().pos_);
+		if (boss_->GetAttack() == BossTutorial::ATTACK::SLASH || boss_->GetAttack() == BossTutorial::ATTACK::TACKLE) {
+			player_->Hit(5, boss_->GetUnit().pos_);
+		}
 	}
 
 	PlayerToBossAttack();
 
 	PlayerAttackToBoss();
+
+	PlayerAttackToBossAttack();
 }
 
 void TutorialScene::PlayerToBossAttack(void)
@@ -270,9 +274,16 @@ void TutorialScene::PlayerAttackToBoss(void)
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
 	if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {
-		mana.HitStop();
-		boss_->SetDamage(0);
-		bamboo_->Create(boss_->GetUnit().pos_, 3);
+		if (boss_->GetAttack() == BossTutorial::ATTACK::SLASH || boss_->GetAttack() == BossTutorial::ATTACK::TACKLE) {
+			boss_->SetDown(player_->DefaultAtt().pos_);
+			mana.HitStop();
+			player_->SetInvici(50);
+		}
+		else {
+			mana.HitStop();
+			boss_->SetDamage(0);
+			bamboo_->Create(boss_->GetUnit().pos_, 1);
+		}
 	}
 
 	for (auto& bpAtt : player_->GetBpAtt()) {
@@ -287,4 +298,25 @@ void TutorialScene::PlayerAttackToBoss(void)
 			boss_->SetDamage(bpAtt->GetDamage());
 		}
 	}
+}
+
+void TutorialScene::PlayerAttackToBossAttack(void)
+{
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
+	for (int i = 0; i < boss_->GetAttackObj().size(); i++) {
+		if (ins.Circle(boss_->GetAttackObj()[i], player_->DefaultAtt())) {
+			mana.HitStop();
+			boss_->ObjHit(i);
+			bamboo_->Create(boss_->GetAttackObj()[i].pos_, 3);
+			if (boss_->GetAttack() == BossTutorial::ATTACK::SLASH || boss_->GetAttack() == BossTutorial::ATTACK::TACKLE) {
+				boss_->SetDown(player_->DefaultAtt().pos_);
+			}
+			player_->SetInvici(50);
+		}
+	}
+
+
+	
+	
 }

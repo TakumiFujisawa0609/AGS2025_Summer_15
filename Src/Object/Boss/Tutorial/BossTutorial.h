@@ -30,6 +30,7 @@ public:
 		E_IDLE,
 		E_MOVE,
 		E_ATTACK,
+		E_DOWN,
 		E_DEATH,
 
 	};
@@ -87,6 +88,7 @@ public:
 	using AttackFunc = void(BossTutorial::*)();
 
 
+	void SetDown(Vector2F pos);
 
 private:
 
@@ -130,6 +132,8 @@ private:
 	void Idle(void);
 	void Move();
 	void Attack();
+	void Down();
+
 	void HpUpdate();
 
 	void Death();
@@ -151,6 +155,8 @@ private:
 
 	Vector2F panVec_;
 	Vector2F target_;
+
+
 
 	//ï`âÊÉpÉ^Å[Éì
 	DRAWPAT DrawPat_;
