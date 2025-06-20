@@ -1,7 +1,7 @@
 #include"Blast.h"
-#include"../../../Manager/Camera.h"
+#include"../../../../Manager/Camera.h"
 #include"../BossTutorial.h"
-#include"../../../Manager/SceneManager.h"
+#include"../../../../Manager/SceneManager.h"
 
 Blast::Blast()
 {

@@ -12,7 +12,7 @@
 
 #include"../Object/Player/Player.h"
 #include"../Object/Manager/EnemyManager.h"
-#include"../Object/Boss/BossTutorial.h"
+#include"../Object/Boss/Tutorial/BossTutorial.h"
 #include"../Object/Stage/Tutorial/TutorialStage.h"
 #include"../Object/Bamboo/BambooManager.h"
 

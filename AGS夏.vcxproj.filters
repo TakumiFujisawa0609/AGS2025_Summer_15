@@ -87,25 +87,25 @@
     <ClCompile Include="Src\Object\Enemy\EnemyBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Boss\BossTutorial.cpp">
+    <ClCompile Include="Src\Object\Boss\Tutorial\BossTutorial.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Boss\Attack\Tackle.cpp">
+    <ClCompile Include="Src\Object\Boss\Tutorial\Attack\Tackle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Boss\Attack\AttackBase.cpp">
+    <ClCompile Include="Src\Object\Boss\Tutorial\Attack\AttackBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Boss\Attack\Bullet.cpp">
+    <ClCompile Include="Src\Object\Boss\Tutorial\Attack\Bullet.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Boss\Attack\Slash.cpp">
+    <ClCompile Include="Src\Object\Boss\Tutorial\Attack\Slash.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Player\Attack\PlayerAttackBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Boss\Attack\Blast.cpp">
+    <ClCompile Include="Src\Object\Boss\Tutorial\Attack\Blast.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Player\Attack\Default.cpp">
@@ -209,25 +209,25 @@
     <ClInclude Include="Src\Object\Enemy\EnemyBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Boss\BossTutorial.h">
+    <ClInclude Include="Src\Object\Boss\Tutorial\BossTutorial.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Boss\Attack\Tackle.h">
+    <ClInclude Include="Src\Object\Boss\Tutorial\Attack\Tackle.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Boss\Attack\AttackBase.h">
+    <ClInclude Include="Src\Object\Boss\Tutorial\Attack\AttackBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Boss\Attack\Bullet.h">
+    <ClInclude Include="Src\Object\Boss\Tutorial\Attack\Bullet.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Boss\Attack\Slash.h">
+    <ClInclude Include="Src\Object\Boss\Tutorial\Attack\Slash.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Player\Attack\PlayerAttackBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Boss\Attack\Blast.h">
+    <ClInclude Include="Src\Object\Boss\Tutorial\Attack\Blast.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Player\Attack\Default.h">

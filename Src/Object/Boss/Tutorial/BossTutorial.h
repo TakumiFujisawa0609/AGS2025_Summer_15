@@ -1,5 +1,5 @@
 #pragma once
-#include"../Enemy/EnemyBase.h"
+#include"../../Enemy/EnemyBase.h"
 
 #include"Attack/Slash.h"
 #include"Attack/Bullet.h"

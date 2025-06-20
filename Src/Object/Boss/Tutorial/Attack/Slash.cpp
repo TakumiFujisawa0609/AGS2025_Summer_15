@@ -2,7 +2,7 @@
 
 #include<DxLib.h>
 
-#include"../../../Manager/Camera.h"
+#include"../../../../Manager/Camera.h"
 #include"../BossTutorial.h"
 
 Slash::Slash()
