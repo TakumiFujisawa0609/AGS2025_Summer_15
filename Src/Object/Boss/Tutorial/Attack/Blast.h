@@ -24,6 +24,7 @@ public:
 private:
 	int reticleImg_;
 	int blastImg_[BLAST_NUM_MAX];
+	int img;
 
 	Vector2F target_;
 

@@ -276,7 +276,7 @@ void BossTutorial::Move()
 		attackCounter_ = 0;
 		if (!(targetIndex_ == 1)) {
 			TargetLook(player_->GetUnit().pos_);
-			attackState_ = BossTutorial::SLASH;// (ATTACK)GetRand((int)ATTACK::MAX - 1);
+			attackState_ = (ATTACK)GetRand((int)ATTACK::MAX - 1);
 			pattern_ = E_ATTACK;
 		}
 		else {
