@@ -15,6 +15,10 @@ public:
 	static constexpr int LOAD_SIZE_X = 120;
 	static constexpr int LOAD_SIZE_Y = 80;		
 
+	//バンブーパワー画像サイズ
+	static constexpr int BAMBOO_SIZE_X = 64;
+	static constexpr int BAMBOO_SIZE_Y = 64;
+
 	//プレイヤーを表示させる大きさ
 	static constexpr float SIZE_SCALE = 2.3f;
 
@@ -295,6 +299,7 @@ private:
 	// 変数
 	std::vector<BPAttack*> BpAtIns_;
 	int BambooImg_;
+	int BambooPowerImg_;
 
 	int bp_;
 	float bpConsCounter_;

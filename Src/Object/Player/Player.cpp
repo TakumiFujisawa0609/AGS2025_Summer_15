@@ -57,6 +57,7 @@ void Player::Init()
 
 	// ì¡éÍçUåÇä÷åW
 	BambooImg_ = LoadGraph("Data/Image/Player/The_Bamboo.png");
+	BambooPowerImg_ = LoadGraph("Data/Image/Player/BambooBar.png");
 
 
 	bp_ = 100;
@@ -116,8 +117,17 @@ void Player::Draw()
 		t->Draw();
 	}
 
-	DrawBar(330, 290, 800,330, unit_.hp_, HP_MAX,RGB(0,255,0));
+	DrawBar(330, 290, 800, 330, unit_.hp_, HP_MAX, RGB(0, 255, 0));
 	DrawBar(330, 335, 500, 350, bp_, BP_MAX, RGB(0, 0, 255));
+	for (int i = 0; i < bp_/ 10; i++) {
+		Vector2F bPos = { 330,320 };
+		if (i < 5) {
+			DrawGraph(bPos.x + i * BAMBOO_SIZE_X, bPos.y, BambooPowerImg_, true);
+		}
+		else {
+			DrawGraph(bPos.x + (i - 5) * BAMBOO_SIZE_X, bPos.y + BAMBOO_SIZE_Y / 2, BambooPowerImg_, true);
+		}
+	}
 }
 
 void Player::Release()
@@ -202,7 +212,7 @@ void Player::DoStateAttack()
 	int input = GetJoypadInputState(DX_INPUT_PAD1);
 
 
-	if (!(ins.IsTrgDown(KEY_INPUT_J))&& !(!prevAttackKey_ && nowAttackKey_)) return;
+	if (!(ins.IsTrgDown(KEY_INPUT_J)) && !(!prevAttackKey_ && nowAttackKey_)) return;
 
 	// çUåÇèÛë‘Ç…ëJà⁄Ç∑ÇÈ
 	ChangeState(Player::STATE::ATTACK);
@@ -232,8 +242,8 @@ void Player::DoStateAttack()
 void Player::DoStateBPAttack(void)
 {
 	auto& ins = InputManager::GetInstance();
-	if (ins.IsNew(KEY_INPUT_H)||nowBambooKey_) {
-		bpConsCounter_+=0.25;
+	if (ins.IsNew(KEY_INPUT_H) || nowBambooKey_) {
+		bpConsCounter_ += 0.25;
 		if (bpConsCounter_ > bp_)bpConsCounter_ = bp_;
 		if (bpConsCounter_ > MAX_BP_CONS)bpConsCounter_ = MAX_BP_CONS;
 	}
@@ -251,7 +261,7 @@ void Player::DoStateGuard()
 	nowGuardKey_ = ins.IsNew(KEY_INPUT_L);
 	if (nowGuardKey_ && (perGuardKey_ != nowGuardKey_)) {
 		ChangeState(Player::STATE::GUARD);
-		ChangeMotion(MOTION::GUARD_PER,false);
+		ChangeMotion(MOTION::GUARD_PER, false);
 		guardState_ = Player::GUARD_STATE::GUARD_PER;
 		guardCounter_ = GUARD_PER_RECOVERY_FRAME;
 		isJustGuard_ = true;
@@ -262,7 +272,7 @@ void Player::DoStateEvasion()
 {
 	auto& ins = InputManager::GetInstance();
 
-	if (ins.IsTrgDown(KEY_INPUT_K)&&evasionPossiFlg_) {
+	if (ins.IsTrgDown(KEY_INPUT_K) && evasionPossiFlg_) {
 		ChangeState(Player::STATE::EVASION);
 		evasionPossiFlg_ = false;
 	}
@@ -274,8 +284,8 @@ void Player::DoStateEvasion()
 void Player::ChangeState(STATE st)
 {
 	unit_.isGravity_ = true;
-	defaultAttack_->Off();			
-	guardState_ = Player::GUARD_STATE::GUARD_POST; 
+	defaultAttack_->Off();
+	guardState_ = Player::GUARD_STATE::GUARD_POST;
 
 	switch (st)
 	{
@@ -356,10 +366,10 @@ void Player::BambooAttack(void)
 			break;
 		}
 	}
-	
+
 	if (!recycll) {
 		BpAtIns_.emplace_back(new BPAttack());
-		BpAtIns_[BpAtIns_.size()-1]->Init(BambooImg_);
+		BpAtIns_[BpAtIns_.size() - 1]->Init(BambooImg_);
 		BpAtIns_[BpAtIns_.size() - 1]->On(unit_.pos_, dir_, bpConsCounter_);
 	}
 
@@ -397,7 +407,7 @@ void Player::Guard()
 		break;
 	case Player::GUARD_STATE::GUARD:
 		//ÉKÅ[Éhéûä‘Ç™èIóπÇµÇΩÇÁå„çdíºÇ…ëJà⁄
-		if (guardCounter_<=0) {
+		if (guardCounter_ <= 0) {
 			isGuard_ = false;
 			guardCounter_ = GUARD_POST_RECOVERY_FRAME;
 			guardState_ = Player::GUARD_STATE::GUARD_POST;
@@ -460,11 +470,11 @@ void Player::Damage(void)
 
 	ChangeMotion(Player::MOTION::DAMAGE);
 
-	if (knockBackDir_ == AsoUtility::DIRECTION::E_DIR_LEFT) 
+	if (knockBackDir_ == AsoUtility::DIRECTION::E_DIR_LEFT)
 	{
 		unit_.nextpos_.x -= KNOCK_SPEED;
 	}
-	else if (knockBackDir_==AsoUtility::DIRECTION::E_DIR_RIGHT)
+	else if (knockBackDir_ == AsoUtility::DIRECTION::E_DIR_RIGHT)
 	{
 		unit_.nextpos_.x += KNOCK_SPEED;
 	}
@@ -713,8 +723,8 @@ void Player::LoadPlayerImage(void)
 	// ÉKÅ[ÉhèÛë‘ÇÃâÊëúÇì«Ç›çûÇ›--------------------------------------------------
 	motion = (int)MOTION::GUARD_PER;
 	int guardPerLoad[GUARD_PER_LOAD_NUM];
-	LoadDivGraph((basePath+"GuardPer.png").c_str(),
-		GUARD_PER_LOAD_NUM, GUARD_PER_LOAD_NUM,1,
+	LoadDivGraph((basePath + "GuardPer.png").c_str(),
+		GUARD_PER_LOAD_NUM, GUARD_PER_LOAD_NUM, 1,
 		LOAD_SIZE_X, LOAD_SIZE_Y, guardPerLoad);
 	image_[motion].insert(image_[motion].end(), guardPerLoad, guardPerLoad + GUARD_PER_LOAD_NUM);
 
@@ -727,8 +737,8 @@ void Player::LoadPlayerImage(void)
 
 	motion = (int)MOTION::GUARD_POST;
 	int guardPostLoad[GUARD_POST_LOAD_NUM];
-	LoadDivGraph((basePath+"GuardPost.png").c_str(),
-		GUARD_POST_LOAD_NUM, GUARD_POST_LOAD_NUM,1,
+	LoadDivGraph((basePath + "GuardPost.png").c_str(),
+		GUARD_POST_LOAD_NUM, GUARD_POST_LOAD_NUM, 1,
 		LOAD_SIZE_X, LOAD_SIZE_Y, guardPostLoad);
 	image_[motion].insert(image_[motion].end(), guardPostLoad, guardPostLoad + GUARD_POST_LOAD_NUM);
 	//-----------------------------------------------------------------------------
@@ -816,7 +826,7 @@ void Player::Hit(int damage, Vector2F bPos)
 
 		return;
 	}
-	else if (guardState_ == GUARD_STATE::GUARD_JUST||guardState_==GUARD_STATE::GUARD_PER) {
+	else if (guardState_ == GUARD_STATE::GUARD_JUST || guardState_ == GUARD_STATE::GUARD_PER) {
 		SceneManager::GetInstance().SHAKE();
 		SceneManager::GetInstance().Slow();
 		unit_.inviCounter_ = 100;
