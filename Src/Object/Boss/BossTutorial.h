@@ -1,5 +1,5 @@
 #pragma once
-#include"../../Enemy/EnemyBase.h"
+#include"../Enemy/EnemyBase.h"
 #include<map>
 
 #include"Attack/Slash.h"
@@ -30,7 +30,6 @@ public:
 		E_IDLE,
 		E_MOVE,
 		E_ATTACK,
-		E_DEATH,
 
 	};
 
@@ -86,14 +85,13 @@ public:
 	//攻撃パターンの関数ポインタ
 	using AttackFunc = void(BossTutorial::*)();
 
-
-
 private:
 
 	//画像
 	int idolImg;
 
 	int img_[DRAWPAT::DRAW_MAX];
+	int EndSlashImg_;
 
 	//戦闘を行うか行わないか
 	bool encount_;
@@ -108,17 +106,12 @@ private:
 	int flashInterval_;
 	int frameCounter_;
 
-	int diedCounter;
-	int slashCnt_;
-
 	void BossDraw();
-
 
 	//ボスの立ち位置の振り分け
 	int targetIndex_;
 
 	//状態
-	//攻撃
 	PATTERN pattern_;
 	ATTACK attackState_;
 	Tackle::DIR tDir_;
@@ -132,7 +125,7 @@ private:
 	void Attack();
 	void HpUpdate();
 
-	void Death();
+	void BossDeath();
 	void DrawHP();
 
 	//Attackの状態別の関数
@@ -155,7 +148,6 @@ private:
 	//描画パターン
 	DRAWPAT DrawPat_;
 
-	//右か左のどちらを向いているかの状態
 	AttackBase::DIR bossDir_;
 
 

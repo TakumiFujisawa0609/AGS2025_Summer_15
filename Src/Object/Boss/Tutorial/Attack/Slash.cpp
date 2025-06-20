@@ -23,13 +23,17 @@ void Slash::Init(const Vector2F* pos)
 	
 	obj_.size_ = { (float)X_SIZE,(float)Y_SIZE };
 	obj_.radius_ = obj_.size_.x;
+	obj_.isDraw_ = false;
 	
 	animCounter_ = 0;
+	startCnt = CHARGE;
 
 }
 
 void Slash::Update()
 {
+	startCnt--;
+	obj_.isDraw_ = true;
 
 	if (obj_.isAlive_) {
 		switch (dir_)
@@ -52,10 +56,10 @@ void Slash::Update()
 		}
 	}
 	else if (animCounter_ > 0) {
-
 		attackCounter_++;
 		if (attackCounter_ > 120) {
 			attackCounter_ = 0;
+			startCnt = CHARGE;
 			end_ = true;
 		}
 	}

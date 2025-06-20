@@ -88,10 +88,10 @@ void TutorialScene::Update(void)
 	ObjCollision();
 
 	//ƒV[ƒ“‘JˆÚ
-	if (!boss_->GetUnit().isAlive_)
+	/*if (!boss_->GetUnit().isAlive_)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
-	}
+	}*/
 	if (!player_->GetUnit().isAlive_) {
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}

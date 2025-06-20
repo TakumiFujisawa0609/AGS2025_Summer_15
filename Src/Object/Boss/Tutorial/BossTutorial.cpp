@@ -31,6 +31,8 @@ void BossTutorial::Init()
 	flashInterval_ = 20;
 	frameCounter_ = 0;
 	hitTimer_ = 0;
+	diedCounter = 0;
+	slashCnt_ = Slash::CHARGE;
 
 	pattern_ = E_NON;
 	attackState_ = NON;
@@ -48,13 +50,13 @@ void BossTutorial::Init()
 	DrawPat_ = NORMAL;
 
 
-	//攻撃パターン
+	//攻撃パターン{ Key, value }
 	attackUpdateFuncs_ = {
-		{ SLASH, &BossTutorial::SlashUpdate },
-		{ BULLET, &BossTutorial::BulletUpdate },
-		{ ROAR, &BossTutorial::RoarUpdate },
-		{ BLAST, &BossTutorial::BlastUpdate },
-		{ TACKLE, &BossTutorial::TackleUpdate }
+		{ SLASH,	&BossTutorial::SlashUpdate },
+		{ BULLET,	&BossTutorial::BulletUpdate },
+		{ ROAR,		&BossTutorial::RoarUpdate },
+		{ BLAST,	&BossTutorial::BlastUpdate },
+		{ TACKLE,	&BossTutorial::TackleUpdate }
 	};
 }
 
@@ -73,6 +75,7 @@ void BossTutorial::Update()
 	if (CheckHitKey(KEY_INPUT_0)) {
 		SetDamage(1);
 	}
+	if (CheckHitKey(KEY_INPUT_1))unit_.isAlive_ = false;
 
 	HpUpdate();
 
@@ -97,6 +100,7 @@ void BossTutorial::Draw()
 
 	if (encount_) {
 		DrawHP();
+	
 	}
 
 	if (unit_.isDraw_)
@@ -106,17 +110,6 @@ void BossTutorial::Draw()
 
 		BossDraw();
 
-		if (attackState_ == BossTutorial::SLASH)
-		{
-
-			DrawBar(
-				unit_.pos_.x - unit_.size_.x / 2,
-				unit_.pos_.y - unit_.size_.y / 2,
-				unit_.pos_.x + unit_.size_.x / 2,
-				unit_.pos_.y - unit_.size_.y / 2 + 15,
-				attackCounter_, Slash::CHARGE,
-				RGB(255, 0, 0, ));
-		}
 		slash_->Draw();
 	}
 
@@ -145,6 +138,17 @@ void BossTutorial::BossDraw()
 		break;
 	case E_SLASH_START:
 		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, img_[DrawPat_], true, bossDir_);
+
+		DrawBar(
+			unit_.disppos_.x - 100,
+			unit_.disppos_.y - unit_.size_.y / 2,
+			unit_.disppos_.x + 100,
+			unit_.disppos_.y - (unit_.size_.y / 2 + 10),
+			slashCnt_, Slash::CHARGE,
+			RGB(255, 0, 255),
+			RGB(0, 0, 0));
+
+
 		break;
 	case E_SLASH_END:
 		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y + 14, 1.0f, 0.0f, img_[DrawPat_], true, bossDir_);
@@ -156,6 +160,8 @@ void BossTutorial::BossDraw()
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		SetDrawBright(255, 255, 255);
 	}
+
+
 }
 
 void BossTutorial::Release()
@@ -200,6 +206,9 @@ void BossTutorial::PattaernManager(void)
 		break;
 	case BossTutorial::E_ATTACK:
 		Attack();
+		break;
+	case BossTutorial::E_DEATH:
+		Death();
 		break;
 	}
 }
@@ -267,7 +276,7 @@ void BossTutorial::Move()
 		attackCounter_ = 0;
 		if (!(targetIndex_ == 1)) {
 			TargetLook(player_->GetUnit().pos_);
-			attackState_ = (ATTACK)GetRand((int)ATTACK::MAX - 1);
+			attackState_ = BossTutorial::SLASH;// (ATTACK)GetRand((int)ATTACK::MAX - 1);
 			pattern_ = E_ATTACK;
 		}
 		else {
@@ -282,13 +291,17 @@ void BossTutorial::Attack()
 {
 	attackCounter_++;
 
+	//アタックの状態遷移（関数ポインタ）
 	auto it = attackUpdateFuncs_.find(attackState_);
 	(this->*(it->second))();
 
+	//デバック用（アタックの状態を攻撃をしてないときの状態にする）
 	if (CheckHitKey(KEY_INPUT_U) == 1) {
 		pattern_ = E_NON;
 	}
 
+	//バグが起きた時のための最終手段
+	//（一定の時間を超えたら攻撃状態が強制的に終了する）
 	if (attackCounter_ > 1000 || attackState_ == NON) {
 		attackCounter_ = 0;
 		pattern_ = E_IDLE;
@@ -373,7 +386,7 @@ void BossTutorial::HpUpdate()
 	if (encount_)
 	{
 		//ボスが死んだらHPバーが揺れ続ける（ただの演出）
-		if (unit_.hp_ == 0) {
+		if (unit_.hp_ <= 0) {
 			hpShakeTimer_ = 10;
 		}
 
@@ -422,8 +435,11 @@ void BossTutorial::SlashUpdate(void)
 		DrawPat_ = E_SLASH_START;
 	}
 
-	if (attackCounter_ < Slash::CHARGE) TargetLook(player_->GetUnit().pos_);
-
+	if (attackCounter_ < Slash::CHARGE)
+	{
+		slashCnt_--;
+		TargetLook(player_->GetUnit().pos_);
+	}
 
 	if (attackCounter_ == Slash::CHARGE) {
 		target_ = player_->GetUnit().pos_;
@@ -455,11 +471,14 @@ void BossTutorial::SlashUpdate(void)
 
 	if (slash_->End()) {
 		attackCounter_ = 0;
+		slashCnt_ = Slash::CHARGE;
 		unit_.isGravity_ = true;
 		pattern_ = E_IDLE;
 		attackState_ = NON;
 	}
 
+	slash_->SetBoss(unit_);
+	slash_->SetTarget(player_->GetUnit());
 	slash_->Update();
 }
 
@@ -632,10 +651,24 @@ AttackBase* BossTutorial::GetAttackIns(void)
 }
 
 
-void BossTutorial::BossDeath()
+void BossTutorial::Death()
 {
 	if (unit_.isAlive_)
 	{
+		diedCounter++;
+		bool is = diedCounter > 180 && unit_.pos_.y > GetStartPos().y + Application::SCREEN_SIZE_Y / 3;
+
+		if (!is) 
+		{
+			unit_.pos_.y += 5;
+		}
+		else
+		{
+
+		}
+
+
+
 
 	}
 }

@@ -4,7 +4,7 @@
 class Slash : public AttackBase
 {
 public:
-	static constexpr int CHARGE = 200;
+	static constexpr int CHARGE = 120;
 
 	static constexpr int ATTACK_TIME = 60;
 
@@ -33,8 +33,13 @@ public:
 
 	void SetTarget(const AttackBase::DIR dir) { dir_ = dir; }
 
+	void SetTarget(Base unit) { target_ = unit; }
+	void SetBoss(Base unit) { bUnit_ = unit; }
 
+	int GetStartCnt(void) { return startCnt; }
 private:
+	Base target_;
+	Base bUnit_;
 
 	bool isTurn;
 
@@ -42,6 +47,6 @@ private:
 
 	int animCounter_;
 
-
+	int startCnt;
 };
 
