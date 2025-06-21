@@ -22,7 +22,7 @@ void BossTutorial::Init()
 	unit_.pos_ = { 4500,250 };
 	unit_.nextpos_ = unit_.pos_;
 	unit_.size_ = { SIZE_X, SIZE_Y };
-	unit_.radius_ = unit_.size_.x;
+	unit_.radius_ = unit_.size_.x / 2;
 	unit_.speed_ = 10.0f;
 	unit_.hp_ = BOSS_HP;
 	dispHp_ = 0.0f;
@@ -279,7 +279,7 @@ void BossTutorial::Move()
 		attackCounter_ = 0;
 		if (!(targetIndex_ == 1)) {
 			TargetLook(player_->GetUnit().pos_);
-			attackState_ = (ATTACK)GetRand((int)ATTACK::MAX - 1);
+			attackState_ = ATTACK::SLASH;// (ATTACK)GetRand((int)ATTACK::MAX - 2);
 			pattern_ = E_ATTACK;
 		}
 		else {
@@ -326,7 +326,7 @@ void BossTutorial::Down()
 
 
 	if (unit_.isGround_) {
-		pattern_ = PATTERN::E_IDLE;
+		pattern_ = PATTERN::E_NON;
 	}
 }
 
@@ -450,10 +450,16 @@ void BossTutorial::DrawHP()
 
 void BossTutorial::SlashUpdate(void)
 {
+	static bool on = false;
+	static int time = 0;
+
 	if (attackCounter_ == 1) {
 		panVec_ = { 0.0f,0.0f };
 		slash_->Init(&unit_.pos_);
 		DrawPat_ = E_SLASH_START;
+		slashCnt_ = Slash::CHARGE;
+		on = false;
+		time = 0;
 	}
 
 	if (attackCounter_ < Slash::CHARGE)
@@ -475,24 +481,27 @@ void BossTutorial::SlashUpdate(void)
 		panVec_ = GetMoveVec(unit_.pos_, target_, unit_.speed_ * 3.0f);
 	}
 
-	if (!(panVec_.x == 0.0f && panVec_.y == 0.0f)) {
 
+
+	if (!(panVec_.x == 0.0f && panVec_.y == 0.0f)) {
 		unit_.isGravity_ = false;
 
-		float dis = target_.x - unit_.nextpos_.x;
+		float dis = target_.x - unit_.pos_.x;
 		if (dis < 0)dis *= -1;
-		if (dis <= player_->GetUnit().size_.x + unit_.size_.x) {
+		if (dis <= (player_->GetUnit().radius_ + unit_.radius_)+30.0f) {
 			panVec_ = { 0.0f,0.0f };
-			slash_->On();
-			DrawPat_ = E_SLASH_END;
+			on = true;
 		}
 	}
+	
+	if (on) time++;
+
+	if (time > 5) { slash_->On(); DrawPat_ = E_SLASH_END; time = 0; }
 
 	unit_.nextpos_ += panVec_;
 
 	if (slash_->End()) {
 		attackCounter_ = 0;
-		slashCnt_ = Slash::CHARGE;
 		unit_.isGravity_ = true;
 		pattern_ = E_IDLE;
 		attackState_ = NON;
@@ -715,7 +724,10 @@ void BossTutorial::SetDown(Vector2F pos)
 	else {
 		bossDir_ = AttackBase::DIR::LEFT;
 	}
-	unit_.yAccel_ = -30.0f;
+	unit_.yAccel_ = -10.0f;
+
+	unit_.nextpos_.y += unit_.yAccel_;
 
 	pattern_ = PATTERN::E_DOWN;
+	attackState_ = ATTACK::NON;
 }

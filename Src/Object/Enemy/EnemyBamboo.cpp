@@ -62,7 +62,7 @@ void EnemyBamboo::SetDmg(int damage)
 		unit_.isAlive_ = false;
 	}
 
-	unit_.inviCounter_ = 50;
+	unit_.inviCounter_ = 20;
 
 }
 

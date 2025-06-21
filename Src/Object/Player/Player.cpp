@@ -24,6 +24,7 @@ void Player::Init()
 {
 	// ’è”’l‚ğİ’è
 	unit_.size_ = { SIZE_X,SIZE_Y };
+	unit_.radius_ = unit_.size_.x / 2;
 	unit_.speed_ = RUN_SPEED;
 
 	// •Ï”‚Ì‰Šú‰»

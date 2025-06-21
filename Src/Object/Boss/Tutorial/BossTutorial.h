@@ -12,7 +12,7 @@ class BossTutorial : public EnemyBase
 {
 public:
 
-	static constexpr int SIZE_X = 200;
+	static constexpr int SIZE_X = 220;
 	static constexpr int SIZE_Y = 249;
 
 
@@ -89,6 +89,8 @@ public:
 
 
 	void SetDown(Vector2F pos);
+
+	DRAWPAT GetDrawpat(void) { return DrawPat_; }
 
 private:
 

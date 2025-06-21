@@ -170,9 +170,10 @@ void TutorialScene::ObjCollision(void)
 {
 	PlayerToBamboo();
 
-	PlayerToEnemyBamboo();
+	
 
 	if (boss_->GetEnCount()) PlayerToBoss();
+	else					 PlayerToEnemyBamboo();
 }
 
 void TutorialScene::PlayerToBamboo(void)
@@ -217,14 +218,9 @@ void TutorialScene::PlayerAttackToEnemyBamboo(void)
 		}
 		for (auto& bpAtt : player_->GetBpAtt()) {
 			if (ins.Rect(bpAtt->GetObj(), enemy_->GetBamboo(i)->GetUnit())) {
-				if (bpAtt->GetBp() > 25) {
-					mana.SHAKE();
-					mana.Slow();
-				}
-				else {
-					mana.HitStop();
-				}
-				enemy_->GetBamboo(i)->SetDmg(5);
+				if (bpAtt->GetBp() >= 3)mana.SHAKE();
+				mana.HitStop();
+				enemy_->GetBamboo(i)->SetDmg(bpAtt->GetDamage());
 			}
 		}
 	}
@@ -241,9 +237,7 @@ void TutorialScene::PlayerToBoss(void)
 	auto& mana = SceneManager::GetInstance().GetInstance();
 
 	if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
-		if (boss_->GetAttack() == BossTutorial::ATTACK::SLASH || boss_->GetAttack() == BossTutorial::ATTACK::TACKLE) {
-			player_->Hit(5, boss_->GetUnit().pos_);
-		}
+		player_->Hit(5, boss_->GetUnit().pos_);
 	}
 
 	PlayerToBossAttack();
@@ -274,7 +268,8 @@ void TutorialScene::PlayerAttackToBoss(void)
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
 	if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {
-		if (boss_->GetAttack() == BossTutorial::ATTACK::SLASH || boss_->GetAttack() == BossTutorial::ATTACK::TACKLE) {
+		if ((boss_->GetAttack() == BossTutorial::ATTACK::SLASH && boss_->GetDrawpat() == BossTutorial::DRAWPAT::E_SLASH_START) ||
+			boss_->GetAttack() == BossTutorial::ATTACK::TACKLE) {
 			boss_->SetDown(player_->DefaultAtt().pos_);
 			mana.HitStop();
 			player_->SetInvici(50);
@@ -288,13 +283,8 @@ void TutorialScene::PlayerAttackToBoss(void)
 
 	for (auto& bpAtt : player_->GetBpAtt()) {
 		if (ins.Rect(bpAtt->GetObj(), boss_->GetUnit())) {
-			if (bpAtt->GetBp() > 25) {
-				mana.SHAKE();
-				mana.Slow();
-			}
-			else {
-				mana.HitStop();
-			}
+			if (bpAtt->GetBp() >= 3) mana.SHAKE();
+			mana.HitStop();
 			boss_->SetDamage(bpAtt->GetDamage());
 		}
 	}
@@ -309,9 +299,6 @@ void TutorialScene::PlayerAttackToBossAttack(void)
 			mana.HitStop();
 			boss_->ObjHit(i);
 			bamboo_->Create(boss_->GetAttackObj()[i].pos_, 3);
-			if (boss_->GetAttack() == BossTutorial::ATTACK::SLASH || boss_->GetAttack() == BossTutorial::ATTACK::TACKLE) {
-				boss_->SetDown(player_->DefaultAtt().pos_);
-			}
 			player_->SetInvici(50);
 		}
 	}
