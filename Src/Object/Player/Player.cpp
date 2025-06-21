@@ -60,18 +60,9 @@ void Player::Init()
 	BambooImg_ = LoadGraph("Data/Image/Player/The_Bamboo.png");
 	BambooPowerImg_ = LoadGraph("Data/Image/Player/BambooBar.png");
 
-
 	bp_ = BP_MAX;
 	bpConsCounter_ = 1;
 	chargeTime_ = 0;
-
-	//ガード関係
-	// ガード関係
-	guardCounter_ = 0;
-	isGuard_ = false;
-	isJustGuard_ = false;
-	perGuardKey_ = false;
-	nowGuardKey_ = false;
 
 	// 回避関係
 	evasionCounter_ = 0;
@@ -164,12 +155,8 @@ void Player::StateManager(void)
 		DoStateAttack();
 		DoStateBPAttack();
 		DoStateEvasion();
-		DoStateGuard();
 		break;
 	case Player::STATE::ATTACK:
-		break;
-	case Player::STATE::GUARD:
-
 		break;
 	case Player::STATE::EVASION:
 
@@ -261,26 +248,12 @@ void Player::DoStateBPAttack(void)
 	}
 }
 
-// ガード状態
-void Player::DoStateGuard()
-{
-	auto& ins = InputManager::GetInstance();
-	perGuardKey_ = nowGuardKey_;
-	nowGuardKey_ = ins.IsNew(KEY_INPUT_L);
-	if (nowGuardKey_ && (perGuardKey_ != nowGuardKey_)) {
-		ChangeState(Player::STATE::GUARD);
-		ChangeMotion(MOTION::GUARD_PER, false);
-		guardState_ = Player::GUARD_STATE::GUARD_PER;
-		guardCounter_ = GUARD_PER_RECOVERY_FRAME;
-		isJustGuard_ = true;
-	}
-}
 // 回避状態
 void Player::DoStateEvasion()
 {
 	auto& ins = InputManager::GetInstance();
 
-	if (ins.IsTrgDown(KEY_INPUT_K) && evasionPossiFlg_) {
+	if ((ins.IsTrgDown(KEY_INPUT_K) || (nowEvasionKey_ && !prevEvasionKey_)) && evasionPossiFlg_) {
 		ChangeState(Player::STATE::EVASION);
 		evasionPossiFlg_ = false;
 	}
@@ -293,7 +266,6 @@ void Player::ChangeState(STATE st)
 {
 	unit_.isGravity_ = true;
 	defaultAttack_->Off();
-	guardState_ = Player::GUARD_STATE::GUARD_POST;
 
 	switch (st)
 	{
@@ -308,10 +280,6 @@ void Player::ChangeState(STATE st)
 	case Player::STATE::BP_ATTACK:
 		state_ = Player::STATE::BP_ATTACK;
 		stateFuncPtr = &Player::BambooAttack;
-		break;
-	case Player::STATE::GUARD:
-		state_ = Player::STATE::GUARD;
-		stateFuncPtr = &Player::Guard;
 		break;
 	case Player::STATE::EVASION:
 		state_ = Player::STATE::EVASION;
@@ -386,72 +354,6 @@ void Player::BambooAttack(void)
 	ChangeState(Player::STATE::MOVE);
 }
 
-// ガード状態
-void Player::Guard()
-{
-	auto& ins = InputManager::GetInstance();
-	perGuardKey_ = nowGuardKey_;
-	nowGuardKey_ = ins.IsNew(KEY_INPUT_L);
-
-	guardCounter_--;
-	switch (guardState_)
-	{
-	case Player::GUARD_STATE::GUARD_PER:
-		//前硬直が終了したらガードに遷移
-		if (guardCounter_ <= 0) {
-			isJustGuard_ = false;
-			isGuard_ = true;
-			guardCounter_ = GUARD_FRAME;
-			guardState_ = Player::GUARD_STATE::GUARD;
-			ChangeMotion(Player::MOTION::GUARD);
-		}
-		//ガードキーを離したらジャストガードに遷移
-		if (perGuardKey_ != nowGuardKey_) {
-			isGuard_ = false;
-			isJustGuard_ = true;
-			guardCounter_ = GUARD_JUST_FRAME;
-			guardState_ = Player::GUARD_STATE::GUARD_JUST;
-		}
-		break;
-	case Player::GUARD_STATE::GUARD:
-		//ガード時間が終了したら後硬直に遷移
-		if (guardCounter_ <= 0) {
-			isGuard_ = false;
-			guardCounter_ = GUARD_POST_RECOVERY_FRAME;
-			guardState_ = Player::GUARD_STATE::GUARD_POST;
-			ChangeMotion(MOTION::GUARD_POST, false);
-		}
-		//ガードキーを離したらジャストガードに遷移
-		if (perGuardKey_ != nowGuardKey_) {
-			isGuard_ = false;
-			isJustGuard_ = true;
-			guardCounter_ = GUARD_JUST_FRAME;
-			guardState_ = Player::GUARD_STATE::GUARD_JUST;
-		}
-		break;
-	case Player::GUARD_STATE::GUARD_JUST:
-		//ジャストガードが終了したら後硬直に遷移
-		if (guardCounter_ <= 0) {
-			isJustGuard_ = false;
-			guardCounter_ = GUARD_POST_RECOVERY_FRAME;
-			guardState_ = Player::GUARD_STATE::GUARD_POST;
-			ChangeMotion(MOTION::GUARD_POST, false);
-		}
-		break;
-	case Player::GUARD_STATE::GUARD_POST:
-		//後硬直が終了したら動けるようにする
-		if (guardCounter_ <= 0) {
-			//初期化
-			guardCounter_ = 0;
-			isGuard_ = false;
-			isJustGuard_ = false;
-			guardState_ = Player::GUARD_STATE::GUARD_PER;
-			//ChangeState(Player::STATE::MOVE);
-		}
-		break;
-	}
-
-}
 
 // 回避状態
 void Player::Evasion()
@@ -728,30 +630,6 @@ void Player::LoadPlayerImage(void)
 	image_[motion].insert(image_[motion].end(), DamageLoad, DamageLoad + DAMAGE_LOAD_NUM);
 	//-----------------------------------------------------------------------------
 
-	// ガード状態の画像を読み込み--------------------------------------------------
-	motion = (int)MOTION::GUARD_PER;
-	int guardPerLoad[GUARD_PER_LOAD_NUM];
-	LoadDivGraph((basePath + "GuardPer.png").c_str(),
-		GUARD_PER_LOAD_NUM, GUARD_PER_LOAD_NUM, 1,
-		LOAD_SIZE_X, LOAD_SIZE_Y, guardPerLoad);
-	image_[motion].insert(image_[motion].end(), guardPerLoad, guardPerLoad + GUARD_PER_LOAD_NUM);
-
-	motion = (int)MOTION::GUARD;
-	int GuardLoad[GUARD_LOAD_NUM];
-	LoadDivGraph((basePath + "Guard.png").c_str(),
-		GUARD_LOAD_NUM, GUARD_LOAD_NUM, 1,
-		LOAD_SIZE_X, LOAD_SIZE_Y, GuardLoad);
-	image_[motion].insert(image_[motion].end(), GuardLoad, GuardLoad + GUARD_LOAD_NUM);
-
-	motion = (int)MOTION::GUARD_POST;
-	int guardPostLoad[GUARD_POST_LOAD_NUM];
-	LoadDivGraph((basePath + "GuardPost.png").c_str(),
-		GUARD_POST_LOAD_NUM, GUARD_POST_LOAD_NUM, 1,
-		LOAD_SIZE_X, LOAD_SIZE_Y, guardPostLoad);
-	image_[motion].insert(image_[motion].end(), guardPostLoad, guardPostLoad + GUARD_POST_LOAD_NUM);
-	//-----------------------------------------------------------------------------
-
-
 	//回避状態の画像を読み込み-----------------------------------------------
 	motion = (int)MOTION::EVASION;
 
@@ -791,7 +669,6 @@ void Player::ChangeMotion(MOTION mo, bool loop)
 	motion_ = mo;
 	animeCounter_ = 0;
 	animeLoop_ = loop;
-
 }
 
 
@@ -799,11 +676,6 @@ void Player::DrawPlayer(void)
 {
 	bool Trance = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? true : false;
 	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true, Trance);
-}
-
-const float Player::GetAnimeRatio(void) const
-{
-	return ((float)animeCounter_ / (float)image_[(int)motion_].size());
 }
 
 void Player::JoyPadInputManager(void)
@@ -824,24 +696,15 @@ void Player::JoyPadInputManager(void)
 
 	prevBambooKey_ = nowBambooKey_;
 	nowBambooKey_ = (((input & 0x200) == 0) && ((input & 0x80)==0)) ? false : true;
+
+	prevEvasionKey_ = nowEvasionKey_;
+	nowEvasionKey_ = (((input & 0x100) == 0) && ((input & 0x20) == 0)) ? false : true;
 }
 
 
 
 void Player::Hit(int damage, Vector2F bPos)
 {
-	if (guardState_ == GUARD_STATE::GUARD) {
-
-		return;
-	}
-	else if (guardState_ == GUARD_STATE::GUARD_JUST || guardState_ == GUARD_STATE::GUARD_PER) {
-		SceneManager::GetInstance().SHAKE();
-		SceneManager::GetInstance().Slow();
-		unit_.inviCounter_ = 100;
-		return;
-	}
-
-
 	ChangeState(Player::STATE::DAMAGE);
 
 	unit_.hp_ -= damage;

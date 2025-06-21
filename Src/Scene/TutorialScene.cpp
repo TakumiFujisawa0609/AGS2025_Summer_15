@@ -56,7 +56,7 @@ void TutorialScene::Init(void)
 	Collision::GetInstance().SetStage(stage_->GetMapData());
 
 	bamboo_ = new BambooManager();
-	bamboo_->Init((Vector2F*)&player_->GetUnit().pos_);
+	bamboo_->Init((Vector2F*)&player_->GetUnit().pos_,(int*)&player_->GetBp());
 
 
 	x = 0;
@@ -170,14 +170,14 @@ void TutorialScene::ObjCollision(void)
 {
 	PlayerToBamboo();
 
-	
-
 	if (boss_->GetEnCount()) PlayerToBoss();
 	else					 PlayerToEnemyBamboo();
 }
 
 void TutorialScene::PlayerToBamboo(void)
 {
+	if (player_->GetBp() >= Player::BP_MAX)return;
+
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
 
