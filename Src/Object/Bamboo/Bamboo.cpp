@@ -32,7 +32,7 @@ void Bamboo::Set(Vector2F pos)
 	ChangeDispPos();
 
 	scale_ = (float)(GetRand(2) + 1);
-	unit_.radius_ = (DEFAULT_SIZE * scale_) / 2;
+	unit_.radius_ = (DEFAULT_SIZE * scaleTb[(int)scale_]) / 2;
 	unit_.size_ = { unit_.radius_ * 2.0f,unit_.radius_ * 2.0f };
 
 	unit_.yAccel_ = -20.0f;
@@ -75,7 +75,7 @@ void Bamboo::Draw(void)
 {
 	if (unit_.isAlive_ &&
 		((aliveTime_ > (int)(ALIVE_TIME * 0.3f)) || ((aliveTime_ / 10) % 2 == 0))) {
-		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, scale_, 0, image_, true);
+		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, scaleTb[(int)scale_], 0, image_, true);
 	}
 }
 
