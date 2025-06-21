@@ -40,6 +40,7 @@ public:
 		NORMAL,
 		E_SLASH_START,
 		E_SLASH_END,
+		E_DAMAGE,
 
 		DRAW_MAX,
 	};

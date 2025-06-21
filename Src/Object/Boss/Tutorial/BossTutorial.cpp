@@ -16,6 +16,7 @@ void BossTutorial::Init()
 	img_[DRAWPAT::NORMAL] = LoadGraph("Data/Image/Boss/TutrialBoss.png");
 	img_[DRAWPAT::E_SLASH_START] = LoadGraph("Data/Image/Boss/BossSlash.png");
 	img_[DRAWPAT::E_SLASH_END] = LoadGraph("Data/Image/Boss/BossSlashEnd.png");
+	img_[DRAWPAT::E_DAMAGE] = LoadGraph("Data/Image/Boss/BossDamage.png");
 
 	unit_.isAlive_ = true;
 	unit_.isDraw_ = true;
@@ -134,6 +135,7 @@ void BossTutorial::BossDraw()
 	switch (DrawPat_)
 	{
 	case NORMAL:
+	case E_DAMAGE:
 		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, img_[DrawPat_], true, bossDir_);
 		break;
 	case E_SLASH_START:
@@ -325,8 +327,9 @@ void BossTutorial::Down()
 	}
 
 
-	if (unit_.isGround_) {
+	if (unit_.isGround_ && unit_.yAccel_ >= 0) {
 		pattern_ = PATTERN::E_NON;
+		DrawPat_ = DRAWPAT::NORMAL;
 	}
 }
 
@@ -730,4 +733,5 @@ void BossTutorial::SetDown(Vector2F pos)
 
 	pattern_ = PATTERN::E_DOWN;
 	attackState_ = ATTACK::NON;
+	DrawPat_ = DRAWPAT::E_DAMAGE;
 }
