@@ -1,11 +1,18 @@
+#include "SceneManager.h"
+
 #include <chrono>
+
 #include "../Common/Fader.h"
+#include "Camera.h"
+
 #include "../Scene/TitleScene.h"
+#include"../Scene/ModeSelect.h"
+#include"../Scene/BossSelect.h"
 #include "../Scene/TutorialScene.h"
+#include"../Scene/BattledomeScene.h"
 #include "../Scene/GameClear.h"
 #include "../Scene/GameOverScene.h"
-#include "Camera.h"
-#include "SceneManager.h"
+
 
 SceneManager* SceneManager::instance_ = nullptr;
 
@@ -256,9 +263,21 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	case SCENE_ID::TITLE:
 		scene_ = new TitleScene();
 		break;
+		
+	case SCENE_ID::MODESELECT:
+		scene_ = new ModeSelect();
+		break;
 
 	case SCENE_ID::TUTORIAL:
 		scene_ = new TutorialScene();
+		break;
+
+	case SCENE_ID::BOSSSELECT:
+		scene_ = new BossSelect();
+		break;
+
+	case SCENE_ID::BATTLEDONE:
+		scene_ = new BattledomeScene();
 		break;
 
 	case SCENE_ID::CLEAR:

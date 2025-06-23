@@ -5,6 +5,12 @@
 
 Application* Application::instance_ = nullptr;
 
+const Vector2 Application::SCREEN_ZERO_POINT =
+{
+	MAIN_SCREEN_SIZE_X / 2 - SCREEN_SIZE_X / 2,
+	MAIN_SCREEN_SIZE_Y / 2 - SCREEN_SIZE_Y / 2
+};
+
 const std::string Application::PATH_IMAGE = "Data/Image/";
 const std::string Application::PATH_MODEL = "Data/Model/";
 const std::string Application::PATH_EFFECT = "Data/Effect/";

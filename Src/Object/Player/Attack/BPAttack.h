@@ -15,6 +15,8 @@ public:
 
 	static constexpr float DEFAULT_SPEED = 30.0f;
 
+	static constexpr int ALIVE_TIME = 300;
+
 	BPAttack();
 	~BPAttack();
 
@@ -34,6 +36,7 @@ private:
 
 	int image_;
 	int bp_;
+	int aliveCounter_;
 
 	AsoUtility::DIRECTION dir_;
 };

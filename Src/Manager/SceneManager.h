@@ -18,10 +18,11 @@ public:
 	// ÉVÅ[Éìä«óùóp
 	enum class SCENE_ID
 	{
-		NONE,
+		NONE = -1,
 		TITLE,
 		MODESELECT,
 		TUTORIAL,
+		BOSSSELECT,
 		BATTLEDONE,
 		GAMEOVER,
 		CLEAR,

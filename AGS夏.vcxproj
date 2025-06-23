@@ -152,6 +152,8 @@
     <ClCompile Include="Src\Object\Stage\StageBase.cpp" />
     <ClCompile Include="Src\Object\Stage\BossStage\Stage1.cpp" />
     <ClCompile Include="Src\Scene\BattledomeScene.cpp" />
+    <ClCompile Include="Src\Scene\BossSelect.cpp" />
+    <ClCompile Include="Src\Scene\ModeSelect.cpp" />
     <ClCompile Include="Src\Utility\ShapesPosition.cpp" />
     <ClCompile Include="Src\Manager\Collision.cpp" />
     <ClCompile Include="Src\Object\Manager\EnemyManager.cpp" />
@@ -196,6 +198,8 @@
     <ClInclude Include="Src\Object\Stage\StageBase.h" />
     <ClInclude Include="Src\Object\Stage\BossStage\Stage1.h" />
     <ClInclude Include="Src\Scene\BattledomeScene.h" />
+    <ClInclude Include="Src\Scene\BossSelect.h" />
+    <ClInclude Include="Src\Scene\ModeSelect.h" />
     <ClInclude Include="Src\Utility\ShapesPosition.h" />
     <ClInclude Include="Src\Manager\Collision.h" />
     <ClInclude Include="Src\Object\Manager\EnemyManager.h" />
