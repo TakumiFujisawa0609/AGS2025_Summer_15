@@ -35,7 +35,7 @@ void EnemyBamboo::Update()
 
 void EnemyBamboo::Draw()
 {
-	if (unit_.isDraw_ && (unit_.inviCounter_ / 10) % 2 == 0)
+	if (unit_.isAlive_ && (unit_.inviCounter_ / 10) % 2 == 0)
 	{
 		DrawHp();
 		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, EX_SIZE, rotate_, modelId_, true, move_);

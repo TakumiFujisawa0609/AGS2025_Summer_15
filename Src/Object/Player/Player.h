@@ -23,7 +23,7 @@ public:
 	static constexpr float SIZE_SCALE = 2.3f;
 
 	//プレイヤーが当たり判定などに使う大きさ		
-	static constexpr int SIZE_X = 13 * SIZE_SCALE;
+	static constexpr int SIZE_X = 10 * SIZE_SCALE;
 	static constexpr int SIZE_Y = 40 * SIZE_SCALE;
 	
 	//各モーションのアニメーション枚数
