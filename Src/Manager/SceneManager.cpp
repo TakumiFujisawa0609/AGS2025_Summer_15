@@ -12,6 +12,7 @@
 #include"../Scene/BattledomeScene.h"
 #include "../Scene/GameClear.h"
 #include "../Scene/GameOverScene.h"
+#include "../Scene/Pause.h"
 
 
 SceneManager* SceneManager::instance_ = nullptr;
@@ -39,6 +40,9 @@ void SceneManager::Init(void)
 
 	fader_ = new Fader();
 	fader_->Init();
+
+	pause_ = new Pause();
+	pause_->Load();
 
 	// カメラ
 	Camera::CreateInstance();
@@ -121,7 +125,28 @@ void SceneManager::Update(void)
 		zoomPos_ = { Application::MAIN_SCREEN_SIZE_X / 2,Application::MAIN_SCREEN_SIZE_Y / 2 };
 		scale_ = 1.0f;
 		//--------------------------------
-		scene_->Update();
+
+		Pause::STATE state = pause_->GetPauseState();
+
+		static int prev = 0;
+		static int now = 0;
+
+		prev = now;
+		now = CheckHitKey(KEY_INPUT_ESCAPE);
+
+		if (prev == 1 && now == 0)pause_->SetPauseState(Pause::STATE::E_PAUSE);
+
+		switch (state)
+		{
+		case Pause::STATE::E_PAUSE:
+			pause_->Update();
+			break;
+		case Pause::STATE::E_UPDATE:
+			pause_->Init();
+			scene_->Update();
+			break;
+		}
+
 	}
 
 
@@ -141,9 +166,19 @@ void SceneManager::Draw(void)
 	// カメラ更新
 	Camera::GetInstance().Set();
 
+	Pause::STATE state = pause_->GetPauseState();
+
 	// 描画
 	scene_->Draw();
 
+	switch (state)
+	{
+	case Pause::STATE::E_PAUSE:
+		pause_->Draw();
+		break;
+	case Pause::STATE::E_UPDATE:
+		break;
+	}
 
 	SetDrawScreen(DX_SCREEN_BACK);
 	ClearDrawScreen();
@@ -175,8 +210,11 @@ void SceneManager::Destroy(void)
 {
 
 	scene_->Release();
+	pause_->Release();
 
 	DeleteGraph(mainScreen_);
+
+	delete pause_;
 
 	delete scene_;
 
@@ -222,6 +260,11 @@ void SceneManager::SetController(const CNTL _cntl)
 	cntl_ = _cntl;
 }
 
+bool SceneManager::GetExit(void)
+{
+	return pause_->GetExit();
+}
+
 SceneManager::SceneManager(void)
 {
 
@@ -230,6 +273,7 @@ SceneManager::SceneManager(void)
 
 	scene_ = nullptr;
 	fader_ = nullptr;
+	pause_ = nullptr;
 
 	isSceneChanging_ = false;
 

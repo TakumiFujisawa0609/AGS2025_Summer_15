@@ -6,6 +6,7 @@
 
 class SceneBase;
 class Fader;
+class Pause;
 
 class SceneManager
 {
@@ -70,6 +71,7 @@ public:
 	void ZoomPos(Vector2F pos) { zoomPos_ = pos; }
 	void ZoomScale(float scale) { scale_ = scale; }
 
+	bool GetExit(void);
 private:
 
 	// 静的インスタンス
@@ -81,6 +83,9 @@ private:
 
 	// フェード
 	Fader* fader_;
+
+	//ポーズ画面
+	Pause* pause_;
 
 	// 各種シーン
 	SceneBase* scene_;
