@@ -98,6 +98,7 @@ public:
 	static constexpr int MAX_BP_CONS = 3;
 	static constexpr int CHARGE_TIME = 60;
 
+	static constexpr int CHARGE_ANIM = 20;
 	// ä÷êî
 	std::vector<BPAttack*> GetBpAtt(void) { return BpAtIns_; }
 	const int &GetBp(void)const { return bp_; }
@@ -266,6 +267,8 @@ private:
 	int BambooImg_;
 	int BambooPowerImg_;
 
+	int chargeImg_[CHARGE_ANIM];
+	int chargeAnim_;
 	int bp_;
 	int chargeTime_;
 	int bpConsCounter_;

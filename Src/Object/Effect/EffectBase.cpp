@@ -15,7 +15,7 @@ EffectBase::~EffectBase()
 
 void EffectBase::Init()
 {
-    isActive_ = true;
+    isActive_ = false;
     // 画像やモデルなどのロード
     Load();
     // パラメータ設定

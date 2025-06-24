@@ -59,7 +59,12 @@ void Player::Init()
 	// “ÁŽêUŒ‚ŠÖŒW
 	BambooImg_ = LoadGraph("Data/Image/Player/The_Bamboo.png");
 	BambooPowerImg_ = LoadGraph("Data/Image/Player/BambooBar.png");
-
+	int err = 0;
+	err=LoadDivGraph("Data/Image/Effect/BpCharge.png", 20, 10, 2, 121, 100, chargeImg_);
+	if (err == -1) {
+ 		return;
+	}
+	chargeAnim_ = 0;
 	bp_ = BP_MAX;
 	bpConsCounter_ = 1;
 	chargeTime_ = 0;
@@ -85,9 +90,17 @@ void Player::Update()
 
 	JoyPadInputManager();
 
+	if (chargeTime_ > 0) {
+		chargeAnim_++;
+		if (chargeAnim_ > CHARGE_ANIM) {
+			chargeAnim_ = 0;
+		}
+	}
+
 	StateManager();
 
 	Animation();
+
 
 	(this->*stateFuncPtr)();
 
@@ -102,15 +115,22 @@ void Player::Draw()
 {
 	if (unit_.isAlive_ && (unit_.inviCounter_ / 5) % 2 == 0) {
 
-		DrawPlayer();
 
+
+		if ((unit_.inviCounter_ / 5) % 2 == 0) {
+			DrawPlayer();
+		}
+
+		if (chargeTime_ > 0) {
+			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 2, chargeTime_, chargeImg_[chargeAnim_], true);
+		}
 		defaultAttack_->Draw();
 	}
 	for (auto t : BpAtIns_) {
 		t->Draw();
 	}
 
-	DrawBar(330, 290, 800, 330, unit_.hp_, HP_MAX, RGB(0, 255, 0));
+	DrawBar(330, 290, 1000, 330, unit_.hp_, HP_MAX, RGB(0, 255, 0));
 	//DrawBar(330, 335, 500, 350, bp_, BP_MAX, RGB(0, 0, 255));
 	for (int i = 0; i < bp_; i++) {
 		Vector2F bPos = { 330,320 };
@@ -157,6 +177,7 @@ void Player::StateManager(void)
 		DoStateEvasion();
 		break;
 	case Player::STATE::ATTACK:
+		DoStateBPAttack();
 		break;
 	case Player::STATE::EVASION:
 
