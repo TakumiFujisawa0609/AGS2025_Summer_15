@@ -54,16 +54,13 @@ public:
 		SECOND_ATTACK,	//攻撃2段目
 		SPECIAL_ATTACK,	//特殊攻撃
 		DAMAGE,			//被ダメージ
-		GUARD_PER,		//ガード前
-		GUARD,			//ガード
-		GUARD_POST,		//ガード解除
 		EVASION,		//回避
 
 		MAX,			//モーション最大数
 	};
 
 
-	static constexpr int HP_MAX = 100;
+	static constexpr int HP_MAX = 30;
 
 	//プレイヤーの状態
 	enum class STATE
@@ -71,18 +68,14 @@ public:
 		MOVE,
 		ATTACK,
 		BP_ATTACK,
-		GUARD,
 		EVASION,
 		DAMAGE,
 	};
 
-	// 移動状態で使用する定数定義-------------------------------------------------------------------
-	
-	// 横軸の移動関係
+	// 移動状態で使用する～～-------------------------------------------------------------------
+	// 定数
 	static constexpr float RUN_SPEED = 10.0f;			//プレイヤーの走る速度
 
-
-	// ジャンプ関係
 	static constexpr float MAX_JUMP_POWER = 50.0f;		//最大ジャンプ力
 	static constexpr int INPUT_JUMPKEY_FRAME = 6;		//ジャンプキーを受け付けるフレーム数
 	static constexpr int JUMP_NUM =10;					//ジャンプ可能回数
@@ -90,66 +83,43 @@ public:
 	//----------------------------------------------------------------------------------------------
 
 
-	// 攻撃状態で使用する定数定義-------------------------------------------------------------------
-	
-	//攻撃の段数
-	enum ATTACK
-	{
-		NON = -1,
-		FIRST,
-		SECONDE,
-
-		MAX,
-	};
-
+	// 攻撃状態で使用する～～-------------------------------------------------------------------
+	// 定数
+	enum ATTACK { NON = -1, FIRST, SECONDE, MAX, };		//攻撃の段数
 	static constexpr int INPUT_ATTACK_FRAME = 20;		//次の段につながる時間(フレーム数)
 
 	// 関数
 	Base DefaultAtt(void) { return defaultAttack_->GetObj(); }
-
 	//----------------------------------------------------------------------------------------------
 
-	// 特殊攻撃状態で使用する定数定義--------------------------------------------------------------
-	static constexpr int BP_MAX = 100;
-
-	static constexpr int MAX_BP_CONS = 30;
+	// 特殊攻撃状態で使用する～～--------------------------------------------------------------
+	// 定数
+	static constexpr int BP_MAX = 20;
+	static constexpr int MAX_BP_CONS = 3;
+	static constexpr int CHARGE_TIME = 60;
 
 	// 関数
-	void BpOptain(int bp) { this->bp_ += bp; if (this->bp_ > BP_MAX) { this->bp_ = BP_MAX; } }
-
 	std::vector<BPAttack*> GetBpAtt(void) { return BpAtIns_; }
-
-	//---------------------------------------------------------------------------------------------
-
-	// ガード状態で使用する定数定義-----------------------------------------------------------------
-	static constexpr int GUARD_FRAME = 180;				//総ガードフレーム
-	static constexpr int GUARD_PER_RECOVERY_FRAME = 5;	//前硬直フレーム
-	static constexpr int GUARD_POST_RECOVERY_FRAME = 10;//後硬直フレーム
-	static constexpr int GUARD_JUST_FRAME = 5;			//ジャストガード猶予時間フレーム
-	enum class GUARD_STATE
-	{
-		GUARD_PER,
-		GUARD,
-		GUARD_JUST,
-		GUARD_POST,
-	};
-	//----------------------------------------------------------------------------------------------
-	 
+	const int &GetBp(void)const { return bp_; }
+	void BpOptain(int bp) { this->bp_ += bp; if (this->bp_ > BP_MAX) { this->bp_ = BP_MAX; } }
+	//---------------------------------------------------------------------------------------------	 
 	
-	// 回避状態で使用する定数定義-------------------------------------------------------------------
-	
+	// 回避状態で使用する～～-------------------------------------------------------------------
+	// 定数
 	static constexpr float EVASION_SPEED = 10.0f;		//スピード
-
 	static constexpr int EVASION_TIME = 20;				//回避時間
-
 	//----------------------------------------------------------------------------------------------
 
-	// ダメージ状態で使用する定数定義---------------------------------------------------------------
+	// ダメージ状態で使用する～～---------------------------------------------------------------
+	// 定数
 	static constexpr float KNOCK_SPEED = 5.0f;
 	static constexpr float KNOCK_POWER = 10.0f;
+	// 関数
 	void Hit(int damage, Vector2F bPos);
 	//----------------------------------------------------------------------------------------------
 
+
+	void SetInvici(int time) { unit_.inviCounter_ = time; }
 
 
 	Player();
@@ -183,7 +153,7 @@ private:
 
 	bool animeLoop_;
 
-	const float GetAnimeRatio(void)const;
+	const float GetAnimeRatio(void)const { return ((float)animeCounter_ / (float)image_[(int)motion_].size()); }
 	//-----------------------------------------------------------------------------
 
 	//向き
@@ -196,6 +166,7 @@ private:
 	bool nowRightKey_, prevRightKey_;
 	bool nowAttackKey_, prevAttackKey_;
 	bool nowBambooKey_, prevBambooKey_;
+	bool nowEvasionKey_, prevEvasionKey_;
 
 	//状態管理--------------------------------------------------------------------------------------
 	
@@ -225,9 +196,6 @@ private:
 	// 特殊攻撃状態に遷移する条件
 	void DoStateBPAttack(void);
 
-	// ガード状態に遷移する条件
-	void DoStateGuard(void);
-
 	// 回避状態に遷移する条件
 	void DoStateEvasion(void);
 
@@ -248,9 +216,6 @@ private:
 
 	// 特殊攻撃状態
 	void BambooAttack(void);
-
-	// ガード処理
-	void Guard(void);
 
 	// 回避処理
 	void Evasion(void);
@@ -302,24 +267,9 @@ private:
 	int BambooPowerImg_;
 
 	int bp_;
-	float bpConsCounter_;
+	int chargeTime_;
+	int bpConsCounter_;
 	//---------------------------------------
-
-
-	// ガード処理関係------------------------
-
-	// 関数
-	bool IsGuard(void) { return isGuard_; }
-	bool IsJustGuard(void) { return isJustGuard_; }
-	// 変数
-	int guardCounter_;
-	bool isGuard_;
-	bool isJustGuard_;
-	bool perGuardKey_;
-	bool nowGuardKey_;
-	GUARD_STATE guardState_;
-	//---------------------------------------
-
 
 	// 回避処理関係--------------------------
 

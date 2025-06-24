@@ -64,8 +64,10 @@ void Blast::Update(void)
 		else {
 			vec = { vec.x / dis,vec.y / dis };
 
-			obj_.pos_.x += vec.x * obj_.speed_;
-			obj_.pos_.y += vec.y * obj_.speed_;
+			if (!blast_) {
+				obj_.pos_.x += vec.x * obj_.speed_;
+				obj_.pos_.y += vec.y * obj_.speed_;
+			}
 
 
 

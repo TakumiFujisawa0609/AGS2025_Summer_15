@@ -16,13 +16,14 @@ void BossTutorial::Init()
 	img_[DRAWPAT::NORMAL] = LoadGraph("Data/Image/Boss/TutrialBoss.png");
 	img_[DRAWPAT::E_SLASH_START] = LoadGraph("Data/Image/Boss/BossSlash.png");
 	img_[DRAWPAT::E_SLASH_END] = LoadGraph("Data/Image/Boss/BossSlashEnd.png");
+	img_[DRAWPAT::E_DAMAGE] = LoadGraph("Data/Image/Boss/BossDamage.png");
 
 	unit_.isAlive_ = true;
 	unit_.isDraw_ = true;
 	unit_.pos_ = { 4500,250 };
 	unit_.nextpos_ = unit_.pos_;
 	unit_.size_ = { SIZE_X, SIZE_Y };
-	unit_.radius_ = unit_.size_.x;
+	unit_.radius_ = unit_.size_.x / 2;
 	unit_.speed_ = 10.0f;
 	unit_.hp_ = BOSS_HP;
 	dispHp_ = 0.0f;
@@ -134,6 +135,7 @@ void BossTutorial::BossDraw()
 	switch (DrawPat_)
 	{
 	case NORMAL:
+	case E_DAMAGE:
 		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, img_[DrawPat_], true, bossDir_);
 		break;
 	case E_SLASH_START:
@@ -207,6 +209,9 @@ void BossTutorial::PattaernManager(void)
 	case BossTutorial::E_ATTACK:
 		Attack();
 		break;
+	case BossTutorial::E_DOWN:
+		Down();
+		break;
 	case BossTutorial::E_DEATH:
 		Death();
 		break;
@@ -276,7 +281,7 @@ void BossTutorial::Move()
 		attackCounter_ = 0;
 		if (!(targetIndex_ == 1)) {
 			TargetLook(player_->GetUnit().pos_);
-			attackState_ = (ATTACK)GetRand((int)ATTACK::MAX - 1);
+			attackState_ = (ATTACK)GetRand((int)ATTACK::MAX - 2);
 			pattern_ = E_ATTACK;
 		}
 		else {
@@ -306,6 +311,25 @@ void BossTutorial::Attack()
 		attackCounter_ = 0;
 		pattern_ = E_IDLE;
 		attackState_ = NON;
+	}
+}
+
+void BossTutorial::Down()
+{
+	unit_.isGravity_ = true;
+
+	if (bossDir_ == AttackBase::DIR::LEFT) {
+		unit_.nextpos_.x += 10.0f;
+	}
+	else
+	{
+		unit_.nextpos_.x -= 10.0f;
+	}
+
+
+	if (unit_.isGround_ && unit_.yAccel_ >= 0) {
+		pattern_ = PATTERN::E_NON;
+		DrawPat_ = DRAWPAT::NORMAL;
 	}
 }
 
@@ -429,10 +453,16 @@ void BossTutorial::DrawHP()
 
 void BossTutorial::SlashUpdate(void)
 {
+	static bool on = false;
+	static int time = 0;
+
 	if (attackCounter_ == 1) {
 		panVec_ = { 0.0f,0.0f };
 		slash_->Init(&unit_.pos_);
 		DrawPat_ = E_SLASH_START;
+		slashCnt_ = Slash::CHARGE;
+		on = false;
+		time = 0;
 	}
 
 	if (attackCounter_ < Slash::CHARGE)
@@ -454,24 +484,27 @@ void BossTutorial::SlashUpdate(void)
 		panVec_ = GetMoveVec(unit_.pos_, target_, unit_.speed_ * 3.0f);
 	}
 
-	if (!(panVec_.x == 0.0f && panVec_.y == 0.0f)) {
 
+
+	if (!(panVec_.x == 0.0f && panVec_.y == 0.0f)) {
 		unit_.isGravity_ = false;
 
-		float dis = target_.x - unit_.nextpos_.x;
+		float dis = target_.x - unit_.pos_.x;
 		if (dis < 0)dis *= -1;
-		if (dis <= player_->GetUnit().size_.x + unit_.size_.x) {
+		if (dis <= (player_->GetUnit().radius_ + unit_.radius_)+30.0f) {
 			panVec_ = { 0.0f,0.0f };
-			slash_->On();
-			DrawPat_ = E_SLASH_END;
+			on = true;
 		}
 	}
+	
+	if (on) time++;
+
+	if (time > 5) { slash_->On(); DrawPat_ = E_SLASH_END; time = 0; }
 
 	unit_.nextpos_ += panVec_;
 
 	if (slash_->End()) {
 		attackCounter_ = 0;
-		slashCnt_ = Slash::CHARGE;
 		unit_.isGravity_ = true;
 		pattern_ = E_IDLE;
 		attackState_ = NON;
@@ -615,7 +648,7 @@ void BossTutorial::ObjHit(int i)
 	case BossTutorial::ROAR:
 		break;
 	case BossTutorial::BLAST:
-		
+		blast_->Hit();
 		break;
 	case BossTutorial::TACKLE:
 		break;
@@ -684,4 +717,21 @@ void BossTutorial::SetDamage(int damage)
 	if (unit_.hp_ <= 0) {
 		unit_.isAlive_ = false;
 	}
+}
+
+void BossTutorial::SetDown(Vector2F pos)
+{
+	if (unit_.pos_.x < pos.x) {
+		bossDir_ = AttackBase::DIR::RIGHT;
+	}
+	else {
+		bossDir_ = AttackBase::DIR::LEFT;
+	}
+	unit_.yAccel_ = -10.0f;
+
+	unit_.nextpos_.y += unit_.yAccel_;
+
+	pattern_ = PATTERN::E_DOWN;
+	attackState_ = ATTACK::NON;
+	DrawPat_ = DRAWPAT::E_DAMAGE;
 }

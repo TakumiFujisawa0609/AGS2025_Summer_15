@@ -48,6 +48,7 @@ private:
 	void PlayerToBoss(void);
 	void PlayerToBossAttack(void);
 	void PlayerAttackToBoss(void);
+	void PlayerAttackToBossAttack(void);
 
 	float x;
 

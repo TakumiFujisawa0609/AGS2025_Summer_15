@@ -11,7 +11,7 @@ public:
 	static constexpr float DEFAULT_SIZE_Y = 24;
 
 
-	static constexpr int DEFAULT_DAMAGE = 3;
+	static constexpr int DEFAULT_DAMAGE = 5;
 
 	static constexpr float DEFAULT_SPEED = 30.0f;
 
@@ -23,17 +23,17 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
-	void On(Vector2F pPos, AsoUtility::DIRECTION dir, float bp);
+	void On(Vector2F pPos, AsoUtility::DIRECTION dir, int bp);
 	void Off(void) { obj_.isAlive_ = false; }
 
 	int GetBp(void) { return bp_; }
 
-	int GetDamage(void) { return (int)((float)DEFAULT_DAMAGE * ((float)bp_ / 10.0f)); }
+	int GetDamage(void) { return DEFAULT_DAMAGE * bp_; }
 
 private:
 
 	int image_;
-	float bp_;
+	int bp_;
 
 	AsoUtility::DIRECTION dir_;
 };

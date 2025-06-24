@@ -8,9 +8,10 @@ BambooManager::~BambooManager()
 {
 }
 
-void BambooManager::Init(Vector2F* pPos)
+void BambooManager::Init(Vector2F* pPos, int* bp)
 {
 	this->pPos_ = pPos;
+	this->playerBp_ = bp;
 
 	image_ = LoadGraph("Data/Image/DropBamboo.png");
 	if (image_ == -1) {
@@ -56,7 +57,7 @@ void BambooManager::Create(Vector2F pos, int num)
 		if (reciycle)continue;
 
 		bamboos_.emplace_back(new Bamboo());
-		bamboos_[bamboos_.size() - 1]->Set(pos,pPos_,image_);
+		bamboos_[bamboos_.size() - 1]->Set(pos, pPos_, playerBp_, image_);
 	}
 }
 

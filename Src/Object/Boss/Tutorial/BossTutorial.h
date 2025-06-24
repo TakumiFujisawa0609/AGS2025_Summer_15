@@ -12,11 +12,11 @@ class BossTutorial : public EnemyBase
 {
 public:
 
-	static constexpr int SIZE_X = 200;
+	static constexpr int SIZE_X = 220;
 	static constexpr int SIZE_Y = 249;
 
 
-	static constexpr int BOSS_HP = 500;						//ボスの最大体力
+	static constexpr int BOSS_HP =1000;						//ボスの最大体力
 	static constexpr int BOSS_HP_X = 5;					//ボスのHPゲージのX座標始点
 	static constexpr int BOSS_HP_Y = 15;						//ボスのHPゲージのY座標始点と描画距離
 	static constexpr int BOSS_HP_DISP_Y = 30;				//ボスのHPゲージのX座標の描画距離
@@ -30,6 +30,7 @@ public:
 		E_IDLE,
 		E_MOVE,
 		E_ATTACK,
+		E_DOWN,
 		E_DEATH,
 
 	};
@@ -39,6 +40,7 @@ public:
 		NORMAL,
 		E_SLASH_START,
 		E_SLASH_END,
+		E_DAMAGE,
 
 		DRAW_MAX,
 	};
@@ -87,6 +89,9 @@ public:
 	using AttackFunc = void(BossTutorial::*)();
 
 
+	void SetDown(Vector2F pos);
+
+	DRAWPAT GetDrawpat(void) { return DrawPat_; }
 
 private:
 
@@ -130,6 +135,8 @@ private:
 	void Idle(void);
 	void Move();
 	void Attack();
+	void Down();
+
 	void HpUpdate();
 
 	void Death();
@@ -151,6 +158,8 @@ private:
 
 	Vector2F panVec_;
 	Vector2F target_;
+
+
 
 	//描画パターン
 	DRAWPAT DrawPat_;
