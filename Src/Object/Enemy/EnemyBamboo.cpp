@@ -35,10 +35,18 @@ void EnemyBamboo::Update()
 
 void EnemyBamboo::Draw()
 {
-	if (unit_.isAlive_ && (unit_.inviCounter_ / 10) % 2 == 0)
+	if (unit_.isAlive_)
 	{
-		DrawHp();
+		bool invic = false;
+		if (!(unit_.inviCounter_ / 10 % 2 == 0))invic = true;
+
+		if (invic)SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+
 		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, EX_SIZE, rotate_, modelId_, true, move_);
+
+		if (invic)SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		DrawHp();
 	}
 }
 

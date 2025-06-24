@@ -35,9 +35,6 @@ public:
 	static constexpr int SECONDE_ATTACK_LOAD_NUM = 6;
 	static constexpr int EVASION_LOAD_NUM = 3;
 	static constexpr int DAMAGE_LOAD_NUM = 1;
-	static constexpr int GUARD_PER_LOAD_NUM = 3;
-	static constexpr int GUARD_LOAD_NUM = 1;
-	static constexpr int GUARD_POST_LOAD_NUM = 3;
 
 
 	//何フレームに１回アニメーションを動かすか
@@ -107,8 +104,8 @@ public:
 	
 	// 回避状態で使用する～～-------------------------------------------------------------------
 	// 定数
-	static constexpr float EVASION_SPEED = 10.0f;		//スピード
-	static constexpr int EVASION_TIME = 20;				//回避時間
+	static constexpr float EVASION_SPEED = 20.0f;		//スピード
+	static constexpr int EVASION_TIME = 10;				//回避時間
 	//----------------------------------------------------------------------------------------------
 
 	// ダメージ状態で使用する～～---------------------------------------------------------------

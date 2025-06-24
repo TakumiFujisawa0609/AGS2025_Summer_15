@@ -104,7 +104,7 @@ void Player::Update()
 
 	(this->*stateFuncPtr)();
 
-	for (auto t : BpAtIns_) {
+	for (auto& t : BpAtIns_) {
 		t->Update();
 	}
 
@@ -115,16 +115,16 @@ void Player::Draw()
 {
 	if (unit_.isAlive_) {
 
-		if ((unit_.inviCounter_ / 5) % 2 == 0) {
-			DrawPlayer();
-		}
+		DrawPlayer();
 
 		if (chargeTime_ > 0) {
 			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 2, chargeTime_, chargeImg_[chargeAnim_], true);
 		}
+
 		defaultAttack_->Draw();
 	}
-	for (auto t : BpAtIns_) {
+
+	for (auto& t : BpAtIns_) {
 		t->Draw();
 	}
 
@@ -142,7 +142,7 @@ void Player::Draw()
 
 void Player::Release()
 {
-	for (auto b : BpAtIns_) {
+	for (auto& b : BpAtIns_) {
 		b->Release();
 		delete b;
 	}
@@ -690,8 +690,15 @@ void Player::ChangeMotion(MOTION mo, bool loop)
 
 void Player::DrawPlayer(void)
 {
+	bool invic = false;
+	if (!(unit_.inviCounter_ / 5 % 2 == 0))invic = true;
+
+	if (invic)SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+
 	bool Trance = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? true : false;
 	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true, Trance);
+
+	if (invic)SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
 void Player::JoyPadInputManager(void)
@@ -721,6 +728,11 @@ void Player::JoyPadInputManager(void)
 
 void Player::Hit(int damage, Vector2F bPos)
 {
+	if (state_ == Player::STATE::EVASION) {
+		SceneManager::GetInstance().HitStop();
+		unit_.inviCounter_ = 100;
+		return;
+	}
 	ChangeState(Player::STATE::DAMAGE);
 
 	unit_.hp_ -= damage;
