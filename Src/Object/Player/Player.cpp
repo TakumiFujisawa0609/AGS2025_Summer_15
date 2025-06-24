@@ -113,9 +113,7 @@ void Player::Update()
 
 void Player::Draw()
 {
-	if (unit_.isAlive_ && (unit_.inviCounter_ / 5) % 2 == 0) {
-
-
+	if (unit_.isAlive_) {
 
 		if ((unit_.inviCounter_ / 5) % 2 == 0) {
 			DrawPlayer();
@@ -131,15 +129,14 @@ void Player::Draw()
 	}
 
 	DrawBar(330, 290, 1000, 330, unit_.hp_, HP_MAX, RGB(0, 255, 0));
-	//DrawBar(330, 335, 500, 350, bp_, BP_MAX, RGB(0, 0, 255));
+
+	Vector2F bPos = { 330,320 };
+	int len = 10;
 	for (int i = 0; i < bp_; i++) {
-		Vector2F bPos = { 330,320 };
-		if (i < 10) {
-			DrawGraph(bPos.x + i * BAMBOO_SIZE_X, bPos.y, BambooPowerImg_, true);
-		}
-		else {
-			DrawGraph(bPos.x + (i - 10) * BAMBOO_SIZE_X, bPos.y + BAMBOO_SIZE_Y / 2, BambooPowerImg_, true);
-		}
+		if ((i >= bp_ - bpConsCounter_) && (!(chargeTime_ / 10 % 2 == 0))) break;
+
+		if (i < len)DrawGraph(bPos.x + i * BAMBOO_SIZE_X, bPos.y, BambooPowerImg_, true);
+		else		DrawGraph(bPos.x + (i - len) * BAMBOO_SIZE_X, bPos.y + BAMBOO_SIZE_Y / 2, BambooPowerImg_, true);
 	}
 }
 
@@ -173,18 +170,16 @@ void Player::StateManager(void)
 	{
 	case Player::STATE::MOVE:
 		DoStateAttack();
-		DoStateBPAttack();
 		DoStateEvasion();
 		break;
 	case Player::STATE::ATTACK:
-		DoStateBPAttack();
 		break;
 	case Player::STATE::EVASION:
-
 		break;
 	case Player::STATE::DAMAGE:
 		break;
 	}
+	DoStateBPAttack();
 
 }
 
