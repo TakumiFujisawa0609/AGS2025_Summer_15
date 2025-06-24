@@ -61,15 +61,16 @@ void Pause::Update(void)
 	KeyInput();
 
 	float targetY = -(obj_[select_].pos_.y + select_ * DISTANCE);
-
 	move_.y += (targetY - move_.y) * 0.2f;
 
 	for (int ii = 0; ii < 2; ii++)
 	{
 		bool isDecision = prevDecision[ii] == 1 && nowDecision[ii] == 0;
+
 		bool isUp = prevUp[ii] == 0 && nowUp[ii] == 1;
 		bool isDown = prevDown[ii] == 0 && nowDown[ii] == 1;
 
+		//‘I‘ð’†‚ª‚Ç‚ê‚©‚ðŒ©•ª‚¯‚é‚æ‚Ö‚Ö
 		switch (select_)
 		{
 		case Pause::CONTINUE:
@@ -98,19 +99,7 @@ void Pause::Draw(void)
 	startPos_.x = ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2);
 	startPos_.y = ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2);
 
-	//switch (select_)
-	//{
-	//case Pause::CONTINUE:
-	//	DrawString(startPos_.x, startPos_.y, "CONTINUE", RGB(255, 255, 255), true);
-	//	break;
-	//case Pause::NEWGAME:
-	//	DrawString(startPos_.x, startPos_.y, "NEWGAME", RGB(255, 255, 255), true);
-	//	break;
-	//case Pause::EXIT:
-	//	DrawString(startPos_.x, startPos_.y, "EXIT", RGB(255, 255, 255), true);
-	//	break;
-	//}
-
+	//‰æ‘œ‚Ì•`‰æ
 	for (int i = 0; i < SELECT::MAX; ++i)
 	{
 		DrawRotaGraph(
@@ -137,9 +126,9 @@ void Pause::KeyInput(void)
 	for (int ii = 0; ii < 2; ii++)
 	{
 		//ŽQl‰‰ŽZŽq‚Ü‚¶‚Å•Ö—˜
-		int keyDecision = (ii) ? CheckHitKey(KEY_INPUT_SPACE) : CheckHitKey(KEY_INPUT_RETURN);
-		int keyUp = (ii) ? CheckHitKey(KEY_INPUT_W) : CheckHitKey(KEY_INPUT_UP);
-		int keyDown = (ii) ? CheckHitKey(KEY_INPUT_S) : CheckHitKey(KEY_INPUT_DOWN);
+		int keyDecision = CheckHitKey((ii) ? KEY_INPUT_SPACE : KEY_INPUT_RETURN);
+		int keyUp = CheckHitKey((ii) ? KEY_INPUT_W : KEY_INPUT_UP);
+		int keyDown = CheckHitKey((ii) ? KEY_INPUT_S : KEY_INPUT_DOWN);
 
 		prevDecision[ii] = nowDecision[ii];
 		nowDecision[ii] = keyDecision;
