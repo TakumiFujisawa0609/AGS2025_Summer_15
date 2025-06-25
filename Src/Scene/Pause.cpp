@@ -66,15 +66,15 @@ void Pause::Update(void)
 			break;
 
 		case Pause::NEWGAME:
+		
 			if (isUp)   select_ = CONTINUE;
 			if (isDown) select_ = EXIT;
-			
-			if (!isDecision)
+
+			if (isDecision)
 			{
 				pauseState_ = STATE::E_UPDATE;
 				scene_.ChangeScene(SceneManager::SCENE_ID::TITLE);
 			}
-
 			break;
 
 		case Pause::EXIT:
