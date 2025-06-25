@@ -5,6 +5,12 @@
 
 Application* Application::instance_ = nullptr;
 
+const Vector2 Application::SCREEN_ZERO_POINT =
+{
+	MAIN_SCREEN_SIZE_X / 2 - SCREEN_SIZE_X / 2,
+	MAIN_SCREEN_SIZE_Y / 2 - SCREEN_SIZE_Y / 2
+};
+
 const std::string Application::PATH_IMAGE = "Data/Image/";
 const std::string Application::PATH_MODEL = "Data/Model/";
 const std::string Application::PATH_EFFECT = "Data/Effect/";
@@ -61,7 +67,7 @@ void Application::Run(void)
 	auto& sceneManager = SceneManager::GetInstance();
 
 	// ÉQÅ[ÉÄÉãÅ[Év
-	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
+	while (ProcessMessage() == 0 && !sceneManager.GetExit())
 	{
 
 		inputManager.Update();

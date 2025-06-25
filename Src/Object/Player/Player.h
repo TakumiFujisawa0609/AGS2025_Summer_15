@@ -23,7 +23,7 @@ public:
 	static constexpr float SIZE_SCALE = 2.3f;
 
 	//プレイヤーが当たり判定などに使う大きさ		
-	static constexpr int SIZE_X = 13 * SIZE_SCALE;
+	static constexpr int SIZE_X = 10 * SIZE_SCALE;
 	static constexpr int SIZE_Y = 40 * SIZE_SCALE;
 	
 	//各モーションのアニメーション枚数
@@ -35,9 +35,6 @@ public:
 	static constexpr int SECONDE_ATTACK_LOAD_NUM = 6;
 	static constexpr int EVASION_LOAD_NUM = 3;
 	static constexpr int DAMAGE_LOAD_NUM = 1;
-	static constexpr int GUARD_PER_LOAD_NUM = 3;
-	static constexpr int GUARD_LOAD_NUM = 1;
-	static constexpr int GUARD_POST_LOAD_NUM = 3;
 
 
 	//何フレームに１回アニメーションを動かすか
@@ -98,6 +95,7 @@ public:
 	static constexpr int MAX_BP_CONS = 3;
 	static constexpr int CHARGE_TIME = 60;
 
+	static constexpr int CHARGE_ANIM = 20;
 	// 関数
 	std::vector<BPAttack*> GetBpAtt(void) { return BpAtIns_; }
 	const int &GetBp(void)const { return bp_; }
@@ -106,8 +104,8 @@ public:
 	
 	// 回避状態で使用する～～-------------------------------------------------------------------
 	// 定数
-	static constexpr float EVASION_SPEED = 10.0f;		//スピード
-	static constexpr int EVASION_TIME = 20;				//回避時間
+	static constexpr float EVASION_SPEED = 20.0f;		//スピード
+	static constexpr int EVASION_TIME = 10;				//回避時間
 	//----------------------------------------------------------------------------------------------
 
 	// ダメージ状態で使用する～～---------------------------------------------------------------
@@ -266,6 +264,8 @@ private:
 	int BambooImg_;
 	int BambooPowerImg_;
 
+	int chargeImg_[CHARGE_ANIM];
+	int chargeAnim_;
 	int bp_;
 	int chargeTime_;
 	int bpConsCounter_;

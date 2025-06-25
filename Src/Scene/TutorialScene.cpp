@@ -104,10 +104,10 @@ void TutorialScene::Update(void)
 void TutorialScene::Draw(void)
 {
 	stage_->Draw();
+	bamboo_->Draw();
 	enemy_->Draw();
 	boss_->Draw();
 	player_->Draw();
-	bamboo_->Draw();
 	EffectManager::GetInstance()->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);

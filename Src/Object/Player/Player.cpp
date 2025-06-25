@@ -59,7 +59,12 @@ void Player::Init()
 	// “ÁŽêUŒ‚ŠÖŒW
 	BambooImg_ = LoadGraph("Data/Image/Player/The_Bamboo.png");
 	BambooPowerImg_ = LoadGraph("Data/Image/Player/BambooBar.png");
-
+	int err = 0;
+	err=LoadDivGraph("Data/Image/Effect/BpCharge.png", 20, 10, 2, 121, 100, chargeImg_);
+	if (err == -1) {
+ 		return;
+	}
+	chargeAnim_ = 0;
 	bp_ = BP_MAX;
 	bpConsCounter_ = 1;
 	chargeTime_ = 0;
@@ -85,13 +90,21 @@ void Player::Update()
 
 	JoyPadInputManager();
 
+	if (chargeTime_ > 0) {
+		chargeAnim_++;
+		if (chargeAnim_ > CHARGE_ANIM) {
+			chargeAnim_ = 0;
+		}
+	}
+
 	StateManager();
 
 	Animation();
 
+
 	(this->*stateFuncPtr)();
 
-	for (auto t : BpAtIns_) {
+	for (auto& t : BpAtIns_) {
 		t->Update();
 	}
 
@@ -100,32 +113,36 @@ void Player::Update()
 
 void Player::Draw()
 {
-	if (unit_.isAlive_ && (unit_.inviCounter_ / 5) % 2 == 0) {
+	if (unit_.isAlive_) {
 
 		DrawPlayer();
 
+		if (chargeTime_ > 0) {
+			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 2, chargeTime_, chargeImg_[chargeAnim_], true);
+		}
+
 		defaultAttack_->Draw();
 	}
-	for (auto t : BpAtIns_) {
+
+	for (auto& t : BpAtIns_) {
 		t->Draw();
 	}
 
-	DrawBar(330, 290, 800, 330, unit_.hp_, HP_MAX, RGB(0, 255, 0));
-	//DrawBar(330, 335, 500, 350, bp_, BP_MAX, RGB(0, 0, 255));
+	DrawBar(330, 290, 1000, 330, unit_.hp_, HP_MAX, RGB(0, 255, 0));
+
+	Vector2F bPos = { 330,320 };
+	int len = 10;
 	for (int i = 0; i < bp_; i++) {
-		Vector2F bPos = { 330,320 };
-		if (i < 10) {
-			DrawGraph(bPos.x + i * BAMBOO_SIZE_X, bPos.y, BambooPowerImg_, true);
-		}
-		else {
-			DrawGraph(bPos.x + (i - 10) * BAMBOO_SIZE_X, bPos.y + BAMBOO_SIZE_Y / 2, BambooPowerImg_, true);
-		}
+		if ((i >= bp_ - bpConsCounter_) && (!(chargeTime_ / 10 % 2 == 0))) break;
+
+		if (i < len)DrawGraph(bPos.x + i * BAMBOO_SIZE_X, bPos.y, BambooPowerImg_, true);
+		else		DrawGraph(bPos.x + (i - len) * BAMBOO_SIZE_X, bPos.y + BAMBOO_SIZE_Y / 2, BambooPowerImg_, true);
 	}
 }
 
 void Player::Release()
 {
-	for (auto b : BpAtIns_) {
+	for (auto& b : BpAtIns_) {
 		b->Release();
 		delete b;
 	}
@@ -153,17 +170,16 @@ void Player::StateManager(void)
 	{
 	case Player::STATE::MOVE:
 		DoStateAttack();
-		DoStateBPAttack();
 		DoStateEvasion();
 		break;
 	case Player::STATE::ATTACK:
 		break;
 	case Player::STATE::EVASION:
-
 		break;
 	case Player::STATE::DAMAGE:
 		break;
 	}
+	DoStateBPAttack();
 
 }
 
@@ -674,8 +690,15 @@ void Player::ChangeMotion(MOTION mo, bool loop)
 
 void Player::DrawPlayer(void)
 {
+	bool invic = false;
+	if (!(unit_.inviCounter_ / 5 % 2 == 0))invic = true;
+
+	if (invic)SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+
 	bool Trance = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? true : false;
 	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true, Trance);
+
+	if (invic)SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
 void Player::JoyPadInputManager(void)
@@ -705,6 +728,11 @@ void Player::JoyPadInputManager(void)
 
 void Player::Hit(int damage, Vector2F bPos)
 {
+	if (state_ == Player::STATE::EVASION) {
+		SceneManager::GetInstance().HitStop();
+		unit_.inviCounter_ = 100;
+		return;
+	}
 	ChangeState(Player::STATE::DAMAGE);
 
 	unit_.hp_ -= damage;
