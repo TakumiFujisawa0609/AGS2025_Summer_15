@@ -1,4 +1,6 @@
 #include <chrono>
+#include<EffekseerForDXLib.h>
+
 #include "../Common/Fader.h"
 #include "../Scene/TitleScene.h"
 #include "../Scene/GameScene.h"
@@ -133,10 +135,11 @@ void SceneManager::Draw(void)
 
 	// ƒJƒƒ‰XV
 	Camera::GetInstance().Set();
+	UpdateEffekseer2D();
 
 	// •`‰æ
 	scene_->Draw();
-
+	DrawEffekseer2D();
 
 	SetDrawScreen(DX_SCREEN_BACK);
 	ClearDrawScreen();

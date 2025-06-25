@@ -35,7 +35,7 @@ private:
 	EnemyManager* enemy_ ;
 	BossTutorial* boss_;
 	BambooManager* bamboo_;
-
+	int effect;
 	void Scroll(void);
 
 	void ObjCollision(void);

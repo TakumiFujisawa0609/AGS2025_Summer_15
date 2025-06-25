@@ -63,5 +63,6 @@ private:
 
 	// デストラクタも同様
 	~Application(void) = default;
-
+	//えふぇくしあの初期化
+	void InitEffekseer(void);
 };
