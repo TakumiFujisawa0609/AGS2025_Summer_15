@@ -64,7 +64,6 @@ void Pause::Update(void)
 			if (isDecision) pauseState_ = STATE::E_UPDATE;
 			if (isDown) select_ = NEWGAME;
 			break;
-
 		case Pause::NEWGAME:
 		
 			if (isUp)   select_ = CONTINUE;
@@ -75,8 +74,8 @@ void Pause::Update(void)
 				pauseState_ = STATE::E_UPDATE;
 				scene_.ChangeScene(SceneManager::SCENE_ID::TITLE);
 			}
-			break;
 
+			break;
 		case Pause::EXIT:
 			if (isDecision) isExit = true;
 			if (isUp) select_ = NEWGAME;
@@ -92,6 +91,19 @@ void Pause::Draw(void)
 	startPos_.x = ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2);
 	startPos_.y = ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2);
 
+	SetDrawBright(128, 128, 128);
+	SetDrawBlendMode(DX_BLENDMODE_ADD, 120);
+
+	DrawBox(
+		startPos_.x, startPos_.y,
+		startPos_.x + Application::SCREEN_SIZE_X,
+		startPos_.y + Application::SCREEN_SIZE_Y,
+		RGB(200, 200, 200), true
+	);
+
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	SetDrawBright(255, 255, 255);
+
 	//‰æ‘œ‚Ì•`‰æ
 	for (int i = 0; i < SELECT::MAX; ++i)
 	{
@@ -100,7 +112,6 @@ void Pause::Draw(void)
 			move_.y + (startPos_.y + obj_[i].pos_.y + Application::SCREEN_SIZE_Y / 2 + i * DISTANCE),
 			0.5f, 0.0f, image_[i], true
 		);
-
 	}
 }
 
