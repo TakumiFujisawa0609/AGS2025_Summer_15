@@ -19,27 +19,12 @@ void Pause::Load(void)
 
 void Pause::Init(void)
 {
-	VECTOR startPos_;
-
-	startPos_.x = ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) + Camera::GetInstance().GetPos().x;
-	startPos_.y = ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2) + Camera::GetInstance().GetPos().y;
-
-	for (int i = 0; i < SELECT::MAX; ++i)
-	{
-		DrawRotaGraph(
-			startPos_.x + obj_[i].pos_.x + Application::SCREEN_SIZE_X / 2,
-			move_.y + (startPos_.y + obj_[i].pos_.y + Application::SCREEN_SIZE_Y / 2 + i * DISTANCE),
-			0.5f, 0.0f, image_[i], true
-		);
-	}
-
 	obj_[SELECT::CONTINUE].pos_ = { 0.0f,0.0f };
 	obj_[SELECT::NEWGAME].pos_  = { 0.0f,0.0f };
 	obj_[SELECT::EXIT].pos_     = { 0.0f,0.0f };
 
 	move_ = { 0.0f,0.0f };
 
-	isNewGame  = false;
 	isExit     = false;
 
 	for (int ii = 0; ii < 2; ii++)
@@ -57,6 +42,8 @@ void Pause::Init(void)
 
 void Pause::Update(void)
 {
+	SceneManager& scene_ = SceneManager::GetInstance();
+
 	//使うキー
 	KeyInput();
 
@@ -79,9 +66,15 @@ void Pause::Update(void)
 			break;
 
 		case Pause::NEWGAME:
-			if (isDecision) isNewGame = true;
 			if (isUp)   select_ = CONTINUE;
 			if (isDown) select_ = EXIT;
+			
+			if (!isDecision)
+			{
+				pauseState_ = STATE::E_UPDATE;
+				scene_.ChangeScene(SceneManager::SCENE_ID::TITLE);
+			}
+
 			break;
 
 		case Pause::EXIT:
@@ -125,7 +118,7 @@ void Pause::KeyInput(void)
 {
 	for (int ii = 0; ii < 2; ii++)
 	{
-		//参考演算子まじで便利
+		//参考演算子まじで便利  
 		int keyDecision = CheckHitKey((ii) ? KEY_INPUT_SPACE : KEY_INPUT_RETURN);
 		int keyUp = CheckHitKey((ii) ? KEY_INPUT_W : KEY_INPUT_UP);
 		int keyDown = CheckHitKey((ii) ? KEY_INPUT_S : KEY_INPUT_DOWN);

@@ -51,7 +51,6 @@ private:
 	//‚±‚ê“®‚©‚¹‚Î‘S•”“®‚­
 	Vector2F move_;
 
-	bool isNewGame;
 	bool isExit;
 
 	int prevDecision[2];
