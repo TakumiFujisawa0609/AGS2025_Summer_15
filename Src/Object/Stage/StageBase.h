@@ -3,6 +3,8 @@
 #include<vector>
 #include<map>
 
+#include"../../Common/Vector2.h"
+
 class StageBase
 {
 public:
@@ -16,6 +18,8 @@ public:
 	void Release(void);
 
 	std::map<int, std::map<int, int>> GetMapData(void) { return mapData_; }
+
+	Vector2 GetMapNum(void);
 
 protected:
 	virtual void Load(void) = 0;

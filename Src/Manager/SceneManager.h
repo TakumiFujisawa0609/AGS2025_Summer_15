@@ -72,6 +72,8 @@ public:
 	void ZoomScale(float scale) { scale_ = scale; }
 
 	bool GetExit(void);
+
+	void SetMapNum(Vector2 num) { mapNum_ = num; }
 private:
 
 	// 静的インスタンス
@@ -130,4 +132,6 @@ private:
 	float scale_ = 1.0f;
 
 	void ZoomCtr(void);
+
+	Vector2 mapNum_;
 };

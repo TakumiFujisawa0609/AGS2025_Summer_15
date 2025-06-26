@@ -12,13 +12,9 @@ public:
 	static constexpr int STAGE_CHIP_Y = 6;		//ステージのマップチップの高さ
 	static constexpr int STAGE_CHIP_ALL = STAGE_CHIP_X * STAGE_CHIP_Y;		//ステージのマップチップの数
 
-	static constexpr int STAGE_NUM_X = 150;
-	static constexpr int STAGE_NUM_Y = 40;
-	static constexpr int STAGE_NUM_MAX = STAGE_NUM_X * STAGE_NUM_Y;
-
 	static constexpr int HAIKEI_SIZE_X = 1500;
 	static constexpr int HAIKEI_SIZE_Y = 900;
-	static constexpr int HAIKEI_MAX = (STAGE_CHIP_SIZE * STAGE_NUM_X) / HAIKEI_SIZE_X + 1;
+	static constexpr int HAIKEI_MAX = (STAGE_CHIP_SIZE * 500) / HAIKEI_SIZE_X + 1;
 
 	enum TILE {
 		WHITE,

@@ -41,7 +41,7 @@ void Camera::Follow(dir xy, float move)
 
 bool Camera::BossSet()
 {
-	return cameraPos.x == (TutorialStage::STAGE_CHIP_SIZE * TutorialStage::STAGE_NUM_X)-(Application::MAIN_SCREEN_SIZE_X-((Application::MAIN_SCREEN_SIZE_X-Application::SCREEN_SIZE_X)/2));
+	return cameraPos.x == (TutorialStage::STAGE_CHIP_SIZE * mapNum_.x)-(Application::MAIN_SCREEN_SIZE_X-((Application::MAIN_SCREEN_SIZE_X-Application::SCREEN_SIZE_X)/2));
 }
 
 

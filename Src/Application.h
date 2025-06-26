@@ -14,7 +14,7 @@ public:
 	static constexpr int SCREEN_SIZE_Y =  720;
 
 	static constexpr int MAIN_SCREEN_SIZE_X = (int)(SCREEN_SIZE_X * 1.5f);
-	static constexpr int MAIN_SCREEN_SIZE_Y = TutorialStage::STAGE_CHIP_SIZE* TutorialStage::STAGE_NUM_Y;
+	static constexpr int MAIN_SCREEN_SIZE_Y = 32 * 40;
 
 	static const Vector2 SCREEN_ZERO_POINT;
 

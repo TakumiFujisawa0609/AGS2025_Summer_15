@@ -26,9 +26,13 @@ public:
 	void Follow(dir xy, float move);
 	bool BossSet(void);
 
+	void SetMapNum(Vector2 num) { mapNum_ = num; }
+
 
 private:
 	static Camera* instance;
 	Vector2F cameraPos;
+
+	Vector2 mapNum_;
 };
 
