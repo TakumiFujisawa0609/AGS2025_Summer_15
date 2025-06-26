@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 
 #include <chrono>
+#include<EffekseerForDXLib.h>
 
 #include "../Common/Fader.h"
 #include "Camera.h"
@@ -165,6 +166,7 @@ void SceneManager::Draw(void)
 
 	// ƒJƒƒ‰XV
 	Camera::GetInstance().Set();
+	UpdateEffekseer2D();
 
 	Pause::STATE state = pause_->GetPauseState();
 
@@ -179,6 +181,7 @@ void SceneManager::Draw(void)
 	case Pause::STATE::E_UPDATE:
 		break;
 	}
+	DrawEffekseer2D();
 
 	SetDrawScreen(DX_SCREEN_BACK);
 	ClearDrawScreen();
