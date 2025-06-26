@@ -1,8 +1,10 @@
 #include <DxLib.h>
+#include<EffekseerForDXLib.h>
+
 #include "Manager/InputManager.h"
 #include "Manager/SceneManager.h"
 #include "Application.h"
-
+#include"Manager/Decoration/EffectManager.h"
 Application* Application::instance_ = nullptr;
 
 const Vector2 Application::SCREEN_ZERO_POINT =
@@ -48,12 +50,14 @@ void Application::Init(void)
 		isInitFail_ = true;
 		return;
 	}
+	InitEffekseer();
 
 	// キー制御初期化
 	SetUseDirectInputFlag(true);
 	InputManager::CreateInstance();
 
 	// リソース管理初期化
+	EffectManager::CreateInstance();
 
 	// シーン管理初期化
 	SceneManager::CreateInstance();
@@ -65,7 +69,6 @@ void Application::Run(void)
 
 	auto& inputManager = InputManager::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
-
 	// ゲームループ
 	while (ProcessMessage() == 0 && !sceneManager.GetExit())
 	{
@@ -87,6 +90,8 @@ void Application::Destroy(void)
 	InputManager::GetInstance().Destroy();
 	SceneManager::GetInstance().Destroy();
 	
+	Effkseer_End();
+
 	// DxLib終了
 	if (DxLib_End() == -1)
 	{
@@ -111,4 +116,14 @@ Application::Application(void)
 {
 	isInitFail_ = false;
 	isReleaseFail_ = false;
+}
+
+void Application::InitEffekseer(void)
+{
+	if (Effekseer_Init(8000) == -1) {
+		DxLib_End();
+	}
+	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
+	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
+	Effekseer_Set2DSetting(SCREEN_SIZE_X, SCREEN_SIZE_Y);
 }

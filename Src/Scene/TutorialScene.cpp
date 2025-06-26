@@ -1,7 +1,7 @@
 #include "TutorialScene.h"
 
 #include<DxLib.h>
-
+#include<EffekseerForDXLib.h>
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/Camera.h"
@@ -16,10 +16,8 @@
 #include"../Object/Stage/Tutorial/TutorialStage.h"
 #include"../Application.h"
 #include"../Utility/ShapesPosition.h"
-#include"../Object/Manager/EffectManager.h"
-#include"../Object/Effect/EffectBase.h"
-#include"../Object/Effect/EffectTakeDrop.h"
 #include"../Object/Bamboo/BambooManager.h"
+#include"../Manager/Decoration//EffectManager.h"
 
 
 
@@ -48,9 +46,11 @@ void TutorialScene::Init(void)
 	boss_ = new BossTutorial();
 	boss_->Init();
 	boss_->SetPlayer(player_);
-
-	EffectManager::CreateInstance();
-	EffectManager::GetInstance()->Init();
+	effect = -1;
+	effect = LoadEffekseerEffect("Data/Effect/BossDeath.efkefc");
+	EffectManager::GetInstance().Add(EffectManager::EFFECT::BOSS_DEATH,effect );
+	EffectManager::GetInstance().Play2D(EffectManager::EFFECT::BOSS_DEATH,
+		player_->GetUnit().disppos_, 1, 1);
 
 	Camera::GetInstance().Init();
 	Collision::GetInstance().SetStage(stage_->GetMapData());
@@ -71,7 +71,6 @@ void TutorialScene::Update(void)
 	enemy_->Update();
 	boss_->Update();
 	bamboo_->Update();
-	EffectManager::GetInstance()->Update();
 
 	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
 	{
@@ -108,7 +107,7 @@ void TutorialScene::Draw(void)
 	enemy_->Draw();
 	boss_->Draw();
 	player_->Draw();
-	EffectManager::GetInstance()->Draw();
+	bamboo_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 }
@@ -135,8 +134,7 @@ void TutorialScene::Release(void)
    delete stage_;  
    stage_ = nullptr;  
 
-   EffectManager::GetInstance()->Release();
-   EffectManager::DeleteInstance();
+
 
    
 
