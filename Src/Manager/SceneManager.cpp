@@ -181,7 +181,8 @@ void SceneManager::Draw(void)
 	case Pause::STATE::E_UPDATE:
 		break;
 	}
-	DrawEffekseer2D();
+
+	//DrawEffekseer2D();
 
 	SetDrawScreen(DX_SCREEN_BACK);
 	ClearDrawScreen();
@@ -387,8 +388,8 @@ void SceneManager::ZoomCtr(void)
 		zoomPos_.x -= (worldZoomPos.x - drawRange.x);
 	}
 
-	if (worldZoomPos.x + drawRange.x >= TutorialStage::STAGE_CHIP_SIZE * TutorialStage::STAGE_NUM_X) {
-		zoomPos_.x -= ((worldZoomPos.x + drawRange.x) - (TutorialStage::STAGE_CHIP_SIZE * TutorialStage::STAGE_NUM_X));
+	if (worldZoomPos.x + drawRange.x >= TutorialStage::STAGE_CHIP_SIZE * mapNum_.x) {
+		zoomPos_.x -= ((worldZoomPos.x + drawRange.x) - (TutorialStage::STAGE_CHIP_SIZE * mapNum_.x));
 	}
 
 }

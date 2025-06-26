@@ -17,7 +17,6 @@ public:
 	static void DeleteInstance(void) { if (instance != nullptr)delete instance; instance = nullptr; }
 
 	void Init();
-	void SetStage(int map,int y,int x){ mapData_[y][x] = map; }
 	void SetStage(std::map<int, std::map<int, int>> map) { mapData = map; }
 
 	enum DIR {
@@ -73,8 +72,6 @@ public:
 
 private:
 	static Collision* instance;
-
-	int mapData_[TutorialStage::STAGE_NUM_Y][TutorialStage::STAGE_NUM_X];
 
 	std::map<int, std::map<int, int>> mapData;
 

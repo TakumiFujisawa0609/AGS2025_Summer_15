@@ -36,6 +36,7 @@ void TutorialScene::Init(void)
 
 	stage_ = new TutorialStage();
 	stage_->Init();
+	SceneManager::GetInstance().SetMapNum(stage_->GetMapNum());
 
 	enemy_ = new EnemyManager();
 	enemy_->Init();
@@ -53,6 +54,8 @@ void TutorialScene::Init(void)
 		player_->GetUnit().disppos_, 1, 1);
 
 	Camera::GetInstance().Init();
+	Camera::GetInstance().SetMapNum(stage_->GetMapNum());
+
 	Collision::GetInstance().SetStage(stage_->GetMapData());
 
 	bamboo_ = new BambooManager();
@@ -148,13 +151,13 @@ void TutorialScene::Scroll(void)
 	auto& camera = Camera::GetInstance();
 	if (!boss_->GetEnCount()) {
 		if (player_->GetUnit().disppos_.x > Application::MAIN_SCREEN_SIZE_X / 7 * 4 &&
-			!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X) - ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) >= TutorialStage::STAGE_CHIP_SIZE * TutorialStage::STAGE_NUM_X)) {
-			camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
+			!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X) - ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) >= TutorialStage::STAGE_CHIP_SIZE * stage_->GetMapNum().x)) {
+			camera.Follow(Camera::dir::X, (player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_);
 		}
 
 		if (player_->GetUnit().disppos_.x < Application::MAIN_SCREEN_SIZE_X / 7 * 3 &&
 			!(camera.GetPos().x <= -((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2))) {
-			camera.Follow(Camera::dir::X, -(player_->GetUnit().speed_));
+			camera.Follow(Camera::dir::X, -((player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_));
 		}
 	}
 	else {

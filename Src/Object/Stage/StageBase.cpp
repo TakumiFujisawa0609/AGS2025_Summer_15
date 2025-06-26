@@ -20,17 +20,17 @@ void StageBase::Init(void)
 
 void StageBase::Draw(void)
 {
-
-
 	//マップチップ画像を表示
-	for (int yy = 0; yy < mapData_.size(); yy++) {
-		for (int xx = 0; xx < mapData_[yy].size(); xx++) {
+	int start = (Camera::GetInstance().GetPos().x / STAGE_CHIP_SIZE);
+	int end = start + (Application::MAIN_SCREEN_SIZE_X / STAGE_CHIP_SIZE);
 
+	for (int yy = 0; yy < mapData_.size(); yy++) {
+		for (int xx = start; xx < end; xx++) {
 			int chip = mapData_[yy][xx];
-			
+
 			int dx = STAGE_CHIP_SIZE * xx - Camera::GetInstance().GetPos().x;
 			int dy = STAGE_CHIP_SIZE * yy - Camera::GetInstance().GetPos().y;
-
+			
 			DrawGraph(dx, dy, chipId_[chip], true);
 		}
 	}
@@ -49,4 +49,9 @@ void StageBase::Release(void)
 	chipId_.clear();
 
 	DeleteGraph(haikei_);
+}
+
+Vector2 StageBase::GetMapNum(void)
+{
+	return{ (int)mapData_[0].size(),(int)mapData_.size() };
 }
