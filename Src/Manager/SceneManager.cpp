@@ -181,7 +181,8 @@ void SceneManager::Draw(void)
 	case Pause::STATE::E_UPDATE:
 		break;
 	}
-	DrawEffekseer2D();
+
+	//DrawEffekseer2D();
 
 	SetDrawScreen(DX_SCREEN_BACK);
 	ClearDrawScreen();
