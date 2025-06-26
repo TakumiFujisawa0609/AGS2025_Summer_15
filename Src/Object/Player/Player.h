@@ -69,13 +69,15 @@ public:
 		DAMAGE,
 	};
 
+	const STATE GetState(void)const { return state_; }
+
 	// 移動状態で使用する～～-------------------------------------------------------------------
 	// 定数
 	static constexpr float RUN_SPEED = 10.0f;			//プレイヤーの走る速度
 
-	static constexpr float MAX_JUMP_POWER = 50.0f;		//最大ジャンプ力
+	static constexpr float MAX_JUMP_POWER = 70.0f;		//最大ジャンプ力
 	static constexpr int INPUT_JUMPKEY_FRAME = 6;		//ジャンプキーを受け付けるフレーム数
-	static constexpr int JUMP_NUM =10;					//ジャンプ可能回数
+	static constexpr int JUMP_NUM =3;					//ジャンプ可能回数
 	
 	//----------------------------------------------------------------------------------------------
 

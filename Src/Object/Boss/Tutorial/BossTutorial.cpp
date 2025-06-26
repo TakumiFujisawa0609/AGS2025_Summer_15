@@ -20,7 +20,7 @@ void BossTutorial::Init()
 
 	unit_.isAlive_ = true;
 	unit_.isDraw_ = true;
-	unit_.pos_ = { 4500,250 };
+	unit_.pos_ = { 15500,250 };
 	unit_.nextpos_ = unit_.pos_;
 	unit_.size_ = { SIZE_X, SIZE_Y };
 	unit_.radius_ = unit_.size_.x / 2;
