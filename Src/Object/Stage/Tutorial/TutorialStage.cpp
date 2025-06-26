@@ -20,34 +20,56 @@ TutorialStage::~TutorialStage()
 
 void TutorialStage::Draw(void)
 {
-	DrawBox(0, 0, STAGE_CHIP_SIZE * mapData_.at(0).size(), STAGE_CHIP_SIZE * mapData_.size(), RGB(255, 100, 100),true);
+	int num = (STAGE_CHIP_SIZE * mapData_[0].size()) / HAIKEI_SIZE_X;
 
-	for (int i = 0; i < HAIKEI_MAX; i++) {
-		int dx = HAIKEI_SIZE_X * i - Camera::GetInstance().GetPos().x;
-		int dy = (Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2 - Camera::GetInstance().GetPos().y;
-		DrawGraph(dx, dy, haikei_, true);
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < num; j++) {
+			Vector2 d =
+			{
+				Application::SCREEN_ZERO_POINT.x + (Application::SCREEN_SIZE_X / 2),
+				Application::SCREEN_ZERO_POINT.y + (Application::SCREEN_SIZE_Y / 2)
+			};
+
+			d.x += HAIKEI_SIZE_X * j;
+
+			Vector2 c = { (int)Camera::GetInstance().GetPos().x / (8 - i),(int)Camera::GetInstance().GetPos().y };
+
+			d.x -= c.x;
+			d.y -= c.y;
+			d.y -=300;
+
+			DrawRotaGraph(d.x, d.y, 1.5, 0, backImg_[i], true);
+		}
 	}
+
 	StageBase::Draw();
 }
 
+#include <tchar.h> // Add this include for TCHAR compatibility
+
 void TutorialStage::Load(void)
 {
-	int load[STAGE_CHIP_ALL];
+    int load[STAGE_CHIP_ALL];
 
-	int err = LoadDivGraph("Data/Image/Stage/ForestTile.png", STAGE_CHIP_ALL,
-		STAGE_CHIP_X, STAGE_CHIP_Y,
-		STAGE_CHIP_SIZE, STAGE_CHIP_SIZE, load);
-	if (err == -1) {
-		return;
-	}
+    int err = LoadDivGraph("Data/Image/Stage/ForestTile.png", STAGE_CHIP_ALL,
+        STAGE_CHIP_X, STAGE_CHIP_Y,
+        STAGE_CHIP_SIZE, STAGE_CHIP_SIZE, load);
+    if (err == -1) {
+        return;
+    }
 
-	chipId_.insert(chipId_.end(), load, load + STAGE_CHIP_ALL);
+    chipId_.insert(chipId_.end(), load, load + STAGE_CHIP_ALL);
 
-	haikei_ = LoadGraph("Data/Image/Stage/BackGround.png");
+    haikei_ = LoadGraph("Data/Image/Stage/BackGround.png");
 
-	if (!LoadMapData()) {
-		return;
-	}
+    for (int i = 0; i < 8; i++) {
+        std::string filePath = "Data/Image/Stage/Tutorial/TutorialBack" + std::to_string(i) + ".png";
+        backImg_[i] = LoadGraph(_T(filePath.c_str()));
+    }
+
+    if (!LoadMapData()) {
+        return;
+    }
 }
 
 bool TutorialStage::LoadMapData(void)

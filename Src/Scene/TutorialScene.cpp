@@ -48,7 +48,7 @@ void TutorialScene::Init(void)
 	boss_->Init();
 	boss_->SetPlayer(player_);
 	effect = -1;
-	effect = LoadEffekseerEffect("Data/Effect/BossDeath.efkefc");
+	//effect = LoadEffekseerEffect("Data/Effect/BossDeath.efkefc");
 	EffectManager::GetInstance().Add(EffectManager::EFFECT::BOSS_DEATH,effect );
 	EffectManager::GetInstance().Play2D(EffectManager::EFFECT::BOSS_DEATH,
 		player_->GetUnit().disppos_, 1, 1);

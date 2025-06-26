@@ -55,3 +55,4 @@ Vector2 StageBase::GetMapNum(void)
 {
 	return{ (int)mapData_[0].size(),(int)mapData_.size() };
 }
+
