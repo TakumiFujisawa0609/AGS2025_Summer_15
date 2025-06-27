@@ -50,6 +50,9 @@ private:
 
 	//‚±‚ê“®‚©‚¹‚Î‘S•”“®‚­
 	Vector2F move_;
+	Vector2F dispPos[SELECT::MAX];
+
+	VECTOR startPos_;
 
 	bool isExit;
 

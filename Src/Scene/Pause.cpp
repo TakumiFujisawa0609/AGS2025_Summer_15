@@ -25,7 +25,11 @@ void Pause::Init(void)
 
 	move_ = { 0.0f,0.0f };
 
+	startPos_ = { 0.0f,0.0f };
+
 	isExit     = false;
+
+	for (int ii = 0; ii < SELECT::MAX; ii++) dispPos[ii] = { 0.0f, 0.0f };
 
 	for (int ii = 0; ii < 2; ii++)
 	{
@@ -44,6 +48,9 @@ void Pause::Update(void)
 {
 	SceneManager& scene_ = SceneManager::GetInstance();
 
+	startPos_.x = ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2);
+	startPos_.y = ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2);
+
 	//使うキー
 	KeyInput();
 
@@ -52,19 +59,22 @@ void Pause::Update(void)
 
 	for (int ii = 0; ii < 2; ii++)
 	{
+		//決定ボタン（アップトリガー）
 		bool isDecision = prevDecision[ii] == 1 && nowDecision[ii] == 0;
 
+		//上キー（ダウントリガー）
 		bool isUp = prevUp[ii] == 0 && nowUp[ii] == 1;
+
+		//下キー（ダウントリガー）
 		bool isDown = prevDown[ii] == 0 && nowDown[ii] == 1;
 
-		//選択中がどれかを見分けるよへへ
+		//選択中がどれかを見分ける
 		switch (select_)
 		{
 		case Pause::CONTINUE:
 			if (isDecision) pauseState_ = STATE::E_UPDATE;
 			if (isDown) select_ = NEWGAME;
 			break;
-
 		case Pause::NEWGAME:
 		
 			if (isUp)   select_ = CONTINUE;
@@ -75,13 +85,19 @@ void Pause::Update(void)
 				pauseState_ = STATE::E_UPDATE;
 				scene_.ChangeScene(SceneManager::SCENE_ID::TITLE);
 			}
-			break;
 
+			break;
 		case Pause::EXIT:
 			if (isDecision) isExit = true;
 			if (isUp) select_ = NEWGAME;
 			break;
 		}
+	}
+
+	for (int ii = 0; ii < SELECT::MAX; ii++)
+	{
+		dispPos[ii].x = startPos_.x + obj_[ii].pos_.x + Application::SCREEN_SIZE_X / 2;
+		dispPos[ii].y = move_.y + (startPos_.y + obj_[ii].pos_.y + Application::SCREEN_SIZE_Y / 2 + ii * DISTANCE);
 	}
 }
 
@@ -92,15 +108,27 @@ void Pause::Draw(void)
 	startPos_.x = ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2);
 	startPos_.y = ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2);
 
+	SetDrawBright(128, 128, 128);
+	SetDrawBlendMode(DX_BLENDMODE_ADD, 120);
+
+	DrawBox(
+		startPos_.x, startPos_.y,
+		startPos_.x + Application::SCREEN_SIZE_X,
+		startPos_.y + Application::SCREEN_SIZE_Y,
+		RGB(200, 200, 200), true
+	);
+
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	SetDrawBright(255, 255, 255);
+
 	//画像の描画
-	for (int i = 0; i < SELECT::MAX; ++i)
+	for (int ii = 0; ii < SELECT::MAX; ++ii)
 	{
 		DrawRotaGraph(
-			startPos_.x + obj_[i].pos_.x + Application::SCREEN_SIZE_X / 2,
-			move_.y + (startPos_.y + obj_[i].pos_.y + Application::SCREEN_SIZE_Y / 2 + i * DISTANCE),
-			0.5f, 0.0f, image_[i], true
+			dispPos[ii].x,
+			dispPos[ii].y,
+			0.5f, 0.0f, image_[ii], true
 		);
-
 	}
 }
 
@@ -118,10 +146,9 @@ void Pause::KeyInput(void)
 {
 	for (int ii = 0; ii < 2; ii++)
 	{
-		//参考演算子まじで便利  
 		int keyDecision = CheckHitKey((ii) ? KEY_INPUT_SPACE : KEY_INPUT_RETURN);
-		int keyUp = CheckHitKey((ii) ? KEY_INPUT_W : KEY_INPUT_UP);
-		int keyDown = CheckHitKey((ii) ? KEY_INPUT_S : KEY_INPUT_DOWN);
+		int keyUp       = CheckHitKey((ii) ? KEY_INPUT_W : KEY_INPUT_UP);
+		int keyDown     = CheckHitKey((ii) ? KEY_INPUT_S : KEY_INPUT_DOWN);
 
 		prevDecision[ii] = nowDecision[ii];
 		nowDecision[ii] = keyDecision;

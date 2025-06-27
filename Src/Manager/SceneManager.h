@@ -14,7 +14,8 @@ class SceneManager
 public:
 
 	static constexpr float STICK_START_POW = 0.5f;
-	
+	static constexpr int HIT_STOP_TIME = 5;
+
 
 	// ƒV[ƒ“ŠÇ——p
 	enum class SCENE_ID
@@ -65,7 +66,7 @@ public:
 
 
 	void Slow(void) { if (slowCounter_ >= 0) { slowCounter_ = SLOW_TIME; } }
-	void HitStop(void) { hitStopCounter_ = HIT_STOP_TIME; }
+	void HitStop(int stopTime) { hitStopCounter_ = stopTime; }
 	void SHAKE(void) { shakeCounter_ = SHAKE_TIME; }
 
 	void ZoomPos(Vector2F pos) { zoomPos_ = pos; }
@@ -122,7 +123,6 @@ private:
 	const int SLOW_TIME = 40;
 	int slowCounter_;
 
-	const int HIT_STOP_TIME = 5;
 	int hitStopCounter_;
 
 	const int SHAKE_TIME = 30;

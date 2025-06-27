@@ -8,6 +8,7 @@ Blast::Blast()
 	reticleImg_ = LoadGraph("Data/Image/Boss/Reticle.png");
 
 	LoadDivGraph("Data/Image/Effect/Blast.png", BLAST_NUM_MAX, BLAST_NUM_X, BLAST_NUM_Y, BLAST_SIZE, BLAST_SIZE, blastImg_);
+	img = LoadGraph("Data/Image/Boss/Bomb.png");
 }
 
 Blast::~Blast()
@@ -103,7 +104,8 @@ void Blast::Draw(void)
 		}
 		else
 		{
-			DrawCircleAA(obj_.disppos_.x, obj_.disppos_.y, obj_.radius_, 30, RGB(0, 0, 0));
+			//DrawCircleAA(obj_.disppos_.x, obj_.disppos_.y, obj_.radius_, 30, RGB(0, 0, 0));
+			DrawRotaGraph(obj_.disppos_.x, obj_.disppos_.y, 1.0f, 0.0f, img, true);
 		}
 	}
 	auto& camera = Camera::GetInstance();

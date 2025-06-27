@@ -518,7 +518,7 @@ void Player::Jump()
 void Player::Respawn(void)
 {
 	if (unit_.disppos_.y > Application::MAIN_SCREEN_SIZE_Y-100) {
-		SceneManager::GetInstance().HitStop();
+		SceneManager::GetInstance().HitStop(SceneManager::HIT_STOP_TIME);
 		SceneManager::GetInstance().SHAKE();
 		unit_.nextpos_ = { 550.0f,500.0f };
 		unit_.pos_ = unit_.nextpos_;
@@ -740,7 +740,7 @@ void Player::JoyPadInputManager(void)
 void Player::Hit(int damage, Vector2F bPos)
 {
 	if (state_ == Player::STATE::EVASION) {
-		SceneManager::GetInstance().HitStop();
+		SceneManager::GetInstance().HitStop(SceneManager::HIT_STOP_TIME);
 		evaConpFlg_ = true;
 		unit_.inviCounter_ = 50;
 		return;

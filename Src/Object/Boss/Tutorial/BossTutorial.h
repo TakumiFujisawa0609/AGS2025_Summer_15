@@ -24,7 +24,7 @@ public:
 	static constexpr float HP_YABAI = 0.3f;			    	// 瀕死のしきい値（30%未満）
 	const int BLINK_FLAME = 60;				// 一回の点滅のフレーム（60フレーム＝1秒）
 
-	enum PATTERN
+	enum STATE
 	{
 		E_NON,
 		E_IDLE,
@@ -116,6 +116,8 @@ private:
 	int diedCounter;
 	int slashCnt_;
 
+	bool endFlg;
+
 	void BossDraw();
 
 
@@ -124,7 +126,7 @@ private:
 
 	//状態
 	//攻撃
-	PATTERN pattern_;
+	STATE state_;
 	ATTACK attackState_;
 	Tackle::DIR tDir_;
 
@@ -140,6 +142,8 @@ private:
 	void HpUpdate();
 
 	void Death();
+	void DiedDraw();
+
 	void DrawHP();
 
 	//Attackの状態別の関数
