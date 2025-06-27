@@ -78,6 +78,8 @@ public:
 	static constexpr float MAX_JUMP_POWER = 70.0f;		//最大ジャンプ力
 	static constexpr int INPUT_JUMPKEY_FRAME = 6;		//ジャンプキーを受け付けるフレーム数
 	static constexpr int JUMP_NUM =3;					//ジャンプ可能回数
+
+	static constexpr int JUMP_ANIM = 5;
 	
 	//----------------------------------------------------------------------------------------------
 
@@ -97,7 +99,7 @@ public:
 	static constexpr int MAX_BP_CONS = 3;
 	static constexpr int CHARGE_TIME = 60;
 
-	static constexpr int CHARGE_ANIM = 20;
+	static constexpr int CHARGE_ANIM = 255;
 	// 関数
 	std::vector<BPAttack*> GetBpAtt(void) { return BpAtIns_; }
 	const int &GetBp(void)const { return bp_; }
@@ -237,9 +239,11 @@ private:
 	void Jump(void);		//ジャンプ関数
 
 	// 変数
-	int isJump_[JUMP_NUM];	//ジャンプしているかの変数
+	bool isJump_[JUMP_NUM];	//ジャンプしているかの変数
 	int jumpKeyCounter_[JUMP_NUM];
-
+	int jumpImg_[JUMP_ANIM];
+	float jumpAnim_;
+	bool isJumpAnim_;
 	//---------------------------------------
 
 
