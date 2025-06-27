@@ -293,6 +293,9 @@ private:
 	//--------------------------------------
 
 
+	//ŒŠ‚É—‚¿‚½‚Ìˆ—
+	void Respawn(void);
+
 	// Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
 	void IsGround(Collision::DIR dir)override;
 };

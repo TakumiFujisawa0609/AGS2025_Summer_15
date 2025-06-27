@@ -28,7 +28,7 @@ void Player::Init()
 	unit_.speed_ = RUN_SPEED;
 
 	// •Ï”‚Ì‰Šú‰»
-	unit_.pos_ = { 500.0f,500.0f };
+	unit_.pos_ = { 550.0f,500.0f };
 	unit_.isAlive_ = true;
 	unit_.hp_ = HP_MAX;
 
@@ -103,6 +103,7 @@ void Player::Update()
 
 
 	(this->*stateFuncPtr)();
+	Respawn();
 
 	for (auto& t : BpAtIns_) {
 		t->Update();
@@ -513,6 +514,16 @@ void Player::Jump()
 
 
 
+
+void Player::Respawn(void)
+{
+	if (unit_.disppos_.y > Application::MAIN_SCREEN_SIZE_Y-100) {
+		SceneManager::GetInstance().HitStop();
+		SceneManager::GetInstance().SHAKE();
+		unit_.nextpos_ = { 550.0f,500.0f };
+		unit_.pos_ = unit_.nextpos_;
+	}
+}
 
 // Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
 void Player::IsGround(Collision::DIR dir)

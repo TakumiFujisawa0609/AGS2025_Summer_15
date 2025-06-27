@@ -2,6 +2,8 @@
 
 #include<DxLib.h>
 
+#include"../Application.h"
+
 Collision* Collision::instance = nullptr;
 
 Collision::Collision()
@@ -97,6 +99,7 @@ const bool Collision::Circle(const Base& u1, const Base& u2, bool invici) const
 	if (invici) {
 		if (u1.inviCounter_ > 0 || u2.inviCounter_ > 0)return false;
 	}
+
 	//2点間のベクトルを作成
 	Vector2F vec = { u1.pos_.x - u2.pos_.x,u1.pos_.y - u2.pos_.y };
 
