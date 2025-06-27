@@ -47,6 +47,12 @@ void Player::Init()
 		isJump_[i] = false;
 		jumpKeyCounter_[i] = 0;
 	}
+	int err = 0;
+	err = LoadDivGraph("Data/Image/Effect/Jump.png", 5, 5, 1, 192, 192, jumpImg_);
+	if (err == -1) {
+		return;
+	}
+	jumpAnim_ = 0;
 
 	// 攻撃関係
 	defaultAttack_ = new Default(&unit_.pos_, &dir_);
@@ -59,10 +65,9 @@ void Player::Init()
 	// 特殊攻撃関係
 	BambooImg_ = LoadGraph("Data/Image/Player/The_Bamboo.png");
 	BambooPowerImg_ = LoadGraph("Data/Image/Player/BambooBar.png");
-	int err = 0;
-	err=LoadDivGraph("Data/Image/Effect/BpCharge.png", 20, 10, 2, 121, 100, chargeImg_);
+	err = LoadDivGraph("Data/Image/Effect/charge.png", 255, 20, 13, 128 * 2, 128 * 2, chargeImg_);
 	if (err == -1) {
- 		return;
+		return;
 	}
 	chargeAnim_ = 0;
 	bp_ = BP_MAX;
@@ -96,6 +101,12 @@ void Player::Update()
 			chargeAnim_ = 0;
 		}
 	}
+	if (isJump_) {
+		jumpAnim_ -= 0.5;
+		if (jumpAnim_ <= 0) {
+			jumpAnim_ = 0;
+		}
+	}
 
 	StateManager();
 
@@ -116,31 +127,33 @@ void Player::Draw()
 {
 	if (unit_.isAlive_) {
 
-		DrawPlayer();
 
 		if (chargeTime_ > 0) {
-			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 2, chargeTime_, chargeImg_[chargeAnim_], true);
+			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1, 0/*chargeTime_*/, chargeImg_[chargeAnim_], true);
+		}
+		if (jumpAnim_ > 0) {
+			DrawRotaGraph(unit_.disppos_.x-5, unit_.disppos_.y+192/4 , 1, 0, jumpImg_[(int)jumpAnim_], true);
+		}
+			DrawPlayer();
+			defaultAttack_->Draw();
+
+
+		for (auto& t : BpAtIns_) {
+			t->Draw();
 		}
 
-		defaultAttack_->Draw();
-	}
+		DrawBar(330, 290, 1000, 330, unit_.hp_, HP_MAX, RGB(0, 255, 0));
 
-	for (auto& t : BpAtIns_) {
-		t->Draw();
-	}
+		Vector2F bPos = { 330,320 };
+		int len = 10;
+		for (int i = 0; i < bp_; i++) {
+			if ((i >= bp_ - bpConsCounter_) && (!(chargeTime_ / 10 % 2 == 0))) break;
 
-	DrawBar(330, 290, 1000, 330, unit_.hp_, HP_MAX, RGB(0, 255, 0));
-
-	Vector2F bPos = { 330,320 };
-	int len = 10;
-	for (int i = 0; i < bp_; i++) {
-		if ((i >= bp_ - bpConsCounter_) && (!(chargeTime_ / 10 % 2 == 0))) break;
-
-		if (i < len)DrawGraph(bPos.x + i * BAMBOO_SIZE_X, bPos.y, BambooPowerImg_, true);
-		else		DrawGraph(bPos.x + (i - len) * BAMBOO_SIZE_X, bPos.y + BAMBOO_SIZE_Y / 2, BambooPowerImg_, true);
+			if (i < len)DrawGraph(bPos.x + i * BAMBOO_SIZE_X, bPos.y, BambooPowerImg_, true);
+			else		DrawGraph(bPos.x + (i - len) * BAMBOO_SIZE_X, bPos.y + BAMBOO_SIZE_Y / 2, BambooPowerImg_, true);
+		}
 	}
 }
-
 void Player::Release()
 {
 	for (auto& b : BpAtIns_) {
@@ -159,9 +172,13 @@ void Player::Release()
 		}
 		image_[i].clear();
 	}
+	for (int i = 0; i < 255; i++) {
+		DeleteGraph(chargeImg_[i]);
+	}
+	for (int i = 0; i < 5; i++) {
+		DeleteGraph(jumpImg_[i]);
+	}
 }
-
-
 
 // 状態遷移を一元管理する
 void Player::StateManager(void)
@@ -448,8 +465,9 @@ void Player::Jump()
 	for (int i = 0; i < JUMP_NUM; i++) {
 
 		// ダウントリガーでジャンプ開始
-		if ((ins.IsTrgDown(KEY_INPUT_SPACE)) || (!prevJumpKey_ && nowJumpKey_))isJump_[i] = true;
-
+		if ((ins.IsTrgDown(KEY_INPUT_SPACE)) || (!prevJumpKey_ && nowJumpKey_)) {
+			isJump_[i] = true;
+		}
 		// ジャンプしていなかったらループから抜ける
 		if (!isJump_[i])break;
 
@@ -465,7 +483,9 @@ void Player::Jump()
 			//ジャンプ力を分配加算する
 			unit_.yAccel_ = -(MAX_JUMP_POWER / (float)INPUT_JUMPKEY_FRAME);
 
+			jumpAnim_ = JUMP_ANIM;
 			// その回のジャンプ処理をしたのでそれ以降のループに入らないようにする
+
 			break;
 		}
 	}
@@ -729,7 +749,7 @@ void Player::JoyPadInputManager(void)
 	nowAttackKey_ = ((input & 0x40) == 0) ? false : true;
 
 	prevBambooKey_ = nowBambooKey_;
-	nowBambooKey_ = (((input & 0x200) == 0) && ((input & 0x80)==0)) ? false : true;
+	nowBambooKey_ = (((input & 0x200) == 0) && ((input & 0x80) == 0)) ? false : true;
 
 	prevEvasionKey_ = nowEvasionKey_;
 	nowEvasionKey_ = (((input & 0x100) == 0) && ((input & 0x20) == 0)) ? false : true;
