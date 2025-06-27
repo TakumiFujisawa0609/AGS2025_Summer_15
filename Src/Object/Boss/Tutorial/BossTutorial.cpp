@@ -1,6 +1,6 @@
 ﻿#include"BossTutorial.h"
 #include"../../Player/Player.h"
-
+#include"../../../Manager/SceneManager.h"
 #include"../../../Manager/Camera.h"
 
 BossTutorial::BossTutorial()
@@ -13,6 +13,8 @@ BossTutorial::~BossTutorial()
 
 void BossTutorial::Init()
 {
+	
+
 	img_[DRAWPAT::NORMAL] = LoadGraph("Data/Image/Boss/TutrialBoss.png");
 	img_[DRAWPAT::E_SLASH_START] = LoadGraph("Data/Image/Boss/BossSlash.png");
 	img_[DRAWPAT::E_SLASH_END] = LoadGraph("Data/Image/Boss/BossSlashEnd.png");
@@ -35,13 +37,15 @@ void BossTutorial::Init()
 	diedCounter = 0;
 	slashCnt_ = Slash::CHARGE;
 
-	pattern_ = E_NON;
+	state_ = E_NON;
 	attackState_ = NON;
 	attackCounter_ = 0;
 	targetIndex_ = 2;
 	encount_ = false;
 	isHit_ = false;
 	unit_.isGravity_ = true;
+
+	endFlg = false;
 
 	slash_ = new Slash();
 	bullet_ = new Bullet();
@@ -73,21 +77,6 @@ void BossTutorial::Update()
 		PattaernManager();
 	}
 
-	if (CheckHitKey(KEY_INPUT_0)) {
-		SetDamage(1);
-	}
-	if (CheckHitKey(KEY_INPUT_1))unit_.isAlive_ = false;
-
-	HpUpdate();
-
-	frameCounter_ += 2;
-
-	EnemyBase::Update();
-}
-
-void BossTutorial::Draw()
-{
-
 	if (hitTimer_ > 0)
 	{
 		hitTimer_--;
@@ -98,7 +87,22 @@ void BossTutorial::Draw()
 		frameCounter_ = 0;
 	}
 
+	if (CheckHitKey(KEY_INPUT_0)) {
+		SetDamage(20);
+	}
+	if (CheckHitKey(KEY_INPUT_1))unit_.isAlive_ = false;
 
+	HpUpdate();
+
+	frameCounter_ += 2;
+
+	EnemyBase::Update();
+
+	if (!unit_.isAlive_)state_ = STATE::E_DEATH;
+}
+
+void BossTutorial::Draw()
+{
 	if (encount_) {
 		DrawHP();
 	
@@ -113,8 +117,6 @@ void BossTutorial::Draw()
 
 		slash_->Draw();
 	}
-
-	DrawFormatString(120, 120, 0x0fffff, "boss(%.2f,%.2f)", unit_.nextpos_.x, unit_.nextpos_.y);
 }
 
 void BossTutorial::BossDraw()
@@ -127,7 +129,7 @@ void BossTutorial::BossDraw()
 		if ((frameCounter_ / (flashInterval_ / 2)) % 2 == 0)
 		{
 			isFlash = true;
-			SetDrawBright(255, 128, 128);                   
+			SetDrawBright(255, 128, 128); 
 			SetDrawBlendMode(DX_BLENDMODE_ADD, 180);        
 		}
 	}
@@ -162,8 +164,6 @@ void BossTutorial::BossDraw()
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		SetDrawBright(255, 255, 255);
 	}
-
-
 }
 
 void BossTutorial::Release()
@@ -186,17 +186,18 @@ void BossTutorial::Release()
 
 	//画像の開放
 	for (int ii = 0; ii < DRAWPAT::DRAW_MAX; ii++) DeleteGraph(img_[ii]);
+
 }
 
 void BossTutorial::PattaernManager(void)
 {
-	switch (pattern_)
+	switch (state_)
 	{
 	case BossTutorial::E_NON:
 		attackCounter_++;
 		if (attackCounter_ > 100) {
 			attackCounter_ = 0;
-			pattern_ = E_IDLE;
+			state_ = E_IDLE;
 		}
 		break;
 
@@ -253,7 +254,7 @@ void BossTutorial::Idle(void)
 	}
 
 	attackCounter_ = 0;
-	pattern_ = E_MOVE;
+	state_ = E_MOVE;
 }
 
 
@@ -282,10 +283,10 @@ void BossTutorial::Move()
 		if (!(targetIndex_ == 1)) {
 			TargetLook(player_->GetUnit().pos_);
 			attackState_ = (ATTACK)GetRand((int)ATTACK::MAX - 2);
-			pattern_ = E_ATTACK;
+			state_ = E_ATTACK;
 		}
 		else {
-			pattern_ = E_NON;
+			state_ = E_NON;
 		}
 	}
 
@@ -302,14 +303,14 @@ void BossTutorial::Attack()
 
 	//デバック用（アタックの状態を攻撃をしてないときの状態にする）
 	if (CheckHitKey(KEY_INPUT_U) == 1) {
-		pattern_ = E_NON;
+		state_ = E_NON;
 	}
 
 	//バグが起きた時のための最終手段
 	//（一定の時間を超えたら攻撃状態が強制的に終了する）
 	if (attackCounter_ > 1000 || attackState_ == NON) {
 		attackCounter_ = 0;
-		pattern_ = E_IDLE;
+		state_ = E_IDLE;
 		attackState_ = NON;
 	}
 }
@@ -328,7 +329,7 @@ void BossTutorial::Down()
 
 
 	if (unit_.isGround_ && unit_.yAccel_ >= 0) {
-		pattern_ = PATTERN::E_NON;
+		state_ = STATE::E_NON;
 		DrawPat_ = DRAWPAT::NORMAL;
 	}
 }
@@ -409,7 +410,7 @@ void BossTutorial::HpUpdate()
 {
 	if (encount_)
 	{
-		//ボスが死んだらHPバーが揺れ続ける（ただの演出）
+		//ボスが死んだらHPバーが揺れ続ける（ただの演出用）
 		if (unit_.hp_ <= 0) {
 			hpShakeTimer_ = 10;
 		}
@@ -422,8 +423,10 @@ void BossTutorial::HpUpdate()
 		prevHp_ = unit_.hp_;
 
 		if (dispHp_ < unit_.hp_) dispHp_ += 3;			//ボスがエンカウントしたら増える！！！！
-		if (dispHp_ > unit_.hp_) dispHp_ -= 1;			//HPをゆっくり減らすよ
+		if (dispHp_ > unit_.hp_) dispHp_ -= 3;			//HPをゆっくり減らすよ
 	}
+
+
 
 }
 
@@ -506,7 +509,7 @@ void BossTutorial::SlashUpdate(void)
 	if (slash_->End()) {
 		attackCounter_ = 0;
 		unit_.isGravity_ = true;
-		pattern_ = E_IDLE;
+		state_ = E_IDLE;
 		attackState_ = NON;
 	}
 
@@ -523,7 +526,7 @@ void BossTutorial::BulletUpdate(void)
 
 	if (bullet_->End()) {
 		attackCounter_ = 0;
-		pattern_ = E_IDLE;
+		state_ = E_IDLE;
 		attackState_ = NON;
 	}
 
@@ -532,7 +535,7 @@ void BossTutorial::BulletUpdate(void)
 
 void BossTutorial::RoarUpdate(void)
 {
-	pattern_ = E_IDLE;
+	state_ = E_IDLE;
 	attackState_ = NON;
 }
 
@@ -548,7 +551,7 @@ void BossTutorial::BlastUpdate(void)
 
 	if (blast_->End()) {
 		attackCounter_ = 0;
-		pattern_ = E_IDLE;
+		state_ = E_IDLE;
 		attackState_ = NON;
 	}
 
@@ -686,24 +689,24 @@ AttackBase* BossTutorial::GetAttackIns(void)
 
 void BossTutorial::Death()
 {
-	if (unit_.isAlive_)
-	{
-		diedCounter++;
-		bool is = diedCounter > 180 && unit_.pos_.y > GetStartPos().y + Application::SCREEN_SIZE_Y / 3;
+	auto& scene_ = SceneManager::GetInstance();
 
-		if (!is) 
-		{
-			unit_.pos_.y += 5;
-		}
-		else
-		{
+	diedCounter++;
+	unit_.isGravity_ = false;
 
-		}
+	DrawPat_ = DRAWPAT::E_DAMAGE;
 
+	//scene_.HitStop(60);
 
+	if (diedCounter < 120)return;
 
+	endFlg = true;
 
-	}
+	if (endFlg) scene_.ChangeScene(SceneManager::SCENE_ID::CLEAR);
+}
+
+void BossTutorial::DiedDraw()
+{
 }
 
 void BossTutorial::SetDamage(int damage)
@@ -731,7 +734,7 @@ void BossTutorial::SetDown(Vector2F pos)
 
 	unit_.nextpos_.y += unit_.yAccel_;
 
-	pattern_ = PATTERN::E_DOWN;
+	state_ = STATE::E_DOWN;
 	attackState_ = ATTACK::NON;
 	DrawPat_ = DRAWPAT::E_DAMAGE;
 }

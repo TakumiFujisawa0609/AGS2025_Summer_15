@@ -110,22 +110,7 @@ void SceneManager::Update(void)
 	}
 	else
 	{
-		//ヒットストップ-----------------
-		if (hitStopCounter_ > 0) {
-			hitStopCounter_--;
-			return;
-		}
-		//スロー--------------------------
-		if (slowCounter_ > 0) {
-			slowCounter_--;
-			if (slowCounter_ % 5 != 0) {
-				return;
-			}
-		}
-		//注視点を初期化-----------------
-		zoomPos_ = { Application::MAIN_SCREEN_SIZE_X / 2,Application::MAIN_SCREEN_SIZE_Y / 2 };
-		scale_ = 1.0f;
-		//--------------------------------
+
 
 		Pause::STATE state = pause_->GetPauseState();
 
@@ -144,6 +129,24 @@ void SceneManager::Update(void)
 			break;
 		case Pause::STATE::E_UPDATE:
 			pause_->Init();
+
+			//ヒットストップ-----------------
+			if (hitStopCounter_ > 0) {
+				hitStopCounter_--;
+				return;
+			}
+			//スロー--------------------------
+			if (slowCounter_ > 0) {
+				slowCounter_--;
+				if (slowCounter_ % 5 != 0) {
+					return;
+				}
+			}
+			//注視点を初期化-----------------
+			zoomPos_ = { Application::MAIN_SCREEN_SIZE_X / 2,Application::MAIN_SCREEN_SIZE_Y / 2 };
+			scale_ = 1.0f;
+			//--------------------------------
+
 			scene_->Update();
 			break;
 		}

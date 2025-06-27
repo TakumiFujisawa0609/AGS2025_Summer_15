@@ -729,7 +729,7 @@ void Player::JoyPadInputManager(void)
 void Player::Hit(int damage, Vector2F bPos)
 {
 	if (state_ == Player::STATE::EVASION) {
-		SceneManager::GetInstance().HitStop();
+		SceneManager::GetInstance().HitStop(SceneManager::HIT_STOP_TIME);
 		unit_.inviCounter_ = 100;
 		return;
 	}
