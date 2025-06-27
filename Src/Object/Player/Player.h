@@ -280,6 +280,7 @@ private:
 	// •Ï”
 	int evasionCounter_;
 	bool evasionPossiFlg_;
+	bool evaConpFlg_;
 	//--------------------------------------
 
 	// ƒ_ƒ[ƒWˆ—ŠÖŒW---------------------

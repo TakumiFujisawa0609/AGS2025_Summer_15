@@ -71,7 +71,7 @@ void Player::Init()
 
 	// ‰ñ”ðŠÖŒW
 	evasionCounter_ = 0;
-
+	evaConpFlg_ = false;
 	evasionPossiFlg_ = true;
 
 	// ƒ_ƒ[ƒWŠÖŒW
@@ -86,8 +86,8 @@ void Player::Init()
 
 void Player::Update()
 {
-	if (unit_.inviCounter_ > 0)unit_.inviCounter_--;
-
+	if (unit_.inviCounter_ > 0) { unit_.inviCounter_--;}
+	else { evaConpFlg_ = false; }
 	JoyPadInputManager();
 
 	if (chargeTime_ > 0) {
@@ -693,12 +693,12 @@ void Player::DrawPlayer(void)
 	bool invic = false;
 	if (!(unit_.inviCounter_ / 5 % 2 == 0))invic = true;
 
-	if (invic)SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+	if (invic && !evaConpFlg_)SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
 
 	bool Trance = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? true : false;
 	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true, Trance);
 
-	if (invic)SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	if (invic && !evaConpFlg_)SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
 void Player::JoyPadInputManager(void)
@@ -730,7 +730,8 @@ void Player::Hit(int damage, Vector2F bPos)
 {
 	if (state_ == Player::STATE::EVASION) {
 		SceneManager::GetInstance().HitStop();
-		unit_.inviCounter_ = 100;
+		evaConpFlg_ = true;
+		unit_.inviCounter_ = 50;
 		return;
 	}
 	ChangeState(Player::STATE::DAMAGE);
