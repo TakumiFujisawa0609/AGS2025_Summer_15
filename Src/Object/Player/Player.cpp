@@ -142,12 +142,8 @@ void Player::Draw()
 
 
 		if (chargeTime_ > 0) {
-			static int s = 0;
-			if (chargeTime_ % 5 == 0)s++;
-			if (s > 10)s = 0;
-
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-			DrawRotaGraph(unit_.disppos_.x + ((dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? 10 : -10), unit_.disppos_.y, std::sin(s), 0, chargeImg_[chargeAnim_], true);
+			DrawRotaGraph(unit_.disppos_.x + ((dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? 10 : -10), unit_.disppos_.y, 1, 0, chargeImg_[chargeAnim_], true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
 
