@@ -20,40 +20,17 @@ TutorialStage::~TutorialStage()
 
 void TutorialStage::Draw(void)
 {
-	int num = (STAGE_CHIP_SIZE * mapData_[0].size()) / HAIKEI_SIZE_X;
+	int num = (STAGE_CHIP_SIZE * mapData_[0].size()) / HAIKEI_SIZE_X + 1;
+
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < num; j++) {
 			Vector2 d =
 			{
-				Application::SCREEN_ZERO_POINT.x ,
-				Application::SCREEN_ZERO_POINT.y + (Application::SCREEN_SIZE_Y / 2)
+				Application::SCREEN_SIZE_X / 2,
+				Application::SCREEN_SIZE_Y / 2
 			};
 
 			d.x += HAIKEI_SIZE_X * j;
-
-			Vector2 c =
-			{
-				(int)Camera::GetInstance().GetPos().x / (8 - i),
-				(int)Camera::GetInstance().GetPos().y
-			};
-
-			d.x -= c.x;
-			d.y -= c.y;
-
-			DrawRotaGraph(d.x, d.y, 3, 0, backImg_[i], true);
-		}
-	}
-
-
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < num; j++) {
-			Vector2 d =
-			{
-				Application::SCREEN_ZERO_POINT.x ,
-				Application::SCREEN_ZERO_POINT.y + (Application::SCREEN_SIZE_Y / 2)
-			};
-
-			d.x += (int)(HAIKEI_SIZE_X* 1.5)*j;
 
 			Vector2 c =
 			{ 
@@ -63,9 +40,8 @@ void TutorialStage::Draw(void)
 
 			d.x -= c.x;
 			d.y -= c.y;
-			d.y -=300;
 
-			DrawRotaGraph(d.x, d.y, 1.5, 0, backImg_[i], true);
+			DrawRotaGraph(d.x, d.y, 1, 0, backImg_[i], true);
 		}
 	}
 

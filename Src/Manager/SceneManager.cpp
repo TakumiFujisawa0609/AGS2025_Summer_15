@@ -47,13 +47,18 @@ void SceneManager::Init(void)
 
 	// カメラ
 	Camera::CreateInstance();
+	Camera::GetInstance().Init();
 
+	//注視点を初期化-----------------
+	zoomPos_ = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
+	scale_ = 1.0f;
+	//--------------------------------
 
 	isSceneChanging_ = false;
 
 
 	//メイクスクリーン
-	mainScreen_ = MakeScreen(Application:: MAIN_SCREEN_SIZE_X, Application::MAIN_SCREEN_SIZE_Y, true);
+	mainScreen_ = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
 
 	// デルタタイム
 	preTime_ = std::chrono::system_clock::now();
@@ -62,7 +67,7 @@ void SceneManager::Init(void)
 	Init3D();
 
 	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::TUTORIAL);
+	DoChangeScene(SCENE_ID::TITLE);
 
 }
 
@@ -143,7 +148,7 @@ void SceneManager::Update(void)
 				}
 			}
 			//注視点を初期化-----------------
-			zoomPos_ = { Application::MAIN_SCREEN_SIZE_X / 2,Application::MAIN_SCREEN_SIZE_Y / 2 };
+			zoomPos_ = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
 			scale_ = 1.0f;
 			//--------------------------------
 
@@ -192,7 +197,7 @@ void SceneManager::Draw(void)
 
 	ZoomCtr();
 	Vector2F vPos,dPos;
-	vPos = { zoomPos_.x - Application::MAIN_SCREEN_SIZE_X / 2, zoomPos_.y - Application::MAIN_SCREEN_SIZE_Y / 2 };
+	vPos = { zoomPos_.x - Application::SCREEN_SIZE_X / 2, zoomPos_.y - Application::SCREEN_SIZE_Y / 2 };
 	dPos = { Application::SCREEN_SIZE_X / 2 - vPos.x,Application::SCREEN_SIZE_Y / 2 - vPos.y };
 
 
@@ -204,6 +209,7 @@ void SceneManager::Draw(void)
 		shake *= 2;
 		shake -= 1;
 		shake *= 5;
+		DrawRotaGraph(dPos.x, dPos.y, scale_, 0, mainScreen_, true);
 	}
 
 	DrawRotaGraph(dPos.x+shake, dPos.y+shake, scale_, 0, mainScreen_, true);
@@ -379,22 +385,32 @@ void SceneManager::Fade(void)
 
 void SceneManager::ZoomCtr(void)
 {
+	if (sceneId_ != SCENE_ID::TUTORIAL)return;
 	auto& camera = Camera::GetInstance();
 
 	Vector2F worldZoomPos = zoomPos_ + camera.GetPos();
 
 	Vector2F drawRange = { (Application::SCREEN_SIZE_X / scale_) / 2,(Application::SCREEN_SIZE_Y / scale_) / 2 };
 
-	Vector2F screenDiff = { (Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2,(Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2 };
-
+	drawRange.x -= 50.0f;
 	if (worldZoomPos.x - drawRange.x <= 0) {
 		zoomPos_.x -= (worldZoomPos.x - drawRange.x);
 	}
+	drawRange.x += 50.0f;
 
 	if (worldZoomPos.x + drawRange.x >= TutorialStage::STAGE_CHIP_SIZE * mapNum_.x) {
 		zoomPos_.x -= ((worldZoomPos.x + drawRange.x) - (TutorialStage::STAGE_CHIP_SIZE * mapNum_.x));
 	}
 
+	drawRange.y -= 50.0f;
+	if (worldZoomPos.y - drawRange.y < 0) {
+		zoomPos_.y -= (worldZoomPos.y - drawRange.y);
+	}
+	drawRange.y += 50.0f;
+
+	if (worldZoomPos.y + drawRange.y > TutorialStage::STAGE_CHIP_SIZE * mapNum_.y) {
+		zoomPos_.y -= ((worldZoomPos.y + drawRange.y) - (TutorialStage::STAGE_CHIP_SIZE * mapNum_.y));
+	}
 }
 
 

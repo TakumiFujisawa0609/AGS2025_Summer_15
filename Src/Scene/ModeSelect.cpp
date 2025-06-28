@@ -34,7 +34,7 @@ void ModeSelect::Draw()
 {
 	using a = Application;
 
-	DrawBox(0, 0, a::MAIN_SCREEN_SIZE_X, a::MAIN_SCREEN_SIZE_Y, RGB(255, 0, 0), true);
+	DrawBox(0, 0, a::SCREEN_SIZE_X, a::SCREEN_SIZE_Y, RGB(255, 0, 0), true);
 
 }
 

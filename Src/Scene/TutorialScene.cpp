@@ -126,7 +126,7 @@ void TutorialScene::Release(void)
 	boss_ = nullptr;
 
    enemy_->Relese();  
-   delete enemy_;  
+   delete enemy_;
    enemy_ = nullptr;  
 
    player_->Release();  
@@ -150,13 +150,13 @@ void TutorialScene::Scroll(void)
 {
 	auto& camera = Camera::GetInstance();
 	if (!boss_->GetEnCount()) {
-		if (player_->GetUnit().disppos_.x > Application::MAIN_SCREEN_SIZE_X / 7 * 4 &&
-			!((camera.GetPos().x + Application::MAIN_SCREEN_SIZE_X) - ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) >= TutorialStage::STAGE_CHIP_SIZE * stage_->GetMapNum().x)) {
+		if (player_->GetUnit().disppos_.x > Application::SCREEN_SIZE_X / 7 * 3 &&
+			!((camera.GetPos().x + Application::SCREEN_SIZE_X) >= TutorialStage::STAGE_CHIP_SIZE * stage_->GetMapNum().x)) {
 			camera.Follow(Camera::dir::X, (player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_);
 		}
 
-		if (player_->GetUnit().disppos_.x < Application::MAIN_SCREEN_SIZE_X / 7 * 3 &&
-			!(camera.GetPos().x <= -((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2))) {
+		if (player_->GetUnit().disppos_.x < Application::SCREEN_SIZE_X / 7 * 2 &&
+			!(camera.GetPos().x <= 0)) {
 			camera.Follow(Camera::dir::X, -((player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_));
 		}
 	}

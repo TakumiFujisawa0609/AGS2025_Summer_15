@@ -33,7 +33,7 @@ void BPAttack::Update(void)
 
 	ChangeDispPos();
 
-	if (obj_.disppos_.x<-200 || obj_.disppos_.x>Application::MAIN_SCREEN_SIZE_X)obj_.isAlive_ = false;
+	if (obj_.disppos_.x < -DEFAULT_SIZE_X * bp_ || obj_.disppos_.x > Application::SCREEN_SIZE_X + DEFAULT_SIZE_X * bp_)obj_.isAlive_ = false;
 }
 
 void BPAttack::Draw(void)

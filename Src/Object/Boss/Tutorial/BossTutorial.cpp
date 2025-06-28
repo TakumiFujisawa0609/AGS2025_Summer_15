@@ -432,10 +432,6 @@ void BossTutorial::HpUpdate()
 
 void BossTutorial::DrawHP()
 {
-	Vector2 start;
-	start.x = (Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2;
-	start.y = (Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2;
-
 	//鮭鮭
 	int shakeX = 0;
 	int shakeY = 0;
@@ -446,10 +442,10 @@ void BossTutorial::DrawHP()
 	}
 
 	DrawBar(
-		start.x + Application::SCREEN_SIZE_X / 4 + shakeX,
-		start.y + Application::SCREEN_SIZE_Y - 50 + shakeY,
-		start.x + Application::SCREEN_SIZE_X / 4 * 3 + shakeX,
-		start.y + Application::SCREEN_SIZE_Y - 20 + shakeY,
+		Application::SCREEN_SIZE_X / 4 + shakeX,
+		Application::SCREEN_SIZE_Y - 50 + shakeY,
+		Application::SCREEN_SIZE_X / 4 * 3 + shakeX,
+		Application::SCREEN_SIZE_Y - 20 + shakeY,
 		dispHp_, BOSS_HP, RGB(100, 100, 255)
 	);
 }
@@ -595,7 +591,7 @@ void BossTutorial::TackleUpdate(void)
 
 		if (unit_.nextpos_.y < start.y - 100)
 		{
-			unit_.nextpos_.x = (start.x + Application::MAIN_SCREEN_SIZE_X);
+			unit_.nextpos_.x = (start.x + Application::SCREEN_SIZE_X);
 			unit_.nextpos_.y = player_->GetUnit().disppos_.y - unit_.radius_;
 			tackle_->SetStandBy(true);
 		}

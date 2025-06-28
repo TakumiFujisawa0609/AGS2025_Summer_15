@@ -22,11 +22,12 @@ void StageBase::Draw(void)
 {
 	//マップチップ画像を表示
 	int start = (Camera::GetInstance().GetPos().x / STAGE_CHIP_SIZE);
-	int end = start + (Application::MAIN_SCREEN_SIZE_X / STAGE_CHIP_SIZE);
+	int end = start + (Application::SCREEN_SIZE_X / STAGE_CHIP_SIZE) + 1;
 
 	for (int yy = 0; yy < mapData_.size(); yy++) {
 		for (int xx = start; xx < end; xx++) {
 			int chip = mapData_[yy][xx];
+			if (chip == -1)continue;
 
 			int dx = STAGE_CHIP_SIZE * xx - Camera::GetInstance().GetPos().x;
 			int dy = STAGE_CHIP_SIZE * yy - Camera::GetInstance().GetPos().y;

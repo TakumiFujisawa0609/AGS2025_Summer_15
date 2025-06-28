@@ -37,8 +37,8 @@ public:
 
 	Vector2F GetStartPos(void)
 	{
-		startPos_.x = ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) + Camera::GetInstance().GetPos().x;
-		startPos_.y = ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2) + Camera::GetInstance().GetPos().y;
+		startPos_.x = Camera::GetInstance().GetPos().x;
+		startPos_.y = Camera::GetInstance().GetPos().y;
 
 		return startPos_; 
 	}

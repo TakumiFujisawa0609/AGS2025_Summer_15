@@ -29,6 +29,7 @@ void Player::Init()
 
 	// •Ï”‚Ì‰Šú‰»
 	unit_.pos_ = { 550.0f,500.0f };
+	unit_.nextpos_ = unit_.pos_;
 	unit_.isAlive_ = true;
 	unit_.hp_ = HP_MAX;
 
@@ -115,6 +116,10 @@ void Player::Update()
 
 	(this->*stateFuncPtr)();
 	Respawn();
+	if (CheckHitKey(KEY_INPUT_P) == 1) {
+		SceneManager::GetInstance().ZoomPos(unit_.disppos_);
+		SceneManager::GetInstance().ZoomScale(1.4);
+	}
 
 	for (auto& t : BpAtIns_) {
 		t->Update();
@@ -128,23 +133,31 @@ void Player::Draw()
 	if (unit_.isAlive_) {
 
 
-		if (chargeTime_ > 0) {
-			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1, 0/*chargeTime_*/, chargeImg_[chargeAnim_], true);
-		}
 		if (jumpAnim_ > 0) {
-			DrawRotaGraph(unit_.disppos_.x-5, unit_.disppos_.y+192/4 , 1, 0, jumpImg_[(int)jumpAnim_], true);
+			DrawRotaGraph(unit_.disppos_.x - 5, unit_.disppos_.y + 192 / 4, 1, 0, jumpImg_[(int)jumpAnim_], true);
 		}
-			DrawPlayer();
-			defaultAttack_->Draw();
 
+		DrawPlayer();
+		defaultAttack_->Draw();
+
+
+		if (chargeTime_ > 0) {
+			static int s = 0;
+			if (chargeTime_ % 5 == 0)s++;
+			if (s > 10)s = 0;
+
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+			DrawRotaGraph(unit_.disppos_.x + ((dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? 10 : -10), unit_.disppos_.y, std::sin(s), 0, chargeImg_[chargeAnim_], true);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		}
 
 		for (auto& t : BpAtIns_) {
 			t->Draw();
 		}
 
-		DrawBar(330, 290, 1000, 330, unit_.hp_, HP_MAX, RGB(0, 255, 0));
+		DrawBar(5, 5, 670, 50, unit_.hp_, HP_MAX, RGB(0, 255, 0));
 
-		Vector2F bPos = { 330,320 };
+		Vector2F bPos = { 5,50 };
 		int len = 10;
 		for (int i = 0; i < bp_; i++) {
 			if ((i >= bp_ - bpConsCounter_) && (!(chargeTime_ / 10 % 2 == 0))) break;
@@ -537,7 +550,7 @@ void Player::Jump()
 
 void Player::Respawn(void)
 {
-	if (unit_.disppos_.y > Application::MAIN_SCREEN_SIZE_Y-100) {
+	if (unit_.disppos_.y > Application::SCREEN_SIZE_Y) {
 		SceneManager::GetInstance().HitStop(SceneManager::HIT_STOP_TIME);
 		SceneManager::GetInstance().SHAKE();
 		unit_.nextpos_ = { 550.0f,500.0f };

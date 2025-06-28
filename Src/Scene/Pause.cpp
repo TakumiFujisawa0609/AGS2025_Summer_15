@@ -48,8 +48,8 @@ void Pause::Update(void)
 {
 	SceneManager& scene_ = SceneManager::GetInstance();
 
-	startPos_.x = ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2);
-	startPos_.y = ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2);
+	startPos_.x = 0;
+	startPos_.y = 0;
 
 	//égÇ§ÉLÅ[
 	KeyInput();
@@ -105,8 +105,8 @@ void Pause::Draw(void)
 {
 	VECTOR startPos_;
 
-	startPos_.x = ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2);
-	startPos_.y = ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2);
+	startPos_.x = 0;
+	startPos_.y = 0;
 
 	SetDrawBright(128, 128, 128);
 	SetDrawBlendMode(DX_BLENDMODE_ADD, 120);

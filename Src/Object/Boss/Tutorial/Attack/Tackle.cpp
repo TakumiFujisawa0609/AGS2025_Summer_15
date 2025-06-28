@@ -24,8 +24,8 @@ void Tackle::Update()
 	attackCounter_++;
 
 	VECTOR start;
-	start.x = ((Application::MAIN_SCREEN_SIZE_X - Application::SCREEN_SIZE_X) / 2) + Camera::GetInstance().GetPos().x;
-	start.y = ((Application::MAIN_SCREEN_SIZE_Y - Application::SCREEN_SIZE_Y) / 2) + Camera::GetInstance().GetPos().y;
+	start.x = Camera::GetInstance().GetPos().x;
+	start.y = Camera::GetInstance().GetPos().y;
 
 	switch (dir_)
 	{

@@ -18,7 +18,6 @@ TitleScene::~TitleScene(void)
 void TitleScene::Init(void)
 {
 
-
 }
 
 void TitleScene::Update(void)
@@ -30,7 +29,7 @@ void TitleScene::Update(void)
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
 		scnM.SetController(SceneManager::CNTL::KEY);
-		scnM.ChangeScene(SceneManager::SCENE_ID::TUTORIAL);
+		scnM.ChangeScene(SceneManager::SCENE_ID::MODESELECT);
 	}
 
 	if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
@@ -42,7 +41,7 @@ void TitleScene::Update(void)
 
 void TitleScene::Draw(void)
 {
-
+	DrawString(0,0,"タイトルシーン",RGB(255,255,255));
 
 }
 

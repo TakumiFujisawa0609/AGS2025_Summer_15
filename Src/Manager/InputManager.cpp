@@ -27,27 +27,30 @@ void InputManager::Init(void)
 	// ゲームで使用したいキーを、
 	// 事前にここで登録しておいてください
 	auto& ins = InputManager::GetInstance();
-	InputManager::GetInstance().Add(KEY_INPUT_SPACE);
-	InputManager::GetInstance().Add(KEY_INPUT_N);
-	InputManager::GetInstance().Add(KEY_INPUT_Z);
-	InputManager::GetInstance().Add(KEY_INPUT_J);
-	InputManager::GetInstance().Add(KEY_INPUT_W);
-	InputManager::GetInstance().Add(KEY_INPUT_A);
-	InputManager::GetInstance().Add(KEY_INPUT_S);
-	InputManager::GetInstance().Add(KEY_INPUT_D);
-	InputManager::GetInstance().Add(KEY_INPUT_E);
-	InputManager::GetInstance().Add(KEY_INPUT_Q);
-	InputManager::GetInstance().Add(KEY_INPUT_F);
+	ins.Add(KEY_INPUT_SPACE);
+	ins.Add(KEY_INPUT_N);
+	ins.Add(KEY_INPUT_Z);
+	ins.Add(KEY_INPUT_J);
+	ins.Add(KEY_INPUT_W);
+	ins.Add(KEY_INPUT_A);
+	ins.Add(KEY_INPUT_S);
+	ins.Add(KEY_INPUT_D);
+	ins.Add(KEY_INPUT_E);
+	ins.Add(KEY_INPUT_Q);
+	ins.Add(KEY_INPUT_F);
 	ins.Add(KEY_INPUT_L);
 	ins.Add(KEY_INPUT_LSHIFT);
 	ins.Add(KEY_INPUT_LCONTROL);
 
 	ins.Add(KEY_INPUT_P);
 	ins.Add(KEY_INPUT_H);
-	InputManager::GetInstance().Add(KEY_INPUT_UP);
-	InputManager::GetInstance().Add(KEY_INPUT_DOWN);
-	InputManager::GetInstance().Add(KEY_INPUT_LEFT);
-	InputManager::GetInstance().Add(KEY_INPUT_RIGHT);
+	ins.Add(KEY_INPUT_UP);
+	ins.Add(KEY_INPUT_DOWN);
+	ins.Add(KEY_INPUT_LEFT);
+	ins.Add(KEY_INPUT_RIGHT);
+
+	ins.Add(KEY_INPUT_1);
+	ins.Add(KEY_INPUT_2);
 
 	ins.Add(KEY_INPUT_K);
 
