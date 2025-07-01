@@ -99,7 +99,8 @@ public:
 	static constexpr int MAX_BP_CONS = 3;
 	static constexpr int CHARGE_TIME = 60;
 
-	static constexpr int CHARGE_ANIM = 255;
+	static constexpr int CHARGE_ANIM = 5;
+	static constexpr int CHARGE_ANIM_SPEED = 2;
 	// ä÷êî
 	std::vector<BPAttack*> GetBpAtt(void) { return BpAtIns_; }
 	const int &GetBp(void)const { return bp_; }

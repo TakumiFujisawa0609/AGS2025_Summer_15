@@ -66,10 +66,15 @@ void Player::Init()
 	// ì¡éÍçUåÇä÷åW
 	BambooImg_ = LoadGraph("Data/Image/Player/The_Bamboo.png");
 	BambooPowerImg_ = LoadGraph("Data/Image/Player/BambooBar.png");
-	err = LoadDivGraph("Data/Image/Effect/charge.png", 255, 20, 13, 128 * 2, 128 * 2, chargeImg_);
-	if (err == -1) {
-		return;
+
+	for (int i = 1; i <= CHARGE_ANIM; i++) {
+		std::string filePath = "Data/Image/Effect/bpCharge/charge" + std::to_string(i) + ".png";
+		chargeImg_[i] = LoadGraph(filePath.c_str());
 	}
+	//err = LoadDivGraph("Data/Image/Effect/charge.png", 255, 20, 13, 128 * 2, 128 * 2, chargeImg_);
+	//if (err == -1) {
+	//	return;
+	//}
 	chargeAnim_ = 0;
 	bp_ = BP_MAX;
 	bpConsCounter_ = 1;
@@ -96,10 +101,14 @@ void Player::Update()
 	else { evaConpFlg_ = false; }
 	JoyPadInputManager();
 
+
+	static int anime = 0;
 	if (chargeTime_ > 0) {
-		chargeAnim_++;
-		if (chargeAnim_ > CHARGE_ANIM) {
-			chargeAnim_ = 0;
+		if (++anime > CHARGE_ANIM_SPEED) {
+			anime = 0;
+			if (++chargeAnim_ > CHARGE_ANIM) {
+				chargeAnim_ = 0;
+			}
 		}
 	}
 	if (isJump_) {
@@ -142,8 +151,8 @@ void Player::Draw()
 
 
 		if (chargeTime_ > 0) {
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-			DrawRotaGraph(unit_.disppos_.x + ((dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? 10 : -10), unit_.disppos_.y, 1, 0, chargeImg_[chargeAnim_], true);
+			SetDrawBlendMode(DX_BLENDMODE_ADD, 200);
+			DrawRotaGraph(unit_.disppos_.x + ((dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? 10 : -10), unit_.disppos_.y, 4, 0, chargeImg_[chargeAnim_], true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
 
