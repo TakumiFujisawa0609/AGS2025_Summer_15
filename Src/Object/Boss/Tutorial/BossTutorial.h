@@ -59,9 +59,9 @@ public:
 
 	const Vector2F BOSS_POINT[3] =
 	{
-		{14900.0f,712.0f},
-		{15400.0f,712.0f},
-		{15800.0f,712.0f}
+		{14900.0f,640.0f - SIZE_Y / 2},
+		{15400.0f,640.0f - SIZE_Y / 2},
+		{15800.0f,640.0f - SIZE_Y / 2}
 	};
 
 	BossTutorial();
