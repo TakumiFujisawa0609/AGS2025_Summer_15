@@ -30,6 +30,8 @@ public:
 		CLEAR,
 	};
 
+
+
 	enum class CNTL
 	{
 		NONE,
@@ -75,6 +77,19 @@ public:
 	bool GetExit(void);
 
 	void SetMapNum(Vector2 num) { mapNum_ = num; }
+
+
+	//ボスの種類
+	enum class BOSS_KINDS
+	{
+		ONE,
+		TWO,
+		THREE,
+	};
+
+	const BOSS_KINDS GetNowBoss(void)const { return nowBossKinds_; }
+	void SetBossKinds(BOSS_KINDS k) { nowBossKinds_ = k; }
+
 private:
 
 	// 静的インスタンス
@@ -134,4 +149,7 @@ private:
 	void ZoomCtr(void);
 
 	Vector2 mapNum_;
+
+
+	BOSS_KINDS nowBossKinds_;
 };

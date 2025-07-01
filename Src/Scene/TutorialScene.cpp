@@ -110,7 +110,6 @@ void TutorialScene::Draw(void)
 	enemy_->Draw();
 	boss_->Draw();
 	player_->Draw();
-	bamboo_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 }
