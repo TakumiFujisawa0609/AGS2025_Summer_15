@@ -23,6 +23,9 @@ void Weakness::Init(Vector2F disppos)
 	Vector2F start_;
 	start_.x = Camera::GetInstance().GetPos().x;
 	start_.y = Camera::GetInstance().GetPos().y;
+
+	cnt_ = GetRand(100);
+
 	unit_.disppos_ + start_;
 
 	unit_.isAlive_ = true;
