@@ -11,6 +11,7 @@
 #include"../Object/Stage/BossStage/Stage1.h"
 #include"../Object/Stage/Tutorial/TutorialStage.h"
 //#include"../Object/Boss/BigBoss/"
+#include"../Object/Boss/BigBoss/Runboo/Runboo.h"
 
 BattledomeScene::BattledomeScene()
 {
@@ -30,12 +31,19 @@ void BattledomeScene::Init(void)
 	{
 	case SceneManager::BOSS_KINDS::ONE:
 		stage_ = new TutorialStage();
+	
 		break;
-	case SceneManager::BOSS_KINDS::TWO:
+	case SceneManager::BOSS_KINDS::RUNBOO:
+		stage_ = new TutorialStage();
 		break;
 	case SceneManager::BOSS_KINDS::THREE:
 		break;
 	}
+
+
+	runboo_ = new Runboo();
+	runboo_->Init();
+
 	stage_->Init();
 	//boss_->Init();
 
@@ -63,16 +71,20 @@ void BattledomeScene::Update(void)
 	bamboo_->Update();
 
 	//スクロール処理は田中に任せた
-	if (SceneManager::GetInstance().GetNowBoss() == SceneManager::BOSS_KINDS::TWO) Scroll();
+	if (SceneManager::GetInstance().GetNowBoss() == SceneManager::BOSS_KINDS::RUNBOO) Scroll();
+
+	runboo_->Update();
 }
 
 void BattledomeScene::Draw(void)
 {
 	stage_->Draw();
+
+	runboo_->Draw();
+
 	bamboo_->Draw();
 	//boss_->Draw();
 	player_->Draw();
-
 }
 
 void BattledomeScene::Release(void)
@@ -95,9 +107,21 @@ void BattledomeScene::Release(void)
 	delete stage_;
 	stage_ = nullptr;
 
+	runboo_->Release();
+	delete runboo_;
+	runboo_ = nullptr;
+}
+
+void BattledomeScene::UnitCollision(void)
+{
+	Collision& coll = Collision::GetInstance();
+
 
 }
 
 void BattledomeScene::Scroll(void)
 {
+	Camera& camera = Camera::GetInstance();
+
+	camera.Follow(Camera::X, 1.0f);
 }

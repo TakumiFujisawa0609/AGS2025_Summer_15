@@ -83,7 +83,7 @@ public:
 	enum class BOSS_KINDS
 	{
 		ONE,
-		TWO,
+		RUNBOO,
 		THREE,
 	};
 

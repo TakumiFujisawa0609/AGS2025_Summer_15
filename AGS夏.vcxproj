@@ -139,6 +139,7 @@
     <ClCompile Include="Src\Object\Boss\BigBoss\Bammoon\Bammoon.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\BossBase.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Runboo.cpp" />
+    <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Weakness.cpp" />
     <ClCompile Include="Src\Object\Player\Attack\BPAttack.cpp" />
     <ClCompile Include="Src\Object\Player\Attack\Default.cpp" />
     <ClCompile Include="Src\Object\Player\Attack\PlayerAttackBase.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="Src\Object\Boss\BigBoss\Bammoon\Bammoon.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\BossBase.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Runboo.h" />
+    <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Weakness.h" />
     <ClInclude Include="Src\Object\Player\Attack\BPAttack.h" />
     <ClInclude Include="Src\Object\Player\Attack\Default.h" />
     <ClInclude Include="Src\Object\Player\Attack\PlayerAttackBase.h" />
