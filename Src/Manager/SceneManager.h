@@ -84,7 +84,7 @@ public:
 	{
 		ONE,
 		TWO,
-		THREE,
+		BAMMOON,
 	};
 
 	const BOSS_KINDS GetNowBoss(void)const { return nowBossKinds_; }

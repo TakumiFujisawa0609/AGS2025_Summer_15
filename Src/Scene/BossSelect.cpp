@@ -31,7 +31,7 @@ void BossSelect::Update()
 		m.ChangeScene(M::SCENE_ID::BATTLEDONE);
 	}
 	if (CheckHitKey(KEY_INPUT_3) == 1) {
-		m.SetBossKinds(M::BOSS_KINDS::THREE);
+		m.SetBossKinds(M::BOSS_KINDS::BAMMOON);
 		m.ChangeScene(M::SCENE_ID::BATTLEDONE);
 	}
 }

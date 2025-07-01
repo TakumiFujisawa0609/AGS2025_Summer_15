@@ -5,6 +5,15 @@
 class Bammoon : public BossBase
 {
 public:
+	enum class ATTACK
+	{
+		NON = -1,
+
+
+
+		MAX,
+	};
+
 	Bammoon();
 	~Bammoon();
 
@@ -16,6 +25,10 @@ public:
 	std::vector<Base*>GetObj(void)override;
 
 private:
+
+	ATTACK attackStage_;
+
+
 	//‘Ò‹@ó‘Ô
 	void Idle(void) override;
 	//ˆÚ“®ó‘Ô
@@ -26,5 +39,9 @@ private:
 	void Damage(void) override;
 	//€–Só‘Ô
 	void Death(void) override;
+
+
+	// Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
+	void IsGround(Collision::DIR dir)override;
 };
 

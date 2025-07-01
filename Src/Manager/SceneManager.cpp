@@ -385,7 +385,11 @@ void SceneManager::Fade(void)
 
 void SceneManager::ZoomCtr(void)
 {
-	if (sceneId_ != SCENE_ID::TUTORIAL)return;
+	bool on = true;
+	if (sceneId_ == SCENE_ID::TUTORIAL)on = false;
+	if (sceneId_ == SCENE_ID::BATTLEDONE)on = false;
+	if (on)return;
+
 	auto& camera = Camera::GetInstance();
 
 	Vector2F worldZoomPos = zoomPos_ + camera.GetPos();
@@ -398,8 +402,8 @@ void SceneManager::ZoomCtr(void)
 	}
 	drawRange.x += 50.0f;
 
-	if (worldZoomPos.x + drawRange.x >= TutorialStage::STAGE_CHIP_SIZE * mapNum_.x) {
-		zoomPos_.x -= ((worldZoomPos.x + drawRange.x) - (TutorialStage::STAGE_CHIP_SIZE * mapNum_.x));
+	if (worldZoomPos.x + drawRange.x >= StageBase::STAGE_CHIP_SIZE * mapNum_.x) {
+		zoomPos_.x -= ((worldZoomPos.x + drawRange.x) - (StageBase::STAGE_CHIP_SIZE * mapNum_.x));
 	}
 
 	drawRange.y -= 50.0f;
@@ -408,8 +412,8 @@ void SceneManager::ZoomCtr(void)
 	}
 	drawRange.y += 50.0f;
 
-	if (worldZoomPos.y + drawRange.y > TutorialStage::STAGE_CHIP_SIZE * mapNum_.y) {
-		zoomPos_.y -= ((worldZoomPos.y + drawRange.y) - (TutorialStage::STAGE_CHIP_SIZE * mapNum_.y));
+	if (worldZoomPos.y + drawRange.y > StageBase::STAGE_CHIP_SIZE * mapNum_.y) {
+		zoomPos_.y -= ((worldZoomPos.y + drawRange.y) - (StageBase::STAGE_CHIP_SIZE * mapNum_.y));
 	}
 }
 

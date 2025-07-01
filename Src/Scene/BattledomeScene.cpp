@@ -8,9 +8,9 @@
 
 #include"../Object/Player/Player.h"
 #include"../Object/Bamboo/BambooManager.h"
-#include"../Object/Stage/BossStage/Stage1.h"
-#include"../Object/Stage/Tutorial/TutorialStage.h"
-//#include"../Object/Boss/BigBoss/"
+
+#include"../Object/Boss/BigBoss/Bammoon/Bammoon.h"
+#include"../Object/Stage/BossStage/BammoonStage.h"
 
 BattledomeScene::BattledomeScene()
 {
@@ -29,15 +29,18 @@ void BattledomeScene::Init(void)
 	switch (sMng.GetNowBoss())
 	{
 	case SceneManager::BOSS_KINDS::ONE:
-		stage_ = new TutorialStage();
 		break;
 	case SceneManager::BOSS_KINDS::TWO:
 		break;
-	case SceneManager::BOSS_KINDS::THREE:
+	case SceneManager::BOSS_KINDS::BAMMOON:
+		stage_ = new BammoonStage();
+		boss_ = new Bammoon();
 		break;
 	}
 	stage_->Init();
-	//boss_->Init();
+	sMng.SetMapNum(stage_->GetMapNum());
+
+	boss_->Init();
 
 	player_ = new Player();
 	player_->Init();
@@ -58,7 +61,7 @@ void BattledomeScene::Init(void)
 
 void BattledomeScene::Update(void)
 {
-	//boss_->Update();
+	boss_->Update();
 	player_->Update();
 	bamboo_->Update();
 
@@ -70,7 +73,7 @@ void BattledomeScene::Draw(void)
 {
 	stage_->Draw();
 	bamboo_->Draw();
-	//boss_->Draw();
+	boss_->Draw();
 	player_->Draw();
 
 }
@@ -87,7 +90,7 @@ void BattledomeScene::Release(void)
 	delete player_;
 	player_ = nullptr;
 
-	//boss_->Release();
+	boss_->Release();
 	delete boss_;
 	boss_ = nullptr;
 
