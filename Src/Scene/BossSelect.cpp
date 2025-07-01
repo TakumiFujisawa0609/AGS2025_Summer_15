@@ -46,7 +46,7 @@ void BossSelect::Draw()
 	SetFontSize(32);
 	DrawString(0, 0, "ÇPÇ≈É{ÉXÇP", RGB(255, 255, 255));
 	DrawString(0, fontsize, "ÇQÇ≈É{ÉXÇQ", RGB(255, 255, 255));
-	DrawString(0, fontsize * 2, "ÇRÇ≈É{ÉXÇR", RGB(255, 255, 255));
+	DrawString(0, fontsize * 2, "ÇRÇ≈ÉoÉìÉÄÅ[Éì", RGB(255, 255, 255));
 	SetFontSize(16);
 }
 

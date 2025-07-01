@@ -51,6 +51,9 @@ std::vector<Base*> Bammoon::GetObj(void)
 
 void Bammoon::Idle(void)
 {
+	if (--idleTime_ <= 0) {
+		ChangeState(STATE::MOVE);
+	}
 }
 
 void Bammoon::Move(void)

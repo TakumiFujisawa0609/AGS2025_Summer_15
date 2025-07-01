@@ -5,6 +5,8 @@
 class Bammoon : public BossBase
 {
 public:
+	static constexpr int HP_MAX = 100;
+
 	enum class ATTACK
 	{
 		NON = -1,
@@ -29,16 +31,30 @@ private:
 	ATTACK attackStage_;
 
 
-	//‘Ò‹@ó‘Ô
+	//‘Ò‹@ó‘Ô—p``
 	void Idle(void) override;
-	//ˆÚ“®ó‘Ô
+	//•Ï”
+	int idleTime_;
+
+
+	//ˆÚ“®ó‘Ô``
 	void Move(void) override;
-	//UŒ‚ó‘Ô
+	//•Ï”
+
+
+	//UŒ‚ó‘Ô``
 	void Attack(void) override;
-	//ƒ_ƒ[ƒWó‘Ô
+	//•Ï”
+	
+
+	//ƒ_ƒ[ƒWó‘Ô``
 	void Damage(void) override;
-	//€–Só‘Ô
+	//•Ï”
+	
+
+	//€–Só‘Ô``
 	void Death(void) override;
+	//•Ï”
 
 
 	// Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
