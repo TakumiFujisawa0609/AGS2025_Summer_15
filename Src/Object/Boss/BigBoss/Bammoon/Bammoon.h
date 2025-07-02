@@ -30,6 +30,7 @@ public:
 	static constexpr int ANIMATION_SPEED = 5;
 
 	static constexpr int IDLE_LOAD_NUM = 4;
+	static constexpr int ATTACK_LOAD_NUM = 3;
 
 	enum class ATTACK
 	{

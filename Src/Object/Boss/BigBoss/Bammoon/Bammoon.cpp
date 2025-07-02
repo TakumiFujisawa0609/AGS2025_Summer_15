@@ -65,6 +65,7 @@ std::vector<Base*> Bammoon::GetObj(void)
 
 void Bammoon::Idle(void)
 {
+	ChangeMotion(MOTION::IDLE);
 	if (--idleTime_ <= 0) {
 		ChangeState(STATE::MOVE);
 	}
@@ -109,8 +110,7 @@ void Bammoon::Move(void)
 			stopCou = 100;
 			//-----------------------
 			unit_.isGravity_ = true;
-			idleTime_ = 300;
-			ChangeState(STATE::IDLE);
+			ChangeState(STATE::ATTACK);
 		}
 
 	}
@@ -119,6 +119,15 @@ void Bammoon::Move(void)
 
 void Bammoon::Attack(void)
 {
+	static bool mot = false;
+	if (!mot) { ChangeMotion(MOTION::ATTACK, false); mot = true; }
+
+
+	if (motion_ != MOTION::ATTACK) {
+		mot = false;
+		idleTime_ = 300;
+		ChangeState(STATE::IDLE);
+	}
 }
 
 void Bammoon::Damage(void)
@@ -141,6 +150,29 @@ void Bammoon::Death(void)
 
 void Bammoon::IsGround(Collision::DIR dir)
 {
+	switch (dir)
+	{
+	case Collision::UP:
+		//天井に衝突していたら行う処理
+		unit_.yAccel_ = 0.0f;
+		break;
+	case Collision::DOWN:
+		//地面に接地していたら行う処理
+		unit_.yAccel_ = 0.0f;
+		if (unit_.isGround_ == false) {
+			unit_.isGround_ = true;
+			SceneManager::GetInstance().SHAKE();
+		}
+		break;
+	case Collision::LEFT:
+		//左側の壁に衝突していたら行う処理
+		unit_.xAccel_ = 0.0f;
+		break;
+	case Collision::RIGHT:
+		//右側の壁に衝突していたら行う処理
+		unit_.xAccel_ = 0.0f;
+		break;
+	}
 }
 
 
@@ -176,6 +208,14 @@ void Bammoon::LoadBammoonImage(void)
 	LoadDivGraph((PATH + "Run/Run.png").c_str(), IDLE_LOAD_NUM, 2, 2, LOAD_SIZE_X, LOAD_SIZE_Y, jumpLoad);
 
 	image_[motion].insert(image_[motion].end(), jumpLoad, jumpLoad + IDLE_LOAD_NUM);
+
+	motion = (int)MOTION::ATTACK;
+
+	for (int i = 1; i <= ATTACK_LOAD_NUM; i++) {
+		std::string filePath = PATH + "Attack/Attack" + std::to_string(i) + ".png";
+		int load = LoadGraph(filePath.c_str());
+		image_[motion].emplace_back(load);
+	}
 }
 
 void Bammoon::DrawBammoonImage(void)
@@ -196,15 +236,15 @@ void Bammoon::Animation(void)
 		}
 		else {
 			ChangeMotion(MOTION::IDLE);
-			ChangeState(STATE::IDLE);
+			//ChangeState(STATE::IDLE);
 		}
 	}
 }
 
 void Bammoon::ChangeMotion(MOTION m, bool loop)
 {
+	if (image_[(int)m].size() == 0)return;
 	if (m == motion_)return;
-
 	motion_ = m;
 	animeCounter_ = 0;
 	animeLoop_ = loop;
