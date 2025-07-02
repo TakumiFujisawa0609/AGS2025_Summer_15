@@ -71,37 +71,6 @@ void Bammoon::Idle(void)
 
 void Bammoon::Move(void)
 {
-	static bool jumpmotion = false;
-	if (!jumpmotion) { ChangeMotion(MOTION::JUMP,false); jumpmotion = true; }
-
-	static bool jump = false;
-	if (motion_ != MOTION::JUMP && jumpmotion && !jump) {
-		jump = true;
-		unit_.yAccel_ = -50.0f;
-	}
-
-	Vector2F vec = {};
-	if (jump && unit_.yAccel_ > 0.0f) {
-		if (unit_.isGravity_) {
-			unit_.isGravity_ = false;
-
-		}
-		else {
-			static bool move = false;
-			static int stopCou = 100;
-			if (--stopCou <= 0 && !move) {
-				unit_.xAccel_ = vec.x;
-				unit_.yAccel_ = vec.y;
-				move = true;
-			}
-
-			if (unit_.isGround_) {
-				unit_.isGravity_ = true;
-				ChangeState(STATE::ATTACK);
-			}
-
-		}
-	}
 }
 
 void Bammoon::Attack(void)
@@ -128,26 +97,6 @@ void Bammoon::Death(void)
 
 void Bammoon::IsGround(Collision::DIR dir)
 {
-	switch (dir)
-	{
-	case Collision::UP:
-		//天井に衝突していたら行う処理
-		unit_.yAccel_ = 0.0f;
-		break;
-	case Collision::DOWN:
-		//地面に接地していたら行う処理
-		unit_.yAccel_ = 0.0f;
-		unit_.isGround_ = true;
-		break;
-	case Collision::LEFT:
-		//左側の壁に衝突していたら行う処理
-		unit_.xAccel_ = 0.0f;
-		break;
-	case Collision::RIGHT:
-		//右側の壁に衝突していたら行う処理
-		unit_.xAccel_ = 0.0f;
-		break;
-	}
 }
 
 
