@@ -1,5 +1,6 @@
 #include "../BossBase.h"
 
+
 class BamBeam;
 class BamBreath;
 class Rushoot;
@@ -83,10 +84,10 @@ private:
     //攻撃用カウンター
     int attackCounter_;
     //攻撃用インスタンス
-    BamBeam beam_;
-    BamBreath breath_;
-    Rushoot rush_;
-    Wavemboo wave_;
+    BamBeam* beam_;
+    BamBreath* breath_;
+    Rushoot* rush_;
+    Wavemboo* wave_;
 
 
     void IsGround(Collision::DIR dir) override;

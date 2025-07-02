@@ -16,7 +16,7 @@ void Nokopy::Init(void)
 {
 	BossBase::Init();
 	unit_.isAlive_ = true;
-	unit_.isDraw_ = false;
+	unit_.isDraw_ = true;
 	unit_.nextpos_ = unit_.pos_ = { 1000,400 };
 	unit_.size_ = { SIZE_X, SIZE_Y };
 	unit_.radius_ = unit_.size_.x / 2;
@@ -29,10 +29,10 @@ void Nokopy::Init(void)
 	img_[DRAW::DRAW_IDLE] = LoadGraph((path+"Idle.png").c_str());
 	img_[DRAW::DRAW_BAMBEAM] = LoadGraph((path+"Beam.png").c_str());
 	img_[DRAW::DRAW_BAMBREATH] = LoadGraph((path + "Breath.png").c_str());
-	img_[DRAW::DRAW_RUSHOOT] = LoadGraph((path + "Rush.png").c_str());
 	img_[DRAW::DRAW_WAVEMBOO] = LoadGraph((path + "Wave.png").c_str());
+	img_[DRAW::DRAW_RUSHOOT] = LoadGraph((path + "Rush.png").c_str());
 	
-	DrawPat_ = DRAW_IDLE;
+	DrawPat_ = DRAW_RUSHOOT;
 	//------------------------------------------------------------------
 
 	state_ = BossBase::STATE::IDLE;
@@ -65,10 +65,6 @@ void Nokopy::Update(void)
 
 void Nokopy::Draw(void)
 {
-	if (unit_.isAlive_) {
-		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, 0x0000ff, true);
-	}
-
 	if (unit_.isDraw_) {
 	BossDraw();
 	}
@@ -116,14 +112,19 @@ void Nokopy::BossDraw(void)
 	switch (DrawPat_)
 	{
 	case Nokopy::DRAW_IDLE:
+		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, 0x0000ff, true);
 		break;
 	case Nokopy::DRAW_BAMBEAM:
+		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, 0x00ff00, true);
 		break;
 	case Nokopy::DRAW_BAMBREATH:
+		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, 0xff0000, true);
 		break;
 	case Nokopy::DRAW_WAVEMBOO:
+		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, 0x000110, true);
 		break;
 	case Nokopy::DRAW_RUSHOOT:
+		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, 0xffffff, true);
 		break;
 	}
 }
