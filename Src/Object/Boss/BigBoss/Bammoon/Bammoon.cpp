@@ -28,6 +28,7 @@ void Bammoon::Init(void)
 	unit_.pos_ = unit_.nextpos_;
 	unit_.hp_ = 1000;
 
+	idleTime_ = 300;
 
 	animeCounter_ = 0;
 	animeInterval_ = 0;
@@ -71,6 +72,49 @@ void Bammoon::Idle(void)
 
 void Bammoon::Move(void)
 {
+	static bool jumpmotion = false;
+	static bool jump = false;
+	static bool move = false;
+	static int stopCou = 100;
+	static Vector2F vec = {};
+
+	if (!jumpmotion) { ChangeMotion(MOTION::JUMP, false); jumpmotion = true; }
+
+	if (motion_ != MOTION::JUMP && jumpmotion && !jump) {
+		jump = true;
+		unit_.yAccel_ = -50.0f;
+	}
+
+
+	if (jump && unit_.yAccel_ > 0.0f && unit_.isGravity_) {
+		unit_.isGravity_ = false;
+		unit_.yAccel_ = 0.0f;
+		vec = { 0.0f,50.0f };
+		return;
+	}
+
+	if (jump && !unit_.isGravity_) {
+		if (--stopCou <= 0 && !move) {
+			unit_.xAccel_ = vec.x;
+			unit_.yAccel_ = vec.y;
+			move = true;
+		}
+
+		if (unit_.isGround_) {
+			//static éŒ¾‚ðƒŠƒZƒbƒg--
+			jumpmotion = false;
+			jump = false;
+			vec = {};
+			move = false;
+			stopCou = 100;
+			//-----------------------
+			unit_.isGravity_ = true;
+			idleTime_ = 300;
+			ChangeState(STATE::IDLE);
+		}
+
+	}
+
 }
 
 void Bammoon::Attack(void)
@@ -125,7 +169,13 @@ void Bammoon::LoadBammoonImage(void)
 
 	image_[motion].insert(image_[motion].end(), idleLoad, idleLoad + IDLE_LOAD_NUM);
 
+	motion = (int)MOTION::JUMP;
 
+	int jumpLoad[IDLE_LOAD_NUM];
+
+	LoadDivGraph((PATH + "Run/Run.png").c_str(), IDLE_LOAD_NUM, 2, 2, LOAD_SIZE_X, LOAD_SIZE_Y, jumpLoad);
+
+	image_[motion].insert(image_[motion].end(), jumpLoad, jumpLoad + IDLE_LOAD_NUM);
 }
 
 void Bammoon::DrawBammoonImage(void)

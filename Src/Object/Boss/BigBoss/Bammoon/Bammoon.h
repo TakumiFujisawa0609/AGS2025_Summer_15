@@ -19,6 +19,7 @@ public:
 	{
 		IDLE,
 		RUN,
+		JUMP,
 		ATTACK,
 		DAMAGE,
 		DEATH,
