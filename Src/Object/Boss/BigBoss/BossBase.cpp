@@ -12,6 +12,9 @@ BossBase::~BossBase()
 
 void BossBase::Update(void)
 {
+
+	(this->*stateFuncPtr)();
+
 	UnitBase::Update();
 }
 
