@@ -47,7 +47,7 @@ public:
     void Release(void) override;
 
     //ゲッター関数
-    std::vector<Base*> GetObj(void) override;
+    std::vector<Base> GetObj(void) override;
     //セッター関数
     void SetDamage(int dmg);
 

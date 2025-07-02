@@ -26,6 +26,12 @@ private:
 	StageBase* stage_;
 	BossBase* boss_;
 
+	//“–‚½‚è”»’è
+	void PlayerToBoss(void);
+	void PlayerAttackToBoss(void);
+	void PlayerToBossAttack(void);
+	void PlayerAttackToBossAttack(void);
+
 	void Scroll(void);
 };
 

@@ -60,10 +60,10 @@ void Runboo::Release()
 	}
 }
 
-std::vector<Base*> Runboo::GetObj(void)
-{
-	return std::vector<Base*>();
-}
+//std::vector<Base*> Runboo::GetObj(void)
+//{
+//	return std::vector<Base*>();
+//}
 
 void Runboo::Idle(void)
 {

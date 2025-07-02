@@ -123,8 +123,7 @@ public:
 
 
 	void SetInvici(int time) { unit_.inviCounter_ = time; }
-
-
+    bool IsInvici(void) { return unit_.inviCounter_ > 0; }
 	Player();
 	~Player();
 

@@ -76,21 +76,25 @@ void Nokopy::Release(void)
 	for (int i = 0; i < DRAW::DRAW_MAX; i++)DeleteGraph(img_[i]);
 }
 
-std::vector<Base*> Nokopy::GetObj(void)
+std::vector<Base> Nokopy::GetObj(void)
 {
+	std::vector<Base>ret;
 	switch (attackState_)
 	{
 	case Nokopy::BAMBEAM:
+		ret = beam_->Get();
 		break;
 	case Nokopy::BAMBREATH:
+		ret = breath_->Get();
 		break;
 	case Nokopy::WAVEMBOO:
+		ret = wave_->Get();
 		break;
 	case Nokopy::RUSHOOT:
-	return std::vector<Base*>();
+		ret = rush_->Get();
 		break;
 	}
-	
+	return ret;
 
 }
 

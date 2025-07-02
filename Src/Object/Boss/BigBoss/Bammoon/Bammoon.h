@@ -24,7 +24,7 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
-	std::vector<Base*>GetObj(void)override;
+	//std::vector<Base*>GetObj(void)override;
 
 private:
 
