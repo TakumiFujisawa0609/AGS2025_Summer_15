@@ -62,6 +62,7 @@ void Nokopy::Init(void)
 
 void Nokopy::Update(void)
 {
+	if (unit_.inviCounter_ > 0)unit_.inviCounter_--;
 	BossBase::Update();
 }
 
@@ -148,8 +149,7 @@ void Nokopy::Idle(void)
 	//UŒ‚‘JˆÚ
 	if (moveCounter_ < 2) {
 		ChangeState(BossBase::STATE::ATTACK);
-		//ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX-1))));
-		ChangeAttackState(static_cast < ATTACK>(4));
+		ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX-1))));
 		return;
 	}
 	//ˆÚ“®‘JˆÚ
@@ -187,10 +187,14 @@ void Nokopy::Attack(void)
 
 void Nokopy::Damage(void)
 {
+
 }
 
 void Nokopy::Death(void)
 {
+	if (unit_.hp_ <= 0) {
+		ChangeState(BossBase::STATE::DEATH);
+	}
 }
 
 void Nokopy::ChangeAttackState(ATTACK atc)
@@ -216,22 +220,34 @@ void Nokopy::ChangeAttackState(ATTACK atc)
 
 void Nokopy::UpdateBamBeam(void)
 {
+	if (attackCounter_ > 120) {
+
 	ChangeState(BossBase::STATE::IDLE);
+	}
 }
 
 void Nokopy::UpdateBamBreath(void)
 {
+	if (attackCounter_ > 120) {
 	ChangeState(BossBase::STATE::IDLE);
+
+	}
 }
 
 void Nokopy::UpdateWavemboo(void)
 {
+	if (attackCounter_ > 120) {
 	ChangeState(BossBase::STATE::IDLE);
+
+	}
 }
 
 void Nokopy::UpdateRushoot(void)
 {
+	if (attackCounter_ > 120) {
 	ChangeState(BossBase::STATE::IDLE);
+
+	}
 }
 
 void Nokopy::IsGround(Collision::DIR dir)

@@ -113,10 +113,11 @@ void BattledomeScene::Release(void)
 void BattledomeScene::UnitCollision(void)
 {
 	Collision& coll = Collision::GetInstance();
+	if (!boss_->IsInvici()) {		//ボスが無敵中早期リターン
+	}
 	PlayerAttackToBossAttack();
 	PlayerAttackToBoss();
-	if (!player_->IsInvici()) {
-		//プレイヤーが無敵中早期リターン
+	if (!player_->IsInvici()) {		//プレイヤーが無敵中早期リターン
 		PlayerToBossAttack();
 		PlayerToBoss();
 	}
@@ -174,7 +175,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			if (ins.CircleAndRect(boss_->GetUnit(), bpAtc->GetObj())) {
 				if (bpAtc->GetBp() >= 3)mana.SHAKE();
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
-				//boss_.SetDamage(bpAtc->GetDamage());
+				boss_->SetDamage(bpAtc->GetDamage());
 			}
 		}
 	}
@@ -191,7 +192,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			if (ins.Rect(bpAtc->GetObj(), boss_->GetUnit())) {
 				if (bpAtc->GetBp() >= 3)mana.SHAKE();
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
-				//boss_.SetDamage(bpAtc->GetDamage());
+				boss_->SetDamage(bpAtc->GetDamage());
 			}
 		}
 	}

@@ -24,6 +24,8 @@ public:
 	virtual void Release(void)override = 0;
 
 	virtual std::vector<Base>GetObj(void) = 0;
+	virtual void SetDamage(int dmg) = 0;
+	virtual bool IsInvici(void) { return unit_.inviCounter_ > 0; }
 
 protected:
 	//ó‘Ô‚²‚Æ‚ÌŠÖ”‚ğŒÄ‚Ô‚½‚ß‚ÌŠÖ”ƒ|ƒCƒ“ƒ^

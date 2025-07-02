@@ -49,7 +49,7 @@ public:
     //ゲッター関数
     std::vector<Base> GetObj(void) override;
     //セッター関数
-    void SetDamage(int dmg);
+    void SetDamage(int dmg)override;
 
     //攻撃パターンの関数ポインタ
     using AttackFunc = void(Nokopy::*)();
