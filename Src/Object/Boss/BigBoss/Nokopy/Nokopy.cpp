@@ -1,4 +1,8 @@
 #include "Nokopy.h"
+#include"Attack/BamBeam.h"
+#include"Attack/BamBreath.h"
+#include"Attack/Wavemboo.h"
+#include"Attack/Rushoot.h"
 
 Nokopy::Nokopy()
 {
@@ -19,10 +23,39 @@ void Nokopy::Init(void)
 	unit_.speed_ = 10.0f;
 	unit_.hp_ = BOSS_HP;
 
+	//-----------------------------------------------------------------
+	//描画の初期化
+	std::string path = "Data/Image/Boss/Nokopy/";
+	img_[DRAW::DRAW_IDLE] = LoadGraph((path+"Idle.png").c_str());
+	img_[DRAW::DRAW_BAMBEAM] = LoadGraph((path+"Beam.png").c_str());
+	img_[DRAW::DRAW_BAMBREATH] = LoadGraph((path + "Breath.png").c_str());
+	img_[DRAW::DRAW_RUSHOOT] = LoadGraph((path + "Rush.png").c_str());
+	img_[DRAW::DRAW_WAVEMBOO] = LoadGraph((path + "Wave.png").c_str());
+	
+	DrawPat_ = DRAW_IDLE;
+	//------------------------------------------------------------------
 
 	state_ = BossBase::STATE::IDLE;
+
+
+	//------------------------------------------------------------------
+	//攻撃の初期化
+	//攻撃用インスタンスの実体化
+	beam_ = new BamBeam();
+	breath_ = new BamBreath();
+	rush_ = new Rushoot();
+	wave_ = new Wavemboo();
 	attackState_ = NON;
+
+	//攻撃パターン
+	attackUpdateFuncs_ = {
+		{BAMBEAM,&Nokopy::UpdateBamBeam},
+		{BAMBREATH,&Nokopy::UpdateBamBreath},
+		{RUSHOOT,&Nokopy::UpdateRushoot},
+		{WAVEMBOO,&Nokopy::UpdateWavemboo}
+	};
 	attackCounter_ = 0;
+	//------------------------------------------------------------------
 }
 
 void Nokopy::Update(void)
@@ -34,6 +67,10 @@ void Nokopy::Draw(void)
 {
 	if (unit_.isAlive_) {
 		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, 0x0000ff, true);
+	}
+
+	if (unit_.isDraw_) {
+	BossDraw();
 	}
 }
 
@@ -47,9 +84,18 @@ std::vector<Base*> Nokopy::GetObj(void)
 {
 	switch (attackState_)
 	{
-	
+	case Nokopy::BAMBEAM:
+		break;
+	case Nokopy::BAMBREATH:
+		break;
+	case Nokopy::WAVEMBOO:
+		break;
+	case Nokopy::RUSHOOT:
 	return std::vector<Base*>();
+		break;
 	}
+	
+
 }
 
 void Nokopy::SetDamage(int dmg)
@@ -62,6 +108,23 @@ void Nokopy::SetDamage(int dmg)
 
 	if (unit_.hp_ <= 0) {
 		unit_.isAlive_ = false;
+	}
+}
+
+void Nokopy::BossDraw(void)
+{
+	switch (DrawPat_)
+	{
+	case Nokopy::DRAW_IDLE:
+		break;
+	case Nokopy::DRAW_BAMBEAM:
+		break;
+	case Nokopy::DRAW_BAMBREATH:
+		break;
+	case Nokopy::DRAW_WAVEMBOO:
+		break;
+	case Nokopy::DRAW_RUSHOOT:
+		break;
 	}
 }
 
@@ -99,6 +162,41 @@ void Nokopy::Damage(void)
 }
 
 void Nokopy::Death(void)
+{
+}
+
+void Nokopy::ChangeStateAttack(ATTACK atc)
+{
+	switch (attackState_)
+	{
+	case Nokopy::BAMBEAM:
+		attackState_ = BAMBEAM;
+		break;
+	case Nokopy::BAMBREATH:
+		attackState_ = BAMBREATH;
+		break;
+	case Nokopy::WAVEMBOO:
+		attackState_ = WAVEMBOO;
+		break;
+	case Nokopy::RUSHOOT:
+		attackState_ = RUSHOOT;
+		break;
+	}
+}
+
+void Nokopy::UpdateBamBeam(void)
+{
+}
+
+void Nokopy::UpdateBamBreath(void)
+{
+}
+
+void Nokopy::UpdateWavemboo(void)
+{
+}
+
+void Nokopy::UpdateRushoot(void)
 {
 }
 
