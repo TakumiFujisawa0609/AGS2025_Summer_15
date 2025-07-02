@@ -1,19 +1,19 @@
-#include "BombooShoot.h"
+#include "Nokopy.h"
 
-BombooShoot::BombooShoot()
+Nokopy::Nokopy()
 {
 }
 
-BombooShoot::~BombooShoot()
+Nokopy::~Nokopy()
 {
 }
 
-void BombooShoot::Init(void)
+void Nokopy::Init(void)
 {
 	BossBase::Init();
 	unit_.isAlive_ = true;
 	unit_.isDraw_ = false;
-	unit_.nextpos_ = unit_.pos_;
+	unit_.nextpos_ = unit_.pos_ = { 1000,400 };
 	unit_.size_ = { SIZE_X, SIZE_Y };
 	unit_.radius_ = unit_.size_.x / 2;
 	unit_.speed_ = 10.0f;
@@ -25,23 +25,25 @@ void BombooShoot::Init(void)
 	attackCounter_ = 0;
 }
 
-void BombooShoot::Update(void)
+void Nokopy::Update(void)
 {
 	BossBase::Update();
 }
 
-void BombooShoot::Draw(void)
+void Nokopy::Draw(void)
 {
-
+	if (unit_.isAlive_) {
+		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, 0x0000ff, true);
+	}
 }
 
-void BombooShoot::Release(void)
+void Nokopy::Release(void)
 {
 	//画像の開放
 	for (int i = 0; i < DRAW::DRAW_MAX; i++)DeleteGraph(img_[i]);
 }
 
-std::vector<Base*> BombooShoot::GetObj(void)
+std::vector<Base*> Nokopy::GetObj(void)
 {
 	switch (attackState_)
 	{
@@ -50,7 +52,7 @@ std::vector<Base*> BombooShoot::GetObj(void)
 	}
 }
 
-void BombooShoot::SetDamage(int dmg)
+void Nokopy::SetDamage(int dmg)
 {
 	if (unit_.hp_ <= 0) return;
 
@@ -63,15 +65,15 @@ void BombooShoot::SetDamage(int dmg)
 	}
 }
 
-void BombooShoot::Idle(void)
+void Nokopy::Idle(void)
 {
 }
 
-void BombooShoot::Move(void)
+void Nokopy::Move(void)
 {
 }
 
-void BombooShoot::Attack(void)
+void Nokopy::Attack(void)
 {
 	attackCounter_++;
 	//アタックの状態遷移
@@ -92,14 +94,14 @@ void BombooShoot::Attack(void)
 	}
 }
 
-void BombooShoot::Damage(void)
+void Nokopy::Damage(void)
 {
 }
 
-void BombooShoot::Death(void)
+void Nokopy::Death(void)
 {
 }
 
-void BombooShoot::IsGround(Collision::DIR dir)
+void Nokopy::IsGround(Collision::DIR dir)
 {
 }

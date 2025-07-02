@@ -14,6 +14,9 @@
 #include"../Object/Boss/BigBoss/Bammoon/Bammoon.h"
 #include"../Object/Stage/BossStage/BammoonStage.h"
 
+#include"../Object/Stage/BossStage/NokoPyStage.h"
+#include"../Object/Boss/BigBoss/Nokopy/Nokopy.h"
+
 BattledomeScene::BattledomeScene()
 {
 }
@@ -30,8 +33,9 @@ void BattledomeScene::Init(void)
 	//種類ごとにボスとステージを読み込む
 	switch (sMng.GetNowBoss())
 	{
-	case SceneManager::BOSS_KINDS::ONE:
-		stage_ = new TutorialStage();
+	case SceneManager::BOSS_KINDS::NOKOPY:
+		stage_ = new NokoPyStage();
+		boss_ = new Nokopy();
 	
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:

@@ -23,7 +23,7 @@ void BossSelect::Update()
 	auto& m = M::GetInstance();
 
 	if (CheckHitKey(KEY_INPUT_1) == 1) {
-		m.SetBossKinds(M::BOSS_KINDS::ONE);
+		m.SetBossKinds(M::BOSS_KINDS::NOKOPY);
 		m.ChangeScene(M::SCENE_ID::BATTLEDONE);
 	}
 	if (CheckHitKey(KEY_INPUT_2) == 1) {

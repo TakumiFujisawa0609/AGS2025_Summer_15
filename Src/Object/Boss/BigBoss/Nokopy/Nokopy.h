@@ -1,10 +1,10 @@
 #include "../BossBase.h"
 
-class BombooShoot : public BossBase
+class Nokopy : public BossBase
 {
 public:
     static constexpr int SIZE_X = 200;
-    static constexpr int SIZE_Y = 249;
+    static constexpr int SIZE_Y = 200;
 
 
     static constexpr int BOSS_HP = 500;
@@ -23,8 +23,8 @@ public:
 		MAX,
 	};
 
-    BombooShoot();
-    ~BombooShoot();
+    Nokopy();
+    ~Nokopy();
 
     void Init(void) override;
     void Update(void) override;
@@ -37,7 +37,7 @@ public:
     void SetDamage(int dmg);
 
     //攻撃パターンの関数ポインタ
-    using AttackFunc = void(BombooShoot::*)();
+    using AttackFunc = void(Nokopy::*)();
 
 private:
     //状態ごとのハンドル番号
