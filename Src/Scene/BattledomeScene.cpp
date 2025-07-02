@@ -135,12 +135,24 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 	// プレイヤーの攻撃とボスの攻撃の当たり判定処理
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
+
 	for (int i = 0; i < boss_->GetObj().size(); i++) {
-		if (ins.Circle(boss_->GetObj()[i], player_->DefaultAtt())) {
-			mana.HitStop(SceneManager::HIT_STOP_TIME);
-			//boss_->ObjHit(i);
-			//bamboo_->Create(boss_.GetAttackObj()[i].pos_, 3);
-			player_->SetInvici(50);
+		if (boss_->GetObj()[i].isCircle_) {
+
+			if (ins.Circle(boss_->GetObj()[i], player_->DefaultAtt())) {
+				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				//boss_->ObjHit(i);
+				//bamboo_->Create(boss_.GetAttackObj()[i].pos_, 3);
+				player_->SetInvici(50);
+			}
+		}
+		else {
+			if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetObj()[i])) {
+				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				//boss_->ObjHit(i);
+				//bamboo_->Create(boss_.GetAttackObj()[i].pos_, 3);
+				player_->SetInvici(50);
+			}
 		}
 	}
 }
@@ -151,7 +163,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
 
-	if (boss_->IsCircle()) {		//ボスの当たり判定が円形
+	if (boss_->GetUnit().isCircle_) {		//ボスの当たり判定が円形
 		//通常攻撃
 		if (ins.Circle(player_->DefaultAtt(), boss_->GetUnit())) {
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
@@ -189,7 +201,7 @@ void BattledomeScene::PlayerToBoss(void)
 	// プレイヤーとボスの当たり判定処理
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
-	if (boss_->IsCircle()) {
+	if (boss_->GetUnit().isCircle_) {
 		if (ins.CircleAndRect(boss_->GetUnit(), player_->GetUnit())) {
 			player_->Hit(5, boss_->GetUnit().pos_);
 
@@ -209,9 +221,18 @@ void BattledomeScene::PlayerToBossAttack(void)
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
 	for (int i = 0; i < boss_->GetObj().size(); i++) {
+		if (boss_->GetObj()[i].isCircle_) {
+			if (ins.Circle(boss_->GetObj()[i], player_->GetUnit())) {
+				player_->Hit(5, boss_->GetObj()[i].pos_);
+				//boss_->ObjHit(i);  
+			}
+		}
+		else {
+
 		if (ins.CircleAndRect(boss_->GetObj()[i], player_->GetUnit())) {
-			player_->Hit(5, boss_->GetObj()[i].pos_); // 修正: "->pos_" を ".pos_" に変更  
+			player_->Hit(5, boss_->GetObj()[i].pos_); 
 			//boss_->ObjHit(i);  
+		}
 		}
 	}
 }

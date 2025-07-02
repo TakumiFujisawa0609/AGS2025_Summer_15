@@ -24,7 +24,6 @@ public:
 	virtual void Release(void)override = 0;
 
 	virtual std::vector<Base>GetObj(void) = 0;
-	virtual bool IsCircle(void) { return isCircle_; }
 
 protected:
 	//状態ごとの関数を呼ぶための関数ポインタ
@@ -52,7 +51,6 @@ protected:
 	STATE state_;
 
 
-	bool isCircle_;	//true=当たり判定は円形 false=矩形
 
 
 

@@ -22,7 +22,7 @@ void Nokopy::Init(void)
 	unit_.radius_ = unit_.size_.x / 2;
 	unit_.speed_ = 10.0f;
 	unit_.hp_ = BOSS_HP;
-	isCircle_ = true;
+	unit_.isCircle_ = true;
 
 	//-----------------------------------------------------------------
 	//•`‰æ‚Ì‰Šú‰»

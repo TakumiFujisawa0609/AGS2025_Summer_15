@@ -28,6 +28,7 @@ public:
 	virtual void On(void) { obj_.isAlive_ = true; }
 
 	virtual void Off() { obj_.isAlive_ = false; }
+	virtual bool IsCircle(void) { return isCircle_; }
 
 protected:
 	//画像ハンドル
@@ -51,6 +52,7 @@ protected:
 
 	//ワールド座標をマップ座標に変換
 	virtual void ChangeDispPos(void);
+	bool isCircle_=true;	//true=当たり判定は円形 false=矩形
 
 };
 
