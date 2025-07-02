@@ -64,12 +64,21 @@ private:
 
 
     //ó‘Ô‚²‚Æ‚Ìs“®
+    //’Êíó‘Ô-------------------------------------------------------------------
     void Idle(void) override;
+    int idleCounter_;
+    //-------------------------------------------------------------------
+
+    //ˆÚ“®--------------------------------------------------------
     void Move(void) override;
-    //UŒ‚
+    int moveCounter_;
+    AsoUtility::DIRECTION dir_;         //Œü‚¢‚Ä‚¢‚éŒü‚«
+    //------------------------------------------------------------
+
+    //UŒ‚-------------------------------------------------------
     void Attack(void) override;
     //UŒ‚ó‘ÔŠÇ—
-    void ChangeStateAttack(ATTACK atc);
+    void ChangeAttackState(ATTACK atc);
     //UŒ‚‚Ìó‘Ô‚²‚Æ‚Ìs“®
     void UpdateBamBeam(void);
     void UpdateBamBreath(void);
@@ -88,7 +97,8 @@ private:
     BamBreath* breath_;
     Rushoot* rush_;
     Wavemboo* wave_;
+    //---------------------------------------------------------------
 
-
+    bool isDive_;       //ö‚Á‚Ä‚¢‚é‚©
     void IsGround(Collision::DIR dir) override;
 };

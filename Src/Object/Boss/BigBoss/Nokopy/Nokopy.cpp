@@ -23,22 +23,23 @@ void Nokopy::Init(void)
 	unit_.speed_ = 10.0f;
 	unit_.hp_ = BOSS_HP;
 	unit_.isCircle_ = true;
-
+	isDive_ = false;
+	ChangeState(BossBase::STATE::IDLE);
+	idleCounter_ = 0;
 	//-----------------------------------------------------------------
 	//描画の初期化
 	std::string path = "Data/Image/Boss/Nokopy/";
-	img_[DRAW::DRAW_IDLE] = LoadGraph((path+"Idle.png").c_str());
-	img_[DRAW::DRAW_BAMBEAM] = LoadGraph((path+"Beam.png").c_str());
+	img_[DRAW::DRAW_IDLE] = LoadGraph((path + "Idle.png").c_str());
+	img_[DRAW::DRAW_BAMBEAM] = LoadGraph((path + "Beam.png").c_str());
 	img_[DRAW::DRAW_BAMBREATH] = LoadGraph((path + "Breath.png").c_str());
 	img_[DRAW::DRAW_WAVEMBOO] = LoadGraph((path + "Wave.png").c_str());
 	img_[DRAW::DRAW_RUSHOOT] = LoadGraph((path + "Rush.png").c_str());
-	
+
 	DrawPat_ = DRAW_RUSHOOT;
-	//------------------------------------------------------------------
-
-	state_ = BossBase::STATE::IDLE;
-
-
+	//-------------------------------------------------------------------
+	//移動の初期化
+	moveCounter_ = 0;
+	dir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
 	//------------------------------------------------------------------
 	//攻撃の初期化
 	//攻撃用インスタンスの実体化
@@ -67,7 +68,7 @@ void Nokopy::Update(void)
 void Nokopy::Draw(void)
 {
 	if (unit_.isDraw_) {
-	BossDraw();
+		BossDraw();
 	}
 }
 
@@ -136,10 +137,31 @@ void Nokopy::BossDraw(void)
 
 void Nokopy::Idle(void)
 {
+	//出現用
+	static int AppearanceCounter = 0;
+	AppearanceCounter++;
+	if (AppearanceCounter < 120)return;
+	//行動後の暇
+	idleCounter_++;
+	if (idleCounter_ < 60)return;
+	idleCounter_ = 0;
+	//攻撃遷移
+	if (moveCounter_ < 2) {
+		ChangeState(BossBase::STATE::ATTACK);
+		//ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX-1))));
+		ChangeAttackState(static_cast < ATTACK>(4));
+		return;
+	}
+	//移動遷移
+	ChangeState(BossBase::STATE::MOVE);
 }
 
 void Nokopy::Move(void)
 {
+	moveCounter_++;
+	if (moveCounter_ < 120)return;	//移動にかかる時間
+	ChangeState(BossBase::STATE::IDLE);
+	moveCounter_ = 0;
 }
 
 void Nokopy::Attack(void)
@@ -147,7 +169,7 @@ void Nokopy::Attack(void)
 	attackCounter_++;
 	//アタックの状態遷移
 	auto it = attackUpdateFuncs_.find(attackState_);
-	(this->*(it->second))();
+ 	(this->*(it->second))();
 
 	//デバック用（アタックの状態を攻撃をしてないときの状態にする）
 	if (CheckHitKey(KEY_INPUT_U) == 1) {
@@ -171,8 +193,10 @@ void Nokopy::Death(void)
 {
 }
 
-void Nokopy::ChangeStateAttack(ATTACK atc)
+void Nokopy::ChangeAttackState(ATTACK atc)
 {
+	moveCounter_++;
+	attackState_ = atc;
 	switch (attackState_)
 	{
 	case Nokopy::BAMBEAM:
@@ -192,20 +216,58 @@ void Nokopy::ChangeStateAttack(ATTACK atc)
 
 void Nokopy::UpdateBamBeam(void)
 {
+	ChangeState(BossBase::STATE::IDLE);
 }
 
 void Nokopy::UpdateBamBreath(void)
 {
+	ChangeState(BossBase::STATE::IDLE);
 }
 
 void Nokopy::UpdateWavemboo(void)
 {
+	ChangeState(BossBase::STATE::IDLE);
 }
 
 void Nokopy::UpdateRushoot(void)
 {
+	ChangeState(BossBase::STATE::IDLE);
 }
 
 void Nokopy::IsGround(Collision::DIR dir)
 {
+	if (isDive_)return;
+	switch (dir)
+	{
+	case Collision::UP:
+
+		//天井に衝突していたら行う処理
+		unit_.yAccel_ = 0;
+
+		break;
+	case Collision::DOWN:
+
+		//地面に接地していたら行う処理
+		unit_.yAccel_ = 0;
+
+		//if (unit_.isGround_ == false) {
+		//	unit_.isGround_ = true;
+		//	SceneManager::GetInstance().SHAKE();
+		//}
+		unit_.isGravity_ = false;
+
+		break;
+	case Collision::LEFT:
+
+		//左側の壁に衝突していたら行う処理
+		unit_.xAccel_ = 0;
+		break;
+
+	case Collision::RIGHT:
+
+		//右側の壁に衝突していたら行う処理
+		unit_.xAccel_ = 0;
+
+		break;
+	}
 }
