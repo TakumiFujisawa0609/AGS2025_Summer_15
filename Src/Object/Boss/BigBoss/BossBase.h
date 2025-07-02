@@ -18,7 +18,7 @@ public:
 	BossBase();
 	~BossBase();
 
-	virtual void Init(void)override = 0;
+	virtual void Init(void)override;
 	virtual void Update(void)override;
 	virtual void Draw(void)override = 0;
 	virtual void Release(void)override = 0;

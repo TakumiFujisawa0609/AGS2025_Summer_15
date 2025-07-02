@@ -10,6 +10,11 @@ BossBase::~BossBase()
 {
 }
 
+void BossBase::Init(void)
+{
+	ChangeState(STATE::IDLE);
+}
+
 void BossBase::Update(void)
 {
 

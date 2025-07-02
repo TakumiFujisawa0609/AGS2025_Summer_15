@@ -12,6 +12,8 @@ Bammoon::~Bammoon()
 
 void Bammoon::Init(void)
 {
+	BossBase::Init();
+
 	unit_.radius_ = 50.0f;
 	unit_.size_ = { unit_.radius_ * 2,unit_.radius_ * 2 };
 	unit_.speed_ = 10.0f;

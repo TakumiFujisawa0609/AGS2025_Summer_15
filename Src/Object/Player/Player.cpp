@@ -135,6 +135,15 @@ void Player::Update()
 	}
 
 	UnitBase::Update();
+
+	if (startPos_.x >= unit_.disppos_.x)
+	{
+		unit_.disppos_.x = startPos_.x;
+	}
+	if (startPos_.x + Application::SCREEN_SIZE_X <= unit_.disppos_.x)
+	{
+		unit_.disppos_.x = startPos_.x + Application::SCREEN_SIZE_X;
+	}
 }
 
 void Player::Draw()

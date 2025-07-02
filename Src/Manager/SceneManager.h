@@ -83,8 +83,8 @@ public:
 	enum class BOSS_KINDS
 	{
 		ONE,
-		TWO,
 		BAMMOON,
+		RUNBOO,
 	};
 
 	const BOSS_KINDS GetNowBoss(void)const { return nowBossKinds_; }

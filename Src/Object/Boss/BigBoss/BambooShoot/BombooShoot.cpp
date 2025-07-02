@@ -10,6 +10,7 @@ BombooShoot::~BombooShoot()
 
 void BombooShoot::Init(void)
 {
+	BossBase::Init();
 	unit_.isAlive_ = true;
 	unit_.isDraw_ = false;
 	unit_.nextpos_ = unit_.pos_;

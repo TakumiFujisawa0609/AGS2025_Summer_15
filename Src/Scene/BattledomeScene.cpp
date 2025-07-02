@@ -8,6 +8,8 @@
 
 #include"../Object/Player/Player.h"
 #include"../Object/Bamboo/BambooManager.h"
+#include"../Object/Stage/Tutorial/TutorialStage.h"
+#include"../Object/Boss/BigBoss/Runboo/Runboo.h"
 
 #include"../Object/Boss/BigBoss/Bammoon/Bammoon.h"
 #include"../Object/Stage/BossStage/BammoonStage.h"
@@ -29,14 +31,19 @@ void BattledomeScene::Init(void)
 	switch (sMng.GetNowBoss())
 	{
 	case SceneManager::BOSS_KINDS::ONE:
+		stage_ = new TutorialStage();
+	
 		break;
-	case SceneManager::BOSS_KINDS::TWO:
+	case SceneManager::BOSS_KINDS::RUNBOO:
+		stage_ = new TutorialStage();
+		boss_ = new Runboo();
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		stage_ = new BammoonStage();
 		boss_ = new Bammoon();
 		break;
 	}
+
 	stage_->Init();
 	sMng.SetMapNum(stage_->GetMapNum());
 
@@ -66,7 +73,7 @@ void BattledomeScene::Update(void)
 	bamboo_->Update();
 
 	//スクロール処理は田中に任せた
-	if (SceneManager::GetInstance().GetNowBoss() == SceneManager::BOSS_KINDS::TWO) Scroll();
+	if (SceneManager::GetInstance().GetNowBoss() == SceneManager::BOSS_KINDS::RUNBOO) Scroll();
 }
 
 void BattledomeScene::Draw(void)
@@ -75,7 +82,6 @@ void BattledomeScene::Draw(void)
 	bamboo_->Draw();
 	boss_->Draw();
 	player_->Draw();
-
 }
 
 void BattledomeScene::Release(void)
@@ -97,10 +103,18 @@ void BattledomeScene::Release(void)
 	stage_->Release();
 	delete stage_;
 	stage_ = nullptr;
+}
+
+void BattledomeScene::UnitCollision(void)
+{
+	Collision& coll = Collision::GetInstance();
 
 
 }
 
 void BattledomeScene::Scroll(void)
 {
+	Camera& camera = Camera::GetInstance();
+
+	camera.Follow(Camera::X, 1.0f);
 }

@@ -27,7 +27,7 @@ void BossSelect::Update()
 		m.ChangeScene(M::SCENE_ID::BATTLEDONE);
 	}
 	if (CheckHitKey(KEY_INPUT_2) == 1) {
-		m.SetBossKinds(M::BOSS_KINDS::TWO);
+		m.SetBossKinds(M::BOSS_KINDS::RUNBOO);
 		m.ChangeScene(M::SCENE_ID::BATTLEDONE);
 	}
 	if (CheckHitKey(KEY_INPUT_3) == 1) {
