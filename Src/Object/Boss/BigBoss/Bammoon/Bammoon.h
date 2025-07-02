@@ -7,6 +7,29 @@ class Bammoon : public BossBase
 public:
 	static constexpr int HP_MAX = 100;
 
+	static const int LOAD_SIZE_X = 512;
+	static const int LOAD_SIZE_Y = 512;
+
+	static constexpr float SCALE = 0.5f;
+
+	static constexpr int SIZE_X = LOAD_SIZE_X * SCALE;
+	static constexpr int SIZE_Y = LOAD_SIZE_Y * SCALE;
+
+	enum class MOTION
+	{
+		IDLE,
+		RUN,
+		ATTACK,
+		DAMAGE,
+		DEATH,
+
+		MAX,
+	};
+
+	static constexpr int ANIMATION_SPEED = 5;
+
+	static constexpr int IDLE_LOAD_NUM = 4;
+
 	enum class ATTACK
 	{
 		NON = -1,
@@ -27,6 +50,24 @@ public:
 	std::vector<Base*>GetObj(void)override;
 
 private:
+	//ƒ{ƒX•`‰æŠÖŒW-------------------------------------------------------------------
+	std::vector<int> image_[(int)MOTION::MAX];		//‰æ‘œƒnƒ“ƒhƒ‹
+
+	void LoadBammoonImage(void);
+
+	void DrawBammoonImage(void);
+	void Animation(void);
+	void ChangeMotion(MOTION m, bool loop = true);
+
+	MOTION motion_;
+
+	int animeCounter_;
+	int animeInterval_;
+	bool animeLoop_;
+
+	const float GetAnimeRatio(void)const { return ((float)animeCounter_ / (float)image_[(int)motion_].size()); }
+
+	//---------------------------------------------------------------------------------
 
 	ATTACK attackStage_;
 
