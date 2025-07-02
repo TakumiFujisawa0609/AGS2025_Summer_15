@@ -25,6 +25,8 @@ public:
 
 	virtual std::vector<Base*>GetObj(void) = 0;
 
+	void TakePlayerPos(Vector2F* pos) { player_ = pos; }
+
 protected:
 	//ó‘Ô‚²‚Æ‚ÌŠÖ”‚ğŒÄ‚Ô‚½‚ß‚ÌŠÖ”ƒ|ƒCƒ“ƒ^
 	void(BossBase::*stateFuncPtr)(void);
@@ -53,7 +55,7 @@ protected:
 
 
 
-
+	Vector2F* player_;
 
 
 
