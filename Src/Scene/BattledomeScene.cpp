@@ -138,11 +138,11 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 	auto& mana = SceneManager::GetInstance().GetInstance();
 
 	for (int i = 0; i < boss_->GetObj().size(); i++) {
+		if (!boss_->GetAttackIns()->IsParry()) continue;//パリィできないとき早期リターン		
 		if (boss_->GetObj()[i].isCircle_) {
-
 			if (ins.Circle(boss_->GetObj()[i], player_->DefaultAtt())) {
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
-				//boss_->ObjHit(i);
+				boss_->ObjHit(i);
 				//bamboo_->Create(boss_.GetAttackObj()[i].pos_, 3);
 				player_->SetInvici(50);
 			}
@@ -150,11 +150,12 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 		else {
 			if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetObj()[i])) {
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
-				//boss_->ObjHit(i);
+				boss_->ObjHit(i);
 				//bamboo_->Create(boss_.GetAttackObj()[i].pos_, 3);
 				player_->SetInvici(50);
 			}
 		}
+
 	}
 }
 
@@ -225,14 +226,14 @@ void BattledomeScene::PlayerToBossAttack(void)
 		if (boss_->GetObj()[i].isCircle_) {
 			if (ins.Circle(boss_->GetObj()[i], player_->GetUnit())) {
 				player_->Hit(5, boss_->GetObj()[i].pos_);
-				//boss_->ObjHit(i);  
+				boss_->ObjHit(i);
 			}
 		}
 		else {
 
 			if (ins.CircleAndRect(boss_->GetObj()[i], player_->GetUnit())) {
 				player_->Hit(5, boss_->GetObj()[i].pos_);
-				//boss_->ObjHit(i);  
+				boss_->ObjHit(i);
 			}
 		}
 	}

@@ -101,6 +101,24 @@ std::vector<Base> Nokopy::GetObj(void)
 
 }
 
+AttackBase* Nokopy::GetAttackIns(void)
+{
+	switch (attackState_)
+	{
+	case Nokopy::NON:
+		break;
+	case Nokopy::BAMBEAM:
+		return beam_;
+	case Nokopy::BAMBREATH:
+		return breath_;
+	case Nokopy::WAVEMBOO:
+		return wave_;
+	case Nokopy::RUSHOOT:
+		return rush_;
+	}
+	return nullptr;
+}
+
 void Nokopy::SetDamage(int dmg)
 {
 	if (unit_.hp_ <= 0) return;
@@ -112,6 +130,22 @@ void Nokopy::SetDamage(int dmg)
 	if (unit_.hp_ <= 0) {
 		unit_.isAlive_ = false;
 	}
+}
+
+void Nokopy::ObjHit(int i)
+{
+	switch (attackState_)
+	{
+	case Nokopy::BAMBEAM:
+		break;
+	case Nokopy::BAMBREATH:
+		break;
+	case Nokopy::WAVEMBOO:
+		break;
+	case Nokopy::RUSHOOT:
+		break;
+	}
+
 }
 
 void Nokopy::BossDraw(void)
@@ -159,13 +193,13 @@ void Nokopy::Idle(void)
 void Nokopy::Move(void)
 {
 	moveCounter_++;
-	if (moveCounter_ >0)
+	if (moveCounter_ < 30)
 	{
 		isDive_ = true;
 		unit_.isStageCollision_ = false;
 		unit_.nextpos_.y += (unit_.pos_.y <= Application::SCREEN_SIZE_Y) ? unit_.speed_ : 0;
 	}
-	else if (moveCounter_ >30)
+	else if (moveCounter_ < 210)
 	{
 		//–Ú•W‚Æ‚·‚éÀ•W‚ÌX‚Ü‚ÅˆÚ“®
 		switch (dir_)
@@ -258,6 +292,8 @@ void Nokopy::ChangeAttackState(ATTACK atc)
 
 void Nokopy::UpdateBamBeam(void)
 {
+	if (attackCounter_ == 1)beam_->Init(&unit_.pos_);
+
 	if (attackCounter_ > 120) {
 
 		ChangeState(BossBase::STATE::IDLE);
@@ -266,6 +302,8 @@ void Nokopy::UpdateBamBeam(void)
 
 void Nokopy::UpdateBamBreath(void)
 {
+	if (attackCounter_ == 1)breath_->Init(&unit_.pos_);
+
 	if (attackCounter_ > 120) {
 		ChangeState(BossBase::STATE::IDLE);
 
@@ -274,6 +312,8 @@ void Nokopy::UpdateBamBreath(void)
 
 void Nokopy::UpdateWavemboo(void)
 {
+	if (attackCounter_ == 1)wave_->Init(&unit_.pos_);
+
 	if (attackCounter_ > 120) {
 		ChangeState(BossBase::STATE::IDLE);
 
@@ -282,6 +322,7 @@ void Nokopy::UpdateWavemboo(void)
 
 void Nokopy::UpdateRushoot(void)
 {
+	if (attackCounter_ == 1)rush_->Init(&unit_.pos_);
 	if (attackCounter_ > 120) {
 		ChangeState(BossBase::STATE::IDLE);
 
