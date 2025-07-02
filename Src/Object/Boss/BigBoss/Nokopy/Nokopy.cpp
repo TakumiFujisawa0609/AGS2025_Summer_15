@@ -17,7 +17,7 @@ void Nokopy::Init(void)
 	BossBase::Init();
 	unit_.isAlive_ = true;
 	unit_.isDraw_ = true;
-	unit_.nextpos_ = unit_.pos_ = { 1000,400 };
+	unit_.nextpos_ = unit_.pos_ = { SPAWN_POS_RIGHT,SPAWN_POS_Y };
 	unit_.size_ = { SIZE_X, SIZE_Y };
 	unit_.radius_ = unit_.size_.x / 2;
 	unit_.speed_ = 10.0f;
@@ -62,8 +62,8 @@ void Nokopy::Init(void)
 
 void Nokopy::Update(void)
 {
-	if (unit_.inviCounter_ > 0)unit_.inviCounter_--;
 	BossBase::Update();
+	if (unit_.inviCounter_ > 0)unit_.inviCounter_--;
 }
 
 void Nokopy::Draw(void)
@@ -144,12 +144,12 @@ void Nokopy::Idle(void)
 	if (AppearanceCounter < 120)return;
 	//行動後の暇
 	idleCounter_++;
-	if (idleCounter_ < 60)return;
+	if (idleCounter_ < 120)return;
 	idleCounter_ = 0;
 	//攻撃遷移
 	if (moveCounter_ < 2) {
 		ChangeState(BossBase::STATE::ATTACK);
-		ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX-1))));
+		ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
 		return;
 	}
 	//移動遷移
@@ -159,9 +159,47 @@ void Nokopy::Idle(void)
 void Nokopy::Move(void)
 {
 	moveCounter_++;
-	if (moveCounter_ < 120)return;	//移動にかかる時間
-	ChangeState(BossBase::STATE::IDLE);
+	if (moveCounter_ >0)
+	{
+		isDive_ = true;
+		unit_.isStageCollision_ = false;
+		unit_.nextpos_.y += (unit_.pos_.y <= Application::SCREEN_SIZE_Y) ? unit_.speed_ : 0;
+	}
+	else if (moveCounter_ >30)
+	{
+		//目標とする座標のXまで移動
+		switch (dir_)
+		{
+		case AsoUtility::DIRECTION::E_DIR_RIGHT:
+			unit_.nextpos_.x += (unit_.pos_.x <= SPAWN_POS_RIGHT) ? unit_.speed_ : 0;
+			break;
+		case AsoUtility::DIRECTION::E_DIR_LEFT:
+			unit_.nextpos_.x -= (unit_.pos_.x >= SPAWN_POS_LEFT) ? unit_.speed_ : 0;
+			break;
+		}
+	}
+	else if (moveCounter_ >210)
+	{
+		//目標とする座標のYまで移動
+		unit_.nextpos_.y -= (unit_.pos_.y > SPAWN_POS_Y) ? unit_.speed_ : 0;
+	}
+	//目標座標についたら遷移
+	if (unit_.pos_.y <= SPAWN_POS_Y) {
+		switch (dir_)
+		{
+		case AsoUtility::DIRECTION::E_DIR_RIGHT:
+			dir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
+			break;
+		case AsoUtility::DIRECTION::E_DIR_LEFT:
+			dir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
+			break;
+		}
+	isDive_ = false;
+	unit_.isStageCollision_ = true;
+	unit_.isGravity_ = true;
 	moveCounter_ = 0;
+	ChangeState(BossBase::STATE::IDLE);
+	}
 }
 
 void Nokopy::Attack(void)
@@ -169,7 +207,7 @@ void Nokopy::Attack(void)
 	attackCounter_++;
 	//アタックの状態遷移
 	auto it = attackUpdateFuncs_.find(attackState_);
- 	(this->*(it->second))();
+	(this->*(it->second))();
 
 	//デバック用（アタックの状態を攻撃をしてないときの状態にする）
 	if (CheckHitKey(KEY_INPUT_U) == 1) {
@@ -222,14 +260,14 @@ void Nokopy::UpdateBamBeam(void)
 {
 	if (attackCounter_ > 120) {
 
-	ChangeState(BossBase::STATE::IDLE);
+		ChangeState(BossBase::STATE::IDLE);
 	}
 }
 
 void Nokopy::UpdateBamBreath(void)
 {
 	if (attackCounter_ > 120) {
-	ChangeState(BossBase::STATE::IDLE);
+		ChangeState(BossBase::STATE::IDLE);
 
 	}
 }
@@ -237,7 +275,7 @@ void Nokopy::UpdateBamBreath(void)
 void Nokopy::UpdateWavemboo(void)
 {
 	if (attackCounter_ > 120) {
-	ChangeState(BossBase::STATE::IDLE);
+		ChangeState(BossBase::STATE::IDLE);
 
 	}
 }
@@ -245,7 +283,7 @@ void Nokopy::UpdateWavemboo(void)
 void Nokopy::UpdateRushoot(void)
 {
 	if (attackCounter_ > 120) {
-	ChangeState(BossBase::STATE::IDLE);
+		ChangeState(BossBase::STATE::IDLE);
 
 	}
 }

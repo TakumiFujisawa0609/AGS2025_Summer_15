@@ -14,6 +14,9 @@ public:
 
 
     static constexpr int BOSS_HP = 500;
+    static constexpr float SPAWN_POS_Y = 300;
+    static constexpr float SPAWN_POS_RIGHT = 1150;
+    static constexpr float SPAWN_POS_LEFT = 150;
 
     enum  DRAW
     {

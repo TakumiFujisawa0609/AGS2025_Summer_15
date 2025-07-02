@@ -114,9 +114,9 @@ void BattledomeScene::UnitCollision(void)
 {
 	Collision& coll = Collision::GetInstance();
 	if (!boss_->IsInvici()) {		//ボスが無敵中早期リターン
+		PlayerAttackToBossAttack();
+		PlayerAttackToBoss();
 	}
-	PlayerAttackToBossAttack();
-	PlayerAttackToBoss();
 	if (!player_->IsInvici()) {		//プレイヤーが無敵中早期リターン
 		PlayerToBossAttack();
 		PlayerToBoss();
@@ -230,10 +230,10 @@ void BattledomeScene::PlayerToBossAttack(void)
 		}
 		else {
 
-		if (ins.CircleAndRect(boss_->GetObj()[i], player_->GetUnit())) {
-			player_->Hit(5, boss_->GetObj()[i].pos_); 
-			//boss_->ObjHit(i);  
-		}
+			if (ins.CircleAndRect(boss_->GetObj()[i], player_->GetUnit())) {
+				player_->Hit(5, boss_->GetObj()[i].pos_);
+				//boss_->ObjHit(i);  
+			}
 		}
 	}
 }
