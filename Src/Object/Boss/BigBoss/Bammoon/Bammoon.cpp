@@ -42,7 +42,6 @@ void Bammoon::Update(void)
 void Bammoon::Draw(void)
 {
 	if (unit_.isAlive_) {
-		//DrawCircleAA(unit_.disppos_.x, unit_.disppos_.y, unit_.radius_, 30, RGB(0, 255, 0));
 		DrawBammoonImage();
 	}
 }
