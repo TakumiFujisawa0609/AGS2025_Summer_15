@@ -136,6 +136,7 @@
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
     <ClCompile Include="Src\Object\Bamboo\Bamboo.cpp" />
     <ClCompile Include="Src\Object\Bamboo\BambooManager.cpp" />
+    <ClCompile Include="Src\Object\Boss\BigBoss\BambooShoot\BombooShoot.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Bammoon\Bammoon.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\BossBase.cpp" />
     <ClCompile Include="Src\Object\Player\Attack\BPAttack.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />
     <ClInclude Include="Src\Object\Bamboo\Bamboo.h" />
     <ClInclude Include="Src\Object\Bamboo\BambooManager.h" />
+    <ClInclude Include="Src\Object\Boss\BigBoss\BambooShoot\BombooShoot.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Bammoon\Bammoon.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\BossBase.h" />
     <ClInclude Include="Src\Object\Player\Attack\BPAttack.h" />
