@@ -36,15 +36,15 @@ void BattledomeScene::Init(void)
 	case SceneManager::BOSS_KINDS::NOKOPY:
 		stage_ = new NokoPyStage();
 		boss_ = new Nokopy();
-	
+
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
 		stage_ = new TutorialStage();
-	//	boss_ = new Runboo();
+		//	boss_ = new Runboo();
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		stage_ = new BammoonStage();
-	//	boss_ = new Bammoon();
+		//	boss_ = new Bammoon();
 		break;
 	}
 
@@ -117,8 +117,8 @@ void BattledomeScene::UnitCollision(void)
 	PlayerAttackToBoss();
 	if (!player_->IsInvici()) {
 		//プレイヤーが無敵中早期リターン
-	PlayerToBossAttack();
-	PlayerToBoss();
+		PlayerToBossAttack();
+		PlayerToBoss();
 	}
 
 }
@@ -132,7 +132,7 @@ void BattledomeScene::Scroll(void)
 
 void BattledomeScene::PlayerAttackToBossAttack(void)
 {
-    // プレイヤーの攻撃とボスの攻撃の当たり判定処理
+	// プレイヤーの攻撃とボスの攻撃の当たり判定処理
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
 	for (int i = 0; i < boss_->GetObj().size(); i++) {
@@ -147,44 +147,72 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 
 void BattledomeScene::PlayerAttackToBoss(void)
 {
-    // プレイヤーの攻撃とボスの当たり判定処理
+	// プレイヤーの攻撃とボスの当たり判定処理
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
-	//通常攻撃
-	if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {
-		mana.HitStop(SceneManager::HIT_STOP_TIME);
-		//boss_.SetDamage(0);
-		bamboo_->Create(boss_->GetUnit().pos_, 1);
-	}
-	//特殊攻撃
-	for (auto& bpAtc : player_->GetBpAtt()) {
-		if (ins.Rect(bpAtc->GetObj(), boss_->GetUnit())) {
-			if (bpAtc->GetBp() >= 3)mana.SHAKE();
+
+	if (boss_->IsCircle()) {		//ボスの当たり判定が円形
+		//通常攻撃
+		if (ins.Circle(player_->DefaultAtt(), boss_->GetUnit())) {
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
-			//boss_.SetDamage(bpAtc->GetDamage());
+			//boss_.SetDamage(0);
+			bamboo_->Create(boss_->GetUnit().pos_, 1);
+		}
+		for (auto& bpAtc : player_->GetBpAtt()) {
+			if (ins.CircleAndRect(boss_->GetUnit(), bpAtc->GetObj())) {
+				if (bpAtc->GetBp() >= 3)mana.SHAKE();
+				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				//boss_.SetDamage(bpAtc->GetDamage());
+			}
+		}
+	}
+	else {		//ボスの当たり判定が矩形
+
+		//通常攻撃
+		if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {
+			mana.HitStop(SceneManager::HIT_STOP_TIME);
+			//boss_.SetDamage(0);
+			bamboo_->Create(boss_->GetUnit().pos_, 1);
+		}
+		//特殊攻撃
+		for (auto& bpAtc : player_->GetBpAtt()) {
+			if (ins.Rect(bpAtc->GetObj(), boss_->GetUnit())) {
+				if (bpAtc->GetBp() >= 3)mana.SHAKE();
+				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				//boss_.SetDamage(bpAtc->GetDamage());
+			}
 		}
 	}
 }
 void BattledomeScene::PlayerToBoss(void)
 {
-    // プレイヤーとボスの当たり判定処理
+	// プレイヤーとボスの当たり判定処理
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
-	if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
-		player_->Hit(5, boss_->GetUnit().pos_);
+	if (boss_->IsCircle()) {
+		if (ins.CircleAndRect(boss_->GetUnit(), player_->GetUnit())) {
+			player_->Hit(5, boss_->GetUnit().pos_);
+
+		}
+	}
+	else {
+
+		if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
+			player_->Hit(5, boss_->GetUnit().pos_);
+		}
 	}
 }
 
-void BattledomeScene::PlayerToBossAttack(void)  
-{  
-    // プレイヤーとボスの攻撃の当たり判定処理  
-    auto& ins = Collision::GetInstance();  
-    auto& mana = SceneManager::GetInstance().GetInstance();  
-    for (int i = 0; i < boss_->GetObj().size(); i++) {  
-        if (ins.CircleAndRect(boss_->GetObj()[i], player_->GetUnit())) {  
-            player_->Hit(5, boss_->GetObj()[i].pos_); // 修正: "->pos_" を ".pos_" に変更  
-            //boss_->ObjHit(i);  
-        }  
-    }  
+void BattledomeScene::PlayerToBossAttack(void)
+{
+	// プレイヤーとボスの攻撃の当たり判定処理  
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
+	for (int i = 0; i < boss_->GetObj().size(); i++) {
+		if (ins.CircleAndRect(boss_->GetObj()[i], player_->GetUnit())) {
+			player_->Hit(5, boss_->GetObj()[i].pos_); // 修正: "->pos_" を ".pos_" に変更  
+			//boss_->ObjHit(i);  
+		}
+	}
 }
 
