@@ -49,3 +49,8 @@ void BossBase::ChangeState(STATE s)
 void BossBase::IsGround(Collision::DIR dir)
 {
 }
+
+void BossBase::SetPlayerPosPtr(const Vector2F* pos)
+{
+	playerPosPtr_ = pos;
+}

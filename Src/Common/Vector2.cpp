@@ -62,6 +62,11 @@ void Vector2::operator/=(const int value)
 	y = y / value;
 }
 
+void Vector2::operator/=(const float value)
+{
+	x /= value; y /= value;
+}
+
 Vector2F::Vector2F(void)
 {
 	x = 0.0f;

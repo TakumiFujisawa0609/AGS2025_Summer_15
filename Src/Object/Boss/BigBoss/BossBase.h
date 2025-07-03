@@ -29,6 +29,8 @@ public:
 	virtual void SetDamage(int dmg) = 0;
 	virtual bool IsInvici(void) { return unit_.inviCounter_ > 0; }
 
+	void SetPlayerPosPtr(const Vector2F* pos);
+
 protected:
 	//ó‘Ô‚²‚Æ‚ÌŠÖ”‚ğŒÄ‚Ô‚½‚ß‚ÌŠÖ”ƒ|ƒCƒ“ƒ^
 	void(BossBase::*stateFuncPtr)(void);
@@ -55,7 +57,7 @@ protected:
 	STATE state_;
 
 
-
+	const Vector2F* playerPosPtr_ = nullptr;
 
 
 
