@@ -15,6 +15,13 @@ public:
     virtual const std::vector<Base> Get(void) const override;
     virtual void On(void) override;
     virtual void Off(void) override;
+
+    void LookOn(Vector2F pos) { target_ = pos; lookOn_ = true; }
+    void Hit(void) { obj_.isAlive_ = false; }
 private:
+    bool lookOn_;
+    Vector2F target_;
+    Vector2F drawPos_;
+
 };
 

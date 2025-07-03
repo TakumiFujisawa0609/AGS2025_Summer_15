@@ -98,6 +98,10 @@ private:
     std::map<ATTACK, AttackFunc> attackUpdateFuncs_;
     //攻撃用カウンター
     int attackCounter_;
+    //ターゲット座標
+    Vector2F targetPos_;
+    //突進用カウンターフラグ
+    bool isRushReflection_;
     //攻撃用インスタンス
     BamBeam* beam_;
     BamBreath* breath_;

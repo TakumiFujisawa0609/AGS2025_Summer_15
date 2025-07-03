@@ -76,8 +76,9 @@ void BattledomeScene::Update(void)
 {
 	boss_->Update();
 	player_->Update();
-	bamboo_->Update();
-
+	if (!boss_->GetUnit().isAlive_) {
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
+	}
 	UnitCollision();
 	//スクロール処理は田中に任せた
 	if (SceneManager::GetInstance().GetNowBoss() == SceneManager::BOSS_KINDS::RUNBOO) Scroll();
@@ -232,9 +233,8 @@ void BattledomeScene::PlayerToBossAttack(void)
 			}
 		}
 		else {
-
-			if (ins.CircleAndRect(boss_->GetObj()[i], player_->GetUnit())) {
-				player_->Hit(5, boss_->GetObj()[i].pos_);
+			if (ins.CircleAndRect(player_->GetUnit(),boss_->GetObj()[i])) {
+ 				player_->Hit(5, boss_->GetObj()[i].pos_);
 				boss_->ObjHit(i);
 			}
 		}

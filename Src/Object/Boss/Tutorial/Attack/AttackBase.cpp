@@ -1,6 +1,5 @@
 #include"AttackBase.h"
 
-#include<DxLib.h>
 
 #include"../../../../Manager/Camera.h"
 
