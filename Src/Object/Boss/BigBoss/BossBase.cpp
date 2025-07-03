@@ -23,6 +23,10 @@ void BossBase::Update(void)
 	UnitBase::Update();
 }
 
+void BossBase::SetPlayerPosPtr(const Vector2F* pPos) {
+	playerPosPtr_ = pPos;
+}
+
 void BossBase::ChangeState(STATE s)
 {
 	state_ = s;
