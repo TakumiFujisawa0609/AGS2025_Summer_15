@@ -76,8 +76,9 @@ void BattledomeScene::Update(void)
 {
 	boss_->Update();
 	player_->Update();
-	bamboo_->Update();
-
+	if (!boss_->GetUnit().isAlive_) {
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
+	}
 	UnitCollision();
 	//スクロール処理は田中に任せた
 	if (SceneManager::GetInstance().GetNowBoss() == SceneManager::BOSS_KINDS::RUNBOO) Scroll();
