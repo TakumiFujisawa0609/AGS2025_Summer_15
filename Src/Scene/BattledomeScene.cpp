@@ -43,7 +43,7 @@ void BattledomeScene::Init(void)
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
 		stage_ = new TutorialStage();
-		//	boss_ = new Runboo();
+			boss_ = new Runboo();
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		stage_ = new BammoonStage();
@@ -239,5 +239,6 @@ void BattledomeScene::PlayerToBossAttack(void)
 			}
 		}
 	}
+
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include<DxLib.h>
+#include<vector>
 #include"../BossBase.h"
 
 class Weakness;
@@ -9,7 +10,7 @@ class Runboo : public BossBase
 {
 public:
 
-	static constexpr int WEAK_MAX = 2;
+	static constexpr int WEAK_MAX = 3;
 
 	Runboo();
 	~Runboo();
@@ -21,9 +22,15 @@ public:
 
 	//std::vector<Base*>GetObj(void)override;
 
+	AttackBase* GetAttackIns(void)override;
+	std::vector<Base>GetObj(void)override;
+	void ObjHit(int i)override;
+	void SetDamage(int dmg)override;
+	bool IsInvici(void) { return unit_.inviCounter_ > 0; }
+
 private:
-	//椅子とタンス
-	Weakness* weak_[WEAK_MAX];
+	//インスタンス
+	std::vector<Weakness*> weak_;
 	
 	//待機状態
 	void Idle(void) override;
@@ -42,4 +49,5 @@ private:
 
 	void HpUpdate(void);
 
+	void IsGround(Collision::DIR dir)override {}
 };
