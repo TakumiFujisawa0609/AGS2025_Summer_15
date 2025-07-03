@@ -133,10 +133,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Rushoot.cpp" />
+    <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\BamBeam.cpp" />
+    <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\BamBreath.cpp" />
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
     <ClCompile Include="Src\Object\Bamboo\Bamboo.cpp" />
     <ClCompile Include="Src\Object\Bamboo\BambooManager.cpp" />
-    <ClCompile Include="Src\Object\Boss\BigBoss\BambooShoot\BombooShoot.cpp" />
+    <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Nokopy.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Bammoon\Bammoon.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\BossBase.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Runboo.cpp" />
@@ -152,6 +155,7 @@
     <ClCompile Include="Src\Object\Boss\Tutorial\BossTutorial.cpp" />
     <ClCompile Include="Src\Object\Enemy\EnemyBase.cpp" />
     <ClCompile Include="Src\Object\Stage\BossStage\BammoonStage.cpp" />
+    <ClCompile Include="Src\Object\Stage\BossStage\NokoPyStage.cpp" />
     <ClCompile Include="Src\Object\Stage\StageBase.cpp" />
     <ClCompile Include="Src\Object\Stage\BossStage\Stage1.cpp" />
     <ClCompile Include="Src\Scene\BattledomeScene.cpp" />
@@ -181,12 +185,16 @@
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
     <ClCompile Include="Src\Object\Stage\Tutorial\TutorialStage.cpp" />
+    <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Wavemboo.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Rushoot.h" />
+    <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\BamBeam.h" />
+    <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\BamBreath.h" />
     <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />
     <ClInclude Include="Src\Object\Bamboo\Bamboo.h" />
     <ClInclude Include="Src\Object\Bamboo\BambooManager.h" />
-    <ClInclude Include="Src\Object\Boss\BigBoss\BambooShoot\BombooShoot.h" />
+    <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Nokopy.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Bammoon\Bammoon.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\BossBase.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Runboo.h" />
@@ -202,6 +210,7 @@
     <ClInclude Include="Src\Object\Boss\Tutorial\BossTutorial.h" />
     <ClInclude Include="Src\Object\Enemy\EnemyBase.h" />
     <ClInclude Include="Src\Object\Stage\BossStage\BammoonStage.h" />
+    <ClInclude Include="Src\Object\Stage\BossStage\NokoPyStage.h" />
     <ClInclude Include="Src\Object\Stage\StageBase.h" />
     <ClInclude Include="Src\Object\Stage\BossStage\Stage1.h" />
     <ClInclude Include="Src\Scene\BattledomeScene.h" />
@@ -232,6 +241,7 @@
     <ClInclude Include="Src\Scene\TitleScene.h" />
     <ClInclude Include="Src\Utility\AsoUtility.h" />
     <ClInclude Include="Src\Object\Stage\Tutorial\TutorialStage.h" />
+    <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Wavemboo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -58,10 +58,10 @@ void Bammoon::Release(void)
 }
 
 
-std::vector<Base*> Bammoon::GetObj(void)
-{
-	return std::vector<Base*>();
-}
+//std::vector<Base*> Bammoon::GetObj(void)
+//{
+//	return std::vector<Base*>();
+//}
 
 void Bammoon::Idle(void)
 {

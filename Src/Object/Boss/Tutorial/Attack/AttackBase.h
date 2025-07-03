@@ -28,7 +28,8 @@ public:
 	virtual void On(void) { obj_.isAlive_ = true; }
 
 	virtual void Off() { obj_.isAlive_ = false; }
-
+	virtual bool IsCircle(void) { return isCircle_; }
+	virtual bool IsParry(void) { return isParry_; }
 protected:
 	//画像ハンドル
 	int image_;
@@ -44,13 +45,15 @@ protected:
 
 	//更新処理に使うカウンター
 	int attackCounter_;
-
+	
+	bool isParry_;
 
 	//攻撃終了
 	bool end_;
 
 	//ワールド座標をマップ座標に変換
 	virtual void ChangeDispPos(void);
+	bool isCircle_=true;	//true=当たり判定は円形 false=矩形
 
 };
 
