@@ -171,7 +171,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		//’ÊíUŒ‚
 		if (ins.Circle(player_->DefaultAtt(), boss_->GetUnit())) {
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
-			//boss_.SetDamage(0);
+			boss_->SetDamage(0);
 			bamboo_->Create(boss_->GetUnit().pos_, 1);
 		}
 		for (auto& bpAtc : player_->GetBpAtt()) {
@@ -187,7 +187,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		//’ÊíUŒ‚
 		if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
-			//boss_.SetDamage(0);
+			boss_->SetDamage(0);
 			bamboo_->Create(boss_->GetUnit().pos_, 1);
 		}
 		//“ÁêUŒ‚

@@ -26,7 +26,7 @@ void Bammoon::Init(void)
 	unit_.isAlive_ = true;
 	unit_.nextpos_ = { 1000.0f,400.0f };
 	unit_.pos_ = unit_.nextpos_;
-	unit_.hp_ = 1000;
+	unit_.hp_ = 100;
 
 	idleTime_ = 300;
 
@@ -38,6 +38,9 @@ void Bammoon::Init(void)
 
 void Bammoon::Update(void)
 {
+	if (unit_.hp_ <= 0) {
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
+	}
 	Animation();
 	BossBase::Update();
 }
@@ -71,6 +74,14 @@ AttackBase* Bammoon::GetAttackIns(void)
 
 void Bammoon::SetDamage(int dmg)
 {
+	if (unit_.hp_ <= 0) return;
+
+	unit_.hp_ -= dmg;
+	unit_.inviCounter_ = 10;
+
+	if (unit_.hp_ <= 0) {
+		unit_.isAlive_ = false;
+	}
 }
 
 void Bammoon::ObjHit(int i)
