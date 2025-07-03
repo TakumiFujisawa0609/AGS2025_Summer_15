@@ -27,6 +27,9 @@ void BattledomeScene::Init(void)
 	using M = SceneManager;
 	auto& sMng = M::GetInstance();
 
+	player_ = new Player();
+	player_->Init();
+
 	//種類ごとにボスとステージを読み込む
 	switch (sMng.GetNowBoss())
 	{
@@ -48,9 +51,7 @@ void BattledomeScene::Init(void)
 	sMng.SetMapNum(stage_->GetMapNum());
 
 	boss_->Init();
-
-	player_ = new Player();
-	player_->Init();
+	boss_->SetPlayerPosPtr(&player_->GetUnit().pos_);
 
 	bamboo_ = new BambooManager();
 	bamboo_->Init((Vector2F*)&player_->GetUnit().pos_, (int*)&player_->GetBp());
@@ -92,10 +93,6 @@ void BattledomeScene::Release(void)
 	delete bamboo_;
 	bamboo_ = nullptr;
 
-	player_->Release();
-	delete player_;
-	player_ = nullptr;
-
 	boss_->Release();
 	delete boss_;
 	boss_ = nullptr;
@@ -103,6 +100,10 @@ void BattledomeScene::Release(void)
 	stage_->Release();
 	delete stage_;
 	stage_ = nullptr;
+
+	player_->Release();
+	delete player_;
+	player_ = nullptr;
 }
 
 void BattledomeScene::UnitCollision(void)

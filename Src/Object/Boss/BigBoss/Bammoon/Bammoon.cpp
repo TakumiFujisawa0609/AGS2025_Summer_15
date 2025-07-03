@@ -235,6 +235,7 @@ void Bammoon::Animation(void)
 			animeCounter_ = 0;
 		}
 		else {
+			animeCounter_ = 0;
 			ChangeMotion(MOTION::IDLE);
 		}
 	}
