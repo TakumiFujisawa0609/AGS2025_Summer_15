@@ -232,9 +232,8 @@ void BattledomeScene::PlayerToBossAttack(void)
 			}
 		}
 		else {
-
-			if (ins.CircleAndRect(boss_->GetObj()[i], player_->GetUnit())) {
-				player_->Hit(5, boss_->GetObj()[i].pos_);
+			if (ins.CircleAndRect(player_->GetUnit(),boss_->GetObj()[i])) {
+ 				player_->Hit(5, boss_->GetObj()[i].pos_);
 				boss_->ObjHit(i);
 			}
 		}

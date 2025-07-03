@@ -1,6 +1,7 @@
 #pragma once
-#include"../../../Common/Base.h"
 #include <vector>
+#include<DxLib.h>
+#include"../../../Common/Base.h"
 
 
 class AttackBase

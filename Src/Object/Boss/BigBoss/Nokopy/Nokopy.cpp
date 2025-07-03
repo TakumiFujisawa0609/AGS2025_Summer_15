@@ -70,6 +70,7 @@ void Nokopy::Draw(void)
 {
 	if (unit_.isDraw_) {
 		BossDraw();
+		beam_->Draw();
 	}
 }
 
@@ -137,6 +138,7 @@ void Nokopy::ObjHit(int i)
 	switch (attackState_)
 	{
 	case Nokopy::BAMBEAM:
+		beam_->Hit();
 		break;
 	case Nokopy::BAMBREATH:
 		break;
@@ -186,7 +188,9 @@ void Nokopy::Idle(void)
 	//UŒ‚‘JˆÚ
 	if (moveCounter_ < 2) {
 		ChangeState(BossBase::STATE::ATTACK);
-		ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
+		//ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
+		ChangeAttackState(BAMBEAM);
+		attackCounter_ = 0;
 		return;
 	}
 	//ˆÚ“®‘JˆÚ
@@ -301,8 +305,13 @@ void Nokopy::ChangeAttackState(ATTACK atc)
 
 void Nokopy::UpdateBamBeam(void)
 {
-	if (attackCounter_ == 1)beam_->Init(&unit_.pos_);
-
+	if (attackCounter_ == 1) {
+		beam_->Init(&unit_.pos_);
+		beam_->LookOn(*playerPosPtr_);
+	}
+	if (attackCounter_ > 1) {
+		beam_->Update();
+	}
 	if (attackCounter_ > 120) {
 
 		ChangeState(BossBase::STATE::IDLE);
