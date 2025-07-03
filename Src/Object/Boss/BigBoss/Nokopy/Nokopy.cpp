@@ -35,7 +35,7 @@ void Nokopy::Init(void)
 	img_[DRAW::DRAW_WAVEMBOO] = LoadGraph((path + "Wave.png").c_str());
 	img_[DRAW::DRAW_RUSHOOT] = LoadGraph((path + "Rush.png").c_str());
 
-	DrawPat_ = DRAW_RUSHOOT;
+	DrawPat_ = DRAW_IDLE;
 	//-------------------------------------------------------------------
 	//à⁄ìÆÇÃèâä˙âª
 	moveCounter_ = 0;
