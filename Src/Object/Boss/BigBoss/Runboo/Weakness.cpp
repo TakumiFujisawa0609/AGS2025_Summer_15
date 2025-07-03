@@ -1,9 +1,11 @@
 #include "Weakness.h"
 #include"../../../UnitBase.h"
 #include"../../../../Manager/Camera.h"
+#include"Attack/WeakBullet.h"
 
 Weakness::Weakness()
 {
+	bullet_ = nullptr;
 }
 
 Weakness::~Weakness()
@@ -15,57 +17,114 @@ void Weakness::Init(Vector2F disppos)
 {
 	Camera::CreateInstance();
 
-	unit_.disppos_ = disppos;
+	unit_.nextpos_ = disppos;
+	unit_.pos_ = unit_.nextpos_;
+
 	unit_.size_ = { SIZE_X,SIZE_Y };
 
-	//画面の左端を見る
-	start_.x = Camera::GetInstance().GetPos().x;
-	start_.y = Camera::GetInstance().GetPos().y;
+	////画面の左端を見る
+	//start_.x = 0.0f;
+	//start_.y = 0.0f;
 
-	cnt_ = GetRand(100);
+	cnt_ = GetRand(16);
 
-	unit_.disppos_ + start_;
+	//unit_.pos_ + start_;
 	unit_.hp_ = HP_MAX;
 	unit_.isAlive_ = true;
 
+	ChangeState(STATE::IDLE);
+
+	//WeakBullet* bullet = new WeakBullet();
+	//bullet->Init(&unit_.disppos_);
+
+	unit_.isGravity_ = false;
+	unit_.isStageCollision_ = false;
+
+	bullet_ = new WeakBullet();
+	bullet_->Init(&unit_.pos_);
 }
 
-void Weakness::Update()
+void Weakness::Init(void) {}
+
+void Weakness::Update(Vector2F boss)
 {
-	cnt_ += 0.1f;
+	unit_.nextpos_.x += 1.0f;
 
-	float move = sinf(cnt_) * AMPLITUDE; //上下に動く
-	unit_.disppos_.x += move;
-	unit_.disppos_.y += move;
+	BossBase::Update();
 
+	bullet_->Update();
 }
+
+void Weakness::Update() {}
 
 void Weakness::Draw()
 {
 	//ボス描画（とりあえずDrawBox）
 	DrawBox(
-		unit_.disppos_.x,
-		unit_.disppos_.y,
-		unit_.disppos_.x + unit_.size_.x,
-		unit_.disppos_.y + unit_.size_.y,
+		unit_.disppos_.x - unit_.size_.x / 2,
+		unit_.disppos_.y - unit_.size_.y / 2,
+		unit_.disppos_.x + unit_.size_.x / 2,
+		unit_.disppos_.y + unit_.size_.y / 2,
 		RGB(255, 0, 255),
 		true
 	);
 
-	HpDraw();
+	bullet_->Draw();
 }
 
 void Weakness::Release()
 {
+	bullet_->Release();
+	delete bullet_;
+	bullet_ = nullptr;
+
 	Camera::DeleteInstance();
 }
 
-void Weakness::Init()
+AttackBase* Weakness::GetAttackIns(void)
 {
+	return nullptr;
+}
+
+std::vector<Base> Weakness::GetObj(void)
+{
+	std::vector<Base>ret;
+
+	ret = bullet_->Get();
+
+	return ret;
+}
+
+void Weakness::ObjHit(int i)
+{
+
+}
+
+void Weakness::SetDamage(int dmg)
+{
+	if (unit_.hp_ <= 0 || unit_.isInvincible_) return;
+
+	unit_.hp_ -= dmg;
+
+	if (unit_.hp_ <= 0)
+	{
+		unit_.isAlive_ = false;
+		ChangeState(STATE::DEATH); // 状態遷移も必要なら
+	}
 }
 
 void Weakness::Idle(void)
 {
+	// カウント更新
+	cnt_ += 0.1f;
+
+	// ランダムにゆらゆら動くオフセットを加える
+	const float noiseX = (GetRand(200) - 100) / 500.0f;
+	const float noiseY = (GetRand(200) - 100) / 500.0f;
+
+	// 元の位置にsin波を少し加える + ノイズ
+	unit_.nextpos_.x += sinf(cnt_) * AMPLITUDE + noiseX;
+	unit_.nextpos_.y += cosf(cnt_ * 0.8f) * AMPLITUDE + noiseY;
 }
 
 void Weakness::Move(void)
@@ -74,6 +133,7 @@ void Weakness::Move(void)
 
 void Weakness::Attack(void)
 {
+
 }
 
 void Weakness::Damage(void)
@@ -82,21 +142,4 @@ void Weakness::Damage(void)
 
 void Weakness::Death(void)
 {
-}
-
-std::vector<Base*> Weakness::GetObj(void)
-{
-	return std::vector<Base*>();
-}
-
-void Weakness::HpDraw(void)
-{
-	DrawBar(
-		unit_.disppos_.x - HP_POS_X,
-		unit_.disppos_.y - HP_POS_Y,
-		unit_.disppos_.x + unit_.size_.x + 10,
-		unit_.disppos_.y - HP_POS_Y / 2,
-		unit_.hp_,HP_MAX,
-		RGB(0, 0, 200)
-	);
 }

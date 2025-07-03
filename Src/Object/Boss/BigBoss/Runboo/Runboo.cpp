@@ -17,24 +17,30 @@ void Runboo::Init()
 	BossBase::Init();
 	for (int ii = 0; ii < WEAK_MAX; ii++)
 	{
-		weak_[ii] = new Weakness();
-		weak_[ii]->Init({ 100, (float)(Application::SCREEN_SIZE_Y / 3 + ii * Application::SCREEN_SIZE_Y / 3) });
+		weak_.emplace_back(new Weakness());
+		weak_[weak_.size() - 1]->Init({ 150, (float)(Application::SCREEN_SIZE_Y / 5.0f) * (ii + 1) });
 	}
-
-
 
 	unit_.disppos_ = { 0.0f,0.0f };
 	unit_.pos_ = { 0.0f,0.0f };
 
 	unit_.hp_ = 100;
 	unit_.isAlive_ = true;
-
-
+	unit_.isGravity_ = false;
+	unit_.isStageCollision_ = false;
 }
 
 void Runboo::Update()
 {
-	for (int ii = 0; ii < WEAK_MAX; ii++)weak_[ii]->Update();
+	unit_.nextpos_.x += 1.0f;
+
+	BossBase::Update();
+
+	/*for (int ii = 0; ii < WEAK_MAX; ii++) {
+		weak_[ii]->Update();
+	}*/
+
+	for (auto& w : weak_) { w->Update(unit_.pos_); }
 }
 
 void Runboo::Draw()
@@ -56,8 +62,26 @@ void Runboo::Release()
 	{
 		weak_[ii]->Release();
 		delete weak_[ii];
-		weak_[ii] = nullptr;
 	}
+	weak_.clear();
+}
+
+AttackBase* Runboo::GetAttackIns(void)
+{
+	return nullptr;
+}
+
+std::vector<Base> Runboo::GetObj(void)
+{
+	return std::vector<Base>();
+}
+
+void Runboo::ObjHit(int i)
+{
+}
+
+void Runboo::SetDamage(int dmg)
+{
 }
 
 //std::vector<Base*> Runboo::GetObj(void)
@@ -82,6 +106,10 @@ void Runboo::Damage(void)
 }
 
 void Runboo::Death(void)
+{
+}
+
+void Runboo::HpUpdate(void)
 {
 }
 

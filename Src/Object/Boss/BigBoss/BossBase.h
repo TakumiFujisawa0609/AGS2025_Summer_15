@@ -30,6 +30,7 @@ public:
 	virtual void SetDamage(int dmg) = 0;
 	virtual bool IsInvici(void) { return unit_.inviCounter_ > 0; }
 
+
 	void SetPlayerPosPtr(const Vector2F* pPos);
 
 protected:

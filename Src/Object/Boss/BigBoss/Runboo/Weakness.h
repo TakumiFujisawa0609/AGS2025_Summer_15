@@ -1,16 +1,20 @@
 #pragma once
 #include<DxLib.h>
 #include"../../../Common/Base.h"
+#include"../../../UnitBase.h"
+#include"../../Tutorial/Attack/AttackBase.h"
 #include"../BossBase.h"
 
-class Weakness : BossBase
+class WeakBullet;
+
+class Weakness : public BossBase
 {
 public:
 	static constexpr float SIZE_X = 100;
 	static constexpr float SIZE_Y = 100;
 
-	static constexpr float AMPLITUDE = 2.0f;          // 振幅（上下の幅）
-	static constexpr float MOVE_Y_SPEED = 0.05f;              // 動く速さ（角度の進み）
+	static constexpr float AMPLITUDE = 1.0f;          
+	static constexpr float MOVE_Y_SPEED = 0.05f;
 
 	static constexpr int HP_MAX = 30;
 	static constexpr int HP_POS_X = 10;
@@ -20,18 +24,23 @@ public:
 	~Weakness();
 
 	void Init(Vector2F disppos);
-	void Update()override;
-	void Draw()override;
-	void Release()override;
+	void Init(void)override;
+	void Update(Vector2F boss);
+	void Update(void)override;
+	void Draw(void)override;
+	void Release(void)override;
+
+	AttackBase* GetAttackIns(void)override;
+	std::vector<Base>GetObj(void)override;
+	void ObjHit(int i)override;
+	void SetDamage(int dmg)override;
 
 private:
-	Base unit_;
+
+	WeakBullet* bullet_;
 
 	float cnt_;
 	Vector2F start_;
-
-	//継承-------------------------------------------
-	void Init()override;
 
 	//待機状態
 	void Idle(void)override;
@@ -48,8 +57,6 @@ private:
 	//死亡状態
 	void Death(void)override;
 
-	std::vector<Base*>GetObj(void)override;
-	//-------------------------------------------
+	void IsGround(Collision::DIR dir)override {}
 
-	void HpDraw(void);
 };
