@@ -1,6 +1,7 @@
 #pragma once
-
 #include"../../UnitBase.h"
+#include "../Tutorial/Attack/AttackBase.h"
+
 
 class BossBase : public UnitBase
 {
@@ -23,8 +24,13 @@ public:
 	virtual void Draw(void)override = 0;
 	virtual void Release(void)override = 0;
 
-	virtual std::vector<Base*>GetObj(void) = 0;
+	virtual AttackBase* GetAttackIns(void)=0;
+	virtual std::vector<Base>GetObj(void) = 0;
+	virtual void ObjHit(int i) = 0;
+	virtual void SetDamage(int dmg) = 0;
+	virtual bool IsInvici(void) { return unit_.inviCounter_ > 0; }
 
+	void SetPlayerPosPtr(const Vector2F* pPos);
 
 protected:
 	//状態ごとの関数を呼ぶための関数ポインタ
@@ -53,7 +59,7 @@ protected:
 
 
 
-
+	const Vector2F* playerPosPtr_ = nullptr; // プレイヤー座標へのポインタ
 
 
 

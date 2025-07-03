@@ -58,10 +58,10 @@ void Bammoon::Release(void)
 }
 
 
-std::vector<Base*> Bammoon::GetObj(void)
-{
-	return std::vector<Base*>();
-}
+//std::vector<Base*> Bammoon::GetObj(void)
+//{
+//	return std::vector<Base*>();
+//}
 
 void Bammoon::Idle(void)
 {
@@ -235,6 +235,7 @@ void Bammoon::Animation(void)
 			animeCounter_ = 0;
 		}
 		else {
+			animeCounter_ = 0;
 			ChangeMotion(MOTION::IDLE);
 		}
 	}
