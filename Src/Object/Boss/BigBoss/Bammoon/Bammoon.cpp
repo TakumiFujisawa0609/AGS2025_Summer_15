@@ -32,6 +32,8 @@ void Bammoon::Init(void)
 
 	animeCounter_ = 0;
 	animeInterval_ = 0;
+
+	counter_ = 0;
 }
 
 void Bammoon::Update(void)
@@ -83,8 +85,8 @@ void Bammoon::ObjHit(int i)
 
 void Bammoon::Idle(void)
 {
-	ChangeMotion(MOTION::IDLE);
 	if (--idleTime_ <= 0) {
+		counter_ = 0;
 		ChangeState(STATE::MOVE);
 	}
 }
@@ -93,9 +95,12 @@ void Bammoon::Move(void)
 {
 	static bool jumpmotion = false;
 	static bool jump = false;
-	static bool move = false;
 	static int stopCou = 100;
-	static Vector2F vec = {};
+	if (counter_ == 0) {
+		jumpmotion = false;
+		jump = false;
+		stopCou = 100;
+	}
 
 	if (!jumpmotion) { ChangeMotion(MOTION::JUMP, false); jumpmotion = true; }
 
@@ -108,44 +113,65 @@ void Bammoon::Move(void)
 	if (jump && unit_.yAccel_ > 0.0f && unit_.isGravity_) {
 		unit_.isGravity_ = false;
 		unit_.yAccel_ = 0.0f;
-		vec = { 0.0f,50.0f };
-		return;
 	}
 
 	if (jump && !unit_.isGravity_) {
-		if (--stopCou <= 0 && !move) {
-			unit_.xAccel_ = vec.x;
-			unit_.yAccel_ = vec.y;
-			move = true;
-		}
-
-		if (unit_.isGround_) {
+		if (--stopCou <= 0) {
+			ChangeState(STATE::ATTACK);
+			counter_ = 0;
 			//static éŒ¾‚ðƒŠƒZƒbƒg--
 			jumpmotion = false;
 			jump = false;
-			vec = {};
-			move = false;
 			stopCou = 100;
 			//-----------------------
-			unit_.isGravity_ = true;
-			ChangeState(STATE::ATTACK);
+			return;
 		}
-
 	}
-
+	counter_++;
 }
 
 void Bammoon::Attack(void)
 {
 	static bool mot = false;
-	if (!mot) { ChangeMotion(MOTION::ATTACK, false); mot = true; }
-
-
-	if (motion_ != MOTION::ATTACK) {
+	static Vector2F vec;
+	if (counter_ == 0) {
 		mot = false;
-		idleTime_ = 300;
-		ChangeState(STATE::IDLE);
+		vec = {};
 	}
+
+	switch (attackState_)
+	{
+	case Bammoon::ATTACK::SWEEP:
+		if (counter_ == 0) {
+			Vector2F v = *playerPosPtr_ - unit_.pos_;
+			float size = sqrtf(v.x * v.x + v.y * v.y);
+			vec = (v / size) * 30.0f;
+		}
+
+		if (counter_ == 100) {
+			unit_.xAccel_ = vec.x;
+			unit_.yAccel_ = vec.y;
+			unit_.isXAttenu = false;
+		}
+
+		if (unit_.isGround_) {
+			ChangeMotion(MOTION::ATTACK, false);
+
+			unit_.isGravity_ = true;
+			unit_.isXAttenu = true;
+
+			counter_ = 0;
+
+			idleTime_ = 400;
+			ChangeState(STATE::IDLE);
+			return;
+		}
+		break;
+	case Bammoon::ATTACK::BLAST:
+
+		break;
+	}
+	counter_++;
 }
 
 void Bammoon::Damage(void)
@@ -238,7 +264,7 @@ void Bammoon::LoadBammoonImage(void)
 
 void Bammoon::DrawBammoonImage(void)
 {
-	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y, SCALE, 0, image_[(int)motion_][animeCounter_], true);
+	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y, SCALE, 0, image_[(int)motion_][animeCounter_], true,true);
 }
 
 void Bammoon::Animation(void)

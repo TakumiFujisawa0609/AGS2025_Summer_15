@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Boss\BigBoss\Bammoon\Attack\Blast.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Rushoot.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\BamBeam.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\BamBreath.cpp" />
@@ -188,6 +189,7 @@
     <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Wavemboo.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Boss\BigBoss\Bammoon\Attack\Blast.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Rushoot.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\BamBeam.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\BamBreath.h" />

@@ -19,6 +19,7 @@ UnitBase::UnitBase()
 	unit_.xAccel_ = 0.0f;
 	unit_.yAccel_ = 0.0f;
 
+	unit_.isXAttenu = true;
 	unit_.isGravity_ = true;
 
 	unit_.isStageCollision_ = true;
@@ -55,6 +56,8 @@ void UnitBase::Accel(void)
 	// ‰¡Œü‚«‚Ì‰Á‘¬“x‚ðŒ¸‘¬‚³‚¹‚é
 
 	//Œ¸‘¬“x
+	if (!unit_.isXAttenu)return;
+
 	const float decel = gravity_;
 
 	if (unit_.xAccel_ > decel) {
