@@ -3,6 +3,8 @@
 #include<DxLib.h>
 #include<string>
 
+#include"Attack/Blast.h"
+
 Bammoon::Bammoon()
 {
 }
@@ -17,6 +19,10 @@ void Bammoon::Init(void)
 	LoadBammoonImage();
 	ChangeMotion(MOTION::IDLE);
 
+	attackState_ = ATTACK::NON;
+
+	blast_ = new Blast();
+	blast_->Init(&unit_.pos_);
 
 	unit_.size_ = { SIZE_X,SIZE_Y };
 	unit_.radius_ = unit_.size_.x/2;
@@ -26,7 +32,7 @@ void Bammoon::Init(void)
 	unit_.isAlive_ = true;
 	unit_.nextpos_ = { 1000.0f,400.0f };
 	unit_.pos_ = unit_.nextpos_;
-	unit_.hp_ = 100;
+	unit_.hp_ = HP_MAX;
 
 	idleTime_ = 300;
 
@@ -34,14 +40,14 @@ void Bammoon::Init(void)
 	animeInterval_ = 0;
 
 	counter_ = 0;
+
+	TargetLook(*playerPosPtr_);
 }
 
 void Bammoon::Update(void)
 {
-	if (unit_.hp_ <= 0) {
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
-	}
 	Animation();
+	AttackUpdate();
 	BossBase::Update();
 }
 
@@ -49,11 +55,21 @@ void Bammoon::Draw(void)
 {
 	if (unit_.isAlive_) {
 		DrawBammoonImage();
+		AttackDraw();
 	}
+	Vector2 start, end, size;
+	size = { 800,50 };
+	end = { Application::SCREEN_SIZE_X - 5,Application::SCREEN_SIZE_Y - 20 };
+	start = end - size;
+	DrawBar(start.x, start.y, end.x, end.y, unit_.hp_, HP_MAX, RGB(0, 255, 255));
 }
 
 void Bammoon::Release(void)
 {
+	blast_->Release();
+	delete blast_;
+	blast_ = nullptr;
+
 	for (int i = 0; i < (int)MOTION::MAX; i++) {
 		for (auto id : image_[i]) {
 			DeleteGraph(id);
@@ -62,42 +78,14 @@ void Bammoon::Release(void)
 	}
 }
 
-std::vector<Base> Bammoon::GetObj(void)
-{
-	return std::vector<Base>();
-}
 
-AttackBase* Bammoon::GetAttackIns(void)
-{
-	return nullptr;
-}
-
-void Bammoon::SetDamage(int dmg)
-{
-	if (unit_.hp_ <= 0) return;
-
-	unit_.hp_ -= dmg;
-	unit_.inviCounter_ = 10;
-
-	if (unit_.hp_ <= 0) {
-		unit_.isAlive_ = false;
-	}
-}
-
-void Bammoon::ObjHit(int i)
-{
-}
-
-
-//std::vector<Base*> Bammoon::GetObj(void)
-//{
-//	return std::vector<Base*>();
-//}
 
 void Bammoon::Idle(void)
 {
+	TargetLook(*playerPosPtr_);
 	if (--idleTime_ <= 0) {
 		counter_ = 0;
+		attackState_ = ATTACK::NON;
 		ChangeState(STATE::MOVE);
 	}
 }
@@ -112,6 +100,8 @@ void Bammoon::Move(void)
 		jump = false;
 		stopCou = 100;
 	}
+
+	TargetLook(*playerPosPtr_);
 
 	if (!jumpmotion) { ChangeMotion(MOTION::JUMP, false); jumpmotion = true; }
 
@@ -128,6 +118,7 @@ void Bammoon::Move(void)
 
 	if (jump && !unit_.isGravity_) {
 		if (--stopCou <= 0) {
+			AttackRand();
 			ChangeState(STATE::ATTACK);
 			counter_ = 0;
 			//static 宣言をリセット--
@@ -162,9 +153,11 @@ void Bammoon::Attack(void)
 		if (counter_ == 100) {
 			unit_.xAccel_ = vec.x;
 			unit_.yAccel_ = vec.y;
+			unit_.isGravity_ = true;
 			unit_.isXAttenu = false;
 		}
 
+		
 		if (unit_.isGround_) {
 			ChangeMotion(MOTION::ATTACK, false);
 
@@ -179,7 +172,16 @@ void Bammoon::Attack(void)
 		}
 		break;
 	case Bammoon::ATTACK::BLAST:
-
+		int rate = 15;	//何フレームに一回打つか
+		if (counter_ % rate == 0) blast_->On(counter_ / rate, *playerPosPtr_);
+		if (blast_->End()) {
+			counter_ = 0;
+			unit_.isGravity_ = true;
+			unit_.isXAttenu = true;
+			idleTime_ = 300;
+			ChangeState(STATE::IDLE);
+			return;
+		}
 		break;
 	}
 	counter_++;
@@ -187,19 +189,154 @@ void Bammoon::Attack(void)
 
 void Bammoon::Damage(void)
 {
+	unit_.isGravity_ = true;
+
+	if (bossDir_ == AttackBase::DIR::LEFT) {
+		unit_.nextpos_.x += 10.0f;
+	}
+	else
+	{
+		unit_.nextpos_.x -= 10.0f;
+	}
+
+
+	if (unit_.isGround_ && unit_.yAccel_ >= 0) {
+		idleTime_ = 400;
+		ChangeState(STATE::IDLE);
+		attackState_ = ATTACK::NON;
+		ChangeMotion(MOTION::DAMAGE);
+	}
 }
 
 void Bammoon::Death(void)
 {
 }
 
+std::vector<Base> Bammoon::GetObj(void)
+{
+	switch (attackState_)
+	{
+	case Bammoon::ATTACK::NON:
+		break;
+	case Bammoon::ATTACK::SWEEP:
+		break;
+	case Bammoon::ATTACK::BLAST:
+		return blast_->Get();
+		break;
+	default:
+		break;
+	}
+	return std::vector<Base>();
+}
+
+AttackBase* Bammoon::GetAttackIns(void)
+{
+	return nullptr;
+}
+
+void Bammoon::ObjHit(int i)
+{
+	switch (attackState_)
+	{
+	case Bammoon::ATTACK::NON:
+		break;
+	case Bammoon::ATTACK::SWEEP:
+		break;
+	case Bammoon::ATTACK::BLAST:
+		blast_->Hit(i);
+		break;
+	case Bammoon::ATTACK::MAX:
+		break;
+	default:
+		break;
+	}
+}
+
+void Bammoon::SetDamage(int dmg)
+{
+	if (unit_.hp_ <= 0) return;
+
+	unit_.hp_ -= dmg;
+	unit_.inviCounter_ = 10;
+
+	if (unit_.hp_ <= 0) {
+		auto& mana = SceneManager::GetInstance();
+		mana.HitStop(60);
+		mana.ZoomPos(unit_.pos_);
+		mana.ZoomScale(2.0f);
+		ChangeState(STATE::DEATH);
+	}
+}
+
+void Bammoon::AttackUpdate(void)
+{
+	switch (attackState_)
+	{
+	case Bammoon::ATTACK::NON:
+		break;
+	case Bammoon::ATTACK::SWEEP:
+		break;
+	case Bammoon::ATTACK::BLAST:
+		blast_->Update();
+		break;
+	case Bammoon::ATTACK::MAX:
+		break;
+	default:
+		break;
+	}
+}
+
+void Bammoon::AttackDraw(void)
+{
+	switch (attackState_)
+	{
+	case Bammoon::ATTACK::NON:
+		break;
+	case Bammoon::ATTACK::SWEEP:
+		break;
+	case Bammoon::ATTACK::BLAST:
+		blast_->Draw();
+		break;
+	case Bammoon::ATTACK::MAX:
+		break;
+	default:
+		break;
+	}
+}
+
+void Bammoon::AttackRand(void)
+{
+	int r = GetRand(1000);
+
+	if (r <= 700) {
+		attackState_ = ATTACK::SWEEP;
+	}
+	else if (r <= 1000) {
+		attackState_ = ATTACK::BLAST;
+	}
+}
 
 
+void Bammoon::SetDown(Vector2F pos)
+{
+	BossBase::SetDown(pos);
+	TargetLook(*playerPosPtr_);
+	if (state_ == STATE::ATTACK) {
+		auto& mana = SceneManager::GetInstance();
+		mana.HitStop(60);
+		Vector2F point = unit_.pos_ + (pos - unit_.pos_);
+		mana.ZoomPos(point);
+		mana.ZoomScale(2.0f);
+
+	}
+}
 
 
-
-
-
+void Bammoon::TargetLook(Vector2F target)
+{
+	if (target.x <= unit_.pos_.x)	bossDir_ = AttackBase::DIR::LEFT;
+	else							bossDir_ = AttackBase::DIR::RIGHT;
+}
 
 
 
@@ -275,7 +412,16 @@ void Bammoon::LoadBammoonImage(void)
 
 void Bammoon::DrawBammoonImage(void)
 {
-	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y, SCALE, 0, image_[(int)motion_][animeCounter_], true,true);
+	bool invic = false;
+	if (!(unit_.inviCounter_ / 5 % 2 == 0))invic = true;
+
+	if (invic)SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+
+	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y, SCALE, 0,
+		image_[(int)motion_][animeCounter_], true,
+		(bossDir_ == AttackBase::DIR::LEFT) ? true : false);
+
+	if (invic)SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
 void Bammoon::Animation(void)

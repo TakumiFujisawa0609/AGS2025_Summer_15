@@ -89,7 +89,7 @@ public:
 	using AttackFunc = void(BossTutorial::*)();
 
 
-	void SetDown(Vector2F pos);
+	virtual void SetDown(Vector2F pos);
 
 	DRAWPAT GetDrawpat(void) { return DrawPat_; }
 

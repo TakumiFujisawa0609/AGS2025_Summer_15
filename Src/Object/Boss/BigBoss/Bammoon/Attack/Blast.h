@@ -6,6 +6,14 @@
 class Blast : public AttackBase
 {
 public:
+	static constexpr int BLAST_NUM_X = 6;
+	static constexpr int BLAST_NUM_Y = 4;
+	static constexpr int BLAST_NUM_MAX = BLAST_NUM_X * BLAST_NUM_Y;
+
+	static constexpr int BLAST_SIZE = 480;
+
+	static constexpr int MAX_NUM = 10;
+
 	Blast();
 	~Blast();
 
@@ -14,17 +22,30 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
-	const std::vector<Base> Get(void)const;
+	const std::vector<Base> Get(void)const { return obj_; }
 
 	void On(int i, Vector2F pPos);
 
+	void Hit(int i);
 
 private:
+	int reticleImg_;
+	int blastImg_[BLAST_NUM_MAX];
+	int img;
+
+	int blastCount_;
+
 	std::vector<Base> obj_;
 
-	Vector2F vec_;
+	struct BlastData {
+		float angle_;
+		float expansion_;
+		Vector2F vec_;
+		Vector2F target_;
+		bool blast_;
+		int animeCounter_;
+	};
 
-	Vector2F target_;
-
+	std::vector<BlastData> bList;
 };
 

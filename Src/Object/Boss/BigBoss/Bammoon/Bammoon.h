@@ -2,10 +2,12 @@
 
 #include"../BossBase.h"
 
+class Blast;
+
 class Bammoon : public BossBase
 {
 public:
-	static constexpr int HP_MAX = 100;
+	static constexpr int HP_MAX = 1000;
 
 	static const int LOAD_SIZE_X = 512;
 	static const int LOAD_SIZE_Y = 512;
@@ -49,15 +51,16 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
-	//ƒQƒbƒ^[ŠÖ”
 	std::vector<Base> GetObj(void) override;
 	AttackBase* GetAttackIns(void)override;
 
-	//ƒZƒbƒ^[ŠÖ”
 	void SetDamage(int dmg)override;
 	void ObjHit(int i)override;
 
-	const ATTACK GetAttackState(void)const { return attackState_; }
+	int GetAttackState(void)override { return (int)attackState_; }
+
+	void SetDown(Vector2F pos)override;
+
 private:
 	//ƒ{ƒX•`‰æŠÖŒW-------------------------------------------------------------------
 	std::vector<int> image_[(int)MOTION::MAX];		//‰æ‘œƒnƒ“ƒhƒ‹
@@ -78,35 +81,53 @@ private:
 
 	//---------------------------------------------------------------------------------
 
-	ATTACK attackState_;
 
 	int counter_;
 
 	//‘Ò‹@ó‘Ô—p``
 	void Idle(void) override;
+	//ŠÖ”
+	
 	//•Ï”
 	int idleTime_;
 
 
 	//ˆÚ“®ó‘Ô``
 	void Move(void) override;
+	//ŠÖ”
+
 	//•Ï”
 
 
 	//UŒ‚ó‘Ô``
 	void Attack(void) override;
+	//ŠÖ”
+	void AttackUpdate(void);
+	void AttackDraw(void);
+	void AttackRand(void);
+
 	//•Ï”
-	
+	ATTACK attackState_;
+	Blast* blast_;
+
 
 	//ƒ_ƒ[ƒWó‘Ô``
 	void Damage(void) override;
+	//ŠÖ”
+
 	//•Ï”
 	
 
 	//€–Só‘Ô``
 	void Death(void) override;
+	//ŠÖ”
+
 	//•Ï”
 
+
+
+	//w’è‚µ‚½À•W‚Ì•ûŒü‚ğŒü‚­
+	void TargetLook(Vector2F target);
 
 	// Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
 	void IsGround(Collision::DIR dir)override;

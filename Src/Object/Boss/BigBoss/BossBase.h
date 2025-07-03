@@ -23,13 +23,20 @@ public:
 	virtual void Draw(void)override = 0;
 	virtual void Release(void)override = 0;
 
-	virtual AttackBase* GetAttackIns(void)=0;
+	virtual AttackBase* GetAttackIns(void) = 0;
 	virtual std::vector<Base>GetObj(void) = 0;
+
 	virtual void ObjHit(int i) = 0;
+
 	virtual void SetDamage(int dmg) = 0;
+
 	virtual bool IsInvici(void) { return unit_.inviCounter_ > 0; }
 
 	void SetPlayerPosPtr(const Vector2F* pos);
+
+	virtual int GetAttackState(void) { return 0; };
+
+	virtual void SetDown(Vector2F pos);
 
 protected:
 	//ó‘Ô‚²‚Æ‚ÌŠÖ”‚ğŒÄ‚Ô‚½‚ß‚ÌŠÖ”ƒ|ƒCƒ“ƒ^
@@ -61,7 +68,7 @@ protected:
 
 
 
-
+	AttackBase::DIR bossDir_;
 
 
 

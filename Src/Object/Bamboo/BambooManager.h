@@ -13,7 +13,7 @@ public:
 	void Draw(void);
 	void Release(void);
 
-	void Create(Vector2F pos,int num);
+	void Create(Vector2F pos, int num, int probability = 100);
 
 	std::vector<Bamboo*>GetBamboos(void) { return bamboos_; }
 

@@ -41,8 +41,11 @@ void BambooManager::Release(void)
 	DeleteGraph(image_);
 }
 
-void BambooManager::Create(Vector2F pos, int num)
+void BambooManager::Create(Vector2F pos, int num, int probability)
 {
+	int p = GetRand(10000) / 100;
+	if (probability < p)return;
+
 	for (int i = 0; i < num; i++) {
 
 		bool reciycle = false;

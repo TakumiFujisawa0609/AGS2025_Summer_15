@@ -32,6 +32,8 @@ private:
 	void PlayerToBossAttack(void);
 	void PlayerAttackToBossAttack(void);
 
+	void PlayerToBamboo(void);
+
 	void Scroll(void);
 };
 

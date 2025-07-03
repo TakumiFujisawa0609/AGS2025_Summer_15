@@ -17,6 +17,7 @@ void BossBase::Init(void)
 
 void BossBase::Update(void)
 {
+	if (unit_.inviCounter_ > 0)unit_.inviCounter_--;
 
 	(this->*stateFuncPtr)();
 
@@ -53,4 +54,25 @@ void BossBase::IsGround(Collision::DIR dir)
 void BossBase::SetPlayerPosPtr(const Vector2F* pos)
 {
 	playerPosPtr_ = pos;
+}
+
+void BossBase::SetDown(Vector2F pos)
+{
+	unit_.inviCounter_ = 30;
+
+	unit_.isGravity_ = true;
+	unit_.isXAttenu = true;
+
+	if (unit_.pos_.x < pos.x) {
+		bossDir_ = AttackBase::DIR::RIGHT;
+	}
+	else {
+		bossDir_ = AttackBase::DIR::LEFT;
+	}
+	unit_.yAccel_ = -10.0f;
+	unit_.xAccel_ = 0.0f;
+
+	unit_.nextpos_.y += unit_.yAccel_;
+
+	ChangeState(STATE::DAMAGE);
 }
