@@ -25,10 +25,8 @@ public:
 	virtual void Release(void)override = 0;
 
 	virtual AttackBase* GetAttackIns(void)=0;
-	virtual std::vector<Base*>GetObj(void) = 0;
-
+	virtual std::vector<Base>GetObj(void) = 0;
 	virtual void ObjHit(int i) = 0;
-
 	virtual void SetDamage(int dmg) = 0;
 	virtual bool IsInvici(void) { return unit_.inviCounter_ > 0; }
 
