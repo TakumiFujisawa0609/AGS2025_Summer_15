@@ -28,6 +28,7 @@ void Bammoon::Init(void)
 	unit_.pos_ = unit_.nextpos_;
 	unit_.hp_ = 1000;
 
+	idleTime_ = 300;
 
 	animeCounter_ = 0;
 	animeInterval_ = 0;
@@ -64,6 +65,7 @@ std::vector<Base*> Bammoon::GetObj(void)
 
 void Bammoon::Idle(void)
 {
+	ChangeMotion(MOTION::IDLE);
 	if (--idleTime_ <= 0) {
 		ChangeState(STATE::MOVE);
 	}
@@ -71,11 +73,61 @@ void Bammoon::Idle(void)
 
 void Bammoon::Move(void)
 {
+	static bool jumpmotion = false;
+	static bool jump = false;
+	static bool move = false;
+	static int stopCou = 100;
+	static Vector2F vec = {};
+
+	if (!jumpmotion) { ChangeMotion(MOTION::JUMP, false); jumpmotion = true; }
+
+	if (motion_ != MOTION::JUMP && jumpmotion && !jump) {
+		jump = true;
+		unit_.yAccel_ = -50.0f;
+	}
+
+
+	if (jump && unit_.yAccel_ > 0.0f && unit_.isGravity_) {
+		unit_.isGravity_ = false;
+		unit_.yAccel_ = 0.0f;
+		vec = { 0.0f,50.0f };
+		return;
+	}
+
+	if (jump && !unit_.isGravity_) {
+		if (--stopCou <= 0 && !move) {
+			unit_.xAccel_ = vec.x;
+			unit_.yAccel_ = vec.y;
+			move = true;
+		}
+
+		if (unit_.isGround_) {
+			//static 宣言をリセット--
+			jumpmotion = false;
+			jump = false;
+			vec = {};
+			move = false;
+			stopCou = 100;
+			//-----------------------
+			unit_.isGravity_ = true;
+			ChangeState(STATE::ATTACK);
+		}
+
+	}
 
 }
 
 void Bammoon::Attack(void)
 {
+	static bool mot = false;
+	if (!mot) { ChangeMotion(MOTION::ATTACK, false); mot = true; }
+
+
+	if (motion_ != MOTION::ATTACK) {
+		mot = false;
+		idleTime_ = 300;
+		ChangeState(STATE::IDLE);
+	}
 }
 
 void Bammoon::Damage(void)
@@ -107,7 +159,10 @@ void Bammoon::IsGround(Collision::DIR dir)
 	case Collision::DOWN:
 		//地面に接地していたら行う処理
 		unit_.yAccel_ = 0.0f;
-		unit_.isGround_ = true;
+		if (unit_.isGround_ == false) {
+			unit_.isGround_ = true;
+			SceneManager::GetInstance().SHAKE();
+		}
 		break;
 	case Collision::LEFT:
 		//左側の壁に衝突していたら行う処理
@@ -146,7 +201,21 @@ void Bammoon::LoadBammoonImage(void)
 
 	image_[motion].insert(image_[motion].end(), idleLoad, idleLoad + IDLE_LOAD_NUM);
 
+	motion = (int)MOTION::JUMP;
 
+	int jumpLoad[IDLE_LOAD_NUM];
+
+	LoadDivGraph((PATH + "Run/Run.png").c_str(), IDLE_LOAD_NUM, 2, 2, LOAD_SIZE_X, LOAD_SIZE_Y, jumpLoad);
+
+	image_[motion].insert(image_[motion].end(), jumpLoad, jumpLoad + IDLE_LOAD_NUM);
+
+	motion = (int)MOTION::ATTACK;
+
+	for (int i = 1; i <= ATTACK_LOAD_NUM; i++) {
+		std::string filePath = PATH + "Attack/Attack" + std::to_string(i) + ".png";
+		int load = LoadGraph(filePath.c_str());
+		image_[motion].emplace_back(load);
+	}
 }
 
 void Bammoon::DrawBammoonImage(void)
@@ -173,9 +242,8 @@ void Bammoon::Animation(void)
 
 void Bammoon::ChangeMotion(MOTION m, bool loop)
 {
-	if (m == motion_)return;
 	if (image_[(int)m].size() == 0)return;
-
+	if (m == motion_)return;
 	motion_ = m;
 	animeCounter_ = 0;
 	animeLoop_ = loop;

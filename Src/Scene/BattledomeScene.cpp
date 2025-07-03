@@ -44,14 +44,13 @@ void BattledomeScene::Init(void)
 		break;
 	}
 
-	player_ = new Player();
-	player_->Init();
-
 	stage_->Init();
 	sMng.SetMapNum(stage_->GetMapNum());
 
 	boss_->Init();
 
+	player_ = new Player();
+	player_->Init();
 
 	bamboo_ = new BambooManager();
 	bamboo_->Init((Vector2F*)&player_->GetUnit().pos_, (int*)&player_->GetBp());

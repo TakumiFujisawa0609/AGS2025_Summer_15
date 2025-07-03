@@ -60,10 +60,6 @@ protected:
 
 
 
-
-
-
-
 	// Ú’n‚µ‚Ä‚¢‚é‚Ì”’l‚Ì‘ã“ü‚È‚Ç‚ğ‚Ü‚Æ‚ß‚½ŠÖ”
 	virtual void IsGround(Collision::DIR dir)override;
 };
