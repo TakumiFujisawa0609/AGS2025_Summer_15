@@ -26,6 +26,7 @@ public:
 	void operator*=(const int value);
 	Vector2 operator/(const int value)const;
 	void operator/=(const int value);
+	void operator/=(const float value);
 };
 
 class Vector2F

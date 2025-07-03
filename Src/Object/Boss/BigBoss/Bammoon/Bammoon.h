@@ -49,6 +49,13 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
+	//ゲッター関数
+	std::vector<Base> GetObj(void) override;
+	AttackBase* GetAttackIns(void)override;
+	//セッター関数
+	void SetDamage(int dmg)override;
+	void ObjHit(int i)override;
+
 	//std::vector<Base*>GetObj(void)override;
 
 private:

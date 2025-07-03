@@ -47,7 +47,7 @@ void BattledomeScene::Init(void)
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		stage_ = new BammoonStage();
-		//	boss_ = new Bammoon();
+		boss_ = new Bammoon();
 		break;
 	}
 

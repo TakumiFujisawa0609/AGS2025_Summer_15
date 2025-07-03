@@ -2,6 +2,7 @@
 
 #include<DxLib.h>
 #include<string>
+#include<cmath>
 
 Bammoon::Bammoon()
 {
@@ -57,11 +58,25 @@ void Bammoon::Release(void)
 	}
 }
 
+std::vector<Base> Bammoon::GetObj(void)
+{
+	return std::vector<Base>();
+}
 
-//std::vector<Base*> Bammoon::GetObj(void)
-//{
-//	return std::vector<Base*>();
-//}
+AttackBase* Bammoon::GetAttackIns(void)
+{
+	return nullptr;
+}
+
+void Bammoon::SetDamage(int dmg)
+{
+}
+
+void Bammoon::ObjHit(int i)
+{
+}
+
+
 
 void Bammoon::Idle(void)
 {
@@ -77,7 +92,7 @@ void Bammoon::Move(void)
 	static bool jump = false;
 	static bool move = false;
 	static int stopCou = 100;
-	static Vector2F vec = {};
+	static Vector2F vec;
 
 	if (!jumpmotion) { ChangeMotion(MOTION::JUMP, false); jumpmotion = true; }
 
@@ -90,7 +105,9 @@ void Bammoon::Move(void)
 	if (jump && unit_.yAccel_ > 0.0f && unit_.isGravity_) {
 		unit_.isGravity_ = false;
 		unit_.yAccel_ = 0.0f;
-		vec = { 0.0f,50.0f };
+		Vector2F v = *playerPosPtr_ - unit_.pos_;
+		float size = sqrtf(v.x * v.x + v.y * v.y);
+		vec = (v / size) * 30.0f;
 		return;
 	}
 
