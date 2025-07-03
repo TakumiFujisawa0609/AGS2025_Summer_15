@@ -37,6 +37,3 @@ void Wavemboo::Off(void)
 {
 }
 
-void Wavemboo::ChangeDispPos(void)
-{
-}

@@ -15,7 +15,6 @@ public:
     virtual const std::vector<Base> Get(void) const override;
     virtual void On(void) override;
     virtual void Off(void) override;
-    virtual void ChangeDispPos(void) override;
 private:
 };
 

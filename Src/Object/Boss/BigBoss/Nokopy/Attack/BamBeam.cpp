@@ -37,6 +37,3 @@ void BamBeam::Off(void)
 {
 }
 
-void BamBeam::ChangeDispPos(void)
-{
-}
