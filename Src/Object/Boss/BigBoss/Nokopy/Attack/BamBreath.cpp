@@ -40,6 +40,3 @@ void BamBreath::Off(void)
 {
 }
 
-void BamBreath::ChangeDispPos(void)
-{
-}

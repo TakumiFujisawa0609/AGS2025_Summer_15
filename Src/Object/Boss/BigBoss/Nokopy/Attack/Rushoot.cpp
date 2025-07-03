@@ -37,6 +37,3 @@ void Rushoot::Off(void)
 {
 }
 
-void Rushoot::ChangeDispPos(void)
-{
-}
