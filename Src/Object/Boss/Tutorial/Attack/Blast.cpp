@@ -2,6 +2,7 @@
 #include"../../../../Manager/Camera.h"
 #include"../BossTutorial.h"
 #include"../../../../Manager/SceneManager.h"
+#include "Blast.h"
 
 Blast::Blast()
 {
@@ -125,3 +126,5 @@ void Blast::Release(void)
 	DeleteGraph(reticleImg_);
 
 }
+
+

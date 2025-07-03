@@ -14,6 +14,7 @@ struct Base
 	float xAccel_;			//横方向の移動量計算用変数
 	float yAccel_;			//縦方向の移動量計算用変数
 
+	bool isXAttenu;			//横軸加速度の減衰の有無(true = 有 / false = 無)
 	bool isGravity_;		//重力をかけるかどうか(true = かける / false = かけない)
 	bool isGround_;			//接地判定	(true = 接地している / false = 接地していない)
 

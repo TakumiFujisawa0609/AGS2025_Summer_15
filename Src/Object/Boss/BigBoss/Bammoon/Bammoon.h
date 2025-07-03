@@ -35,8 +35,8 @@ public:
 	enum class ATTACK
 	{
 		NON = -1,
-
-
+		SWEEP,
+		BLAST,
 
 		MAX,
 	};
@@ -56,8 +56,7 @@ public:
 	void SetDamage(int dmg)override;
 	void ObjHit(int i)override;
 
-	//std::vector<Base*>GetObj(void)override;
-
+	const ATTACK GetAttackState(void)const { return attackState_; }
 private:
 	//ƒ{ƒX•`‰æŠÖŒW-------------------------------------------------------------------
 	std::vector<int> image_[(int)MOTION::MAX];		//‰æ‘œƒnƒ“ƒhƒ‹
@@ -78,8 +77,9 @@ private:
 
 	//---------------------------------------------------------------------------------
 
-	ATTACK attackStage_;
+	ATTACK attackState_;
 
+	int counter_;
 
 	//‘Ò‹@ó‘Ô—p``
 	void Idle(void) override;
