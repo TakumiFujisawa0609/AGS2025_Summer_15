@@ -22,7 +22,7 @@ public:
 	std::vector<Base*>GetObj(void)override;
 
 private:
-	//椅子とタンス
+	//インスタンス
 	Weakness* weak_[WEAK_MAX];
 	
 	//待機状態
