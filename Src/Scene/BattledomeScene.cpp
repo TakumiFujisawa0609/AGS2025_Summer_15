@@ -51,7 +51,6 @@ void BattledomeScene::Init(void)
 	sMng.SetMapNum(stage_->GetMapNum());
 
 	boss_->Init();
-	boss_->TakePlayerPos((Vector2F*)&player_->GetUnit().pos_);
 
 
 	bamboo_ = new BambooManager();
