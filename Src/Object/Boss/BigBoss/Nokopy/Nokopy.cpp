@@ -153,19 +153,22 @@ void Nokopy::BossDraw(void)
 	switch (DrawPat_)
 	{
 	case Nokopy::DRAW_IDLE:
-		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, 0x0000ff, true);
+		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, GetColor(255,255,255), true);
+		break;
+	case Nokopy::DRAW_MOVE:
+		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, GetColor(255, 255, 0), true);
 		break;
 	case Nokopy::DRAW_BAMBEAM:
-		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, 0x00ff00, true);
+		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, GetColor(255,0,0), true);
 		break;
 	case Nokopy::DRAW_BAMBREATH:
-		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, 0xff0000, true);
+		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, GetColor(0,255,0), true);
 		break;
 	case Nokopy::DRAW_WAVEMBOO:
-		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, 0x000110, true);
+		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, GetColor(0,255,255), true);
 		break;
 	case Nokopy::DRAW_RUSHOOT:
-		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, 0xffffff, true);
+		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, GetColor(0,0,255), true);
 		break;
 	}
 }
@@ -188,6 +191,7 @@ void Nokopy::Idle(void)
 	}
 	//ˆÚ“®‘JˆÚ
 	ChangeState(BossBase::STATE::MOVE);
+	DrawPat_ = DRAW_MOVE;
 }
 
 void Nokopy::Move(void)
@@ -233,6 +237,7 @@ void Nokopy::Move(void)
 	unit_.isGravity_ = true;
 	moveCounter_ = 0;
 	ChangeState(BossBase::STATE::IDLE);
+	DrawPat_ = DRAW_IDLE;
 	}
 }
 
@@ -277,15 +282,19 @@ void Nokopy::ChangeAttackState(ATTACK atc)
 	{
 	case Nokopy::BAMBEAM:
 		attackState_ = BAMBEAM;
+		DrawPat_ = DRAW_BAMBEAM;
 		break;
 	case Nokopy::BAMBREATH:
 		attackState_ = BAMBREATH;
+		DrawPat_ = DRAW_BAMBREATH;
 		break;
 	case Nokopy::WAVEMBOO:
 		attackState_ = WAVEMBOO;
+		DrawPat_ = DRAW_WAVEMBOO;
 		break;
 	case Nokopy::RUSHOOT:
 		attackState_ = RUSHOOT;
+		DrawPat_ = DRAW_RUSHOOT;
 		break;
 	}
 }

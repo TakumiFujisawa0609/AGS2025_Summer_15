@@ -21,6 +21,7 @@ public:
     enum  DRAW
     {
         DRAW_IDLE,
+        DRAW_MOVE,
         DRAW_BAMBEAM,
         DRAW_BAMBREATH,
         DRAW_WAVEMBOO,
