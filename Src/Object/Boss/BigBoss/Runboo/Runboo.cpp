@@ -14,11 +14,16 @@ Runboo::~Runboo()
 
 void Runboo::Init()
 {
+
+	moveSpeed_ = MOVE_SPEED;
+
 	BossBase::Init();
 	for (int ii = 0; ii < WEAK_MAX; ii++)
 	{
+		Vector2F weakPos = { 150, (float)(Application::SCREEN_SIZE_Y / 5.0f) * (ii + 1) };
+
 		weak_.emplace_back(new Weakness());
-		weak_[weak_.size() - 1]->Init({ 150, (float)(Application::SCREEN_SIZE_Y / 5.0f) * (ii + 1) });
+		weak_[weak_.size() - 1]->Init(weakPos, moveSpeed_);
 	}
 
 	unit_.disppos_ = { 0.0f,0.0f };
@@ -32,7 +37,7 @@ void Runboo::Init()
 
 void Runboo::Update()
 {
-	unit_.nextpos_.x += 1.0f;
+	unit_.nextpos_.x += moveSpeed_;
 
 	BossBase::Update();
 

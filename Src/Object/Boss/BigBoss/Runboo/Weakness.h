@@ -23,7 +23,7 @@ public:
 	Weakness();
 	~Weakness();
 
-	void Init(Vector2F disppos);
+	void Init(Vector2F disppos, float moveSpeed);
 	void Init(void)override;
 	void Update(Vector2F boss);
 	void Update(void)override;
@@ -38,6 +38,8 @@ public:
 private:
 
 	WeakBullet* bullet_;
+
+	float moveSpeed_;
 
 	float cnt_;
 	Vector2F start_;

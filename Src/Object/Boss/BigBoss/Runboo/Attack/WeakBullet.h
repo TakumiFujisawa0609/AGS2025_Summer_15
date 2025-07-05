@@ -13,7 +13,7 @@ public:
 	static constexpr float MOVE_SPEED = 5.0f;
 
 
-	WeakBullet();
+	WeakBullet(float moveSpeed);
 	~WeakBullet();
 
 	void Init(const Vector2F* pos)override;
@@ -28,6 +28,8 @@ public:
 private:
 
 	Base bullets_[BULLET_NUM];
+
+	float moveSpeed_;
 
 	float radius_;
 	float stAngle_;
