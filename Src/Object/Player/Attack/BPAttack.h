@@ -32,11 +32,14 @@ public:
 
 	int GetDamage(void) { return DEFAULT_DAMAGE * bp_; }
 
+	void Hit(void) { aliveHit_--; }
+
 private:
 
 	int image_;
 	int bp_;
 	int aliveCounter_;
+	int aliveHit_;
 
 	AsoUtility::DIRECTION dir_;
 };

@@ -19,7 +19,7 @@ void BPAttack::Update(void)
 {
 	if (!obj_.isAlive_)return;
 
-	if (aliveCounter_-- <= 0)obj_.isAlive_ = false;
+	if (aliveCounter_-- <= 0 || aliveHit_ <= 0)obj_.isAlive_ = false;
 
 	switch (dir_)
 	{
@@ -56,6 +56,7 @@ void BPAttack::On(Vector2F pPos, AsoUtility::DIRECTION dir,int bp)
 	obj_.pos_.x += (dir == AsoUtility::DIRECTION::E_DIR_RIGHT) ? Player::SIZE_X : -Player::SIZE_X;
 
 	aliveCounter_ = ALIVE_TIME;
+	aliveHit_ = bp;
 
 	this->bp_ = bp;
 

@@ -213,13 +213,14 @@ void TutorialScene::PlayerAttackToEnemyBamboo(void)
 
 	for (int i = 0; i < EnemyBamboo::ENEMY_MAX; i++) {
 		if (ins.CircleAndRect(player_->DefaultAtt(), enemy_->GetBamboo(i)->GetUnit())) {
-			enemy_->GetBamboo(i)->SetDmg(0);
-			bamboo_->Create(enemy_->GetBamboo(i)->GetUnit().pos_, 1);
+			enemy_->GetBamboo(i)->SetDmg(5);
+			bamboo_->Create(enemy_->GetBamboo(i)->GetUnit().pos_, 1, 50);
 		}
 		for (auto& bpAtt : player_->GetBpAtt()) {
 			if (ins.Rect(bpAtt->GetObj(), enemy_->GetBamboo(i)->GetUnit())) {
 				if (bpAtt->GetBp() >= 3)mana.SHAKE();
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				bpAtt->Hit();
 				enemy_->GetBamboo(i)->SetDmg(bpAtt->GetDamage());
 			}
 		}
@@ -276,8 +277,8 @@ void TutorialScene::PlayerAttackToBoss(void)
 		}
 		else {
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
-			boss_->SetDamage(0);
-			bamboo_->Create(boss_->GetUnit().pos_, 1);
+			boss_->SetDamage(5);
+			bamboo_->Create(boss_->GetUnit().pos_, 1,50);
 		}
 	}
 
@@ -285,6 +286,7 @@ void TutorialScene::PlayerAttackToBoss(void)
 		if (ins.Rect(bpAtt->GetObj(), boss_->GetUnit())) {
 			if (bpAtt->GetBp() >= 3) mana.SHAKE();
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
+			bpAtt->Hit();
 			boss_->SetDamage(bpAtt->GetDamage());
 		}
 	}
@@ -298,12 +300,21 @@ void TutorialScene::PlayerAttackToBossAttack(void)
 		if (ins.Circle(boss_->GetAttackObj()[i], player_->DefaultAtt())) {
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
 			boss_->ObjHit(i);
-			bamboo_->Create(boss_->GetAttackObj()[i].pos_, 3);
+			bamboo_->Create(boss_->GetAttackObj()[i].pos_, 1,50);
 			player_->SetInvici(50);
 		}
 	}
 
-
-	
+	for (auto& bpAtt : player_->GetBpAtt()) {
+		int i = 0;
+		for (auto& bossAt : boss_->GetAttackObj()) {
+			if (ins.CircleAndRect(bossAt, bpAtt->GetObj())) {
+				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				boss_->ObjHit(i);
+				bpAtt->Hit();
+			}
+			i++;
+		}
+	}
 	
 }

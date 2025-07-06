@@ -3,7 +3,7 @@
 #include<DxLib.h>
 #include<string>
 
-#include"Attack/Blast.h"
+#include"Attack/BamBlast.h"
 
 Bammoon::Bammoon()
 {
@@ -21,7 +21,7 @@ void Bammoon::Init(void)
 
 	attackState_ = ATTACK::NON;
 
-	blast_ = new Blast();
+	blast_ = new BamBlast();
 	blast_->Init(&unit_.pos_);
 
 	unit_.size_ = { SIZE_X,SIZE_Y };
@@ -171,7 +171,7 @@ void Bammoon::Attack(void)
 			return;
 		}
 		break;
-	case Bammoon::ATTACK::BLAST:
+	case Bammoon::ATTACK::BLAST: {
 		int rate = 15;	//‰½ƒtƒŒ[ƒ€‚Éˆê‰ñ‘Å‚Â‚©
 		if (counter_ % rate == 0) blast_->On(counter_ / rate, *playerPosPtr_);
 		if (blast_->End()) {
@@ -182,6 +182,10 @@ void Bammoon::Attack(void)
 			ChangeState(STATE::IDLE);
 			return;
 		}
+		break;
+	}
+	case Bammoon::ATTACK::PBULLET:
+		
 		break;
 	}
 	counter_++;

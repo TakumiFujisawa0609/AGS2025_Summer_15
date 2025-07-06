@@ -7,7 +7,7 @@ public:
 
     static constexpr float EX_SIZE = 0.25f;                 // 画像サイズの操作用
 
-    static constexpr int HP_MAX = 50;                       // HP
+    static constexpr int HP_MAX = 30;                       // HP
     static constexpr float MOVE_SPEED = 2.0f;               // 移動速度
 
     static constexpr float IMAGE_SIZE_X = 180.0f;           // 画像の横サイズ

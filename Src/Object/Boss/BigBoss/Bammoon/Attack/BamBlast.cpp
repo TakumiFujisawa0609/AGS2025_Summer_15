@@ -1,20 +1,20 @@
-#include"Blast.h"
+#include"BamBlast.h"
 
 #include<DxLib.h>
 #include<cmath>
 
 #include"../../../../../Manager/Camera.h"
 
-Blast::Blast()
+BamBlast::BamBlast()
 {
 
 }
 
-Blast::~Blast()
+BamBlast::~BamBlast()
 {
 }
 
-void Blast::Init(const Vector2F* pos)
+void BamBlast::Init(const Vector2F* pos)
 {
 	AttackBase::Init(pos);
 
@@ -39,7 +39,7 @@ void Blast::Init(const Vector2F* pos)
 		b.animeCounter_ = 0;
 	}
 }
-void Blast::Update(void)
+void BamBlast::Update(void)
 {
 	int i = -1;
 	for (auto& o : obj_) {
@@ -71,7 +71,7 @@ void Blast::Update(void)
 
 	if (blastCount_ >= MAX_NUM)end_ = true;
 }
-void Blast::Draw(void)
+void BamBlast::Draw(void)
 {
 	auto& camera = Camera::GetInstance();
 
@@ -87,7 +87,7 @@ void Blast::Draw(void)
 			(bList[i].blast_) ? blastImg_[bList[i].animeCounter_] : img, true);
 	}
 }
-void Blast::Release(void)
+void BamBlast::Release(void)
 {
 	for (int i = 0; i < BLAST_NUM_MAX; i++) {
 		DeleteGraph(blastImg_[i]);
@@ -96,9 +96,9 @@ void Blast::Release(void)
 }
 
 
-void Blast::On(int i, Vector2F pPos)
+void BamBlast::On(int i, Vector2F pPos)
 {
-	if (obj_.size() - 1 < i)return;
+	if (obj_.size() <= i)return;
 
 	if (i == 0) { end_ = false; blastCount_ = 0; }
 
@@ -115,13 +115,18 @@ void Blast::On(int i, Vector2F pPos)
 	bList[i].blast_ = false;
 	bList[i].animeCounter_ = 0;
 
+	obj_[i].radius_ = 45.0f;
+	obj_[i].size_ = { obj_[i].radius_,obj_[i].radius_ };
+
 	obj_[i].inviCounter_ = 0;
 
 	obj_[i].isAlive_ = true;
 }
 
-void Blast::Hit(int i)
+void BamBlast::Hit(int i)
 {
+	if (obj_.size() <= i)return;
+
 	obj_[i].inviCounter_ = 1;
 	blastCount_++;
 	obj_[i].size_ *= 2.0f;

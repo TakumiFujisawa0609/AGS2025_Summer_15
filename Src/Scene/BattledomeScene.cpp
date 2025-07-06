@@ -215,7 +215,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			//’ÊíUŒ‚
 			if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
-				boss_->SetDamage(0);
+				boss_->SetDamage(5);
 				bamboo_->Create(boss_->GetUnit().pos_, 1);
 			}
 			//“ÁŽêUŒ‚
@@ -234,7 +234,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
-			boss_->SetDamage(0);
+			boss_->SetDamage(5);
 			bamboo_->Create(boss_->GetUnit().pos_, 1, 30);
 			if (boss_->GetAttackState() == (int)Bammoon::ATTACK::SWEEP) {
 				boss_->SetDown(player_->GetUnit().pos_);
@@ -245,6 +245,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 				if (bpAtc->GetBp() >= 3)mana.SHAKE();
 				mana.HitStop(5);
 				boss_->SetDamage(bpAtc->GetDamage());
+				bpAtc->Hit();
 			}
 		}
 		break;
@@ -318,6 +319,13 @@ void BattledomeScene::PlayerToBossAttack(void)
 			if (ins.CircleAndRect(bAtc, player_->GetUnit())) {
 				player_->Hit(5, bAtc.pos_);
 				boss_->ObjHit(i);
+			}
+
+			for (auto& pAtc : player_->GetBpAtt()) {
+				if (ins.CircleAndRect(bAtc, pAtc->GetObj())) {
+					boss_->ObjHit(i);
+					pAtc->Hit();
+				}
 			}
 			i++;
 		}

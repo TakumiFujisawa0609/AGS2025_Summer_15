@@ -3,7 +3,7 @@
 #include"../../../Tutorial/Attack/AttackBase.h"
 
 
-class Blast : public AttackBase
+class BamBlast : public AttackBase
 {
 public:
 	static constexpr int BLAST_NUM_X = 6;
@@ -14,8 +14,8 @@ public:
 
 	static constexpr int MAX_NUM = 10;
 
-	Blast();
-	~Blast();
+	BamBlast();
+	~BamBlast();
 
 	void Init(const Vector2F* pos) override;
 	void Update(void) override;

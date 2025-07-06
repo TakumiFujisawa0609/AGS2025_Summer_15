@@ -2,7 +2,7 @@
 
 #include"../BossBase.h"
 
-class Blast;
+class BamBlast;
 
 class Bammoon : public BossBase
 {
@@ -39,6 +39,7 @@ public:
 		NON = -1,
 		SWEEP,
 		BLAST,
+		PBULLET,
 
 		MAX,
 	};
@@ -108,7 +109,7 @@ private:
 
 	//•Ï”
 	ATTACK attackState_;
-	Blast* blast_;
+	BamBlast* blast_;
 
 
 	//ƒ_ƒ[ƒWó‘Ô``
