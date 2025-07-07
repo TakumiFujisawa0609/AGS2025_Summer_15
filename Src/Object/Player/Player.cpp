@@ -64,21 +64,11 @@ void Player::Init()
 	attackKeyCounter_ = 0;
 
 	// ì¡éÍçUåÇä÷åW
-	BambooImg_ = LoadGraph("Data/Image/Player/The_Bamboo.png");
-	BambooPowerImg_ = LoadGraph("Data/Image/Player/BambooBar.png");
+	BambooImg_ = LoadGraph("Data/Image/Player/BambooBar.png");
+	arrowImage_ = LoadGraph("Data/Image/Player/ñÓàÛ.png");
+	vec_ = {};
 
-	for (int i = 1; i <= CHARGE_ANIM; i++) {
-		std::string filePath = "Data/Image/Effect/bpCharge/charge" + std::to_string(i) + ".png";
-		chargeImg_[i] = LoadGraph(filePath.c_str());
-	}
-	//err = LoadDivGraph("Data/Image/Effect/charge.png", 255, 20, 13, 128 * 2, 128 * 2, chargeImg_);
-	//if (err == -1) {
-	//	return;
-	//}
-	chargeAnim_ = 0;
-	bp_ = BP_MAX;
-	bpConsCounter_ = 1;
-	chargeTime_ = 0;
+	haveB_ = false;
 
 	// âÒîä÷åW
 	evasionCounter_ = 0;
@@ -101,22 +91,25 @@ void Player::Update()
 	else { evaConpFlg_ = false; }
 	JoyPadInputManager();
 
+	auto& ins = InputManager::GetInstance();
 
-	static int anime = 0;
-	if (chargeTime_ > 0) {
-		if (++anime > CHARGE_ANIM_SPEED) {
-			anime = 0;
-			if (++chargeAnim_ > CHARGE_ANIM) {
-				chargeAnim_ = 0;
-			}
-		}
-	}
+	vec_ = {};
+
+	if ((ins.IsNew(KEY_INPUT_W)) || (nowUpKey_))vec_.y--;
+	if ((ins.IsNew(KEY_INPUT_S)) || (nowDownKey_))vec_.y++;
+	if ((ins.IsNew(KEY_INPUT_A)) || (nowLeftKey_))vec_.x--;
+	if ((ins.IsNew(KEY_INPUT_D)) || (nowRightKey_))vec_.x++;
+
+	if (vec_.x == 0.0f && vec_.y == 0.0f)vec_.x = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? -1.0f : 1.0f;
+
 	if (isJump_) {
 		jumpAnim_ -= 0.5;
 		if (jumpAnim_ <= 0) {
 			jumpAnim_ = 0;
 		}
 	}
+
+
 
 	StateManager();
 
@@ -155,34 +148,24 @@ void Player::Draw()
 			DrawRotaGraph(unit_.disppos_.x - 5, unit_.disppos_.y + 192 / 4, 1, 0, jumpImg_[(int)jumpAnim_], true);
 		}
 
+		if (haveB_) {
+			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 0.02, atan2(vec_.y, vec_.x), arrowImage_, true);
+			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y - 50, 1, 0, BambooImg_, true);
+		}
 		DrawPlayer();
 		defaultAttack_->Draw();
-
-
-		if (chargeTime_ > 0) {
-			SetDrawBlendMode(DX_BLENDMODE_ADD, 200);
-			DrawRotaGraph(unit_.disppos_.x + ((dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? 10 : -10), unit_.disppos_.y, 4, 0, chargeImg_[chargeAnim_], true);
-			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-		}
 
 		for (auto& t : BpAtIns_) {
 			t->Draw();
 		}
 
 		DrawBar(5, 5, 670, 50, unit_.hp_, HP_MAX, RGB(0, 255, 0));
-
-		Vector2F bPos = { 5,50 };
-		int len = 10;
-		for (int i = 0; i < bp_; i++) {
-			if ((i >= bp_ - bpConsCounter_) && (!(chargeTime_ / 10 % 2 == 0))) break;
-
-			if (i < len)DrawGraph(bPos.x + i * BAMBOO_SIZE_X, bPos.y, BambooPowerImg_, true);
-			else		DrawGraph(bPos.x + (i - len) * BAMBOO_SIZE_X, bPos.y + BAMBOO_SIZE_Y / 2, BambooPowerImg_, true);
-		}
 	}
 }
 void Player::Release()
 {
+	DeleteGraph(arrowImage_);
+
 	for (auto& b : BpAtIns_) {
 		b->Release();
 		delete b;
@@ -192,6 +175,7 @@ void Player::Release()
 
 	defaultAttack_->Release();
 	delete defaultAttack_;
+
 	//âÊëúâï˙
 	for (int i = 0; i < (int)MOTION::MAX; i++) {
 		for (auto id : image_[i]) {
@@ -199,9 +183,7 @@ void Player::Release()
 		}
 		image_[i].clear();
 	}
-	for (int i = 0; i < 255; i++) {
-		DeleteGraph(chargeImg_[i]);
-	}
+
 	for (int i = 0; i < 5; i++) {
 		DeleteGraph(jumpImg_[i]);
 	}
@@ -224,7 +206,6 @@ void Player::StateManager(void)
 	case Player::STATE::DAMAGE:
 		break;
 	}
-	DoStateBPAttack();
 
 }
 
@@ -264,50 +245,34 @@ void Player::DoStateAttack()
 
 	if (!(ins.IsTrgDown(KEY_INPUT_J)) && !(!prevAttackKey_ && nowAttackKey_)) return;
 
-	// çUåÇèÛë‘Ç…ëJà⁄Ç∑ÇÈ
-	ChangeState(Player::STATE::ATTACK);
-
-	// ç≈èIíiÇ‹Ç≈Ç¢Ç¡ÇƒÇ¢ÇÈ Ç‹ÇΩÇÕ ëOÇÃíiÇÃçUåÇÇ©ÇÁàÍíËéûä‘âﬂÇ¨ÇƒÇ¢ÇΩÇÁ ÉtÉâÉOÉäÉZÉbÉg
-	if ((isAttack_[ATTACK::MAX - 1]) || (attackKeyCounter_ > INPUT_ATTACK_FRAME)) {
-		for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; }
-	}
-
-	// ÇPíiñ⁄Ç©ÇÁíTçıÇµÇƒìKêÿÇ»íiêîÇattack_Ç…ë„ì¸Ç∑ÇÈ
-	for (int i = 0; i < ATTACK::MAX; i++) {
-		if (!isAttack_[i]) {
-
-			isAttack_[i] = true;
-
-			attackKeyCounter_ = 0;
-
-			attack_ = (ATTACK)i;
-
-			break;
-		}
-	}
-
-}
-
-// ì¡éÍçUåÇèÛë‘
-void Player::DoStateBPAttack(void)
-{
-	auto& ins = InputManager::GetInstance();
-	if ((ins.IsNew(KEY_INPUT_H) || nowBambooKey_) && bp_ > 0) {
-		chargeTime_++;
-		if (chargeTime_ > CHARGE_TIME) {
-			chargeTime_ = 0;
-
-			bpConsCounter_++;
-			if (bpConsCounter_ > bp_)bpConsCounter_ = bp_;
-			if (bpConsCounter_ > MAX_BP_CONS)bpConsCounter_ = MAX_BP_CONS;
-		}
-	}
-
-	if (((ins.IsTrgUp(KEY_INPUT_H)) || (prevBambooKey_ && !nowBambooKey_)) && bp_ > 0) {
+	if (haveB_) {
 		ChangeState(Player::STATE::BP_ATTACK);
-		chargeTime_ = 0;
+	}
+	else {
+		// çUåÇèÛë‘Ç…ëJà⁄Ç∑ÇÈ
+		ChangeState(Player::STATE::ATTACK);
+
+		// ç≈èIíiÇ‹Ç≈Ç¢Ç¡ÇƒÇ¢ÇÈ Ç‹ÇΩÇÕ ëOÇÃíiÇÃçUåÇÇ©ÇÁàÍíËéûä‘âﬂÇ¨ÇƒÇ¢ÇΩÇÁ ÉtÉâÉOÉäÉZÉbÉg
+		if ((isAttack_[ATTACK::MAX - 1]) || (attackKeyCounter_ > INPUT_ATTACK_FRAME)) {
+			for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; }
+		}
+
+		// ÇPíiñ⁄Ç©ÇÁíTçıÇµÇƒìKêÿÇ»íiêîÇattack_Ç…ë„ì¸Ç∑ÇÈ
+		for (int i = 0; i < ATTACK::MAX; i++) {
+			if (!isAttack_[i]) {
+
+				isAttack_[i] = true;
+
+				attackKeyCounter_ = 0;
+
+				attack_ = (ATTACK)i;
+
+				break;
+			}
+		}
 	}
 }
+
 
 // âÒîèÛë‘
 void Player::DoStateEvasion()
@@ -392,13 +357,13 @@ void Player::Attack()
 // ì¡éÍçUåÇèÛë‘
 void Player::BambooAttack(void)
 {
-	bp_ -= bpConsCounter_;
+	haveB_ = false;
 
 	bool recycll = false;
 
 	for (int i = 0; i < BpAtIns_.size(); i++) {
 		if (!BpAtIns_[i]->GetObj().isAlive_) {
-			BpAtIns_[i]->On(unit_.pos_, dir_, bpConsCounter_);
+			BpAtIns_[i]->On(unit_.pos_,vec_);
 			recycll = true;
 			break;
 		}
@@ -407,10 +372,8 @@ void Player::BambooAttack(void)
 	if (!recycll) {
 		BpAtIns_.emplace_back(new BPAttack());
 		BpAtIns_[BpAtIns_.size() - 1]->Init(BambooImg_);
-		BpAtIns_[BpAtIns_.size() - 1]->On(unit_.pos_, dir_, bpConsCounter_);
+		BpAtIns_[BpAtIns_.size() - 1]->On(unit_.pos_,vec_);
 	}
-
-	bpConsCounter_ = 1;
 
 	ChangeState(Player::STATE::MOVE);
 }
@@ -771,6 +734,12 @@ void Player::JoyPadInputManager(void)
 
 	prevRightKey_ = nowRightKey_;
 	nowRightKey_ = ((input & PAD_INPUT_RIGHT) == 0) ? false : true;
+
+	prevUpKey_ = nowUpKey_;
+	nowUpKey_ = ((input & PAD_INPUT_UP) == 0) ? false : true;
+
+	prevDownKey_ = nowDownKey_;
+	nowDownKey_ = ((input & PAD_INPUT_DOWN) == 0) ? false : true;
 
 	prevAttackKey_ = nowAttackKey_;
 	nowAttackKey_ = ((input & 0x40) == 0) ? false : true;

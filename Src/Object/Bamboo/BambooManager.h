@@ -8,7 +8,7 @@ public:
 	BambooManager();
 	~BambooManager();
 
-	void Init(Vector2F* pPos,int* bp);
+	void Init(void);
 	void Update(void);
 	void Draw(void);
 	void Release(void);
@@ -21,8 +21,5 @@ private:
 	std::vector<Bamboo*> bamboos_;
 
 	int image_;
-
-	Vector2F* pPos_;
-	int* playerBp_;
 };
 

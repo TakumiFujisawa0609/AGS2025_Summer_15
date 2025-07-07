@@ -59,7 +59,7 @@ void BattledomeScene::Init(void)
 
 
 	bamboo_ = new BambooManager();
-	bamboo_->Init((Vector2F*)&player_->GetUnit().pos_, (int*)&player_->GetBp());
+	bamboo_->Init();
 
 	Collision::CreateInstance();
 	auto& colli = Collision::GetInstance();
@@ -335,7 +335,7 @@ void BattledomeScene::PlayerToBossAttack(void)
 
 void BattledomeScene::PlayerToBamboo(void)
 {
-	if (player_->GetBp() >= Player::BP_MAX)return;
+	if (player_->GetHaveB())return;
 
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
@@ -343,7 +343,7 @@ void BattledomeScene::PlayerToBamboo(void)
 	for (auto& b : bamboo_->GetBamboos()) {
 		if (ins.CircleAndRect(b->GetUnit(), player_->GetUnit(), false)) {
 			b->Collect();
-			player_->BpOptain((int)b->GetScale());
+			player_->BpOptain();
 		}
 	}
 }

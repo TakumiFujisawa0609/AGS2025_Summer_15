@@ -103,8 +103,8 @@ public:
 	static constexpr int CHARGE_ANIM_SPEED = 2;
 	// ŠÖ”
 	std::vector<BPAttack*> GetBpAtt(void) { return BpAtIns_; }
-	const int &GetBp(void)const { return bp_; }
-	void BpOptain(int bp) { this->bp_ += bp; if (this->bp_ > BP_MAX) { this->bp_ = BP_MAX; } }
+	bool GetHaveB(void) { return haveB_; }
+	void BpOptain(void) { if (!haveB_)haveB_ = true; }
 	//---------------------------------------------------------------------------------------------	 
 	
 	// ‰ñ”ğó‘Ô‚Åg—p‚·‚é``-------------------------------------------------------------------
@@ -166,6 +166,8 @@ private:
 	bool nowJumpKey_, prevJumpKey_;
 	bool nowLeftKey_, prevLeftKey_;
 	bool nowRightKey_, prevRightKey_;
+	bool nowUpKey_, prevUpKey_;
+	bool nowDownKey_, prevDownKey_;
 	bool nowAttackKey_, prevAttackKey_;
 	bool nowBambooKey_, prevBambooKey_;
 	bool nowEvasionKey_, prevEvasionKey_;
@@ -194,9 +196,6 @@ private:
 
 	// UŒ‚ó‘Ô‚É‘JˆÚ‚·‚éğŒ
 	void DoStateAttack(void);
-
-	// “ÁêUŒ‚ó‘Ô‚É‘JˆÚ‚·‚éğŒ
-	void DoStateBPAttack(void);
 
 	// ‰ñ”ğó‘Ô‚É‘JˆÚ‚·‚éğŒ
 	void DoStateEvasion(void);
@@ -266,15 +265,11 @@ private:
 	// ŠÖ”
 
 	// •Ï”
+	int arrowImage_;
+	Vector2F vec_;
+	bool haveB_;
 	std::vector<BPAttack*> BpAtIns_;
 	int BambooImg_;
-	int BambooPowerImg_;
-
-	int chargeImg_[CHARGE_ANIM];
-	int chargeAnim_;
-	int bp_;
-	int chargeTime_;
-	int bpConsCounter_;
 	//---------------------------------------
 
 	// ‰ñ”ğˆ—ŠÖŒW--------------------------

@@ -15,7 +15,8 @@ public:
 
 	static constexpr float DEFAULT_SPEED = 30.0f;
 
-	static constexpr int ALIVE_TIME = 300;
+	static constexpr int ALIVE_TIME = 600;
+	static constexpr int ALIVE_HIT = 10;
 
 	BPAttack();
 	~BPAttack();
@@ -25,7 +26,7 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
-	void On(Vector2F pPos, AsoUtility::DIRECTION dir, int bp);
+	void On(Vector2F pPos, Vector2F vec);
 	void Off(void) { obj_.isAlive_ = false; }
 
 	int GetBp(void) { return bp_; }
@@ -41,6 +42,7 @@ private:
 	int aliveCounter_;
 	int aliveHit_;
 
-	AsoUtility::DIRECTION dir_;
+	Vector2F vec_;
+
 };
 
