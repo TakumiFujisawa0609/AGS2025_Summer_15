@@ -1,10 +1,18 @@
 #pragma once
-
 #include"PlayerAttackBase.h"
+
+class ThrowBamboo;
+class GrowBamboo;
+class Firecracker;
 
 class BPAttack : public PlayerAttackBase
 {
 public:
+	enum class BP_ATTACK_TYPE {
+		THROW_BAMBOO,
+		GROW_BAMBOO,
+		FIRECRACKER
+	};
 	static constexpr float DEFAULT_RADIUS = 30.0f;
 
 	static constexpr float DEFAULT_SIZE_X = 85;
@@ -33,13 +41,16 @@ public:
 	int GetDamage(void) { return DEFAULT_DAMAGE * bp_; }
 
 	void Hit(void) { aliveHit_--; }
-
+	// 攻撃タイプを切り替えるメソッド
+	void SetAttackType(BP_ATTACK_TYPE type);
 private:
-
+	BP_ATTACK_TYPE bpAttackType_; 
+	PlayerAttackBase* attack_;    
 	int image_;
 	int bp_;
 	int aliveCounter_;
 	int aliveHit_;
+
 
 	AsoUtility::DIRECTION dir_;
 };

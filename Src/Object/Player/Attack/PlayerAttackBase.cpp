@@ -19,6 +19,9 @@ PlayerAttackBase::~PlayerAttackBase(){}
 void PlayerAttackBase::Init(void)
 {
 }
+void PlayerAttackBase::Init(int img)
+{
+}
 
 void PlayerAttackBase::ChangeDispPos(void)
 {

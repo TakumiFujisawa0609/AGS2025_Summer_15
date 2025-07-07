@@ -133,6 +133,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Player\Attack\Firecracker.cpp" />
+    <ClCompile Include="Src\Object\Player\Attack\GrowBamboo.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Bammoon\Attack\BamBlast.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Bammoon\Attack\Pbullet.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Rushoot.cpp" />
@@ -189,8 +191,11 @@
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
     <ClCompile Include="Src\Object\Stage\Tutorial\TutorialStage.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Wavemboo.cpp" />
+    <ClCompile Include="Src\Object\Player\Attack\ThrowBamboo.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Player\Attack\Firecracker.h" />
+    <ClInclude Include="Src\Object\Player\Attack\GrowBamboo.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Bammoon\Attack\BamBlast.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Bammoon\Attack\Pbullet.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Rushoot.h" />
@@ -249,6 +254,7 @@
     <ClInclude Include="Src\Utility\AsoUtility.h" />
     <ClInclude Include="Src\Object\Stage\Tutorial\TutorialStage.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Wavemboo.h" />
+    <ClInclude Include="Src\Object\Player\Attack\ThrowBamboo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
