@@ -218,7 +218,10 @@ private:
 
 	// 特殊攻撃状態
 	void BambooAttack(void);
-
+    // BP攻撃タイプ切り替え（Q/Eキーで前後にループ）
+    void ChangeBPAttackType();
+    // bpConsCounter_の値に応じてbpAttackLevel_を切り替える
+    void ChangeBPAttackLevel();
 	// 回避処理
 	void Evasion(void);
 
@@ -275,6 +278,27 @@ private:
 	int bp_;
 	int chargeTime_;
 	int bpConsCounter_;
+
+	// 特殊攻撃の種類とレベルを定義
+	enum class BP_ATTACK_TYPE {
+		THROW_BAMBOO = 0,
+		GROW_BAMBOO,
+		FIRECRACKER,
+		MAX
+	};
+	enum class BP_ATTACK_LEVEL {
+		LEVEL1 = 0, // toss, Germination, Small
+		LEVEL2,     // pitch, Germination, Medium
+		LEVEL3,     // launch, Germination, Large
+		MAX
+	};
+
+	// プレイヤークラスのメンバ変数に追加
+	BP_ATTACK_TYPE bpAttackType_ = BP_ATTACK_TYPE::THROW_BAMBOO;
+	BP_ATTACK_LEVEL bpAttackLevel_ = BP_ATTACK_LEVEL::LEVEL1;
+    void ThrowBambooAttack(void);
+    void GrowBambooAttack(void);
+    void FirecrackerAttack(void);
 	//---------------------------------------
 
 	// 回避処理関係--------------------------

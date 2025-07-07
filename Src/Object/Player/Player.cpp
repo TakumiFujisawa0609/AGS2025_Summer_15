@@ -97,7 +97,7 @@ void Player::Init()
 
 void Player::Update()
 {
-	if (unit_.inviCounter_ > 0) { unit_.inviCounter_--;}
+	if (unit_.inviCounter_ > 0) { unit_.inviCounter_--; }
 	else { evaConpFlg_ = false; }
 	JoyPadInputManager();
 
@@ -119,7 +119,8 @@ void Player::Update()
 	}
 
 	StateManager();
-
+	ChangeBPAttackType();
+	ChangeBPAttackLevel();
 	Animation();
 
 
@@ -150,14 +151,12 @@ void Player::Draw()
 {
 	if (unit_.isAlive_) {
 
-
 		if (jumpAnim_ > 0) {
 			DrawRotaGraph(unit_.disppos_.x - 5, unit_.disppos_.y + 192 / 4, 1, 0, jumpImg_[(int)jumpAnim_], true);
 		}
 
 		DrawPlayer();
 		defaultAttack_->Draw();
-
 
 		if (chargeTime_ > 0) {
 			SetDrawBlendMode(DX_BLENDMODE_ADD, 200);
@@ -179,6 +178,42 @@ void Player::Draw()
 			if (i < len)DrawGraph(bPos.x + i * BAMBOO_SIZE_X, bPos.y, BambooPowerImg_, true);
 			else		DrawGraph(bPos.x + (i - len) * BAMBOO_SIZE_X, bPos.y + BAMBOO_SIZE_Y / 2, BambooPowerImg_, true);
 		}
+
+		int debugY = 120;
+		const char* bpTypeStr = "";
+		switch (bpAttackType_) {
+		case BP_ATTACK_TYPE::THROW_BAMBOO:
+			bpTypeStr = "THROW_BAMBOO";
+			break;
+		case BP_ATTACK_TYPE::GROW_BAMBOO:
+			bpTypeStr = "GROW_BAMBOO";
+			break;
+		case BP_ATTACK_TYPE::FIRECRACKER:
+			bpTypeStr = "FIRECRACKER";
+			break;
+		default:
+			bpTypeStr = "UNKNOWN";
+			break;
+		}
+		DrawFormatString(5, debugY, RGB(255, 255, 0), "bpAttackType_: %s (%d)", bpTypeStr, (int)bpAttackType_);
+
+		// bpAttackLevel_のデバッグ表示を追加
+		const char* bpLevelStr = "";
+		switch (bpAttackLevel_) {
+		case BP_ATTACK_LEVEL::LEVEL1:
+			bpLevelStr = "LEVEL1";
+			break;
+		case BP_ATTACK_LEVEL::LEVEL2:
+			bpLevelStr = "LEVEL2";
+			break;
+		case BP_ATTACK_LEVEL::LEVEL3:
+			bpLevelStr = "LEVEL3";
+			break;
+		default:
+			bpLevelStr = "UNKNOWN";
+			break;
+		}
+		DrawFormatString(5, debugY + 20, RGB(0, 255, 255), "bpAttackLevel_: %s (%d)", bpLevelStr, (int)bpAttackLevel_);
 	}
 }
 void Player::Release()
@@ -292,20 +327,27 @@ void Player::DoStateAttack()
 void Player::DoStateBPAttack(void)
 {
 	auto& ins = InputManager::GetInstance();
-	if ((ins.IsNew(KEY_INPUT_H) || nowBambooKey_) && bp_ > 0) {
-		chargeTime_++;
-		if (chargeTime_ > CHARGE_TIME) {
-			chargeTime_ = 0;
 
-			bpConsCounter_++;
-			if (bpConsCounter_ > bp_)bpConsCounter_ = bp_;
-			if (bpConsCounter_ > MAX_BP_CONS)bpConsCounter_ = MAX_BP_CONS;
+	// Hキーまたはバンブー攻撃ボタンが押されていて、BPが1以上ある場合
+	if ((ins.IsNew(KEY_INPUT_H) || nowBambooKey_) && bp_ > 0) {
+		chargeTime_++; // チャージ時間を加算
+		// チャージ時間が規定値を超えた場合
+		if (chargeTime_ > CHARGE_TIME) {
+			chargeTime_ = 0; // チャージ時間リセット
+
+			bpConsCounter_++; // 消費BPカウンタを増やす
+			// BPの最大値を超えないように制限
+			if (bpConsCounter_ > bp_) bpConsCounter_ = bp_;
+
+			// 消費BPの最大値を超えないように制限
+			if (bpConsCounter_ > MAX_BP_CONS) bpConsCounter_ = MAX_BP_CONS;
 		}
 	}
 
+	// Hキーが離された、またはバンブー攻撃ボタンが離された時、かつBPが1以上ある場合
 	if (((ins.IsTrgUp(KEY_INPUT_H)) || (prevBambooKey_ && !nowBambooKey_)) && bp_ > 0) {
-		ChangeState(Player::STATE::BP_ATTACK);
-		chargeTime_ = 0;
+		ChangeState(Player::STATE::BP_ATTACK); // BP攻撃状態に遷移
+		chargeTime_ = 0; // チャージ時間リセット
 	}
 }
 
@@ -389,30 +431,141 @@ void Player::Attack()
 	defaultAttack_->Update();
 }
 
-// 特殊攻撃状態
+
+// BP攻撃タイプをQ/Eキーで切り替える
+void Player::ChangeBPAttackType()
+{
+	auto& ins = InputManager::GetInstance();
+	// Qキーで前のタイプ、Eキーで次のタイプ
+	if (ins.IsTrgDown(KEY_INPUT_Q)) {
+		int type = static_cast<int>(bpAttackType_);
+		type--;
+		if (type < 0) type = static_cast<int>(BP_ATTACK_TYPE::FIRECRACKER); // 最後にループ
+		bpAttackType_ = static_cast<BP_ATTACK_TYPE>(type);
+	}
+	if (ins.IsTrgDown(KEY_INPUT_E)) {
+		int type = static_cast<int>(bpAttackType_);
+		type++;
+		if (type > static_cast<int>(BP_ATTACK_TYPE::FIRECRACKER)) type = 0; // 最初にループ
+		bpAttackType_ = static_cast<BP_ATTACK_TYPE>(type);
+	}
+}
+
+// BP消費数に応じて攻撃レベルを切り替える
+void Player::ChangeBPAttackLevel()
+{
+	if (bpConsCounter_ <= 1) {
+		bpAttackLevel_ = BP_ATTACK_LEVEL::LEVEL1;
+	}
+	else if (bpConsCounter_ == 2) {
+		bpAttackLevel_ = BP_ATTACK_LEVEL::LEVEL2;
+	}
+	else {
+		bpAttackLevel_ = BP_ATTACK_LEVEL::LEVEL3;
+	}
+}
+
+// 特殊攻撃の発動処理
 void Player::BambooAttack(void)
 {
 	bp_ -= bpConsCounter_;
 
-	bool recycll = false;
-
-	for (int i = 0; i < BpAtIns_.size(); i++) {
-		if (!BpAtIns_[i]->GetObj().isAlive_) {
-			BpAtIns_[i]->On(unit_.pos_, dir_, bpConsCounter_);
-			recycll = true;
-			break;
-		}
-	}
-
-	if (!recycll) {
-		BpAtIns_.emplace_back(new BPAttack());
-		BpAtIns_[BpAtIns_.size() - 1]->Init(BambooImg_);
-		BpAtIns_[BpAtIns_.size() - 1]->On(unit_.pos_, dir_, bpConsCounter_);
+	switch (bpAttackType_) {
+	case BP_ATTACK_TYPE::THROW_BAMBOO:
+		ThrowBambooAttack(); // 竹を投げる攻撃
+		break;
+	case BP_ATTACK_TYPE::GROW_BAMBOO:
+		GrowBambooAttack(); // 竹を生やす攻撃
+		break;
+	case BP_ATTACK_TYPE::FIRECRACKER:
+		FirecrackerAttack(); // 爆竹攻撃
+		break;
+	default:
+		break;
 	}
 
 	bpConsCounter_ = 1;
-
 	ChangeState(Player::STATE::MOVE);
+}
+
+// 1種類目: 投げる竹
+void Player::ThrowBambooAttack()
+{
+	// レベルをbpAttackLevel_で切り替える
+	int power = 1;
+	switch (bpAttackLevel_) {
+	case BP_ATTACK_LEVEL::LEVEL1:
+		power = 1;
+		break;
+	case BP_ATTACK_LEVEL::LEVEL2:
+		power = 2;
+		break;
+	case BP_ATTACK_LEVEL::LEVEL3:
+		power = 3;
+		break;
+	}
+	bool recycled = false;
+	// 既存のBPAttackインスタンスを再利用できるかチェック
+	for (int i = 0; i < BpAtIns_.size(); i++) {
+		if (!BpAtIns_[i]->GetObj().isAlive_) {
+			// 死亡しているBPAttackを再利用
+			BpAtIns_[i]->On(unit_.pos_, dir_, power);
+			recycled = true;
+			break;
+		}
+	}
+	if (!recycled) {
+		// 再利用できるものがなければ新規生成
+		BpAtIns_.emplace_back(new BPAttack());
+		BpAtIns_.back()->Init(BambooImg_);
+		BpAtIns_.back()->On(unit_.pos_, dir_, power);
+	}
+}
+
+
+// 2種類目: 竹を生やす
+void Player::GrowBambooAttack()
+{
+	// レベルごとに分岐するが、本数や範囲は変えない
+	Vector2F pos = unit_.pos_;
+	pos.x += (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT ? -50 : 50);
+	int power = 1;
+	switch (bpAttackLevel_) {
+	case BP_ATTACK_LEVEL::LEVEL1:
+		power = 1;
+		break;
+	case BP_ATTACK_LEVEL::LEVEL2:
+		power = 2;
+		break;
+	case BP_ATTACK_LEVEL::LEVEL3:
+		power = 3;
+		break;
+	}
+	BpAtIns_.emplace_back(new BPAttack());
+	BpAtIns_.back()->Init(BambooImg_);
+	BpAtIns_.back()->On(pos, dir_, power);
+}
+
+// 3種類目: 爆竹
+void Player::FirecrackerAttack()
+{
+	int power = 1;
+	switch (bpAttackLevel_) {
+	case BP_ATTACK_LEVEL::LEVEL1: // Small
+		power = 1;
+		break;
+	case BP_ATTACK_LEVEL::LEVEL2: // Medium
+		power = 2;
+		break;
+	case BP_ATTACK_LEVEL::LEVEL3: // Large
+		power = 3;
+		break;
+	}
+	// FirecrackerAttackInstanceは仮のクラス名。実装に合わせて修正してください。
+	// ここでは簡易的にBPAttackを使います。
+	BpAtIns_.emplace_back(new BPAttack());
+	BpAtIns_.back()->Init(BambooImg_); // 爆竹用画像に差し替えてください
+	BpAtIns_.back()->On(unit_.pos_, dir_, power);
 }
 
 
