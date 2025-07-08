@@ -37,12 +37,10 @@ void BPAttack::Update(void)
 	if (obj_.disppos_.x < DEFAULT_SIZE_X / 2 || obj_.disppos_.x > Application::SCREEN_SIZE_X - DEFAULT_SIZE_X / 2) {
 		vec_.x *= -1;
 		aliveHit_--;
-		SceneManager::GetInstance().HitStop(SceneManager::HIT_STOP_TIME);
 	}
 	if (obj_.disppos_.y<DEFAULT_SIZE_Y / 2 || obj_.disppos_.y>Application::SCREEN_SIZE_Y - DEFAULT_SIZE_Y / 2) {
 		vec_.y *= -1;
 		aliveHit_--;
-		SceneManager::GetInstance().HitStop(SceneManager::HIT_STOP_TIME);
 	}
 }
 

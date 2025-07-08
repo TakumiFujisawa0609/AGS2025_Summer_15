@@ -243,12 +243,18 @@ void Player::DoStateAttack()
 	int input = GetJoypadInputState(DX_INPUT_PAD1);
 
 
-	if (!(ins.IsTrgDown(KEY_INPUT_J)) && !(!prevAttackKey_ && nowAttackKey_)) return;
 
 	if (haveB_) {
-		ChangeState(Player::STATE::BP_ATTACK);
+
+
+		if (ins.IsTrgUp(KEY_INPUT_J) || (prevAttackKey_ && !nowAttackKey_)) {
+			ChangeState(Player::STATE::BP_ATTACK);
+		}
 	}
 	else {
+
+		if (!(ins.IsTrgDown(KEY_INPUT_J)) && !(!prevAttackKey_ && nowAttackKey_)) return;
+
 		// çUåÇèÛë‘Ç…ëJà⁄Ç∑ÇÈ
 		ChangeState(Player::STATE::ATTACK);
 
