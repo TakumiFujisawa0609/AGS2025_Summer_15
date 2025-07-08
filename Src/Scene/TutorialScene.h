@@ -10,6 +10,7 @@ class BossTutorial;
 class EffectManager;
 class EffectBase;
 class BambooManager;
+class BlastEffectManager;
 
 class TutorialScene :
     public SceneBase
@@ -35,6 +36,7 @@ private:
 	EnemyManager* enemy_ ;
 	BossTutorial* boss_;
 	BambooManager* bamboo_;
+	BlastEffectManager* blast_;
 	int effect;
 	void Scroll(void);
 

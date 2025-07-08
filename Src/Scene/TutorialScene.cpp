@@ -18,7 +18,7 @@
 #include"../Utility/ShapesPosition.h"
 #include"../Object/Bamboo/BambooManager.h"
 #include"../Manager/Decoration//EffectManager.h"
-
+#include"../Manager/Decoration/BlastEffect/BlastEffectManager.h"
 
 
 
@@ -62,6 +62,9 @@ void TutorialScene::Init(void)
 	bamboo_->Init();
 
 
+	blast_ = new BlastEffectManager();
+	blast_->Init();
+
 	x = 0;
 
 }
@@ -74,6 +77,7 @@ void TutorialScene::Update(void)
 	enemy_->Update();
 	boss_->Update();
 	bamboo_->Update();
+	blast_->Update();
 
 	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
 	{
@@ -110,12 +114,17 @@ void TutorialScene::Draw(void)
 	enemy_->Draw();
 	boss_->Draw();
 	player_->Draw();
+	blast_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 }
 
 void TutorialScene::Release(void)
 {
+	blast_->Release();
+	delete blast_;
+	blast_ = nullptr;
+
 	bamboo_->Release();
 	delete bamboo_;
 	bamboo_ = nullptr;
@@ -222,6 +231,7 @@ void TutorialScene::PlayerAttackToEnemyBamboo(void)
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
 				bpAtt->Hit();
 				enemy_->GetBamboo(i)->SetDmg(bpAtt->GetDamage());
+				blast_->On(bpAtt->GetObj().pos_);
 			}
 		}
 	}
@@ -288,6 +298,7 @@ void TutorialScene::PlayerAttackToBoss(void)
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
 			bpAtt->Hit();
 			boss_->SetDamage(bpAtt->GetDamage());
+			blast_->On(bpAtt->GetObj().pos_);
 		}
 	}
 }
