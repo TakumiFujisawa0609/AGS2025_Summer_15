@@ -43,6 +43,7 @@ private:
 	void ObjCollision(void);
 
 	void PlayerToBamboo(void);
+	void PlayerAttackToPlayerBpAttack(void);
 
 	void PlayerToEnemyBamboo(void);
 	void PlayerAttackToEnemyBamboo(void);

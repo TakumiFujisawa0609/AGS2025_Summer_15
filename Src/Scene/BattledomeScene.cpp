@@ -221,7 +221,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			//“ÁŽêUŒ‚
 			for (auto& bpAtc : player_->GetBpAtt()) {
 				if (ins.Rect(bpAtc->GetObj(), boss_->GetUnit())) {
-					if (bpAtc->GetBounce() >= 4)mana.SHAKE();
+					if (bpAtc->GetPower() >= 4)mana.SHAKE();
 					mana.HitStop(SceneManager::HIT_STOP_TIME);
 					boss_->SetDamage(bpAtc->GetDamage());
 				}

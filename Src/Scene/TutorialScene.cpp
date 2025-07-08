@@ -178,6 +178,7 @@ void TutorialScene::Scroll(void)
 void TutorialScene::ObjCollision(void)
 {
 	PlayerToBamboo();
+	PlayerAttackToPlayerBpAttack();
 
 	if (boss_->GetEnCount()) PlayerToBoss();
 	else					 PlayerToEnemyBamboo();
@@ -194,6 +195,19 @@ void TutorialScene::PlayerToBamboo(void)
 		if (ins.CircleAndRect(b->GetUnit(),player_->GetUnit(),false)) {
 			b->Collect();
 			player_->BpOptain();
+		}
+	}
+}
+
+void TutorialScene::PlayerAttackToPlayerBpAttack(void)
+{
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
+
+	for (auto& b : player_->GetBpAtt()) {
+		if (ins.CircleAndRect(player_->DefaultAtt(), b->GetObj())) {
+			mana.HitStop(SceneManager::HIT_STOP_TIME);
+			b->Parry(player_->GetUnit().pos_);
 		}
 	}
 }
@@ -294,8 +308,8 @@ void TutorialScene::PlayerAttackToBoss(void)
 	for (auto& bpAtt : player_->GetBpAtt()) {
 		if (ins.Rect(bpAtt->GetObj(), boss_->GetUnit())) {
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
-			if (bpAtt->GetBounce() >= 3) { mana.SHAKE(); }
-			if (bpAtt->GetBounce() >= 5) { mana.ZoomPos(bpAtt->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
+			if (bpAtt->GetPower() >= 3) { mana.SHAKE(); }
+			if (bpAtt->GetPower() >= 5) { mana.ZoomPos(bpAtt->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
 			bpAtt->Off();
 			boss_->SetDamage(bpAtt->GetDamage());
 			blast_->On(bpAtt->GetObj().pos_);
