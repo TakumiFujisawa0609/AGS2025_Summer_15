@@ -16,7 +16,7 @@ public:
 	static constexpr float DEFAULT_SPEED = 30.0f;
 
 	static constexpr int ALIVE_TIME = 600;
-	static constexpr int ALIVE_HIT = 10;
+	static constexpr int ALIVE_HIT = 5;
 
 	BPAttack();
 	~BPAttack();
@@ -33,7 +33,7 @@ public:
 
 	void Hit(void) { bounce_++; }
 
-	int GetDamage(void) { return DEFAULT_DAMAGE * (1.0f + bounce_ / 5.0f); }
+	int GetDamage(void) { return DEFAULT_DAMAGE * (bounce_ + 1); }
 
 private:
 

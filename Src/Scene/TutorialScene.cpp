@@ -282,18 +282,20 @@ void TutorialScene::PlayerAttackToBoss(void)
 			boss_->SetDown(player_->DefaultAtt().pos_);
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
 			player_->SetInvici(50);
+			bamboo_->Create(boss_->GetUnit().pos_, 1);
 		}
 		else {
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
 			boss_->SetDamage(5);
-			bamboo_->Create(boss_->GetUnit().pos_, 1,50);
+			bamboo_->Create(boss_->GetUnit().pos_, 1,30);
 		}
 	}
 
 	for (auto& bpAtt : player_->GetBpAtt()) {
 		if (ins.Rect(bpAtt->GetObj(), boss_->GetUnit())) {
-			if (bpAtt->GetBounce() >= 4) mana.SHAKE();
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
+			if (bpAtt->GetBounce() >= 3) { mana.SHAKE(); }
+			if (bpAtt->GetBounce() >= 5) { mana.ZoomPos(bpAtt->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
 			bpAtt->Off();
 			boss_->SetDamage(bpAtt->GetDamage());
 			blast_->On(bpAtt->GetObj().pos_);
@@ -309,8 +311,22 @@ void TutorialScene::PlayerAttackToBossAttack(void)
 		if (ins.Circle(boss_->GetAttackObj()[i], player_->DefaultAtt())) {
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
 			boss_->ObjHit(i);
-			bamboo_->Create(boss_->GetAttackObj()[i].pos_, 1,50);
 			player_->SetInvici(50);
+			switch (boss_->GetAttack())
+			{
+			case BossTutorial::SLASH:
+				break;
+			case BossTutorial::BULLET:
+				bamboo_->Create(boss_->GetAttackObj()[i].pos_, 1, 5);
+				break;
+			case BossTutorial::ROAR:
+				break;
+			case BossTutorial::BLAST:
+				bamboo_->Create(boss_->GetAttackObj()[i].pos_, 1);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 

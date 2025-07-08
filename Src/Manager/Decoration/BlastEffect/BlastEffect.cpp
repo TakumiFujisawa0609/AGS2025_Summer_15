@@ -29,7 +29,7 @@ void BlastEffect::Update(void)
 {
 	if (++animeInterval_ > ANIME_SPEED) {
 		animeInterval_ = 0;
-		if (++animeCounter_ > image_.size()) {
+		if (++animeCounter_ >= image_.size()) {
 			isAlive_ = false;
 			animeCounter_ = 0;
 		}

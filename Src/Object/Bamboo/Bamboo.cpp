@@ -27,7 +27,7 @@ void Bamboo::Set(Vector2F pos)
 	unit_.pos_ = unit_.nextpos_;
 	ChangeDispPos();
 
-	scale_ = (float)(GetRand(2) + 1);
+	scale_ = /*(float)(GetRand(2) + 1)*/1.0f;
 	unit_.radius_ = (DEFAULT_SIZE * scaleTb[(int)scale_]) / 2;
 	unit_.size_ = { unit_.radius_ * 2.0f,unit_.radius_ * 2.0f };
 

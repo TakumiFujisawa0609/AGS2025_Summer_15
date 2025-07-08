@@ -57,7 +57,7 @@ public:
 	};
 
 
-	static constexpr int HP_MAX = 300;
+	static constexpr int HP_MAX = 30;
 
 	//ƒvƒŒƒCƒ„[‚Ìó‘Ô
 	enum class STATE
