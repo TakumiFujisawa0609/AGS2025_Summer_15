@@ -245,9 +245,7 @@ void Player::DoStateAttack()
 
 
 	if (haveB_) {
-
-
-		if (ins.IsTrgUp(KEY_INPUT_J) || (prevAttackKey_ && !nowAttackKey_)) {
+		if (ins.IsNew(KEY_INPUT_J) || (nowAttackKey_)) {
 			ChangeState(Player::STATE::BP_ATTACK);
 		}
 	}
@@ -363,25 +361,33 @@ void Player::Attack()
 // ì¡éÍçUåÇèÛë‘
 void Player::BambooAttack(void)
 {
-	haveB_ = false;
+	auto& ins = InputManager::GetInstance();
 
-	bool recycll = false;
+	if (ins.IsTrgUp(KEY_INPUT_J) || (prevAttackKey_ && !nowAttackKey_)) {
 
-	for (int i = 0; i < BpAtIns_.size(); i++) {
-		if (!BpAtIns_[i]->GetObj().isAlive_) {
-			BpAtIns_[i]->On(unit_.pos_,vec_);
-			recycll = true;
-			break;
+		haveB_ = false;
+
+		bool recycll = false;
+
+		for (int i = 0; i < BpAtIns_.size(); i++) {
+			if (!BpAtIns_[i]->GetObj().isAlive_) {
+				BpAtIns_[i]->On(unit_.pos_, vec_);
+				recycll = true;
+				break;
+			}
 		}
+
+		if (!recycll) {
+			BpAtIns_.emplace_back(new BPAttack());
+			BpAtIns_[BpAtIns_.size() - 1]->Init(BambooImg_);
+			BpAtIns_[BpAtIns_.size() - 1]->On(unit_.pos_, vec_);
+		}
+
+		ChangeState(Player::STATE::MOVE);
+		return;
 	}
 
-	if (!recycll) {
-		BpAtIns_.emplace_back(new BPAttack());
-		BpAtIns_[BpAtIns_.size() - 1]->Init(BambooImg_);
-		BpAtIns_[BpAtIns_.size() - 1]->On(unit_.pos_,vec_);
-	}
 
-	ChangeState(Player::STATE::MOVE);
 }
 
 

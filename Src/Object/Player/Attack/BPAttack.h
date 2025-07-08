@@ -11,7 +11,7 @@ public:
 	static constexpr float DEFAULT_SIZE_Y = 24;
 
 
-	static constexpr int DEFAULT_DAMAGE = 5;
+	static constexpr int DEFAULT_DAMAGE = 10;
 
 	static constexpr float DEFAULT_SPEED = 30.0f;
 
@@ -29,20 +29,20 @@ public:
 	void On(Vector2F pPos, Vector2F vec);
 	void Off(void) { obj_.isAlive_ = false; }
 
-	int GetBp(void) { return bp_; }
+	int GetBounce(void) { return bounce_; }
 
-	int GetDamage(void) { return DEFAULT_DAMAGE * bp_; }
+	void Hit(void) { bounce_++; }
 
-	void Hit(void) { aliveHit_--; }
+	int GetDamage(void) { return DEFAULT_DAMAGE * (1.0f + bounce_ / 5.0f); }
 
 private:
 
 	int image_;
 	int bp_;
 	int aliveCounter_;
-	int aliveHit_;
 
 	Vector2F vec_;
 
+	int bounce_;
 };
 

@@ -204,7 +204,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			}
 			for (auto& bpAtc : player_->GetBpAtt()) {
 				if (ins.CircleAndRect(boss_->GetUnit(), bpAtc->GetObj())) {
-					if (bpAtc->GetBp() >= 3)mana.SHAKE();
+					//if (bpAtc->GetBp() >= 3)mana.SHAKE();
 					mana.HitStop(SceneManager::HIT_STOP_TIME);
 					boss_->SetDamage(bpAtc->GetDamage());
 				}
@@ -221,7 +221,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			//“ÁŽêUŒ‚
 			for (auto& bpAtc : player_->GetBpAtt()) {
 				if (ins.Rect(bpAtc->GetObj(), boss_->GetUnit())) {
-					if (bpAtc->GetBp() >= 3)mana.SHAKE();
+					if (bpAtc->GetBounce() >= 4)mana.SHAKE();
 					mana.HitStop(SceneManager::HIT_STOP_TIME);
 					boss_->SetDamage(bpAtc->GetDamage());
 				}
@@ -242,7 +242,6 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		}
 		for (auto& bpAtc : player_->GetBpAtt()) {
 			if (ins.Ellipse(bpAtc->GetObj(), boss_->GetUnit())) {
-				if (bpAtc->GetBp() >= 3)mana.SHAKE();
 				mana.HitStop(5);
 				boss_->SetDamage(bpAtc->GetDamage());
 				bpAtc->Hit();

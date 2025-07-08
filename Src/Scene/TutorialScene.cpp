@@ -227,7 +227,6 @@ void TutorialScene::PlayerAttackToEnemyBamboo(void)
 		}
 		for (auto& bpAtt : player_->GetBpAtt()) {
 			if (ins.Rect(bpAtt->GetObj(), enemy_->GetBamboo(i)->GetUnit())) {
-				if (bpAtt->GetBp() >= 3)mana.SHAKE();
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
 				bpAtt->Hit();
 				enemy_->GetBamboo(i)->SetDmg(bpAtt->GetDamage());
@@ -251,11 +250,10 @@ void TutorialScene::PlayerToBoss(void)
 		player_->Hit(5, boss_->GetUnit().pos_);
 	}
 
+	PlayerAttackToBoss();
+	PlayerAttackToBossAttack();
 	PlayerToBossAttack();
 
-	PlayerAttackToBoss();
-
-	PlayerAttackToBossAttack();
 }
 
 void TutorialScene::PlayerToBossAttack(void)
@@ -294,9 +292,9 @@ void TutorialScene::PlayerAttackToBoss(void)
 
 	for (auto& bpAtt : player_->GetBpAtt()) {
 		if (ins.Rect(bpAtt->GetObj(), boss_->GetUnit())) {
-			if (bpAtt->GetBp() >= 3) mana.SHAKE();
+			if (bpAtt->GetBounce() >= 4) mana.SHAKE();
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
-			bpAtt->Hit();
+			bpAtt->Off();
 			boss_->SetDamage(bpAtt->GetDamage());
 			blast_->On(bpAtt->GetObj().pos_);
 		}
