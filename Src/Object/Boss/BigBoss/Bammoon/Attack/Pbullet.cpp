@@ -18,6 +18,7 @@ void Pbullet::Init(const Vector2F* pos)
 	obj_.resize(NUM);
 	move_.resize(NUM);
 	animeCou_.resize(NUM);
+	hit_.resize(NUM);
 	for (int i = 0; i < NUM; i++) {
 		obj_[i].isAlive_ = false;
 		obj_[i].pos_ = {};
@@ -30,14 +31,14 @@ void Pbullet::Init(const Vector2F* pos)
 	end_ = false;
 
 	for (int i = 0; i < PBULLET_ANIME_NUM; i++) {
-		std::string path = "Data/Image/Boss/Bammmoon/AttackEffect/Pbullet" + std::to_string(i + 1) + ".png";
+		std::string path = "Data/Image/Boss/Bammoon/AttackEffect/Pbullet/Pbullet" + std::to_string(i + 1) + ".png";
 		pBulletImg_[i] = LoadGraph(path.c_str());
 		if (pBulletImg_[i] == -1) {
 			return;
 		}
 	}
 	for (int i = 0; i < HIT_ANIME_NUM; i++) {
-		std::string path = "Data/Image/Boss/Bammmoon/AttackEffect/Hit/hits" + std::to_string(i + 1) + ".png";
+		std::string path = "Data/Image/Boss/Bammoon/AttackEffect/Pbullet/Hit/hits" + std::to_string(i + 1) + ".png";
 		hitImg_[i] = LoadGraph(path.c_str());
 		if (hitImg_[i] == -1) {
 			return;
@@ -47,19 +48,20 @@ void Pbullet::Init(const Vector2F* pos)
 
 void Pbullet::Update(void) 
 {
+	int e = 0;
 	int i = -1;
 	for (auto& p : obj_) {
 		i++;
-		if (!p.isAlive_)continue;
+		if (!p.isAlive_) { e++; continue; }
 
 		p.pos_ += move_[i];
 
 		p.disppos_ = p.pos_ - Camera::GetInstance().GetPos();
 
-
-		animeCou_[i]++;
+		animeCou_[i]+=1;
 		if (animeCou_[i] < PBULLET_ANIME_NUM)animeCou_[i] = 0;
 	}
+	if (e > NUM)end_ = true;
 }
 
 void Pbullet::Draw(void) 
@@ -69,9 +71,7 @@ void Pbullet::Draw(void)
 		i++;
 		if (!p.isAlive_)continue;
 
-		DrawRotaGraph(p.disppos_.x, p.disppos_.y, 1, atan2(move_[i].y, move_[i].x), pBulletImg_[i], true);
-
-
+		DrawRotaGraph(p.disppos_.x, p.disppos_.y, 3, atan2(move_[i].y, move_[i].x), pBulletImg_[animeCou_[i]], true);
 	}
 }
 
@@ -110,5 +110,5 @@ void Pbullet::Hit(int i)
 {
 	if (obj_.size() <= i)return;
 
-
+	hit_[i] = true;
 }

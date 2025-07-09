@@ -3,6 +3,7 @@
 #include"../BossBase.h"
 
 class BamBlast;
+class Pbullet;
 
 class Bammoon : public BossBase
 {
@@ -110,7 +111,7 @@ private:
 	//•Ï”
 	ATTACK attackState_;
 	BamBlast* blast_;
-
+	Pbullet* pBullet_;
 
 	//ƒ_ƒ[ƒWó‘Ô``
 	void Damage(void) override;

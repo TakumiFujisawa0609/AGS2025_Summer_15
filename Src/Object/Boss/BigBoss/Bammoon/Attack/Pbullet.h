@@ -3,7 +3,7 @@
 #include"../../../Tutorial/Attack/AttackBase.h"
 
 
-class Pbullet : AttackBase
+class Pbullet : public AttackBase
 {
 public:
 	static constexpr int NUM = 10;

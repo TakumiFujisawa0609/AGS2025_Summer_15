@@ -4,6 +4,7 @@
 #include<string>
 
 #include"Attack/BamBlast.h"
+#include"Attack/Pbullet.h"
 
 Bammoon::Bammoon()
 {
@@ -23,6 +24,9 @@ void Bammoon::Init(void)
 
 	blast_ = new BamBlast();
 	blast_->Init(&unit_.pos_);
+
+	pBullet_ = new Pbullet();
+	pBullet_->Init(&unit_.pos_);
 
 	unit_.size_ = { SIZE_X,SIZE_Y };
 	unit_.radius_ = unit_.size_.x/2;
@@ -66,6 +70,10 @@ void Bammoon::Draw(void)
 
 void Bammoon::Release(void)
 {
+	pBullet_->Release();
+	delete pBullet_;
+	pBullet_ = nullptr;
+
 	blast_->Release();
 	delete blast_;
 	blast_ = nullptr;
@@ -185,7 +193,16 @@ void Bammoon::Attack(void)
 		break;
 	}
 	case Bammoon::ATTACK::PBULLET:
-		
+		int rate = 5;	//‰½ƒtƒŒ[ƒ€‚Éˆê‰ñ‘Å‚Â‚©
+		if (counter_ % rate == 0) pBullet_->On(counter_ / rate, *playerPosPtr_);
+		if (pBullet_->End()) {
+			counter_ = 0;
+			unit_.isGravity_ = true;
+			unit_.isXAttenu = true;
+			idleTime_ = 300;
+			ChangeState(STATE::IDLE);
+			return;
+		}
 		break;
 	}
 	counter_++;
@@ -227,6 +244,9 @@ std::vector<Base> Bammoon::GetObj(void)
 	case Bammoon::ATTACK::BLAST:
 		return blast_->Get();
 		break;
+	case Bammoon::ATTACK::PBULLET:
+		pBullet_->Get();
+		break;
 	default:
 		break;
 	}
@@ -248,6 +268,9 @@ void Bammoon::ObjHit(int i)
 		break;
 	case Bammoon::ATTACK::BLAST:
 		blast_->Hit(i);
+		break;
+	case Bammoon::ATTACK::PBULLET:
+		pBullet_->Hit(i);
 		break;
 	case Bammoon::ATTACK::MAX:
 		break;
@@ -283,6 +306,9 @@ void Bammoon::AttackUpdate(void)
 	case Bammoon::ATTACK::BLAST:
 		blast_->Update();
 		break;
+	case Bammoon::ATTACK::PBULLET:
+		pBullet_->Update();
+		break;
 	case Bammoon::ATTACK::MAX:
 		break;
 	default:
@@ -301,6 +327,9 @@ void Bammoon::AttackDraw(void)
 	case Bammoon::ATTACK::BLAST:
 		blast_->Draw();
 		break;
+	case Bammoon::ATTACK::PBULLET:
+		pBullet_->Draw();
+		break;
 	case Bammoon::ATTACK::MAX:
 		break;
 	default:
@@ -312,11 +341,16 @@ void Bammoon::AttackRand(void)
 {
 	int r = GetRand(1000);
 
-	if (r <= 700) {
+	if (r <= 400) {
 		attackState_ = ATTACK::SWEEP;
+		attackState_ = ATTACK::PBULLET;
+	}
+	else if (r <= 700) {
+		attackState_ = ATTACK::BLAST;
+		attackState_ = ATTACK::PBULLET;
 	}
 	else if (r <= 1000) {
-		attackState_ = ATTACK::BLAST;
+		attackState_ = ATTACK::PBULLET;
 	}
 }
 

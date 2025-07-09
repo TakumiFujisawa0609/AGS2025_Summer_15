@@ -24,7 +24,7 @@ public:
 
 	virtual const std::vector<Base> Get(void)const;
 
-	const bool End(void)const { return end_; }
+	const bool End(void)const{ return end_; }
 
 	virtual void On(void) { obj_.isAlive_ = true; }
 
