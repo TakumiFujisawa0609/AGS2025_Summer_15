@@ -123,6 +123,6 @@ Vector2F Vector2F::operator/(const float value) const
 
 void Vector2F::operator/=(const float value)
 {
-	x = x * value;
-	y = y * value;
+	x = x / value;
+	y = y / value;
 }

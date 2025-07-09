@@ -18,7 +18,7 @@
 #include"../Utility/ShapesPosition.h"
 #include"../Object/Bamboo/BambooManager.h"
 #include"../Manager/Decoration//EffectManager.h"
-
+#include"../Manager/Decoration/BlastEffect/BlastEffectManager.h"
 
 
 
@@ -59,8 +59,11 @@ void TutorialScene::Init(void)
 	Collision::GetInstance().SetStage(stage_->GetMapData());
 
 	bamboo_ = new BambooManager();
-	bamboo_->Init((Vector2F*)&player_->GetUnit().pos_,(int*)&player_->GetBp());
+	bamboo_->Init();
 
+
+	blast_ = new BlastEffectManager();
+	blast_->Init();
 
 	x = 0;
 
@@ -74,6 +77,7 @@ void TutorialScene::Update(void)
 	enemy_->Update();
 	boss_->Update();
 	bamboo_->Update();
+	blast_->Update();
 
 	for (int ii = 0; ii < EnemyBamboo::ENEMY_MAX; ii++)
 	{
@@ -110,12 +114,17 @@ void TutorialScene::Draw(void)
 	enemy_->Draw();
 	boss_->Draw();
 	player_->Draw();
+	blast_->Draw();
 
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 }
 
 void TutorialScene::Release(void)
 {
+	blast_->Release();
+	delete blast_;
+	blast_ = nullptr;
+
 	bamboo_->Release();
 	delete bamboo_;
 	bamboo_ = nullptr;
@@ -169,6 +178,7 @@ void TutorialScene::Scroll(void)
 void TutorialScene::ObjCollision(void)
 {
 	PlayerToBamboo();
+	PlayerAttackToPlayerBpAttack();
 
 	if (boss_->GetEnCount()) PlayerToBoss();
 	else					 PlayerToEnemyBamboo();
@@ -176,7 +186,7 @@ void TutorialScene::ObjCollision(void)
 
 void TutorialScene::PlayerToBamboo(void)
 {
-	if (player_->GetBp() >= Player::BP_MAX)return;
+	if (player_->GetHaveB())return;
 
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
@@ -184,7 +194,20 @@ void TutorialScene::PlayerToBamboo(void)
 	for (auto& b : bamboo_->GetBamboos()) {
 		if (ins.CircleAndRect(b->GetUnit(),player_->GetUnit(),false)) {
 			b->Collect();
-			player_->BpOptain((int)b->GetScale());
+			player_->BpOptain();
+		}
+	}
+}
+
+void TutorialScene::PlayerAttackToPlayerBpAttack(void)
+{
+	auto& ins = Collision::GetInstance();
+	auto& mana = SceneManager::GetInstance().GetInstance();
+
+	for (auto& b : player_->GetBpAtt()) {
+		if (ins.CircleAndRect(player_->DefaultAtt(), b->GetObj())) {
+			mana.HitStop(SceneManager::HIT_STOP_TIME);
+			b->Parry(player_->GetUnit().pos_);
 		}
 	}
 }
@@ -218,10 +241,10 @@ void TutorialScene::PlayerAttackToEnemyBamboo(void)
 		}
 		for (auto& bpAtt : player_->GetBpAtt()) {
 			if (ins.Rect(bpAtt->GetObj(), enemy_->GetBamboo(i)->GetUnit())) {
-				if (bpAtt->GetBp() >= 3)mana.SHAKE();
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
 				bpAtt->Hit();
 				enemy_->GetBamboo(i)->SetDmg(bpAtt->GetDamage());
+				blast_->On(bpAtt->GetObj().pos_);
 			}
 		}
 	}
@@ -241,11 +264,10 @@ void TutorialScene::PlayerToBoss(void)
 		player_->Hit(5, boss_->GetUnit().pos_);
 	}
 
+	PlayerAttackToBoss();
+	PlayerAttackToBossAttack();
 	PlayerToBossAttack();
 
-	PlayerAttackToBoss();
-
-	PlayerAttackToBossAttack();
 }
 
 void TutorialScene::PlayerToBossAttack(void)
@@ -274,20 +296,23 @@ void TutorialScene::PlayerAttackToBoss(void)
 			boss_->SetDown(player_->DefaultAtt().pos_);
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
 			player_->SetInvici(50);
+			bamboo_->Create(boss_->GetUnit().pos_, 1);
 		}
 		else {
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
 			boss_->SetDamage(5);
-			bamboo_->Create(boss_->GetUnit().pos_, 1,50);
+			bamboo_->Create(boss_->GetUnit().pos_, 1,30);
 		}
 	}
 
 	for (auto& bpAtt : player_->GetBpAtt()) {
 		if (ins.Rect(bpAtt->GetObj(), boss_->GetUnit())) {
-			if (bpAtt->GetBp() >= 3) mana.SHAKE();
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
-			bpAtt->Hit();
+			if (bpAtt->GetPower() >= 3) { mana.SHAKE(); }
+			if (bpAtt->GetPower() >= 5) { mana.ZoomPos(bpAtt->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
+			bpAtt->Off();
 			boss_->SetDamage(bpAtt->GetDamage());
+			blast_->On(bpAtt->GetObj().pos_);
 		}
 	}
 }
@@ -300,8 +325,22 @@ void TutorialScene::PlayerAttackToBossAttack(void)
 		if (ins.Circle(boss_->GetAttackObj()[i], player_->DefaultAtt())) {
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
 			boss_->ObjHit(i);
-			bamboo_->Create(boss_->GetAttackObj()[i].pos_, 1,50);
 			player_->SetInvici(50);
+			switch (boss_->GetAttack())
+			{
+			case BossTutorial::SLASH:
+				break;
+			case BossTutorial::BULLET:
+				bamboo_->Create(boss_->GetAttackObj()[i].pos_, 1, 5);
+				break;
+			case BossTutorial::ROAR:
+				break;
+			case BossTutorial::BLAST:
+				bamboo_->Create(boss_->GetAttackObj()[i].pos_, 1);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 

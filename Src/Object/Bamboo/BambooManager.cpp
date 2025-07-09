@@ -8,12 +8,10 @@ BambooManager::~BambooManager()
 {
 }
 
-void BambooManager::Init(Vector2F* pPos, int* bp)
+void BambooManager::Init(void)
 {
-	this->pPos_ = pPos;
-	this->playerBp_ = bp;
-
-	image_ = LoadGraph("Data/Image/DropBamboo.png");
+	//image_ = LoadGraph("Data/Image/DropBamboo.png");
+	image_ = LoadGraph("Data/Image/Player/BambooBar.png");
 	if (image_ == -1) {
 		return;
 	}
@@ -60,7 +58,7 @@ void BambooManager::Create(Vector2F pos, int num, int probability)
 		if (reciycle)continue;
 
 		bamboos_.emplace_back(new Bamboo());
-		bamboos_[bamboos_.size() - 1]->Set(pos, pPos_, playerBp_, image_);
+		bamboos_[bamboos_.size() - 1]->Set(pos, image_);
 	}
 }
 

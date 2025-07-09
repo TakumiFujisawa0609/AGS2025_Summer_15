@@ -59,7 +59,7 @@ void BattledomeScene::Init(void)
 
 
 	bamboo_ = new BambooManager();
-	bamboo_->Init((Vector2F*)&player_->GetUnit().pos_, (int*)&player_->GetBp());
+	bamboo_->Init();
 
 	Collision::CreateInstance();
 	auto& colli = Collision::GetInstance();
@@ -204,7 +204,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			}
 			for (auto& bpAtc : player_->GetBpAtt()) {
 				if (ins.CircleAndRect(boss_->GetUnit(), bpAtc->GetObj())) {
-					if (bpAtc->GetBp() >= 3)mana.SHAKE();
+					//if (bpAtc->GetBp() >= 3)mana.SHAKE();
 					mana.HitStop(SceneManager::HIT_STOP_TIME);
 					boss_->SetDamage(bpAtc->GetDamage());
 				}
@@ -221,7 +221,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			//“ÁŽêUŒ‚
 			for (auto& bpAtc : player_->GetBpAtt()) {
 				if (ins.Rect(bpAtc->GetObj(), boss_->GetUnit())) {
-					if (bpAtc->GetBp() >= 3)mana.SHAKE();
+					if (bpAtc->GetPower() >= 4)mana.SHAKE();
 					mana.HitStop(SceneManager::HIT_STOP_TIME);
 					boss_->SetDamage(bpAtc->GetDamage());
 				}
@@ -242,7 +242,6 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		}
 		for (auto& bpAtc : player_->GetBpAtt()) {
 			if (ins.Ellipse(bpAtc->GetObj(), boss_->GetUnit())) {
-				if (bpAtc->GetBp() >= 3)mana.SHAKE();
 				mana.HitStop(5);
 				boss_->SetDamage(bpAtc->GetDamage());
 				bpAtc->Hit();
@@ -335,7 +334,7 @@ void BattledomeScene::PlayerToBossAttack(void)
 
 void BattledomeScene::PlayerToBamboo(void)
 {
-	if (player_->GetBp() >= Player::BP_MAX)return;
+	if (player_->GetHaveB())return;
 
 	auto& ins = Collision::GetInstance();
 	auto& mana = SceneManager::GetInstance().GetInstance();
@@ -343,7 +342,7 @@ void BattledomeScene::PlayerToBamboo(void)
 	for (auto& b : bamboo_->GetBamboos()) {
 		if (ins.CircleAndRect(b->GetUnit(), player_->GetUnit(), false)) {
 			b->Collect();
-			player_->BpOptain((int)b->GetScale());
+			player_->BpOptain();
 		}
 	}
 }
