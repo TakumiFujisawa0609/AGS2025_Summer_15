@@ -6,6 +6,7 @@ class StageBase;
 class BossBase;
 class Player;
 class BambooManager;
+class BlastEffectManager;
 
 class BattledomeScene : public SceneBase
 {
@@ -25,7 +26,7 @@ private:
 	BambooManager* bamboo_;
 	StageBase* stage_;
 	BossBase* boss_;
-
+	BlastEffectManager* blastMng_;
 	//“–‚½‚è”»’è
 	void PlayerToBoss(void);
 	void PlayerAttackToBoss(void);

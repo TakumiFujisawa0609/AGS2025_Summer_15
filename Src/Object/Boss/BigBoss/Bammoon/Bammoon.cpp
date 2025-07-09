@@ -343,11 +343,9 @@ void Bammoon::AttackRand(void)
 
 	if (r <= 400) {
 		attackState_ = ATTACK::SWEEP;
-		attackState_ = ATTACK::PBULLET;
 	}
 	else if (r <= 700) {
 		attackState_ = ATTACK::BLAST;
-		attackState_ = ATTACK::PBULLET;
 	}
 	else if (r <= 1000) {
 		attackState_ = ATTACK::PBULLET;

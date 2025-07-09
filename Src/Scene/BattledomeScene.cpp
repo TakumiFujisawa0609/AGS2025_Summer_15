@@ -5,6 +5,7 @@
 #include"../Manager/SceneManager.h"
 #include"../Manager/Collision.h"
 #include"../Manager/Camera.h"
+#include"../Manager/Decoration/BlastEffect/BlastEffectManager.h"
 
 #include"../Object/Player/Player.h"
 #include"../Object/Bamboo/BambooManager.h"
@@ -61,6 +62,10 @@ void BattledomeScene::Init(void)
 	bamboo_ = new BambooManager();
 	bamboo_->Init();
 
+	blastMng_ = new BlastEffectManager();
+	blastMng_->Init();
+
+
 	Collision::CreateInstance();
 	auto& colli = Collision::GetInstance();
 	colli.Init();
@@ -77,6 +82,7 @@ void BattledomeScene::Update(void)
 	boss_->Update();
 	player_->Update();
 	bamboo_->Update();
+	blastMng_->Update();
 
 	if (!boss_->GetUnit().isAlive_) {
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
@@ -92,11 +98,16 @@ void BattledomeScene::Draw(void)
 	bamboo_->Draw();
 	boss_->Draw();
 	player_->Draw();
+	blastMng_->Draw();
 }
 
 void BattledomeScene::Release(void)
 {
 	Collision::DeleteInstance();
+
+	blastMng_->Release();
+	delete blastMng_;
+	blastMng_ = nullptr;
 
 	bamboo_->Release();
 	delete bamboo_;
@@ -242,9 +253,11 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		}
 		for (auto& bpAtc : player_->GetBpAtt()) {
 			if (ins.Ellipse(bpAtc->GetObj(), boss_->GetUnit())) {
-				mana.HitStop(5);
+				if (bpAtc->GetPower() >= 3) { mana.SHAKE(); }
+				if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
+				bpAtc->Off();
 				boss_->SetDamage(bpAtc->GetDamage());
-				bpAtc->Hit();
+				blastMng_->On(bpAtc->GetObj().pos_);
 			}
 		}
 		break;
