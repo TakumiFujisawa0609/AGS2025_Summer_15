@@ -380,7 +380,7 @@ void BattledomeScene::PlayerToBossAttack(void)
 			}
 			else {
 
-				if (ins.CircleAndRect(nokopy_->GetObj()[i], player_->GetUnit())) {
+				if (ins.CircleAndRect(player_->GetUnit(), nokopy_->GetObj()[i])) {
 					player_->Hit(5, nokopy_->GetObj()[i].pos_);
 					nokopy_->ObjHit(i);
 				}
