@@ -3,8 +3,9 @@
 #include"../../../../../Application.h"
 #include"../../../../../Manager/Camera.h"
 
-WeakBullet::WeakBullet()
+WeakBullet::WeakBullet(float moveSpeed)
 {
+    moveSpeed_ = moveSpeed;
 }
 
 WeakBullet::~WeakBullet()
@@ -29,7 +30,7 @@ void WeakBullet::Init(const Vector2F* pos)
 
 void WeakBullet::Update()
 {
-    obj_.pos_.x += 1.0f;
+    obj_.pos_.x += moveSpeed_;
 
     if (!canShot_) {
         // 発射不可ならタイマー減算
