@@ -5,6 +5,7 @@
 
 #include"Attack/BamBlast.h"
 #include"Attack/Pbullet.h"
+#include"Attack/Stripe.h"
 
 Bammoon::Bammoon()
 {
@@ -27,6 +28,9 @@ void Bammoon::Init(void)
 
 	pBullet_ = new Pbullet();
 	pBullet_->Init(&unit_.pos_);
+
+	stripe_ = new Stripe();
+	stripe_->Init(&unit_.pos_);
 
 	unit_.size_ = { SIZE_X,SIZE_Y };
 	unit_.radius_ = unit_.size_.x/2;
@@ -70,6 +74,10 @@ void Bammoon::Draw(void)
 
 void Bammoon::Release(void)
 {
+	stripe_->Release();
+	delete stripe_;
+	stripe_ = nullptr;
+
 	pBullet_->Release();
 	delete pBullet_;
 	pBullet_ = nullptr;
@@ -207,6 +215,19 @@ void Bammoon::Attack(void)
 		}
 		break;
 	}
+	case Bammoon::ATTACK::STRIPE: {
+		int rate = 30;
+		if (counter_ % rate == 0)stripe_->On(counter_ / rate);
+
+		if (stripe_->End()) {
+			counter_ = 0;
+			unit_.isGravity_ = true;
+			unit_.isXAttenu = true;
+			idleTime_ = 300;
+			ChangeState(STATE::IDLE);
+			return;
+		}
+	}
 	}
 	counter_++;
 }
@@ -250,6 +271,9 @@ std::vector<Base> Bammoon::GetObj(void)
 	case Bammoon::ATTACK::PBULLET:
 		return pBullet_->Get();
 		break;
+	case Bammoon::ATTACK::STRIPE:
+		return stripe_->Get();
+		break;
 	default:
 		break;
 	}
@@ -274,6 +298,8 @@ void Bammoon::ObjHit(int i)
 		break;
 	case Bammoon::ATTACK::PBULLET:
 		pBullet_->Hit(i);
+		break;
+	case Bammoon::ATTACK::STRIPE:
 		break;
 	case Bammoon::ATTACK::MAX:
 		break;
@@ -312,6 +338,9 @@ void Bammoon::AttackUpdate(void)
 	case Bammoon::ATTACK::PBULLET:
 		pBullet_->Update();
 		break;
+	case Bammoon::ATTACK::STRIPE:
+		stripe_->Update();
+		break;
 	case Bammoon::ATTACK::MAX:
 		break;
 	default:
@@ -333,6 +362,9 @@ void Bammoon::AttackDraw(void)
 	case Bammoon::ATTACK::PBULLET:
 		pBullet_->Draw();
 		break;
+	case Bammoon::ATTACK::STRIPE:
+		stripe_->Draw();
+		break;
 	case Bammoon::ATTACK::MAX:
 		break;
 	default:
@@ -344,15 +376,19 @@ void Bammoon::AttackRand(void)
 {
 	int r = GetRand(1000);
 
-	if (r <= 400) {
+	if (r <= 100) {
 		attackState_ = ATTACK::SWEEP;
 	}
-	else if (r <= 700) {
+	else if (r <= 400) {
 		attackState_ = ATTACK::BLAST;
 	}
-	else if (r <= 1000) {
+	else if (r <= 700) {
 		attackState_ = ATTACK::PBULLET;
 	}
+	else if (r <= 1000) {
+		attackState_ = ATTACK::STRIPE;
+	}
+	attackState_ = ATTACK::STRIPE;
 }
 
 

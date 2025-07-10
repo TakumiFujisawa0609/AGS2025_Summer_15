@@ -4,6 +4,7 @@
 
 class BamBlast;
 class Pbullet;
+class Stripe;
 
 class Bammoon : public BossBase
 {
@@ -41,6 +42,7 @@ public:
 		SWEEP,
 		BLAST,
 		PBULLET,
+		STRIPE,
 
 		MAX,
 	};
@@ -112,6 +114,7 @@ private:
 	ATTACK attackState_;
 	BamBlast* blast_;
 	Pbullet* pBullet_;
+	Stripe* stripe_;
 
 	//É_ÉÅÅ[ÉWèÛë‘Å`Å`
 	void Damage(void) override;
