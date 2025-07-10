@@ -34,7 +34,7 @@ public:
 
 	float GetMoveSpeed(void) { return moveSpeed_; }
 
-	std::vector<Weakness*> GetWeakness(void)override { return weak_; }
+	std::vector<BossBase*> GetWeakness(void)override { return weak_; }
 
 private:
 	//インスタンス

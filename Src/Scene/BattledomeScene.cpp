@@ -44,6 +44,7 @@ void BattledomeScene::Init(void)
 	case SceneManager::BOSS_KINDS::RUNBOO:
 		stage_ = new TutorialStage();
 			boss_ = new Runboo();
+
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		stage_ = new BammoonStage();
@@ -228,9 +229,15 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
-		if (ins.Rect(player_->GetUnit(), boss_->GetUnit()))
-		{
+		if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
 			player_->Hit(10, boss_->GetUnit().pos_);
+		}
+
+		for (auto& w : boss_->GetWeakness())
+		{
+			if (ins.CircleAndRect(w->GetUnit(), player_->GetUnit())) {
+				player_->Hit(10.0f, w->GetUnit().pos_);
+			}
 		}
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
@@ -251,8 +258,8 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		}
 		break;
 	}
-
 }
+
 void BattledomeScene::PlayerToBoss(void)
 {
 	// プレイヤーとボスの当たり判定処理
