@@ -26,7 +26,8 @@ void Runboo::Init()
 		weak_[weak_.size() - 1]->Init(weakPos, moveSpeed_);
 	}
 
-	unit_.pos_ = { HALF_X, HALF_Y };
+	unit_.nextpos_ = { HALF_X, HALF_Y };
+	unit_.pos_ = unit_.nextpos_;
 	ChangeDispPos();
 	unit_.size_ = { HALF_X * 2 ,HALF_Y * 2 };
 
