@@ -91,6 +91,42 @@ const float Collision::GetStageLine(const Vector2F& pos, const Vector2F& size , 
 	return static_cast<float>(line * TutorialStage::STAGE_CHIP_SIZE);
 }
 
+const bool Collision::StageCollision(const Vector2F& pos, const Vector2F& size) const
+{
+	for (int dir = 0; dir < DIR::MAX; dir++) {
+		float point = 0.0f;
+
+		switch (dir)
+		{
+		case Collision::UP:
+			point = pos.y - (size.y / 2);
+			break;
+		case Collision::DOWN:
+			point = pos.y + (size.y / 2);
+			break;
+		case Collision::LEFT:
+			point = pos.x - (size.x / 2);
+			break;
+		case Collision::RIGHT:
+			point = pos.x + (size.x / 2);
+			break;
+		}
+
+		float line = GetStageLine(pos, size, (DIR)dir);
+
+		int step = (dir == UP || dir == LEFT) ? -1 : 1;
+
+		if (step == -1) {
+			if (point <= line)return true;
+		}
+		else {
+			if (point >= line)return true;
+		}
+
+	}
+	return false;
+}
+
 
 
 const bool Collision::Circle(const Base& u1, const Base& u2, bool invici) const

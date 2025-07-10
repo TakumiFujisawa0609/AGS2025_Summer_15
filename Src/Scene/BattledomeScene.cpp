@@ -5,9 +5,11 @@
 #include"../Manager/SceneManager.h"
 #include"../Manager/Collision.h"
 #include"../Manager/Camera.h"
+#include"../Manager/Decoration/BlastEffect/BlastEffectManager.h"
 
 #include"../Object/Player/Player.h"
 #include"../Object/Bamboo/BambooManager.h"
+
 #include"../Object/Stage/Tutorial/TutorialStage.h"
 #include"../Object/Boss/BigBoss/Runboo/Runboo.h"
 
@@ -43,7 +45,7 @@ void BattledomeScene::Init(void)
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
 		stage_ = new TutorialStage();
-			boss_ = new Runboo();
+		boss_ = new Runboo();
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		stage_ = new BammoonStage();
@@ -61,6 +63,10 @@ void BattledomeScene::Init(void)
 	bamboo_ = new BambooManager();
 	bamboo_->Init();
 
+	blastMng_ = new BlastEffectManager();
+	blastMng_->Init();
+
+
 	Collision::CreateInstance();
 	auto& colli = Collision::GetInstance();
 	colli.Init();
@@ -77,6 +83,7 @@ void BattledomeScene::Update(void)
 	boss_->Update();
 	player_->Update();
 	bamboo_->Update();
+	blastMng_->Update();
 
 	if (!boss_->GetUnit().isAlive_) {
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
@@ -92,11 +99,16 @@ void BattledomeScene::Draw(void)
 	bamboo_->Draw();
 	boss_->Draw();
 	player_->Draw();
+	blastMng_->Draw();
 }
 
 void BattledomeScene::Release(void)
 {
 	Collision::DeleteInstance();
+
+	blastMng_->Release();
+	delete blastMng_;
+	blastMng_ = nullptr;
 
 	bamboo_->Release();
 	delete bamboo_;
@@ -244,9 +256,11 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		}
 		for (auto& bpAtc : player_->GetBpAtt()) {
 			if (ins.Ellipse(bpAtc->GetObj(), boss_->GetUnit())) {
-				mana.HitStop(5);
+				if (bpAtc->GetPower() >= 3) { mana.SHAKE(); }
+				if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
+				bpAtc->Off();
 				boss_->SetDamage(bpAtc->GetDamage());
-				bpAtc->Hit();
+				blastMng_->On(bpAtc->GetObj().pos_);
 			}
 		}
 		break;
@@ -345,6 +359,14 @@ void BattledomeScene::PlayerToBamboo(void)
 		if (ins.CircleAndRect(b->GetUnit(), player_->GetUnit(), false)) {
 			b->Collect();
 			player_->BpOptain();
+		}
+	}
+
+
+	for (auto& b : player_->GetBpAtt()) {
+		if (ins.CircleAndRect(player_->DefaultAtt(), b->GetObj())) {
+			mana.HitStop(SceneManager::HIT_STOP_TIME);
+			b->Parry(player_->GetUnit().pos_);
 		}
 	}
 }
