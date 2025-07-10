@@ -165,7 +165,7 @@ void Bammoon::Attack(void)
 			unit_.isXAttenu = false;
 		}
 
-		
+
 		if (unit_.isGround_) {
 			ChangeMotion(MOTION::ATTACK, false);
 
@@ -192,9 +192,11 @@ void Bammoon::Attack(void)
 		}
 		break;
 	}
-	case Bammoon::ATTACK::PBULLET:
+	case Bammoon::ATTACK::PBULLET: {
 		int rate = 5;	//‰½ƒtƒŒ[ƒ€‚Éˆê‰ñ‘Å‚Â‚©
-		if (counter_ % rate == 0) pBullet_->On(counter_ / rate, *playerPosPtr_);
+		if (counter_ % rate == 0) {
+			pBullet_->On(counter_ / rate, *playerPosPtr_);
+		}
 		if (pBullet_->End()) {
 			counter_ = 0;
 			unit_.isGravity_ = true;
@@ -204,6 +206,7 @@ void Bammoon::Attack(void)
 			return;
 		}
 		break;
+	}
 	}
 	counter_++;
 }
@@ -245,7 +248,7 @@ std::vector<Base> Bammoon::GetObj(void)
 		return blast_->Get();
 		break;
 	case Bammoon::ATTACK::PBULLET:
-		pBullet_->Get();
+		return pBullet_->Get();
 		break;
 	default:
 		break;

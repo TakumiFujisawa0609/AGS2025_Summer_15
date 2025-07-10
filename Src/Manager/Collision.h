@@ -37,6 +37,8 @@ public:
 	/// <returns>指定した方向における最も近い床または壁の座標（float値、ピクセル単位）。</returns>
 	const float GetStageLine(const Vector2F& pos, const Vector2F& size, const DIR dir) const;
 
+	const bool StageCollision(const Vector2F& pos, const Vector2F& size)const;
+
 
 	/// <summary>
 	/// 円形同士の当たり判定

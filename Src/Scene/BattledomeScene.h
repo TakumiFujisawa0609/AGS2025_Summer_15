@@ -2,8 +2,9 @@
 
 #include"SceneBase.h"
 
+#include"../Object/Boss/BigBoss/BossBase.h"
+
 class StageBase;
-class BossBase;
 class Player;
 class BambooManager;
 class BlastEffectManager;

@@ -9,6 +9,7 @@
 
 #include"../Object/Player/Player.h"
 #include"../Object/Bamboo/BambooManager.h"
+
 #include"../Object/Stage/Tutorial/TutorialStage.h"
 #include"../Object/Boss/BigBoss/Runboo/Runboo.h"
 
@@ -44,7 +45,7 @@ void BattledomeScene::Init(void)
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
 		stage_ = new TutorialStage();
-			boss_ = new Runboo();
+		boss_ = new Runboo();
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		stage_ = new BammoonStage();
@@ -356,6 +357,14 @@ void BattledomeScene::PlayerToBamboo(void)
 		if (ins.CircleAndRect(b->GetUnit(), player_->GetUnit(), false)) {
 			b->Collect();
 			player_->BpOptain();
+		}
+	}
+
+
+	for (auto& b : player_->GetBpAtt()) {
+		if (ins.CircleAndRect(player_->DefaultAtt(), b->GetObj())) {
+			mana.HitStop(SceneManager::HIT_STOP_TIME);
+			b->Parry(player_->GetUnit().pos_);
 		}
 	}
 }

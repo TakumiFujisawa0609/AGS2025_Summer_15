@@ -6,9 +6,13 @@
 class Pbullet : public AttackBase
 {
 public:
-	static constexpr int NUM = 10;
+	static constexpr int NUM = 11;
+
+	static constexpr float PBULLET_SIZE_X = 48;
+	static constexpr float PBULLET_SIZE_Y = 32;
 
 	static constexpr int ANIME_INTERVAL = 2;
+
 	static constexpr int PBULLET_ANIME_NUM = 4;
 
 	static constexpr int HIT_ANIME_NUM = 5;
