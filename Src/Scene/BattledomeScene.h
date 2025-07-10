@@ -9,6 +9,10 @@ class Player;
 class BambooManager;
 class BlastEffectManager;
 
+class Nokopy;
+class Runboo;
+class Bammoon;
+
 class BattledomeScene : public SceneBase
 {
 public:
@@ -26,7 +30,11 @@ private:
 	Player* player_;
 	BambooManager* bamboo_;
 	StageBase* stage_;
-	BossBase* boss_;
+
+	Nokopy* nokopy_;
+	Runboo* runboo_;
+	Bammoon* bammoon_;
+
 	BlastEffectManager* blastMng_;
 	//“–‚½‚è”»’è
 	void PlayerToBoss(void);
