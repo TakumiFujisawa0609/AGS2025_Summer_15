@@ -13,9 +13,14 @@ Weakness::~Weakness()
 }
 
 //‰Šú‰»
-void Weakness::Init(Vector2F disppos)
+void Weakness::Init(Vector2F disppos, float moveSpeed)
 {
+	moveSpeed_ = moveSpeed;
+
 	Camera::CreateInstance();
+
+	bullet_ = new WeakBullet(moveSpeed_);
+	bullet_->Init(&unit_.pos_);
 
 	unit_.nextpos_ = disppos;
 	unit_.pos_ = unit_.nextpos_;
@@ -40,15 +45,14 @@ void Weakness::Init(Vector2F disppos)
 	unit_.isGravity_ = false;
 	unit_.isStageCollision_ = false;
 
-	bullet_ = new WeakBullet();
-	bullet_->Init(&unit_.pos_);
+
 }
 
 void Weakness::Init(void) {}
 
 void Weakness::Update(Vector2F boss)
 {
-	unit_.nextpos_.x += 1.0f;
+	unit_.nextpos_.x += moveSpeed_;
 
 	BossBase::Update();
 
@@ -105,12 +109,6 @@ void Weakness::SetDamage(int dmg)
 	if (unit_.hp_ <= 0 || unit_.isInvincible_) return;
 
 	unit_.hp_ -= dmg;
-
-	if (unit_.hp_ <= 0)
-	{
-		unit_.isAlive_ = false;
-		ChangeState(STATE::DEATH); // ó‘Ô‘JˆÚ‚à•K—v‚È‚ç
-	}
 }
 
 void Weakness::Idle(void)

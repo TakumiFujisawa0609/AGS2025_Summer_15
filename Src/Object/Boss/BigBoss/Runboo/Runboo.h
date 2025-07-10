@@ -11,7 +11,7 @@ class Runboo : public BossBase
 public:
 
 	static constexpr int WEAK_MAX = 3;
-
+	static constexpr float MOVE_SPEED = 1.0f;
 	Runboo();
 	~Runboo();
 
@@ -28,9 +28,13 @@ public:
 	void SetDamage(int dmg)override;
 	bool IsInvici(void) { return unit_.inviCounter_ > 0; }
 
+	float GetMoveSpeed(void) { return moveSpeed_; }
+
 private:
 	//インスタンス
 	std::vector<Weakness*> weak_;
+
+	float moveSpeed_;
 	
 	//待機状態
 	void Idle(void) override;
