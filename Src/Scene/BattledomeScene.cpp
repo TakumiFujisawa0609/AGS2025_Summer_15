@@ -170,7 +170,6 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
-
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		int i = 0;
@@ -229,7 +228,10 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
-
+		if (ins.Rect(player_->GetUnit(), boss_->GetUnit()))
+		{
+			player_->Hit(10, boss_->GetUnit().pos_);
+		}
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {

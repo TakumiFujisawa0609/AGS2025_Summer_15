@@ -26,8 +26,9 @@ void Runboo::Init()
 		weak_[weak_.size() - 1]->Init(weakPos, moveSpeed_);
 	}
 
-	unit_.disppos_ = { 0.0f,0.0f };
-	unit_.pos_ = { 0.0f,0.0f };
+	unit_.pos_ = { HALF_X, HALF_Y };
+	ChangeDispPos();
+	unit_.size_ = { HALF_X * 2 ,HALF_Y * 2 };
 
 	unit_.hp_ = 100;
 	unit_.isAlive_ = true;
@@ -51,10 +52,10 @@ void Runboo::Update()
 void Runboo::Draw()
 {
 	DrawBox(
-		unit_.disppos_.x,
-		unit_.disppos_.y,
-		unit_.disppos_.x + 200,
-		unit_.disppos_.y + Application::SCREEN_SIZE_Y + 100,
+		unit_.disppos_.x - HALF_X,
+		unit_.disppos_.y - HALF_Y,
+		unit_.disppos_.x + HALF_X,
+		unit_.disppos_.y + HALF_Y,
 		RGB(255, 255, 255), true
 	);
 

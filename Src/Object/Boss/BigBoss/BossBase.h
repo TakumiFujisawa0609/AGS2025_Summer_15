@@ -2,6 +2,8 @@
 #include"../../UnitBase.h"
 #include "../Tutorial/Attack/AttackBase.h"
 
+class Weakness;
+
 class BossBase : public UnitBase
 {
 public:
@@ -37,6 +39,11 @@ public:
 	virtual int GetAttackState(void) { return 0; };
 
 	virtual void SetDown(Vector2F pos);
+
+	virtual std::vector<Weakness*> GetWeakness(void) 
+	{
+		return std::vector<Weakness*>{};
+	};
 
 protected:
 	//ó‘Ô‚²‚Æ‚ÌŠÖ”‚ğŒÄ‚Ô‚½‚ß‚ÌŠÖ”ƒ|ƒCƒ“ƒ^
