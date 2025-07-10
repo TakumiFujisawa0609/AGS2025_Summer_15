@@ -191,6 +191,7 @@
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
     <ClCompile Include="Src\Object\Stage\Tutorial\TutorialStage.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Wavemboo.cpp" />
+    <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Takenoko.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Manager\Decoration\BlastEffect\BlastEffect.h" />
@@ -253,6 +254,7 @@
     <ClInclude Include="Src\Utility\AsoUtility.h" />
     <ClInclude Include="Src\Object\Stage\Tutorial\TutorialStage.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Wavemboo.h" />
+    <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Takenoko.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

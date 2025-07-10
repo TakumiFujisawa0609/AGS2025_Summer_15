@@ -21,7 +21,7 @@ void Nokopy::Init(void)
 	unit_.size_ = { SIZE_X, SIZE_Y };
 	unit_.radius_ = unit_.size_.x / 2;
 	unit_.speed_ = 10.0f;
-	unit_.hp_ = 5; //BOSS_HP;
+	unit_.hp_ = BOSS_HP;
 	unit_.isCircle_ = true;
 	isDive_ = false;
 	isRushReflection_ = false;

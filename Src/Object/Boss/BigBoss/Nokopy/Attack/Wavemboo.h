@@ -1,5 +1,7 @@
 #pragma once
 #include "../../../Tutorial/Attack/AttackBase.h"
+class Takenoko;
+
 class Wavemboo :
     public AttackBase
 {
@@ -15,6 +17,9 @@ public:
     virtual const std::vector<Base> Get(void) const override;
     virtual void On(void) override;
     virtual void Off(void) override;
+    void Hit(void) { obj_.isAlive_ = false; }
 private:
+    std::vector<Takenoko*>takenokos_;
+
 };
 
