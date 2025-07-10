@@ -135,7 +135,7 @@ void BattledomeScene::Scroll(void)
 {
 	Camera& camera = Camera::GetInstance();
 
-	camera.Follow(Camera::X, );
+	camera.Follow(Camera::X, 1.0f);
 }
 
 void BattledomeScene::PlayerAttackToBossAttack(void)

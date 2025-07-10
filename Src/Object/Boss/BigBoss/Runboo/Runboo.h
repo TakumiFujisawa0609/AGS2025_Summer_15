@@ -11,8 +11,7 @@ class Runboo : public BossBase
 public:
 
 	static constexpr int WEAK_MAX = 3;
-	static constexpr float MOVE_SPEED;
-
+	static constexpr float MOVE_SPEED = 1.0f;
 	Runboo();
 	~Runboo();
 
