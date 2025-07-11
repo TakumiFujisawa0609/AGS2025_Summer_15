@@ -4,6 +4,7 @@
 
 class BamBlast;
 class Pbullet;
+class Stripe;
 
 class Bammoon : public BossBase
 {
@@ -41,6 +42,7 @@ public:
 		SWEEP,
 		BLAST,
 		PBULLET,
+		STRIPE,
 
 		MAX,
 	};
@@ -53,13 +55,15 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
+	void DrawHp(void)override;
+
 	std::vector<Base> GetObj(void) override;
 	AttackBase* GetAttackIns(void)override;
 
 	void SetDamage(int dmg)override;
 	void ObjHit(int i)override;
 
-	int GetAttackState(void)override { return (int)attackState_; }
+	ATTACK GetAtState(void) { return attackState_; }
 
 	void SetDown(Vector2F pos)override;
 
@@ -113,6 +117,7 @@ private:
 	ATTACK attackState_;
 	BamBlast* blast_;
 	Pbullet* pBullet_;
+	Stripe* stripe_;
 
 	//É_ÉÅÅ[ÉWèÛë‘Å`Å`
 	void Damage(void) override;

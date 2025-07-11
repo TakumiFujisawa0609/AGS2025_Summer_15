@@ -205,10 +205,10 @@ void SceneManager::Draw(void)
 	if (shakeCounter_ > 0) {
 		shakeCounter_--;
 
-		shake = shakeCounter_ / 5 % 2;
+		shake = shakeCounter_ / 3 % 2;
 		shake *= 2;
 		shake -= 1;
-		shake *= 5;
+		shake *= 2;
 		DrawRotaGraph(dPos.x, dPos.y, scale_, 0, mainScreen_, true);
 	}
 

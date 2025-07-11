@@ -18,6 +18,10 @@ void StageBase::Init(void)
 	Load();
 }
 
+void StageBase::BackDraw(void)
+{
+}
+
 void StageBase::Draw(void)
 {
 	//マップチップ画像を表示
