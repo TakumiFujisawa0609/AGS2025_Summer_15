@@ -5,6 +5,7 @@
 class BamBlast;
 class Pbullet;
 class Stripe;
+class Csphere;
 
 class Bammoon : public BossBase
 {
@@ -48,6 +49,15 @@ public:
 		MAX,
 	};
 
+	const int ATTACKDMG[(int)ATTACK::MAX] =
+	{
+		3,//SWEEP
+		3,//BLAST
+		2,//PBULLET
+		5,//STRIPE
+		1//CSPHERE
+	};
+
 	Bammoon();
 	~Bammoon();
 
@@ -59,6 +69,7 @@ public:
 	void DrawHp(void)override;
 
 	std::vector<Base> GetObj(void) override;
+	int GetObjDamage(void) { return (attackState_ != ATTACK::NON) ? ATTACKDMG[(int)attackState_] : 0; }
 	AttackBase* GetAttackIns(void)override;
 
 	void SetDamage(int dmg)override;
@@ -119,6 +130,7 @@ private:
 	BamBlast* blast_;
 	Pbullet* pBullet_;
 	Stripe* stripe_;
+	Csphere* csphere_;
 
 	//É_ÉÅÅ[ÉWèÛë‘Å`Å`
 	void Damage(void) override;

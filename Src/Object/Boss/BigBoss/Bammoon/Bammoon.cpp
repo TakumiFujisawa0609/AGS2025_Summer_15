@@ -6,6 +6,7 @@
 #include"Attack/BamBlast.h"
 #include"Attack/Pbullet.h"
 #include"Attack/Stripe.h"
+#include"Attack/Csphere.h"
 
 Bammoon::Bammoon()
 {
@@ -31,6 +32,9 @@ void Bammoon::Init(void)
 
 	stripe_ = new Stripe();
 	stripe_->Init(&unit_.pos_);
+
+	csphere_ = new Csphere();
+	csphere_->Init(&unit_.pos_);
 
 	unit_.size_ = { SIZE_X,SIZE_Y };
 	unit_.radius_ = unit_.size_.x/2;
@@ -70,6 +74,10 @@ void Bammoon::Draw(void)
 
 void Bammoon::Release(void)
 {
+	csphere_->Release();
+	delete csphere_;
+	csphere_ = nullptr;
+
 	stripe_->Release();
 	delete stripe_;
 	stripe_ = nullptr;
@@ -222,10 +230,23 @@ void Bammoon::Attack(void)
 	}
 	case Bammoon::ATTACK::STRIPE: {
 		int rate = 5;
-		if (counter_ % rate == 0) {
-			stripe_->On(counter_ / rate);
-		}
+		if (counter_ % rate == 0) { stripe_->On(counter_ / rate); }
 		if (stripe_->End()) {
+			counter_ = 0;
+			unit_.isGravity_ = true;
+			unit_.isXAttenu = true;
+			idleTime_ = 300;
+			ChangeState(STATE::IDLE);
+			return;
+		}
+	}
+	case Bammoon::ATTACK::CSPHERE: {
+		int rate = 50;
+		if (counter_ % rate == 0) {
+			if (counter_ == 0) { csphere_->On(*playerPosPtr_); }
+			else { csphere_->CorceChange(*playerPosPtr_); }
+		}
+		if (csphere_->End()) {
 			counter_ = 0;
 			unit_.isGravity_ = true;
 			unit_.isXAttenu = true;
@@ -265,6 +286,7 @@ void Bammoon::Death(void)
 
 std::vector<Base> Bammoon::GetObj(void)
 {
+	std::vector<Base> ret = {};
 	switch (attackState_)
 	{
 	case Bammoon::ATTACK::NON:
@@ -272,18 +294,21 @@ std::vector<Base> Bammoon::GetObj(void)
 	case Bammoon::ATTACK::SWEEP:
 		break;
 	case Bammoon::ATTACK::BLAST:
-		return blast_->Get();
+		ret = blast_->Get();
 		break;
 	case Bammoon::ATTACK::PBULLET:
-		return pBullet_->Get();
+		ret = pBullet_->Get();
 		break;
 	case Bammoon::ATTACK::STRIPE:
-		return stripe_->Get();
+		ret = stripe_->Get();
+		break;
+	case Bammoon::ATTACK::CSPHERE:
+		ret.emplace_back(csphere_->GetObj());
 		break;
 	default:
 		break;
 	}
-	return std::vector<Base>();
+	return ret;
 }
 
 AttackBase* Bammoon::GetAttackIns(void)
@@ -307,6 +332,9 @@ void Bammoon::ObjHit(int i)
 		break;
 	case Bammoon::ATTACK::STRIPE:
 		break;
+	case Bammoon::ATTACK::CSPHERE:
+		csphere_->Hit();
+		break;
 	case Bammoon::ATTACK::MAX:
 		break;
 	default:
@@ -327,6 +355,7 @@ void Bammoon::SetDamage(int dmg)
 		mana.ZoomPos(unit_.pos_);
 		mana.ZoomScale(2.0f);
 		ChangeState(STATE::DEATH);
+		unit_.isAlive_ = false;
 	}
 }
 
@@ -346,6 +375,9 @@ void Bammoon::AttackUpdate(void)
 		break;
 	case Bammoon::ATTACK::STRIPE:
 		stripe_->Update();
+		break;
+	case Bammoon::ATTACK::CSPHERE:
+		csphere_->Update();
 		break;
 	case Bammoon::ATTACK::MAX:
 		break;
@@ -371,6 +403,9 @@ void Bammoon::AttackDraw(void)
 	case Bammoon::ATTACK::STRIPE:
 		stripe_->Draw();
 		break;
+	case Bammoon::ATTACK::CSPHERE:
+		csphere_->Draw();
+		break;
 	case Bammoon::ATTACK::MAX:
 		break;
 	default:
@@ -391,9 +426,13 @@ void Bammoon::AttackRand(void)
 	else if (r <= 700) {
 		attackState_ = ATTACK::PBULLET;
 	}
-	else if (r <= 1000) {
+	else if (r <= 850) {
 		attackState_ = ATTACK::STRIPE;
 	}
+	else if (r <= 1000) {
+		attackState_ = ATTACK::CSPHERE;
+	}
+
 }
 
 

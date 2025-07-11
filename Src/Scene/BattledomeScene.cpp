@@ -368,7 +368,7 @@ void BattledomeScene::PlayerToBoss(void)
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		if (ins.Ellipse(player_->GetUnit(), bammoon_->GetUnit())) {
-			player_->Hit(5, bammoon_->GetUnit().pos_);
+			player_->Hit(2, bammoon_->GetUnit().pos_);
 		}
 		break;
 	}
@@ -410,8 +410,9 @@ void BattledomeScene::PlayerToBossAttack(void)
 			case Bammoon::ATTACK::SWEEP:
 			case Bammoon::ATTACK::BLAST:
 			case Bammoon::ATTACK::PBULLET:
+			case Bammoon::ATTACK::CSPHERE:
 				if (ins.CircleAndRect(bAtc, player_->GetUnit())) {
-					player_->Hit(5, bAtc.pos_);
+					player_->Hit(bammoon_->GetObjDamage(), bAtc.pos_);
 					bammoon_->ObjHit(i);
 				}
 				for (auto& pAtc : player_->GetBpAtt()) {
@@ -423,7 +424,7 @@ void BattledomeScene::PlayerToBossAttack(void)
 				break;
 			case Bammoon::ATTACK::STRIPE:
 				if (ins.Rect(bAtc, player_->GetUnit())) {
-					player_->Hit(5, bAtc.pos_);
+					player_->Hit(bammoon_->GetObjDamage(), bAtc.pos_);
 					bammoon_->ObjHit(i);
 				}
 
