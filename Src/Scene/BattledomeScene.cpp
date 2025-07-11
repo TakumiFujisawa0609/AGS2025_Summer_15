@@ -300,10 +300,10 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
-		if (ins.Rect(player_->GetUnit(), runboo_->GetUnit()))
+		/*if (ins.Rect(player_->GetUnit(), boss_->GetUnit()))
 		{
-			player_->Hit(10, runboo_->GetUnit().pos_);
-		}
+			player_->Hit(10, boss_->GetUnit().pos_);
+		}*/
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		if (ins.CircleAndRect(player_->DefaultAtt(), bammoon_->GetUnit())) {
@@ -325,8 +325,8 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		}
 		break;
 	}
-
 }
+
 void BattledomeScene::PlayerToBoss(void)
 {
 	// プレイヤーとボスの当たり判定処理

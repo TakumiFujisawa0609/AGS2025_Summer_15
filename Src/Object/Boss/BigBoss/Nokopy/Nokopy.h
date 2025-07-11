@@ -60,6 +60,7 @@ public:
     //攻撃パターンの関数ポインタ
     using AttackFunc = void(Nokopy::*)();
 
+
 private:
     //状態ごとのハンドル番号
     int img_[DRAW::DRAW_MAX];

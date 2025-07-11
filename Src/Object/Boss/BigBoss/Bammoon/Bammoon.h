@@ -63,6 +63,7 @@ public:
 
 	void SetDown(Vector2F pos)override;
 
+
 private:
 	//ボス描画関係-------------------------------------------------------------------
 	std::vector<int> image_[(int)MOTION::MAX];		//画像ハンドル

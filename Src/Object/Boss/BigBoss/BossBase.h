@@ -2,7 +2,6 @@
 #include"../../UnitBase.h"
 #include "../Tutorial/Attack/AttackBase.h"
 
-class Weakness;
 
 class BossBase : public UnitBase
 {
@@ -19,6 +18,9 @@ public:
 
 	BossBase();
 	~BossBase();
+
+	//virtual void Init(Vector2F disppos, float moveSpeed) {};
+	//virtual void Update(Vector2F boss) {};
 
 	virtual void Init(void)override;
 	virtual void Update(void)override;
@@ -40,10 +42,7 @@ public:
 
 	virtual void SetDown(Vector2F pos);
 
-	virtual std::vector<Weakness*> GetWeakness(void) 
-	{
-		return std::vector<Weakness*>{};
-	};
+	//virtual std::vector<BossBase*> GetWeakness(void) { return std::vector<BossBase*>{}; };
 
 protected:
 	//ó‘Ô‚²‚Æ‚ÌŠÖ”‚ğŒÄ‚Ô‚½‚ß‚ÌŠÖ”ƒ|ƒCƒ“ƒ^
