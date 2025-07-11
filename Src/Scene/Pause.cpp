@@ -6,6 +6,7 @@
 void Pause::Load(void)
 {
 	Camera::CreateInstance();
+	
 
 	std::string PATH = "Data/Image/MenuButton/";
 
@@ -42,6 +43,15 @@ void Pause::Init(void)
 		prevDown[ii] = 0;
 		nowDown[ii]  = 0;
 	}
+
+	prevPadDecision = 0;
+	nowPadDecision = 0;
+
+	prevPadDown = 0;
+	nowPadDown = 0;
+
+	prevPadUp = 0;
+	nowPadUp = 0;
 }
 
 void Pause::Update(void)
@@ -57,6 +67,17 @@ void Pause::Update(void)
 	float targetY = -(obj_[select_].pos_.y + select_ * DISTANCE);
 	move_.y += (targetY - move_.y) * 0.2f;
 
+	int pad = GetJoypadInputState(DX_INPUT_PAD1);
+
+	prevPadDecision = nowPadDecision;
+	nowPadDecision = (pad & PAD_INPUT_A);
+
+	prevPadUp = nowPadUp;
+	nowPadUp = (pad & PAD_INPUT_UP);
+
+	prevPadDown = nowPadDown;
+	nowPadDown = (pad & PAD_INPUT_DOWN);
+
 	for (int ii = 0; ii < 2; ii++)
 	{
 		//決定ボタン（アップトリガー）
@@ -67,18 +88,19 @@ void Pause::Update(void)
 
 		//下キー（ダウントリガー）
 		bool isDown = prevDown[ii] == 0 && nowDown[ii] == 1;
+		
 
 		//選択中がどれかを見分ける
 		switch (select_)
 		{
 		case Pause::CONTINUE:
 			if (isDecision) pauseState_ = STATE::E_UPDATE;
-			if (isDown) select_ = NEWGAME;
+			if (isDown || (prevPadDown == 0 && nowPadDown != 0)) select_ = NEWGAME;
 			break;
 		case Pause::NEWGAME:
 		
-			if (isUp)   select_ = CONTINUE;
-			if (isDown) select_ = EXIT;
+			if (isUp || (prevPadUp == 0 && nowPadUp != 0))   select_ = CONTINUE;
+			if (isDown || (prevPadDown == 0 && nowPadDown != 0)) select_ = EXIT;
 
 			if (isDecision)
 			{
@@ -89,7 +111,7 @@ void Pause::Update(void)
 			break;
 		case Pause::EXIT:
 			if (isDecision) isExit = true;
-			if (isUp) select_ = NEWGAME;
+			if (isUp || (prevPadUp == 0 && nowPadUp != 0)) select_ = NEWGAME;
 			break;
 		}
 	}

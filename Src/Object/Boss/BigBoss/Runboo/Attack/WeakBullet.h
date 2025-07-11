@@ -9,7 +9,7 @@
 class WeakBullet : public AttackBase
 {
 public:
-	static constexpr int BULLET_NUM = 20;
+	static constexpr int BULLET_NUM = 10;
 	static constexpr float MOVE_SPEED = 5.0f;
 
 	static constexpr float SIZE_X = 32.0f;
@@ -31,6 +31,8 @@ public:
 
 	bool End(void);
 
+	void SetIsAlive(bool isAlive);
+
 private:
 
 	Base bullets_[BULLET_NUM];
@@ -38,11 +40,15 @@ private:
 
 	float moveSpeed_;
 
+	/*int imageArray_[IMAGE_ALL_NUM];*/ // 弾の画像配列
+
 	float radius_;
 	float stAngle_;
 	int shotTimer_ = 0;                 // 発射間隔カウント用
 	const int SHOT_INTERVAL = 320;      // 発射間隔（フレーム数）
 	bool canShot_ = true;               // 発射可能かどうか
+
+	float rotate_;
 
 	void ChangeDispPos() override;
 };

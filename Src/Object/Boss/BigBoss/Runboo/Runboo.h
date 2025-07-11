@@ -12,12 +12,12 @@ public:
 
 	static constexpr int WEAK_MAX = 3;
 	static constexpr float MOVE_SPEED = 1.0f;
-	static constexpr int INVI_COUNTER = 180;
+	static constexpr int INVI_COUNTER = 60;
 
-	static constexpr int HALF_X = 100;
+	static constexpr int HALF_X = 70;
 	static constexpr int HALF_Y = Application::SCREEN_SIZE_Y / 2;
 
-	static constexpr int HP_MAX = 100;
+	static constexpr int HP_MAX = 300;
 
 	Runboo();
 	~Runboo();
@@ -36,6 +36,7 @@ public:
 	bool IsInvici(void) { return unit_.inviCounter_ > 0; }
 
 	float GetMoveSpeed(void) { return moveSpeed_; }
+	bool GetWeakAllDeath(void);
 
 	std::vector<Weakness*> GetWeakness(void) { return weak_; }
 

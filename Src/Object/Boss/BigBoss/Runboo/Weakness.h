@@ -6,6 +6,7 @@
 #include"../BossBase.h"
 
 class WeakBullet;
+class Laser;
 
 class Weakness : public BossBase
 {
@@ -16,7 +17,7 @@ public:
 	static constexpr float AMPLITUDE = 1.0f;          
 	static constexpr float MOVE_Y_SPEED = 0.05f;
 
-	static constexpr int HP_MAX = 100;
+	static constexpr int HP_MAX = 10;
 	static constexpr int HP_POS_X = 10;
 	static constexpr int HP_POS_Y = 15;
 
@@ -25,7 +26,6 @@ public:
 	enum ATTACK
 	{
 		NON,
-		BULLET,
 		BOUND,
 	};
 
@@ -48,13 +48,12 @@ public:
 		attack_ = attack;
 	}
 
-	void StateManager(void);
-
 	int GetCnt(void) { return cnt_; }
 
 private:
 
 	WeakBullet* bullet_;
+	Laser* laser_;
 
 	ATTACK attack_;
 
