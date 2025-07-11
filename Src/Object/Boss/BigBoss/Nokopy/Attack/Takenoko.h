@@ -1,16 +1,18 @@
 #pragma once
-#include "../../../../UnitBase.h"
-class Takenoko :
-    public UnitBase
+#include"../../../../Common/Base.h"
+class Takenoko 
 {
 public:
     Takenoko();
-    virtual ~Takenoko() override;
+     ~Takenoko() ;
 
      void Init(Vector2F pos) ;
-     void Update(void) override;
-     void Draw(void) override;
-     void Release(void) override;
-     void IsGround(Collision::DIR dir) override;
+     void Update(void) ;
+     void Draw(void) ;
+     void Release(void) ;
+     void SetPos(Vector2F pos) { obj_.pos_ = pos; }
+    Base GetBase() const { return obj_; } 
+private:
+    Base obj_;
 };
 

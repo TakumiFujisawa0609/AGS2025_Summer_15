@@ -6,20 +6,27 @@ class Wavemboo :
     public AttackBase
 {
 public:
+    static constexpr int MAX_NUM = 13;
+
     Wavemboo();
     virtual ~Wavemboo();
 
-    virtual void Init(const Vector2F* pos) override;
-    virtual void Update(void) override;
-    virtual void Draw(void) override;
-    virtual void Release(void) override;
+     void Init(const Vector2F* pos) override;
+     void Update(void) override;
+     void Draw(void) override;
+     void Release(void) override;
+     std::vector<Base>Get(void);
 
-    virtual const std::vector<Base> Get(void) const override;
-    virtual void On(void) override;
-    virtual void Off(void) override;
-    void Hit(void) { obj_.isAlive_ = false; }
+     void Off(void) { lookOn_ = false; }
+     void Create(void);
+    void LookOn(Vector2F pos) { target_ = pos; lookOn_ = true; }
+    
 private:
     std::vector<Takenoko*>takenokos_;
-
+    std::vector<Base>obj_;
+    Vector2F target_;
+    bool lookOn_;
+    void UpdatePositionTakenokos(void);
+    DIR dir_;
 };
 

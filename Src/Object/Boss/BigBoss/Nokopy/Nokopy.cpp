@@ -73,6 +73,7 @@ void Nokopy::Draw(void)
 	if (unit_.isAlive_) {
 		BossDraw();
 		beam_->Draw();
+		wave_->Draw();
 	}
 }
 
@@ -195,7 +196,7 @@ void Nokopy::Idle(void)
 	if (moveCounter_ < 2) {
 		ChangeState(BossBase::STATE::ATTACK);
 		//ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
-		ChangeAttackState(BAMBEAM);
+		ChangeAttackState(WAVEMBOO);
 		attackCounter_ = 0;
 		return;
 	}
@@ -335,10 +336,16 @@ void Nokopy::UpdateBamBreath(void)
 
 void Nokopy::UpdateWavemboo(void)
 {
-	if (attackCounter_ == 1)wave_->Init(&unit_.pos_);
-
-	if (attackCounter_ > 120) {
+	if (attackCounter_ == 1) {
+		wave_->Init(&unit_.pos_);
+		wave_->LookOn(*playerPosPtr_);
+	}
+	if (attackCounter_ > 1) {
+		wave_->Update();
+	}
+	if (attackCounter_ > 1200) {
 		ChangeState(BossBase::STATE::IDLE);
+		wave_->Off();
 
 	}
 }
