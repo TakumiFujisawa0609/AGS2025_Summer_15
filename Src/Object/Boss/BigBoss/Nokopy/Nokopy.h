@@ -22,6 +22,7 @@ public:
     {
         DRAW_IDLE,
         DRAW_MOVE,
+        DRAW_KNOCKBACK,
         DRAW_BAMBEAM,
         DRAW_BAMBREATH,
         DRAW_WAVEMBOO,
@@ -50,7 +51,7 @@ public:
     void Draw(void) override;
     void Release(void) override;
 
-    //ゲッター関数
+    //ゲッター関数f
     std::vector<Base> GetObj(void) override;
     AttackBase* GetAttackIns(void)override;
     //セッター関数
@@ -90,9 +91,10 @@ private:
     void UpdateBamBreath(void);
     void UpdateWavemboo(void);
     void UpdateRushoot(void);
-    void Damage(void) override;
     void Death(void) override;
-  
+    //ダメージ--------------------------------------------------
+    void Damage(void) override;
+    //-----------------------------------------------------------
     ATTACK attackState_;
     //攻撃パターンの関数ポインタをmapで管理
     std::map<ATTACK, AttackFunc> attackUpdateFuncs_;
@@ -107,8 +109,6 @@ private:
     BamBreath* breath_;
     Rushoot* rush_;
     Wavemboo* wave_;
-    //---------------------------------------------------------------
-
     bool isDive_;       //潜っているか
     void IsGround(Collision::DIR dir) override;
 };

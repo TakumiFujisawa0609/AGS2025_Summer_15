@@ -226,7 +226,7 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 				if (ins.Circle(nokopy_->GetObj()[i], player_->DefaultAtt())) {
 					mana.HitStop(SceneManager::HIT_STOP_TIME);
 					nokopy_->ObjHit(i);
-					bamboo_->Create(nokopy_->GetObj()[i].pos_, 3);
+					bamboo_->Create(nokopy_->GetObj()[i].pos_, 1);
 					player_->SetInvici(50);
 				}
 				for (auto& bpAtc : player_->GetBpAtt()) {

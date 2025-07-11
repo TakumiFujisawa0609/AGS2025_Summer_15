@@ -85,5 +85,6 @@ void BamBeam::On(void)
 
 void BamBeam::Off(void)
 {
+	obj_.isAlive_ = false;
 }
 
