@@ -119,7 +119,8 @@ void BattledomeScene::Update(void)
 
 void BattledomeScene::Draw(void)
 {
-	stage_->Draw();
+	stage_->BackDraw();
+
 	bamboo_->Draw();
 
 	using M = SceneManager;
@@ -131,14 +132,27 @@ void BattledomeScene::Draw(void)
 		nokopy_->Draw();
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
-		runboo_->Draw();
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		bammoon_->Draw();
 		break;
 	}
-	player_->Draw();
+	stage_->Draw();
+
 	blastMng_->Draw();
+	player_->Draw();
+
+	switch (sMng.GetNowBoss())
+	{
+	case SceneManager::BOSS_KINDS::NOKOPY:
+		break;
+	case SceneManager::BOSS_KINDS::RUNBOO:
+		runboo_->Draw();
+		break;
+	case SceneManager::BOSS_KINDS::BAMMOON:
+		bammoon_->DrawHp();
+		break;
+	}
 }
 
 void BattledomeScene::Release(void)
@@ -310,7 +324,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			mana.HitStop(SceneManager::HIT_STOP_TIME);
 			bammoon_->SetDamage(5);
 			bamboo_->Create(bammoon_->GetUnit().pos_, 1, 30);
-			if (bammoon_->GetAttackState() == (int)Bammoon::ATTACK::SWEEP) {
+			if (bammoon_->GetAtState() == Bammoon::ATTACK::SWEEP) {
 				bammoon_->SetDown(player_->GetUnit().pos_);
 			}
 		}
@@ -391,17 +405,37 @@ void BattledomeScene::PlayerToBossAttack(void)
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		int i = 0;
 		for (auto& bAtc : bammoon_->GetObj()) {
-			if (ins.CircleAndRect(bAtc, player_->GetUnit())) {
-				player_->Hit(5, bAtc.pos_);
-				bammoon_->ObjHit(i);
+			switch (bammoon_->GetAtState())
+			{
+			case Bammoon::ATTACK::SWEEP:
+			case Bammoon::ATTACK::BLAST:
+			case Bammoon::ATTACK::PBULLET:
+				if (ins.CircleAndRect(bAtc, player_->GetUnit())) {
+					player_->Hit(5, bAtc.pos_);
+					bammoon_->ObjHit(i);
+				}
+				for (auto& pAtc : player_->GetBpAtt()) {
+					if (ins.CircleAndRect(bAtc, pAtc->GetObj())) {
+						bammoon_->ObjHit(i);
+						pAtc->Hit();
+					}
+				}
+				break;
+			case Bammoon::ATTACK::STRIPE:
+				if (ins.Rect(bAtc, player_->GetUnit())) {
+					player_->Hit(5, bAtc.pos_);
+					bammoon_->ObjHit(i);
+				}
+
+				for (auto& pAtc : player_->GetBpAtt()) {
+					if (ins.Rect(bAtc, pAtc->GetObj())) {
+						bammoon_->ObjHit(i);
+						pAtc->Hit();
+					}
+				}
+				break;
 			}
 
-			for (auto& pAtc : player_->GetBpAtt()) {
-				if (ins.CircleAndRect(bAtc, pAtc->GetObj())) {
-					bammoon_->ObjHit(i);
-					pAtc->Hit();
-				}
-			}
 			i++;
 		}
 		break;

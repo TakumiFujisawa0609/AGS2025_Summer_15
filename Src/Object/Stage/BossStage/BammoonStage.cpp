@@ -15,7 +15,7 @@ BammoonStage::~BammoonStage()
 {
 }
 
-void BammoonStage::Draw(void) 
+void BammoonStage::BackDraw(void)
 {
     int num = (STAGE_CHIP_SIZE * mapData_[0].size()) / HAIKEI_SIZE_X + 1;
 
@@ -41,9 +41,8 @@ void BammoonStage::Draw(void)
             DrawRotaGraph(d.x, d.y, 1, 0, backImg_[i], true);
         }
     }
-
-    StageBase::Draw();
 }
+
 
 void BammoonStage::Load(void) 
 {

@@ -45,6 +45,8 @@ public:
 		return std::vector<Weakness*>{};
 	};
 
+	virtual void DrawHp(void) {};
+
 protected:
 	//ó‘Ô‚²‚Æ‚ÌŠÖ”‚ğŒÄ‚Ô‚½‚ß‚ÌŠÖ”ƒ|ƒCƒ“ƒ^
 	void(BossBase::*stateFuncPtr)(void);

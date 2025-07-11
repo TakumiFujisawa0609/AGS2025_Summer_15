@@ -65,11 +65,7 @@ void Bammoon::Draw(void)
 		DrawBammoonImage();
 		AttackDraw();
 	}
-	Vector2 start, end, size;
-	size = { 800,50 };
-	end = { Application::SCREEN_SIZE_X - 5,Application::SCREEN_SIZE_Y - 20 };
-	start = end - size;
-	DrawBar(start.x, start.y, end.x, end.y, unit_.hp_, HP_MAX, RGB(0, 255, 255));
+
 }
 
 void Bammoon::Release(void)
@@ -92,6 +88,15 @@ void Bammoon::Release(void)
 		}
 		image_[i].clear();
 	}
+}
+
+void Bammoon::DrawHp(void)
+{
+	Vector2 start, end, size;
+	size = { 800,50 };
+	end = { Application::SCREEN_SIZE_X - 5,Application::SCREEN_SIZE_Y - 20 };
+	start = end - size;
+	DrawBar(start.x, start.y, end.x, end.y, unit_.hp_, HP_MAX, RGB(0, 255, 255));
 }
 
 
@@ -216,9 +221,10 @@ void Bammoon::Attack(void)
 		break;
 	}
 	case Bammoon::ATTACK::STRIPE: {
-		int rate = 30;
-		if (counter_ % rate == 0)stripe_->On(counter_ / rate);
-
+		int rate = 5;
+		if (counter_ % rate == 0) {
+			stripe_->On(counter_ / rate);
+		}
 		if (stripe_->End()) {
 			counter_ = 0;
 			unit_.isGravity_ = true;
@@ -388,7 +394,6 @@ void Bammoon::AttackRand(void)
 	else if (r <= 1000) {
 		attackState_ = ATTACK::STRIPE;
 	}
-	attackState_ = ATTACK::STRIPE;
 }
 
 

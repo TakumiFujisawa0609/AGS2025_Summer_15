@@ -76,3 +76,4 @@ void BossBase::SetDown(Vector2F pos)
 
 	ChangeState(STATE::DAMAGE);
 }
+

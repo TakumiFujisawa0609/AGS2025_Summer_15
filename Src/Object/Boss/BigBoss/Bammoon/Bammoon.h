@@ -55,13 +55,15 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
+	void DrawHp(void)override;
+
 	std::vector<Base> GetObj(void) override;
 	AttackBase* GetAttackIns(void)override;
 
 	void SetDamage(int dmg)override;
 	void ObjHit(int i)override;
 
-	int GetAttackState(void)override { return (int)attackState_; }
+	ATTACK GetAtState(void) { return attackState_; }
 
 	void SetDown(Vector2F pos)override;
 

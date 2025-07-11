@@ -14,6 +14,7 @@ public:
 	~StageBase();
 
 	void Init(void);
+	virtual void BackDraw(void);
 	virtual void Draw(void);
 	void Release(void);
 

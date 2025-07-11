@@ -15,7 +15,7 @@ public:
 	BammoonStage();
 	~BammoonStage();
 
-	void Draw(void)override;
+	void BackDraw(void)override;
 
 private:
 	void Load(void)override;
