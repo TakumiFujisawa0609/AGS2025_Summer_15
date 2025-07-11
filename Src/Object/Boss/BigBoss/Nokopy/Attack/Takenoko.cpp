@@ -12,7 +12,7 @@ Takenoko::~Takenoko()
 
 void Takenoko::Init(Vector2F pos)
 {
-	obj_.radius_ = 10;
+ 	obj_.radius_ = 10;
 	obj_.pos_ = pos;
 	obj_.isAlive_ = true;
 }

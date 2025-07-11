@@ -148,6 +148,7 @@ void Nokopy::ObjHit(int i)
 	case Nokopy::BAMBREATH:
 		break;
 	case Nokopy::WAVEMBOO:
+		wave_->Hit(i);
 		break;
 	case Nokopy::RUSHOOT:
 		isRushReflection_ = true;
@@ -196,7 +197,7 @@ void Nokopy::Idle(void)
 	if (moveCounter_ < 2) {
 		ChangeState(BossBase::STATE::ATTACK);
 		//ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
-		ChangeAttackState(WAVEMBOO);
+		ChangeAttackState(RUSHOOT);
 		attackCounter_ = 0;
 		return;
 	}
@@ -343,7 +344,7 @@ void Nokopy::UpdateWavemboo(void)
 	if (attackCounter_ > 1) {
 		wave_->Update();
 	}
-	if (attackCounter_ > 1200) {
+	if (attackCounter_ > 300) {
 		ChangeState(BossBase::STATE::IDLE);
 		wave_->Off();
 

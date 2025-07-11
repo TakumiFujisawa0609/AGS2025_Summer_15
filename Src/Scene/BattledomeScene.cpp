@@ -229,13 +229,31 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 					bamboo_->Create(nokopy_->GetObj()[i].pos_, 3);
 					player_->SetInvici(50);
 				}
+				for (auto& bpAtc : player_->GetBpAtt()) {
+					if (ins.CircleAndRect(nokopy_->GetUnit(), bpAtc->GetObj())) {
+						if (bpAtc->GetPower() >= 3) { mana.SHAKE(); }
+						if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
+						bpAtc->Off();
+						nokopy_->ObjHit(i);
+					}
+				}
 			}
+
 			else {
 				if (ins.CircleAndRect(player_->DefaultAtt(), nokopy_->GetObj()[i])) {
 					mana.HitStop(SceneManager::HIT_STOP_TIME);
 					nokopy_->ObjHit(i);
 					//bamboo_->Create(boss_.GetAttackObj()[i].pos_, 3);
 					player_->SetInvici(50);
+				}
+				//“ÁŽêUŒ‚
+				for (auto& bpAtc : player_->GetBpAtt()) {
+					if (ins.Rect(bpAtc->GetObj(), nokopy_->GetUnit())) {
+						if (bpAtc->GetPower() >= 3) { mana.SHAKE(); }
+						if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
+						bpAtc->Off();
+						nokopy_->ObjHit(i);
+					}
 				}
 			}
 
