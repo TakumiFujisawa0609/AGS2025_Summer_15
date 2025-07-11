@@ -42,7 +42,6 @@ public:
 
 	virtual void SetDown(Vector2F pos);
 
-	//virtual std::vector<BossBase*> GetWeakness(void) { return std::vector<BossBase*>{}; };
 
 	virtual void DrawHp(void) {};
 

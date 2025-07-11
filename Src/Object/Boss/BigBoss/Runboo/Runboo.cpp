@@ -16,7 +16,7 @@ Runboo::~Runboo()
 
 void Runboo::Init()
 {
-
+	image_ = LoadGraph((Application::PATH_IMAGE + "Boss/Runboo/Runboo.png").c_str());
 	moveSpeed_ = MOVE_SPEED;
 
 	BossBase::Init();
@@ -33,7 +33,7 @@ void Runboo::Init()
 	ChangeDispPos();
 	unit_.size_ = { HALF_X * 2 ,HALF_Y * 2 };
 
-	unit_.hp_ = 100;
+	unit_.hp_ = HP_MAX;
 	unit_.isAlive_ = true;
 	unit_.isGravity_ = false;
 	unit_.isStageCollision_ = false;
@@ -45,21 +45,31 @@ void Runboo::Update()
 
 	BossBase::Update();
 
-	/*for (int ii = 0; ii < WEAK_MAX; ii++) {
-		weak_[ii]->Update();
-	}*/
+	const float noiseX = (GetRand(200) - 100) / 500.0f;
+	unit_.nextpos_.x += sinf(weak_[0]->GetCnt()) * Weakness::AMPLITUDE + noiseX;
 
-	for (auto& w : weak_) { w->Update(unit_.pos_); }
+	for (auto& w : weak_)
+	{ 
+		w->Update(unit_.pos_);
+		w->Update();
+	}
 }
 
 void Runboo::Draw()
 {
-	DrawBox(
-		unit_.disppos_.x - HALF_X,
-		unit_.disppos_.y - HALF_Y,
-		unit_.disppos_.x + HALF_X,
-		unit_.disppos_.y + HALF_Y,
-		RGB(255, 255, 255), true
+	DrawRotaGraph(
+		unit_.disppos_.x - 600.0f,
+		unit_.disppos_.y - 16,
+		1.5f, 0.0f, image_,
+		true, true
+	);
+
+	DrawBar(
+		100,
+		Application::SCREEN_SIZE_Y - 80,
+		Application::SCREEN_SIZE_X - 100,
+		Application::SCREEN_SIZE_Y - 30,
+		unit_.hp_, HP_MAX, RGB(100, 100, 200)
 	);
 
 	for (int ii = 0; ii < WEAK_MAX; ii++)weak_[ii]->Draw();
@@ -72,7 +82,10 @@ void Runboo::Release()
 		weak_[ii]->Release();
 		delete weak_[ii];
 	}
+
 	weak_.clear();
+
+	DeleteGraph(image_);
 }
 
 AttackBase* Runboo::GetAttackIns(void)
@@ -80,10 +93,17 @@ AttackBase* Runboo::GetAttackIns(void)
 	return nullptr;
 }
 
-std::vector<Base> Runboo::GetObj(void)
-{
-	return std::vector<Base>();
-}
+//std::vector<Base> Runboo::GetObj(void)
+//{
+//	std::vector<Base> ret;
+//
+//	for (auto& w : weak_)
+//	{
+//		ret.emplace_back(w->GetObj());
+//	}
+//
+//	return ret;
+//}
 
 void Runboo::ObjHit(int i)
 {
