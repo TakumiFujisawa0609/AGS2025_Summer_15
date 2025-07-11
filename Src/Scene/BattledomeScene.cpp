@@ -18,6 +18,9 @@
 
 #include"../Object/Stage/BossStage/NokoPyStage.h"
 #include"../Object/Boss/BigBoss/Nokopy/Nokopy.h"
+#include"../Object/Boss/BigBoss/Runboo/Weakness.h"
+#include"../Object/Boss/BigBoss/Runboo/Attack/WeakBullet.h"
+
 
 BattledomeScene::BattledomeScene()
 {
@@ -241,9 +244,15 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 
 		}
 		break;
-	case SceneManager::BOSS_KINDS::RUNBOO:
+	case SceneManager::BOSS_KINDS::RUNBOO: {
+		int i = 0;
+		for (auto& weak : runboo_->GetWeakness())
+		{
+
+		}
 		break;
-	case SceneManager::BOSS_KINDS::BAMMOON:
+	}
+	case SceneManager::BOSS_KINDS::BAMMOON: {
 		int i = 0;
 		for (auto& bAtc : bammoon_->GetObj()) {
 			if (ins.Circle(bAtc, player_->DefaultAtt())) {
@@ -255,6 +264,7 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 			i++;
 		}
 		break;
+	}
 	}
 }
 
@@ -300,10 +310,22 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
-		/*if (ins.Rect(player_->GetUnit(), boss_->GetUnit()))
+		for (auto& weak : runboo_->GetWeakness())
 		{
-			player_->Hit(10, boss_->GetUnit().pos_);
-		}*/
+			if (ins.Circle(player_->DefaultAtt(), weak->GetUnit()))
+			{
+				weak->SetDamage(1.0f);
+				bamboo_->Create(player_->GetUnit().pos_, 100);
+			}
+			//“ÁŽêUŒ‚
+			for (auto& bpAtc : player_->GetBpAtt()) {
+				if (ins.CircleAndRect(weak->GetUnit(), bpAtc->GetObj())) {
+					if (bpAtc->GetPower() >= 4)mana.SHAKE();
+					mana.HitStop(SceneManager::HIT_STOP_TIME);
+					weak->SetDamage(bpAtc->GetDamage());
+				}
+			}
+		}
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		if (ins.CircleAndRect(player_->DefaultAtt(), bammoon_->GetUnit())) {
@@ -350,7 +372,25 @@ void BattledomeScene::PlayerToBoss(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
+		if (ins.CircleAndRect(player_->GetUnit(), runboo_->GetUnit()))
+		{
+			player_->Hit(10, runboo_->GetUnit().pos_);
+		}
 
+		for (auto& weak : runboo_->GetWeakness())
+		{
+			if (ins.Circle(player_->GetUnit(), weak->GetUnit()))
+			{
+				player_->Hit(5.0f, weak->GetUnit().pos_);
+			}
+		
+			for (auto& weakObj : weak->GetObj()) {
+				if (ins.Circle(player_->GetUnit(), weakObj))
+				{
+					player_->Hit(5.0f, weakObj.pos_);
+				}
+			}
+		}
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		if (ins.Ellipse(player_->GetUnit(), bammoon_->GetUnit())) {

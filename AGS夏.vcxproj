@@ -146,6 +146,7 @@
     <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Nokopy.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Bammoon\Bammoon.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\BossBase.cpp" />
+    <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Attack\Bound.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Attack\WeakBullet.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Runboo.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Weakness.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Nokopy.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Bammoon\Bammoon.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\BossBase.h" />
+    <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Attack\Bound.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Attack\Bullet.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Attack\WeakBullet.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Runboo.h" />

@@ -16,9 +16,18 @@ public:
 	static constexpr float AMPLITUDE = 1.0f;          
 	static constexpr float MOVE_Y_SPEED = 0.05f;
 
-	static constexpr int HP_MAX = 30;
+	static constexpr int HP_MAX = 100;
 	static constexpr int HP_POS_X = 10;
 	static constexpr int HP_POS_Y = 15;
+
+	static constexpr int INVI_COUNTER = 180;
+
+	enum ATTACK
+	{
+		NON,
+		BULLET,
+		BOUND,
+	};
 
 	Weakness();
 	~Weakness();
@@ -32,30 +41,38 @@ public:
 
 	AttackBase* GetAttackIns(void)override;
 	std::vector<Base>GetObj(void)override;
-	void ObjHit(int i)override;
+	void ObjHit(int i);
 	void SetDamage(int dmg)override;
+	void ChengeAttack(ATTACK attack)
+	{
+		attack_ = attack;
+	}
+
+	void StateManager(void);
+
+	int GetCnt(void) { return cnt_; }
 
 private:
 
 	WeakBullet* bullet_;
+
+	ATTACK attack_;
 
 	float moveSpeed_;
 
 	float cnt_;
 	Vector2F start_;
 
+	int image_;
+
 	//待機状態
 	void Idle(void)override;
-
 	//移動状態
 	void Move(void)override;
-
 	//攻撃状態
 	void Attack(void)override;
-
 	//ダメージ状態
 	void Damage(void)override;
-
 	//死亡状態
 	void Death(void)override;
 

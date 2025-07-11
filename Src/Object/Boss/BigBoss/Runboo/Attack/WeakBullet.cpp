@@ -18,19 +18,21 @@ void WeakBullet::Init(const Vector2F* pos)
     canShot_ = true;
 
     obj_.pos_ = *pos;
-    obj_.nextpos_ = obj_.pos_;
 
     for (int i = 0; i < BULLET_NUM; i++) {
         bullets_[i].isAlive_ = false;
         bullets_[i].isDraw_ = false;
         bullets_[i].pos_ = *pos;
-        bullets_[i].radius_ = 20;
+        bullets_[i].radius_ = 30;
+        bullets_[i].size_ = {SIZE_X, SIZE_Y};
     }
+
+    endCnt_ = 0;
 }
 
-void WeakBullet::Update()
+void WeakBullet::Update(Vector2F boss)
 {
-    obj_.pos_.x += moveSpeed_;
+    obj_.pos_.x = boss.x;
 
     if (!canShot_) {
         // 発射不可ならタイマー減算
@@ -65,6 +67,7 @@ void WeakBullet::Update()
             // 発射後はタイマー開始、発射不可にする
             shotTimer_ = SHOT_INTERVAL;
             canShot_ = false;
+            endCnt_++;
         }
     }
 
@@ -88,6 +91,11 @@ void WeakBullet::Update()
     AttackBase::Update();
 }
 
+void WeakBullet::Update()
+{
+ 
+}
+
 void WeakBullet::Draw(void)
 {
     for (int i = 0; i < BULLET_NUM; i++) {
@@ -107,6 +115,20 @@ const std::vector<Base> WeakBullet::Get() const
         ret.emplace_back(bullets_[i]);
     }
     return ret;
+}
+
+void WeakBullet::Hit(void)
+{
+
+}
+
+bool WeakBullet::End(void)
+{
+    if (endCnt_ >= 3)
+    {
+        return true;
+    }
+    return false;
 }
 
 void WeakBullet::ChangeDispPos()
