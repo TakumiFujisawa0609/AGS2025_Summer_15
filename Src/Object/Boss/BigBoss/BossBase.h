@@ -42,7 +42,7 @@ public:
 
 	virtual void SetDown(Vector2F pos);
 
-	virtual std::vector<BossBase*> GetWeakness(void) { return std::vector<BossBase*>{}; };
+	//virtual std::vector<BossBase*> GetWeakness(void) { return std::vector<BossBase*>{}; };
 
 protected:
 	//ó‘Ô‚²‚Æ‚ÌŠÖ”‚ğŒÄ‚Ô‚½‚ß‚ÌŠÖ”ƒ|ƒCƒ“ƒ^

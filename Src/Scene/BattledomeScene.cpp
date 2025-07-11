@@ -229,7 +229,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
-		if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
+		/*if (ins.Rect(player_->GetUnit(), boss_->GetUnit())) {
 			player_->Hit(10, boss_->GetUnit().pos_);
 		}
 
@@ -238,7 +238,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			if (ins.CircleAndRect(w->GetUnit(), player_->GetUnit())) {
 				player_->Hit(10.0f, w->GetUnit().pos_);
 			}
-		}
+		}*/
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		if (ins.CircleAndRect(player_->DefaultAtt(), boss_->GetUnit())) {
