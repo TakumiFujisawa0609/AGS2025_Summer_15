@@ -247,6 +247,7 @@ void Player::DoStateAttack()
 	if (haveB_) {
 		if (ins.IsNew(KEY_INPUT_J) || (nowAttackKey_)) {
 			ChangeState(Player::STATE::BP_ATTACK);
+			ChangeMotion(MOTION::IDLE);
 		}
 	}
 	else {
@@ -347,11 +348,15 @@ void Player::Attack()
 		// モーション更新
 		ChangeMotion(MOTION::SECOND_ATTACK, false);
 		break;
+	case Player::THREE:
+		// モーション更新
+		ChangeMotion(MOTION::THREE_ATTACK, false);
+		break;
 	}
 
 	defaultAttack_->Off();
 
-	if (GetAnimeRatio() > 0.4f && GetAnimeRatio() < 0.6f) {
+	if (GetAnimeRatio() >= 0.4f && GetAnimeRatio() <= 0.6f) {
 		defaultAttack_->On();
 	}
 
@@ -667,6 +672,18 @@ void Player::LoadPlayerImage(void)
 	image_[motion].insert(image_[motion].end(), SecondeAttaclLoad, SecondeAttaclLoad + SECONDE_ATTACK_LOAD_NUM);
 	//-----------------------------------------------------------------------------
 
+	//攻撃３段目状態の画像を読み込み-----------------------------------------------
+	motion = (int)MOTION::THREE_ATTACK;
+
+	int ThreeAttaclLoad[THREE_ATTACK_LOAD_NUM];
+
+	LoadDivGraph((basePath + "ThreeAttack.png").c_str(),
+		THREE_ATTACK_LOAD_NUM, THREE_ATTACK_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, ThreeAttaclLoad);
+
+	image_[motion].insert(image_[motion].end(), ThreeAttaclLoad, ThreeAttaclLoad + THREE_ATTACK_LOAD_NUM);
+	//-----------------------------------------------------------------------------
+
 	//被ダメ状態の画像を読み込み-----------------------------------------------
 	motion = (int)MOTION::DAMAGE;
 
@@ -728,8 +745,8 @@ void Player::DrawPlayer(void)
 
 	if (invic && !evaConpFlg_)SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
 
-	bool Trance = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? true : false;
-	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true, Trance);
+	bool Trance = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? false : true;
+	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y-18, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true, Trance);
 
 	if (invic && !evaConpFlg_)SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }

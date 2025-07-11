@@ -51,7 +51,7 @@ void Pbullet::Init(const Vector2F* pos)
 	}
 }
 
-void Pbullet::Update(void) 
+void Pbullet::Update(void)
 {
 	int i = -1;
 	for (auto& p : obj_) {
@@ -62,10 +62,6 @@ void Pbullet::Update(void)
 
 		p.disppos_ = p.pos_ - Camera::GetInstance().GetPos();
 
-		//float yuka = Collision::GetInstance().GetStageLine(p.pos_, p.size_, Collision::DIR::DOWN);
-		//if (p.pos_.y + (p.size_.y / 2) >= yuka) {
-		//	Hit(i);
-		//}
 		if (Collision::GetInstance().StageCollision(p.pos_, p.size_))Hit(i);
 
 		if (++animeInterval_[i] > ANIME_INTERVAL) {
@@ -81,10 +77,12 @@ void Pbullet::Update(void)
 
 		if (++animeInterval_[i] > ANIME_INTERVAL) {
 			animeInterval_[i] = 0;
-			if (++animeCou_[i] > HIT_ANIME_NUM)hit_[i] = false;
+			if (++animeCou_[i] > HIT_ANIME_NUM) { hit_[i] = false;}
 		}
 	}
-	if(num_>=NUM) end_ = true;
+	if (num_ >= NUM) {
+		end_ = true;
+	}
 }
 
 void Pbullet::Draw(void) 
@@ -128,6 +126,7 @@ void Pbullet::On(int i, Vector2F pPos)
 	num_++;
 
 	obj_[i].pos_ = *boss;
+	obj_[i].disppos_ = obj_[i].pos_ - Camera::GetInstance().GetPos();
 
 	Vector2F v = pPos - obj_[i].pos_;
 	float dis = sqrtf(v.x * v.x + v.y * v.y);

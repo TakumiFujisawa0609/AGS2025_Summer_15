@@ -12,8 +12,8 @@ class Player:public UnitBase
 public:
 
 	//プレイヤー画像サイズ
-	static constexpr int LOAD_SIZE_X = 120;
-	static constexpr int LOAD_SIZE_Y = 80;		
+	static constexpr int LOAD_SIZE_X = 128;
+	static constexpr int LOAD_SIZE_Y = 64;		
 
 	//バンブーパワー画像サイズ
 	static constexpr int BAMBOO_SIZE_X = 64;
@@ -27,14 +27,15 @@ public:
 	static constexpr int SIZE_Y = 40 * SIZE_SCALE;
 	
 	//各モーションのアニメーション枚数
-	static constexpr int IDLE_LOAD_NUM = 10;
-	static constexpr int RUN_LOAD_NUM = 10;
+	static constexpr int IDLE_LOAD_NUM = 8;
+	static constexpr int RUN_LOAD_NUM = 8;
 	static constexpr int JUMP_LOAD_NUM = 3;
 	static constexpr int FALL_LOAD_NUM = 3;
-	static constexpr int FIRST_ATTACK_LOAD_NUM = 4;
-	static constexpr int SECONDE_ATTACK_LOAD_NUM = 6;
-	static constexpr int EVASION_LOAD_NUM = 3;
-	static constexpr int DAMAGE_LOAD_NUM = 1;
+	static constexpr int FIRST_ATTACK_LOAD_NUM = 5;
+	static constexpr int SECONDE_ATTACK_LOAD_NUM = 5;
+	static constexpr int THREE_ATTACK_LOAD_NUM = 6;
+	static constexpr int EVASION_LOAD_NUM = 7;
+	static constexpr int DAMAGE_LOAD_NUM = 4;
 
 
 	//何フレームに１回アニメーションを動かすか
@@ -49,6 +50,7 @@ public:
 		FALL,			//落下状態
 		FIRST_ATTACK,	//攻撃1段目
 		SECOND_ATTACK,	//攻撃2段目
+		THREE_ATTACK,
 		SPECIAL_ATTACK,	//特殊攻撃
 		DAMAGE,			//被ダメージ
 		EVASION,		//回避
@@ -86,7 +88,7 @@ public:
 
 	// 攻撃状態で使用する～～-------------------------------------------------------------------
 	// 定数
-	enum ATTACK { NON = -1, FIRST, SECONDE, MAX, };		//攻撃の段数
+	enum ATTACK { NON = -1, FIRST, SECONDE, THREE, MAX, };		//攻撃の段数
 	static constexpr int INPUT_ATTACK_FRAME = 20;		//次の段につながる時間(フレーム数)
 
 	// 関数

@@ -43,6 +43,7 @@ public:
 		BLAST,
 		PBULLET,
 		STRIPE,
+		CSPHERE,
 
 		MAX,
 	};

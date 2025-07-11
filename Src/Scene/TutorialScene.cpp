@@ -116,6 +116,13 @@ void TutorialScene::Draw(void)
 	player_->Draw();
 	blast_->Draw();
 
+	//int input = GetJoypadInputState(DX_INPUT_PAD1);
+	//for (int i = 0; i < 32; ++i) {
+	//	if (input & (1 << i)) {
+	//		printfDx("PAD_INPUT_%d (0x%04X) ‚ª‰Ÿ‚³‚ê‚Ä‚¢‚Ü‚·\n", i, (1 << i));
+	//	}
+	//}
+
 	DrawString(0, 0, "GameScene", 0xffffff, true);
 }
 

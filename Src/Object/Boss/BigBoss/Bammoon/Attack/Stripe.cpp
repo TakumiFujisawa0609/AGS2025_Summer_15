@@ -53,14 +53,15 @@ void Stripe::Update(void)
 		}
 		else {
 			if (o.inviCounter_ > 0) {
-				if (--o.inviCounter_ <= 0) { o.isAlive_ = false; end_++; }
+				if (--o.inviCounter_ <= 0) { o.isAlive_ = false; }
 			}
 			else {
 				o.pos_.y -= SPEED;
 				o.disppos_ = o.pos_ - Camera::GetInstance().GetPos();
 
 				if (o.pos_.y <= SIZE_Y / 2) {
-					o.inviCounter_ = 200;
+					o.inviCounter_ = 250;
+					end_++;
 					SceneManager::GetInstance().SHAKE();
 				}
 			}
@@ -79,7 +80,7 @@ void Stripe::Draw(void)
 			}
 		}
 		else {
-			if (o.inviCounter_ > 0)SetDrawBlendMode(DX_BLENDMODE_ALPHA, o.inviCounter_ / 2);
+			if (o.inviCounter_ > 0)SetDrawBlendMode(DX_BLENDMODE_ALPHA, o.inviCounter_);
 			DrawRotaGraph(o.disppos_.x, o.disppos_.y, 1, 0, image_, true);
 			if (o.inviCounter_ > 0)SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
