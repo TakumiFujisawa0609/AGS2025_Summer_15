@@ -40,28 +40,8 @@ private:
 
 	int end_;
 
-	const Vector2F S_POS[NUM] =
-	{
-		{SIZE_X,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 2,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 3,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 4,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 5,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 6,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 7,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 8,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 9,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 10,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 11,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 12,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 13,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 14,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 15,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 16,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 17,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 18,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)},
-		{SIZE_X * 19,(float)(Application::SCREEN_SIZE_Y + SIZE_Y) },
-		{SIZE_X * 20,(float)(Application::SCREEN_SIZE_Y + SIZE_Y)}
-	};
+	bool side_;
+
+	static constexpr float POS_Y = (float)(Application::SCREEN_SIZE_Y + SIZE_Y);
 };
 

@@ -432,7 +432,7 @@ void Bammoon::AttackRand(void)
 	else if (r <= 1000) {
 		attackState_ = ATTACK::CSPHERE;
 	}
-
+	attackState_ = ATTACK::STRIPE;
 }
 
 
