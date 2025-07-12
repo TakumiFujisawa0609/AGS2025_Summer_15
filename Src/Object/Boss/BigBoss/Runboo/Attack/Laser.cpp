@@ -32,26 +32,74 @@ void Laser::Init(const Vector2F* pos)
 
 void Laser::Update(Vector2F boss)
 {
-    attackStartPos_ = boss;
-	attackStartPos_.x += 1.0f;
+    shootTimer_++;
+
+    if (shootTimer_ >= INTERVAL && nextIndex_ < MAX_NUM)
+    {
+        if (!obj_[nextIndex_].isDraw_)
+        {
+            obj_[nextIndex_].isAlive_ = true;
+            obj_[nextIndex_].isDraw_ = true;
+            obj_[nextIndex_].pos_ = boss;
+
+            // 方向ベクトル計算
+            Vector2F dir = target_ - boss;
+            float len = sqrtf(dir.x * dir.x + dir.y * dir.y);
+            if (len != 0)
+            {
+                dir.x /= len;
+                dir.y /= len;
+            }
+
+            obj_[nextIndex_].xAccel_ = dir.x * LASER_SPEED;
+            obj_[nextIndex_].yAccel_ = dir.y * LASER_SPEED;
+
+            nextIndex_++;
+            shootTimer_ = 0;
+        }
+    }
 
     for (auto& laser : obj_)
     {
-        if (!laser.isAlive_) continue;
+        if (!laser.isAlive_ || !laser.isDraw_) continue;
 
-        if (!laser.isDraw_)
+        // 位置更新
+        laser.pos_.x += laser.xAccel_;
+        laser.pos_.y += laser.yAccel_;
+
+        // 上下反射処理
+        if (laser.pos_.y < UPPER_BOUND)
         {
-            laser.pos_ = attackStartPos_;  // ← 修正ここ
-            laser.isDraw_ = true;
+            laser.pos_.y = UPPER_BOUND;
+            laser.yAccel_ *= -1;
         }
-        else
+        else if (laser.pos_.y > LOWER_BOUND)
         {
-            laser.pos_.x += ATTACK_SPEED;
-            if (laser.pos_.x > Application::SCREEN_SIZE_X)
-            {
-                laser.isDraw_ = false;
-            }
+            laser.pos_.y = LOWER_BOUND;
+            laser.yAccel_ *= -1;
         }
+
+        // 右端で消す
+        if (laser.pos_.x > Camera::GetInstance().GetPos().x + Application::SCREEN_SIZE_X)
+        {
+            laser.isDraw_ = false;
+            laser.isAlive_ = false;
+        }
+    }
+
+    // すべて消えたら再発射可能に
+    bool allInactive = true;
+    for (const auto& laser : obj_)
+    {
+        if (laser.isDraw_)
+        {
+            allInactive = false;
+            break;
+        }
+    }
+    if (allInactive)
+    {
+        nextIndex_ = 0;
     }
 
     ChangeDispPos();
@@ -102,7 +150,6 @@ bool Laser::End(void)
 
 void Laser::SetIsAlive(bool isAlive)
 {
-
 }
 
 

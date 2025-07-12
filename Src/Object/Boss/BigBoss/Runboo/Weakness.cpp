@@ -17,6 +17,7 @@ Weakness::~Weakness()
 //‰Šú‰»
 void Weakness::Init(Vector2F disppos, float moveSpeed)
 {
+	BossBase::Init();
 	moveSpeed_ = moveSpeed;
 
 	Camera::CreateInstance();
@@ -48,6 +49,9 @@ void Weakness::Init(Vector2F disppos, float moveSpeed)
 	unit_.isStageCollision_ = false;
 
 	attack_ = ATTACK::NON;
+
+	laser_->SetTarget(*playerPosPtr_);
+
 }
 
 void Weakness::Init(void) {}
@@ -88,7 +92,6 @@ void Weakness::Update()
 
 		ChangeState(STATE::DEATH);
 	}
-
 	bullet_->Update(unit_.pos_);
 	laser_->Update(unit_.pos_);
 

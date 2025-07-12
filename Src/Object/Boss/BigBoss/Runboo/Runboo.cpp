@@ -7,6 +7,13 @@
 
 Runboo::Runboo()
 {
+	for (int ii = 0; ii < WEAK_MAX; ii++)
+	{
+		Vector2F weakPos = { unit_.pos_.x, (float)(Application::SCREEN_SIZE_Y / 5.0f) * (ii + 1) };
+
+		weak_.emplace_back(new Weakness());
+		weak_[weak_.size() - 1]->Init(weakPos, moveSpeed_);
+	}
 }
 
 Runboo::~Runboo()
@@ -20,14 +27,7 @@ void Runboo::Init()
 	image_ = LoadGraph((Application::PATH_IMAGE + "Boss/Runboo/Runboo.png").c_str());
 	moveSpeed_ = MOVE_SPEED;
 
-	BossBase::Init();
-	for (int ii = 0; ii < WEAK_MAX; ii++)
-	{
-		Vector2F weakPos = { unit_.pos_.x, (float)(Application::SCREEN_SIZE_Y / 5.0f) * (ii + 1) };
 
-		weak_.emplace_back(new Weakness());
-		weak_[weak_.size() - 1]->Init(weakPos, moveSpeed_);
-	}
 
 	unit_.nextpos_ = { HALF_X, HALF_Y };
 	unit_.pos_ = unit_.nextpos_;
@@ -38,6 +38,8 @@ void Runboo::Init()
 	unit_.isAlive_ = true;
 	unit_.isGravity_ = false;
 	unit_.isStageCollision_ = false;
+
+
 }
 
 void Runboo::Update()
