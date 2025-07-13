@@ -3,6 +3,11 @@
 #include<DxLib.h>
 
 #include"../Manager/SceneManager.h"
+#include"../Manager/Collision.h"
+#include"../Manager/Camera.h"
+
+#include"../Object/Stage/SelectStage/SelectStage.h"
+#include"../Object/Player/Player.h"
 
 BossSelect::BossSelect()
 {
@@ -14,7 +19,23 @@ BossSelect::~BossSelect()
 
 void BossSelect::Init()
 {
+	stage_ = new SelectStage();
+	stage_->Init();
 
+	player_ = new Player();
+	player_->Init();
+	player_->BpOptain();
+
+	Collision::CreateInstance();
+	auto& colli = Collision::GetInstance();
+	colli.Init();
+	colli.SetStage(stage_->GetMapData());
+
+	auto& camera = Camera::GetInstance();
+	camera.Init();
+	camera.SetMapNum(stage_->GetMapNum());
+
+	haveBcou_ = 0;
 }
 
 void BossSelect::Update()
@@ -23,7 +44,8 @@ void BossSelect::Update()
 	auto& m = M::GetInstance();
 
 	if (CheckHitKey(KEY_INPUT_0) == 1) {
-		m.ChangeScene(M::SCENE_ID::TUTORIAL);
+		m.SetBossKinds(M::BOSS_KINDS::TUTORIAL);
+		m.ChangeScene(M::SCENE_ID::BATTLEDONE);
 	}
 
 	if (CheckHitKey(KEY_INPUT_1) == 1) {
@@ -38,14 +60,23 @@ void BossSelect::Update()
 		m.SetBossKinds(M::BOSS_KINDS::BAMMOON);
 		m.ChangeScene(M::SCENE_ID::BATTLEDONE);
 	}
+
+	player_->Update();
+	if (player_->GetHaveB()) { haveBcou_ = 0; }
+	else { if (++haveBcou_ > 200) { player_->BpOptain(); haveBcou_ = 0; } }
+
+	this->Collision();
 }
 
 void BossSelect::Draw()
 {
 	using a = Application;
 
-	DrawBox(0, 0, a::SCREEN_SIZE_X, a::SCREEN_SIZE_Y, RGB(0, 255, 0), true);
+	stage_->BackDraw();
 
+	player_->Draw();
+
+	stage_->Draw();
 	int fontsize = 32;
 	SetFontSize(32);
 	DrawString(0, 0, "‚P‚Åƒ{ƒX‚P", RGB(255, 255, 255));
@@ -55,6 +86,19 @@ void BossSelect::Draw()
 }
 
 void BossSelect::Release()
+{
+	Collision::DeleteInstance();
+
+	player_->Release();
+	delete player_;
+
+	stage_->Release();
+	delete stage_;
+
+}
+
+
+void BossSelect::Collision()
 {
 
 }

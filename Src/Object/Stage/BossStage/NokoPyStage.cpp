@@ -65,9 +65,6 @@ void NokoPyStage::Load(void)
         backImg_[i] = LoadGraph(_T(filePath.c_str()));
     }
 
-    if (!LoadMapData()) {
-        return;
-    }
 }
 
 bool NokoPyStage::LoadMapData(void)
@@ -92,4 +89,8 @@ bool NokoPyStage::LoadMapData(void)
     }
 
     return true;
+}
+
+void NokoPyStage::AddRelease(void)
+{
 }

@@ -16,7 +16,7 @@ public:
 	void Init(void);
 	virtual void BackDraw(void);
 	virtual void Draw(void);
-	virtual void Release(void);
+	void Release(void);
 
 	std::map<int, std::map<int, int>> GetMapData(void) { return mapData_; }
 
@@ -25,6 +25,7 @@ public:
 protected:
 	virtual void Load(void) = 0;
 	virtual bool LoadMapData(void) = 0;
+	virtual void AddRelease(void) = 0;
 
 	int haikei_;
 

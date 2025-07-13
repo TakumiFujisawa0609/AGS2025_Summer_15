@@ -116,13 +116,9 @@ void Player::Update()
 
 	Animation();
 
-
 	(this->*stateFuncPtr)();
+
 	Respawn();
-	if (CheckHitKey(KEY_INPUT_P) == 1) {
-		SceneManager::GetInstance().ZoomPos(unit_.disppos_);
-		SceneManager::GetInstance().ZoomScale(1.4);
-	}
 
 	for (auto& t : BpAtIns_) {
 		t->Update();
@@ -130,14 +126,14 @@ void Player::Update()
 
 	UnitBase::Update();
 
-	if (startPos_.x >= unit_.disppos_.x)
-	{
-		unit_.disppos_.x = startPos_.x;
-	}
-	if (startPos_.x + Application::SCREEN_SIZE_X <= unit_.disppos_.x)
-	{
-		unit_.disppos_.x = startPos_.x + Application::SCREEN_SIZE_X;
-	}
+	//if (startPos_.x >= unit_.disppos_.x)
+	//{
+	//	unit_.disppos_.x = startPos_.x;
+	//}
+	//if (startPos_.x + Application::SCREEN_SIZE_X <= unit_.disppos_.x)
+	//{
+	//	unit_.disppos_.x = startPos_.x + Application::SCREEN_SIZE_X;
+	//}
 }
 
 void Player::Draw()

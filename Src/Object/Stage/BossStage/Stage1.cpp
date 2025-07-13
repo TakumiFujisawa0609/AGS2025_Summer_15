@@ -22,7 +22,6 @@ void Stage1::Draw(void)
 void Stage1::Load(void)
 {
 
-	LoadMapData();
 }
 
 bool Stage1::LoadMapData(void)
@@ -48,4 +47,8 @@ bool Stage1::LoadMapData(void)
 	}
 
 	return true;
+}
+
+void Stage1::AddRelease(void)
+{
 }

@@ -129,7 +129,7 @@ void BattledomeScene::Update(void)
 
 	UnitCollision();
 	//スクロール処理は田中に任せた
-	if (SceneManager::GetInstance().GetNowBoss() == SceneManager::BOSS_KINDS::RUNBOO) Scroll();
+	Scroll();
 }
 
 void BattledomeScene::Draw(void)
@@ -155,6 +155,7 @@ void BattledomeScene::Draw(void)
 		bammoon_->Draw();
 		break;
 	}
+
 	stage_->Draw();
 
 	blastMng_->Draw();
@@ -163,7 +164,6 @@ void BattledomeScene::Draw(void)
 	switch (sMng.GetNowBoss())
 	{
 	case M::BOSS_KINDS::TUTORIAL:
-
 		break;
 	case M::BOSS_KINDS::NOKOPY:
 		break;
@@ -245,7 +245,37 @@ void BattledomeScene::Scroll(void)
 {
 	Camera& camera = Camera::GetInstance();
 
-	camera.Follow(Camera::X, 1.0f);
+	using M = SceneManager;
+	auto& sMng = M::GetInstance();
+
+	switch (sMng.GetNowBoss())
+	{
+	case SceneManager::BOSS_KINDS::TUTORIAL:
+		if (!tutorial_->GetEnCount()) {
+			if (player_->GetUnit().disppos_.x > Application::SCREEN_SIZE_X / 7 * 3 &&
+				!((camera.GetPos().x + Application::SCREEN_SIZE_X) >= TutorialStage::STAGE_CHIP_SIZE * stage_->GetMapNum().x)) {
+				camera.Follow(Camera::dir::X, (player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_);
+			}
+
+			if (player_->GetUnit().disppos_.x < Application::SCREEN_SIZE_X / 7 * 2 &&
+				!(camera.GetPos().x <= 0)) {
+				camera.Follow(Camera::dir::X, -((player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_));
+			}
+		}
+		else {
+			if (!camera.BossSet()) {
+				camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
+			}
+		}
+		break;
+	case SceneManager::BOSS_KINDS::RUNBOO:
+		camera.Follow(Camera::X, 1.0f);
+		break;
+	case SceneManager::BOSS_KINDS::NOKOPY:
+	case SceneManager::BOSS_KINDS::BAMMOON:
+		break;
+	}
+
 }
 
 void BattledomeScene::PlayerAttackToBossAttack(void)
@@ -265,6 +295,26 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
 				tutorial_->ObjHit(i);
 				player_->SetInvici(50);
+				switch (tutorial_->GetAttack())
+				{
+				case BossTutorial::BULLET:
+					bamboo_->Create(tutorial_->GetAttackObj()[i].pos_, 1, 5);
+					break;
+				case BossTutorial::BLAST:
+					bamboo_->Create(tutorial_->GetAttackObj()[i].pos_, 1);
+					break;
+				case BossTutorial::SLASH:
+				case BossTutorial::ROAR:
+					break;
+				}
+			}
+
+			for (auto& bpAtt : player_->GetBpAtt()) {
+				if (ins.CircleAndRect(at, bpAtt->GetObj())) {
+					mana.HitStop(SceneManager::HIT_STOP_TIME);
+					tutorial_->ObjHit(i);
+					bpAtt->Hit();
+				}
 			}
 
 			i++;
@@ -321,7 +371,31 @@ void BattledomeScene::PlayerAttackToBoss(void)
 	switch (mana.GetNowBoss())
 	{
 	case M::BOSS_KINDS::TUTORIAL:
+		if (ins.CircleAndRect(player_->DefaultAtt(), tutorial_->GetUnit())) {
+			if ((tutorial_->GetAttack() == BossTutorial::ATTACK::SLASH && tutorial_->GetDrawpat() == BossTutorial::DRAWPAT::E_SLASH_START) ||
+				tutorial_->GetAttack() == BossTutorial::ATTACK::TACKLE) {
+				tutorial_->SetDown(player_->DefaultAtt().pos_);
+				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				player_->SetInvici(50);
+				bamboo_->Create(tutorial_->GetUnit().pos_, 1);
+			}
+			else {
+				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				tutorial_->SetDamage(5);
+				bamboo_->Create(tutorial_->GetUnit().pos_, 1, 30);
+			}
+		}
 
+		for (auto& bpAtt : player_->GetBpAtt()) {
+			if (ins.Rect(bpAtt->GetObj(), tutorial_->GetUnit())) {
+				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				if (bpAtt->GetPower() >= 3) { mana.SHAKE(); }
+				if (bpAtt->GetPower() >= 5) { mana.ZoomPos(bpAtt->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
+				bpAtt->Off();
+				tutorial_->SetDamage(bpAtt->GetDamage());
+				blastMng_->On(bpAtt->GetObj().pos_);
+			}
+		}
 		break;
 	case M::BOSS_KINDS::NOKOPY:
 		if (nokopy_->GetUnit().isCircle_) {		//ボスの当たり判定が円形
@@ -433,9 +507,17 @@ void BattledomeScene::PlayerToBossAttack(void)
 	auto& mana = M::GetInstance().GetInstance();
 	switch (mana.GetNowBoss())
 	{
-	case M::BOSS_KINDS::TUTORIAL:
-
+	case M::BOSS_KINDS::TUTORIAL: {
+		int i = 0;
+		for (auto& at : tutorial_->GetAttackObj()) {
+			if (ins.CircleAndRect(at, player_->GetUnit())) {
+				player_->Hit(5, at.pos_);
+				tutorial_->ObjHit(i);
+			}
+			i++;
+		}
 		break;
+	}
 	case M::BOSS_KINDS::NOKOPY:
 		for (int i = 0; i < nokopy_->GetObj().size(); i++) {
 			if (nokopy_->GetObj()[i].isCircle_) {
