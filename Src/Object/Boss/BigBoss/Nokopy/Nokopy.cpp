@@ -376,6 +376,9 @@ void Nokopy::UpdateRushoot(void)
 	Vector2F targetPos = { 0,0 };
 	Vector2F centerPos = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
 	static Vector2F vecN = { 0,0 };
+	if (isRushReflection_) {
+		ChangeState(STATE::DAMAGE);
+	}
 	if (num >= 5) {
 		unit_.nextpos_.x = SPAWN_POS_RIGHT;
 		unit_.nextpos_.y = SPAWN_POS_Y;
@@ -384,13 +387,9 @@ void Nokopy::UpdateRushoot(void)
 		num = 0;
 		ChangeState(STATE::IDLE);
 	}
-	if (isRushReflection_) {
-		ChangeState(STATE::DAMAGE);
-	}
 	if (attackCounter_ == 1) {
 		rush_->Init(&unit_.pos_);
 	}
-	rush_->Update();
 	if (attackCounter_ < 30) {
 		isDive_ = true;
 		unit_.isStageCollision_ = false;
@@ -407,14 +406,15 @@ void Nokopy::UpdateRushoot(void)
 	float length =sqrtf( vec.x * vec.x + vec.y * vec.y);
 	vecN = vec / length;
 	}	
-	if (rushCounter>40&&rushCounter < 120) {
+	if (rushCounter < 120) {
 		unit_.nextpos_ += vecN*unit_.speed_*(num+1);
 	}
 	else {
 	num++;
+	rushCounter = 0;
 	}
-	if (SceneManager::GetInstance().ThatsNotRight(1, num))rushCounter = 0;
 
+	rush_->Update();
 
 }
 
