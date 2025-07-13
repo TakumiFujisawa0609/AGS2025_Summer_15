@@ -5,6 +5,7 @@ class BamBeam;
 class BamBreath;
 class Rushoot;
 class Wavemboo;
+class Spine;
 
 class Nokopy : public BossBase
 {
@@ -24,8 +25,8 @@ public:
         DRAW_MOVE,
         DRAW_KNOCKBACK,
         DRAW_BAMBEAM,
-        DRAW_BAMBREATH,
         DRAW_WAVEMBOO,
+        DRAW_SPINE,
         DRAW_RUSHOOT,
 
         DRAW_MAX,
@@ -35,10 +36,9 @@ public:
     {
         NON = -1,
         BAMBEAM,
-        BAMBREATH,
         WAVEMBOO,
         RUSHOOT,
-
+        SPINE,
 
         MAX,
     };
@@ -63,6 +63,7 @@ public:
     //攻撃パターンの関数ポインタ
     using AttackFunc = void(Nokopy::*)();
     void OnRushReflection(void) { isRushReflection_ = true; }
+    void DrawHp(void);
 private:
     //状態ごとのハンドル番号
     int img_[DRAW::DRAW_MAX];
@@ -90,9 +91,9 @@ private:
     void ChangeAttackState(ATTACK atc);
     //攻撃の状態ごとの行動
     void UpdateBamBeam(void);
-    void UpdateBamBreath(void);
     void UpdateWavemboo(void);
     void UpdateRushoot(void);
+    void UpdateSpine(void);
     void Death(void) override;
     //ダメージ--------------------------------------------------
     void Damage(void) override;
@@ -108,9 +109,9 @@ private:
     bool isRushReflection_;
     //攻撃用インスタンス
     BamBeam* beam_;
-    BamBreath* breath_;
     Rushoot* rush_;
     Wavemboo* wave_;
+    Spine* spine_;
     bool targetLine_ = false;
     Vector2F targetVec_;
 

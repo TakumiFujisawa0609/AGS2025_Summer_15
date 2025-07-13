@@ -1,9 +1,9 @@
 #include<cmath>
 #include "Nokopy.h"
 #include"Attack/BamBeam.h"
-#include"Attack/BamBreath.h"
 #include"Attack/Wavemboo.h"
 #include"Attack/Rushoot.h"
+#include"Attack/Spine.h"
 #include"../../../../Utility/ShapesPosition.h"
 
 Nokopy::Nokopy()
@@ -34,9 +34,9 @@ void Nokopy::Init(void)
 	std::string path = "Data/Image/Boss/Nokopy/";
 	img_[DRAW::DRAW_IDLE] = LoadGraph((path + "Idle.png").c_str());
 	img_[DRAW::DRAW_BAMBEAM] = LoadGraph((path + "Beam.png").c_str());
-	img_[DRAW::DRAW_BAMBREATH] = LoadGraph((path + "Breath.png").c_str());
 	img_[DRAW::DRAW_WAVEMBOO] = LoadGraph((path + "Wave.png").c_str());
 	img_[DRAW::DRAW_RUSHOOT] = LoadGraph((path + "Rush.png").c_str());
+	img_[DRAW::DRAW_SPINE] = LoadGraph((path + "Spine.png").c_str());
 
 	DrawPat_ = DRAW_IDLE;
 	//-------------------------------------------------------------------
@@ -47,7 +47,6 @@ void Nokopy::Init(void)
 	//攻撃の初期化
 	//攻撃用インスタンスの実体化
 	beam_ = new BamBeam();
-	breath_ = new BamBreath();
 	rush_ = new Rushoot();
 	wave_ = new Wavemboo();
 	attackState_ = NON;
@@ -55,9 +54,9 @@ void Nokopy::Init(void)
 	//攻撃パターン
 	attackUpdateFuncs_ = {
 		{BAMBEAM,&Nokopy::UpdateBamBeam},
-		{BAMBREATH,&Nokopy::UpdateBamBreath},
 		{RUSHOOT,&Nokopy::UpdateRushoot},
-		{WAVEMBOO,&Nokopy::UpdateWavemboo}
+		{WAVEMBOO,&Nokopy::UpdateWavemboo},
+		{SPINE,&Nokopy::UpdateSpine}
 	};
 	attackCounter_ = 0;
 	//------------------------------------------------------------------
@@ -80,6 +79,7 @@ void Nokopy::Draw(void)
 	if (targetLine_) {
 		DrawLine(unit_.pos_.x, unit_.pos_.y, targetPos_.x+10, targetPos_.y+10, GetColor(0, 255, 30));
 	}
+	DrawHp();
 }
 
 void Nokopy::Release(void)
@@ -96,15 +96,14 @@ std::vector<Base> Nokopy::GetObj(void)
 	case Nokopy::BAMBEAM:
 		ret = beam_->Get();
 		break;
-	case Nokopy::BAMBREATH:
-		ret = breath_->Get();
-		break;
 	case Nokopy::WAVEMBOO:
 		ret = wave_->Get();
 		break;
 	case Nokopy::RUSHOOT:
 		ret = rush_->Get();
 		break;
+	case Nokopy::SPINE:
+		ret = spine_->Get();
 	}
 	return ret;
 
@@ -118,12 +117,12 @@ AttackBase* Nokopy::GetAttackIns(void)
 		break;
 	case Nokopy::BAMBEAM:
 		return beam_;
-	case Nokopy::BAMBREATH:
-		return breath_;
 	case Nokopy::WAVEMBOO:
 		return wave_;
 	case Nokopy::RUSHOOT:
 		return rush_;
+	case Nokopy::SPINE:
+		return spine_;
 	}
 	return nullptr;
 }
@@ -155,13 +154,13 @@ void Nokopy::ObjHit(int i)
 	case Nokopy::BAMBEAM:
 		beam_->Hit();
 		break;
-	case Nokopy::BAMBREATH:
-		break;
 	case Nokopy::WAVEMBOO:
 		wave_->Hit(i);
 		break;
 	case Nokopy::RUSHOOT:
 		break;
+	case Nokopy::SPINE:
+		spine_->Hit(i);
 	}
 
 }
@@ -178,9 +177,6 @@ void Nokopy::BossDraw(void)
 		break;
 	case Nokopy::DRAW_BAMBEAM:
 		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, GetColor(255, 0, 0), true);
-		break;
-	case Nokopy::DRAW_BAMBREATH:
-		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, GetColor(0, 255, 0), true);
 		break;
 	case Nokopy::DRAW_WAVEMBOO:
 		DrawCircle(unit_.pos_.x, unit_.pos_.y, unit_.radius_, GetColor(0, 255, 255), true);
@@ -211,14 +207,21 @@ void Nokopy::Idle(void)
 		attackCounter_ = 0;
 		ChangeState(BossBase::STATE::ATTACK);
 		//ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
-		ChangeAttackState(RUSHOOT);
+		ChangeAttackState(WAVEMBOO);
 		return;
 	}
 	//移動遷移
 	ChangeState(BossBase::STATE::MOVE);
 	DrawPat_ = DRAW_MOVE;
 }
-
+void Nokopy::DrawHp(void)
+{
+	Vector2 start, end, size;
+	size = { 800,50 };
+	end = { Application::SCREEN_SIZE_X - 5,Application::SCREEN_SIZE_Y - 20 };
+	start = end - size;
+	DrawBar(start.x, start.y, end.x, end.y, unit_.hp_, BOSS_HP, RGB(0, 255, 255));
+}
 void Nokopy::Move(void)
 {
 	moveCounter_++;
@@ -318,10 +321,6 @@ void Nokopy::ChangeAttackState(ATTACK atc)
 		attackState_ = BAMBEAM;
 		DrawPat_ = DRAW_BAMBEAM;
 		break;
-	case Nokopy::BAMBREATH:
-		attackState_ = BAMBREATH;
-		DrawPat_ = DRAW_BAMBREATH;
-		break;
 	case Nokopy::WAVEMBOO:
 		attackState_ = WAVEMBOO;
 		DrawPat_ = DRAW_WAVEMBOO;
@@ -349,19 +348,11 @@ void Nokopy::UpdateBamBeam(void)
 	}
 }
 
-void Nokopy::UpdateBamBreath(void)
-{
-	if (attackCounter_ == 1)breath_->Init(&unit_.pos_);
 
-	if (attackCounter_ > 120) {
-		ChangeState(BossBase::STATE::IDLE);
-
-	}
-}
 
 void Nokopy::UpdateWavemboo(void)
 {
-	if (attackCounter_ == 1) {
+	if (attackCounter_ == 0) {
 		wave_->Init(&unit_.pos_);
 		wave_->LookOn(*playerPosPtr_);
 	}
@@ -424,6 +415,18 @@ void Nokopy::UpdateRushoot(void)
 
 	rush_->Update();
 
+}
+
+void Nokopy::UpdateSpine(void)
+{
+	if (attackCounter_ == 0)spine_->Init(&unit_.pos_);
+	if (attackCounter_ > 1) {
+		spine_->Update();
+	}
+	if (attackCounter_ > 180) {
+		ChangeState(BossBase::STATE::IDLE);
+		spine_->Off();
+	}
 }
 
 void Nokopy::IsGround(Collision::DIR dir)
