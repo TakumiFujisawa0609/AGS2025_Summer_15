@@ -50,7 +50,7 @@ void Weakness::Init(Vector2F disppos, float moveSpeed)
 
 	attack_ = ATTACK::NON;
 
-	laser_->SetTarget(*playerPosPtr_);
+	laser_->SetTarget(playerPosPtr_);
 
 }
 

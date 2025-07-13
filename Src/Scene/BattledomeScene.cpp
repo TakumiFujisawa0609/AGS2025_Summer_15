@@ -51,10 +51,7 @@ void BattledomeScene::Init(void)
 	case SceneManager::BOSS_KINDS::RUNBOO:
 		stage_ = new TutorialStage();
 		runboo_ = new Runboo();
-		for (auto& weak : runboo_->GetWeakness())
-		{
-			weak->SetPlayerPosPtr(&player_->GetUnit().pos_);
-		}
+		runboo_->SetPlayerPosPtr(&player_->GetUnit().pos_);
 		runboo_->Init();
 
 		break;

@@ -37,13 +37,13 @@ public:
 
 	void SetIsAlive(bool isAlive);
 
-	void SetTarget(Vector2F target) { target_ = target; }
+	void SetTarget(const Vector2F* target) { target_ = target; }
 
 private:
 	std::vector<Base> obj_;
 
 	Vector2F attackStartPos_;
-	Vector2F target_;
+	const Vector2F* target_;
 	int cnt_;
 
 	int shootTimer_ = 0;

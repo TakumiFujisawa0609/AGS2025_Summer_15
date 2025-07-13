@@ -43,7 +43,7 @@ void Laser::Update(Vector2F boss)
             obj_[nextIndex_].pos_ = boss;
 
             // 方向ベクトル計算
-            Vector2F dir = target_ - boss;
+            Vector2F dir = *target_ - boss;
             float len = sqrtf(dir.x * dir.x + dir.y * dir.y);
             if (len != 0)
             {
