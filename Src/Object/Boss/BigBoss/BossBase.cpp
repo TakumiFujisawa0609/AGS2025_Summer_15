@@ -74,6 +74,5 @@ void BossBase::SetDown(Vector2F pos)
 
 	unit_.nextpos_.y += unit_.yAccel_;
 
-	ChangeState(STATE::DAMAGE);
 }
 

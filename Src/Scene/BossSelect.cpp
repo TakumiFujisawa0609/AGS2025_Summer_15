@@ -22,6 +22,10 @@ void BossSelect::Update()
 	using M = SceneManager;
 	auto& m = M::GetInstance();
 
+	if (CheckHitKey(KEY_INPUT_0) == 1) {
+		m.ChangeScene(M::SCENE_ID::TUTORIAL);
+	}
+
 	if (CheckHitKey(KEY_INPUT_1) == 1) {
 		m.SetBossKinds(M::BOSS_KINDS::NOKOPY);
 		m.ChangeScene(M::SCENE_ID::BATTLEDONE);

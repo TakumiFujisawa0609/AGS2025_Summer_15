@@ -16,7 +16,7 @@ public:
 	void Init(void);
 	virtual void BackDraw(void);
 	virtual void Draw(void);
-	void Release(void);
+	virtual void Release(void);
 
 	std::map<int, std::map<int, int>> GetMapData(void) { return mapData_; }
 

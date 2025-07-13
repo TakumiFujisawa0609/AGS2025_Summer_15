@@ -45,6 +45,7 @@ public:
 		PBULLET,
 		STRIPE,
 		CSPHERE,
+		BAMLINE,
 
 		MAX,
 	};
@@ -58,6 +59,8 @@ public:
 		1//CSPHERE
 	};
 
+	static constexpr int DEATH_DIRECTION_TIME = 150;
+
 	Bammoon();
 	~Bammoon();
 
@@ -70,7 +73,7 @@ public:
 
 	std::vector<Base> GetObj(void) override;
 	int GetObjDamage(void) { return (attackState_ != ATTACK::NON) ? ATTACKDMG[(int)attackState_] : 0; }
-	AttackBase* GetAttackIns(void)override;
+	AttackBase* GetAttackIns(void)override { return nullptr; }
 
 	void SetDamage(int dmg)override;
 	void ObjHit(int i)override;
@@ -144,7 +147,7 @@ private:
 	//ŠÖ”
 
 	//•Ï”
-
+	int deathCou_;
 
 
 	//w’è‚µ‚½À•W‚Ì•ûŒü‚ğŒü‚­
