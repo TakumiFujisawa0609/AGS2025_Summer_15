@@ -54,13 +54,15 @@ public:
     //ゲッター関数f
     std::vector<Base> GetObj(void) override;
     AttackBase* GetAttackIns(void)override;
+    int GetAttackState(void)override;
+
     //セッター関数
     void SetDamage(int dmg)override;
     void ObjHit(int i)override;
 
     //攻撃パターンの関数ポインタ
     using AttackFunc = void(Nokopy::*)();
-
+    void OnRushReflection(void) { isRushReflection_ = true; }
 private:
     //状態ごとのハンドル番号
     int img_[DRAW::DRAW_MAX];
@@ -109,6 +111,10 @@ private:
     BamBreath* breath_;
     Rushoot* rush_;
     Wavemboo* wave_;
+    bool targetLine_ = false;
+    Vector2F targetVec_;
+
+
     bool isDive_;       //潜っているか
     void IsGround(Collision::DIR dir) override;
 };

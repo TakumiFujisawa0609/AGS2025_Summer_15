@@ -77,6 +77,9 @@ void Nokopy::Draw(void)
 		beam_->Draw();
 		wave_->Draw();
 	}
+	if (targetLine_) {
+		DrawLine(unit_.pos_.x, unit_.pos_.y, targetPos_.x+10, targetPos_.y+10, GetColor(0, 255, 30));
+	}
 }
 
 void Nokopy::Release(void)
@@ -125,6 +128,11 @@ AttackBase* Nokopy::GetAttackIns(void)
 	return nullptr;
 }
 
+int Nokopy::GetAttackState(void)
+{
+	return attackState_;
+}
+
 void Nokopy::SetDamage(int dmg)
 {
 	if (unit_.hp_ <= 0) return;
@@ -136,7 +144,7 @@ void Nokopy::SetDamage(int dmg)
 	if (unit_.hp_ <= 0) {
 		unit_.isAlive_ = false;
 	}
-	//isRushReflection_ = true;
+
 
 }
 
@@ -153,7 +161,6 @@ void Nokopy::ObjHit(int i)
 		wave_->Hit(i);
 		break;
 	case Nokopy::RUSHOOT:
-		isRushReflection_ = true;
 		break;
 	}
 
@@ -261,10 +268,10 @@ void Nokopy::Move(void)
 
 void Nokopy::Attack(void)
 {
-	attackCounter_++;
 	//アタックの状態遷移
 	auto it = attackUpdateFuncs_.find(attackState_);
 	(this->*(it->second))();
+	attackCounter_++;
 
 	//デバック用（アタックの状態を攻撃をしてないときの状態にする）
 	if (CheckHitKey(KEY_INPUT_U) == 1) {
@@ -282,12 +289,11 @@ void Nokopy::Attack(void)
 
 void Nokopy::Damage(void)
 {
-	unit_.yAccel_ =- 10;
-	if (unit_.pos_.x > playerPosPtr_->x) {
-		unit_.xAccel_ = -10;
-	}
-	else {
-		unit_.xAccel_ = 10;
+	static int counter = 0;
+	counter++;
+	if (counter > 15) {
+		isDive_ = false;
+		unit_.isStageCollision_ = true;
 	}
 	if (unit_.yAccel_ == 0) {
 	ChangeState(STATE::IDLE);
@@ -373,10 +379,16 @@ void Nokopy::UpdateRushoot(void)
 {
 	static int num = 0;
 	static int rushCounter = 0;
-	Vector2F targetPos = { 0,0 };
 	Vector2F centerPos = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
 	static Vector2F vecN = { 0,0 };
+
 	if (isRushReflection_) {
+
+		unit_.isGravity_ = true;
+		attackCounter_ = 0;
+		vecN = { 0,0 };
+		num = 0;
+		SetDown(*playerPosPtr_);
 		ChangeState(STATE::DAMAGE);
 	}
 	if (num >= 5) {
@@ -387,31 +399,27 @@ void Nokopy::UpdateRushoot(void)
 		num = 0;
 		ChangeState(STATE::IDLE);
 	}
-	if (attackCounter_ == 1) {
+	if (attackCounter_ == 0) {
 		rush_->Init(&unit_.pos_);
-	}
-	if (attackCounter_ < 30) {
+	}else if (attackCounter_ < 30) {
 		isDive_ = true;
 		unit_.isStageCollision_ = false;
 		unit_.nextpos_.y += (unit_.pos_.y <= Application::SCREEN_SIZE_Y) ? unit_.speed_ : 0;
-	}
-	if (attackCounter_ > 40) {
-		rushCounter++;
-	}
-	if (rushCounter == 1) {
+	}else if (attackCounter_ < 31) {
 	Vector2F pos = ShapesPosition::GetOnePositionCircle(centerPos.x, centerPos.y, Application::SCREEN_SIZE_X / 2, GetRand(AsoUtility::Deg2RadF(360)));
 	unit_.nextpos_ = pos;
-	targetPos = *playerPosPtr_;
-	Vector2F vec = targetPos - pos;
-	float length =sqrtf( vec.x * vec.x + vec.y * vec.y);
-	vecN = vec / length;
-	}	
-	if (rushCounter < 120) {
+	targetPos_ = *playerPosPtr_;
+	targetVec_ = targetPos_ - pos;
+	float length =sqrtf(targetVec_.x * targetVec_.x + targetVec_.y * targetVec_.y);
+	vecN = targetVec_ / length;
+	}else if (attackCounter_ <50) {
+		targetLine_ = true;
+	}else if (attackCounter_ <120) {
+		targetLine_ = false;
 		unit_.nextpos_ += vecN*unit_.speed_*(num+1);
-	}
-	else {
+	}else{
 	num++;
-	rushCounter = 0;
+	attackCounter_ = 0;
 	}
 
 	rush_->Update();
