@@ -10,6 +10,9 @@
 #include"../Object/Player/Player.h"
 #include"../Object/Bamboo/BambooManager.h"
 
+#include"../Object/Boss/Tutorial/BossTutorial.h"
+#include"../Object/Stage/Tutorial/TutorialStage.h"
+
 #include"../Object/Stage/Tutorial/TutorialStage.h"
 #include"../Object/Boss/BigBoss/Runboo/Runboo.h"
 
@@ -38,20 +41,26 @@ void BattledomeScene::Init(void)
 	//種類ごとにボスとステージを読み込む
 	switch (sMng.GetNowBoss())
 	{
-	case SceneManager::BOSS_KINDS::NOKOPY:
+	case M::BOSS_KINDS::TUTORIAL:
+		stage_ = new TutorialStage();
+		tutorial_ = new BossTutorial();
+		tutorial_->Init();
+		tutorial_->SetPlayer(player_);
+		break;
+	case M::BOSS_KINDS::NOKOPY:
 		stage_ = new NokoPyStage();
 		nokopy_ = new Nokopy();
 		nokopy_->SetPlayerPosPtr(&player_->GetUnit().pos_);
 		nokopy_->Init();
 
 		break;
-	case SceneManager::BOSS_KINDS::RUNBOO:
+	case M::BOSS_KINDS::RUNBOO:
 		stage_ = new TutorialStage();
 		runboo_ = new Runboo();
 		runboo_->SetPlayerPosPtr(&player_->GetUnit().pos_);
 		runboo_->Init();
 		break;
-	case SceneManager::BOSS_KINDS::BAMMOON:
+	case M::BOSS_KINDS::BAMMOON:
 		stage_ = new BammoonStage();
 		bammoon_ = new Bammoon();
 		bammoon_->SetPlayerPosPtr(&player_->GetUnit().pos_);
@@ -88,22 +97,28 @@ void BattledomeScene::Update(void)
 
 	switch (sMng.GetNowBoss())
 	{
-	case SceneManager::BOSS_KINDS::NOKOPY:
+	case M::BOSS_KINDS::TUTORIAL:
+		tutorial_->Update();
+		if (!tutorial_->GetUnit().isAlive_) {
+			sMng.ChangeScene(M::SCENE_ID::CLEAR);
+		}
+		break;
+	case M::BOSS_KINDS::NOKOPY:
 		nokopy_->Update();
 		if (!nokopy_->GetUnit().isAlive_) {
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
+			sMng.ChangeScene(M::SCENE_ID::CLEAR);
 		}
 		break;
-	case SceneManager::BOSS_KINDS::RUNBOO:
+	case M::BOSS_KINDS::RUNBOO:
 		runboo_->Update();
 		if (!runboo_->GetUnit().isAlive_) {
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
+			sMng.ChangeScene(M::SCENE_ID::CLEAR);
 		}
 		break;
-	case SceneManager::BOSS_KINDS::BAMMOON:
+	case M::BOSS_KINDS::BAMMOON:
 		bammoon_->Update();
 		if (!bammoon_->GetUnit().isAlive_) {
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
+			sMng.ChangeScene(M::SCENE_ID::CLEAR);
 		}
 		break;
 	}
@@ -128,12 +143,15 @@ void BattledomeScene::Draw(void)
 
 	switch (sMng.GetNowBoss())
 	{
-	case SceneManager::BOSS_KINDS::NOKOPY:
+	case M::BOSS_KINDS::TUTORIAL:
+		tutorial_->Draw();
+		break;
+	case M::BOSS_KINDS::NOKOPY:
 		nokopy_->Draw();
 		break;
-	case SceneManager::BOSS_KINDS::RUNBOO:
+	case M::BOSS_KINDS::RUNBOO:
 		break;
-	case SceneManager::BOSS_KINDS::BAMMOON:
+	case M::BOSS_KINDS::BAMMOON:
 		bammoon_->Draw();
 		break;
 	}
@@ -144,12 +162,15 @@ void BattledomeScene::Draw(void)
 
 	switch (sMng.GetNowBoss())
 	{
-	case SceneManager::BOSS_KINDS::NOKOPY:
+	case M::BOSS_KINDS::TUTORIAL:
+
 		break;
-	case SceneManager::BOSS_KINDS::RUNBOO:
+	case M::BOSS_KINDS::NOKOPY:
+		break;
+	case M::BOSS_KINDS::RUNBOO:
 		runboo_->Draw();
 		break;
-	case SceneManager::BOSS_KINDS::BAMMOON:
+	case M::BOSS_KINDS::BAMMOON:
 		bammoon_->DrawHp();
 		break;
 	}
@@ -176,17 +197,22 @@ void BattledomeScene::Release(void)
 
 	switch (sMng.GetNowBoss())
 	{
-	case SceneManager::BOSS_KINDS::NOKOPY:
+	case M::BOSS_KINDS::TUTORIAL:
+		tutorial_->Release();
+		delete tutorial_;
+		tutorial_ = nullptr;
+		break;
+	case M::BOSS_KINDS::NOKOPY:
 		nokopy_->Release();
 		delete nokopy_;
 		nokopy_ = nullptr;
 		break;
-	case SceneManager::BOSS_KINDS::RUNBOO:
+	case M::BOSS_KINDS::RUNBOO:
 		runboo_->Release();
 		delete runboo_;
 		runboo_ = nullptr;
 		break;
-	case SceneManager::BOSS_KINDS::BAMMOON:
+	case M::BOSS_KINDS::BAMMOON:
 		bammoon_->Release();
 		delete bammoon_;
 		bammoon_ = nullptr;
@@ -226,19 +252,33 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 {
 	// プレイヤーの攻撃とボスの攻撃の当たり判定処理
 	auto& ins = Collision::GetInstance();
-	auto& mana = SceneManager::GetInstance().GetInstance();
+	using M = SceneManager;
+	auto& mana = M::GetInstance().GetInstance();
 
 
 	switch (mana.GetNowBoss())
 	{
-	case SceneManager::BOSS_KINDS::NOKOPY:
+	case M::BOSS_KINDS::TUTORIAL: {
+		int i = 0;
+		for (auto& at : tutorial_->GetAttackObj()) {
+			if (ins.Circle(at, player_->DefaultAtt())) {
+				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				tutorial_->ObjHit(i);
+				player_->SetInvici(50);
+			}
+
+			i++;
+		}
+		break;
+	}
+	case M::BOSS_KINDS::NOKOPY:
 		for (int i = 0; i < nokopy_->GetObj().size(); i++) {
 
 			if (!nokopy_->GetAttackIns()->IsParry()) continue;//パリィできないとき早期リターン	
 
 			if (nokopy_->GetObj()[i].isCircle_) {
 				if (ins.Circle(nokopy_->GetObj()[i], player_->DefaultAtt())) {
-					mana.HitStop(SceneManager::HIT_STOP_TIME);
+					mana.HitStop(M::HIT_STOP_TIME);
 					nokopy_->ObjHit(i);
 					bamboo_->Create(nokopy_->GetObj()[i].pos_, 3);
 					player_->SetInvici(50);
@@ -246,7 +286,7 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 			}
 			else {
 				if (ins.CircleAndRect(player_->DefaultAtt(), nokopy_->GetObj()[i])) {
-					mana.HitStop(SceneManager::HIT_STOP_TIME);
+					mana.HitStop(M::HIT_STOP_TIME);
 					nokopy_->ObjHit(i);
 					//bamboo_->Create(boss_.GetAttackObj()[i].pos_, 3);
 					player_->SetInvici(50);
@@ -255,9 +295,9 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 
 		}
 		break;
-	case SceneManager::BOSS_KINDS::RUNBOO:
+	case M::BOSS_KINDS::RUNBOO:
 		break;
-	case SceneManager::BOSS_KINDS::BAMMOON:
+	case M::BOSS_KINDS::BAMMOON:
 		int i = 0;
 		for (auto& bAtc : bammoon_->GetObj()) {
 			if (ins.Circle(bAtc, player_->DefaultAtt())) {
@@ -276,21 +316,25 @@ void BattledomeScene::PlayerAttackToBoss(void)
 {
 	// プレイヤーの攻撃とボスの当たり判定処理
 	auto& ins = Collision::GetInstance();
-	auto& mana = SceneManager::GetInstance().GetInstance();
+	using M = SceneManager;
+	auto& mana = M::GetInstance().GetInstance();
 	switch (mana.GetNowBoss())
 	{
-	case SceneManager::BOSS_KINDS::NOKOPY:
+	case M::BOSS_KINDS::TUTORIAL:
+
+		break;
+	case M::BOSS_KINDS::NOKOPY:
 		if (nokopy_->GetUnit().isCircle_) {		//ボスの当たり判定が円形
 			//通常攻撃
 			if (ins.Circle(player_->DefaultAtt(), nokopy_->GetUnit())) {
-				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				mana.HitStop(M::HIT_STOP_TIME);
 				nokopy_->SetDamage(0);
 				bamboo_->Create(nokopy_->GetUnit().pos_, 1);
 			}
 			for (auto& bpAtc : player_->GetBpAtt()) {
 				if (ins.CircleAndRect(nokopy_->GetUnit(), bpAtc->GetObj())) {
 					//if (bpAtc->GetBp() >= 3)mana.SHAKE();
-					mana.HitStop(SceneManager::HIT_STOP_TIME);
+					mana.HitStop(M::HIT_STOP_TIME);
 					nokopy_->SetDamage(bpAtc->GetDamage());
 				}
 			}
@@ -299,7 +343,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 
 			//通常攻撃
 			if (ins.CircleAndRect(player_->DefaultAtt(), nokopy_->GetUnit())) {
-				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				mana.HitStop(M::HIT_STOP_TIME);
 				nokopy_->SetDamage(5);
 				bamboo_->Create(nokopy_->GetUnit().pos_, 1);
 			}
@@ -307,21 +351,21 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			for (auto& bpAtc : player_->GetBpAtt()) {
 				if (ins.Rect(bpAtc->GetObj(), nokopy_->GetUnit())) {
 					if (bpAtc->GetPower() >= 4)mana.SHAKE();
-					mana.HitStop(SceneManager::HIT_STOP_TIME);
+					mana.HitStop(M::HIT_STOP_TIME);
 					nokopy_->SetDamage(bpAtc->GetDamage());
 				}
 			}
 		}
 		break;
-	case SceneManager::BOSS_KINDS::RUNBOO:
+	case M::BOSS_KINDS::RUNBOO:
 		/*if (ins.Rect(player_->GetUnit(), boss_->GetUnit()))
 		{
 			player_->Hit(10, boss_->GetUnit().pos_);
 		}*/
 		break;
-	case SceneManager::BOSS_KINDS::BAMMOON:
+	case M::BOSS_KINDS::BAMMOON:
 		if (ins.CircleAndRect(player_->DefaultAtt(), bammoon_->GetUnit())) {
-			mana.HitStop(SceneManager::HIT_STOP_TIME);
+			mana.HitStop(M::HIT_STOP_TIME);
 			bammoon_->SetDamage(5);
 			bamboo_->Create(bammoon_->GetUnit().pos_, 1, 30);
 			if (bammoon_->GetAtState() == Bammoon::ATTACK::SWEEP) {
@@ -345,11 +389,17 @@ void BattledomeScene::PlayerToBoss(void)
 {
 	// プレイヤーとボスの当たり判定処理
 	auto& ins = Collision::GetInstance();
-	auto& mana = SceneManager::GetInstance().GetInstance();
+	using M = SceneManager;
+	auto& mana = M::GetInstance().GetInstance();
 
 	switch (mana.GetNowBoss())
 	{
-	case SceneManager::BOSS_KINDS::NOKOPY:
+	case M::BOSS_KINDS::TUTORIAL:
+		if (ins.Rect(player_->GetUnit(), tutorial_->GetUnit())) {
+			player_->Hit(5, tutorial_->GetUnit().pos_);
+		}
+		break;
+	case M::BOSS_KINDS::NOKOPY:
 		if (nokopy_->GetUnit().isCircle_) {
 			if (ins.CircleAndRect(nokopy_->GetUnit(), player_->GetUnit())) {
 				player_->Hit(5, nokopy_->GetUnit().pos_);
@@ -363,10 +413,10 @@ void BattledomeScene::PlayerToBoss(void)
 			}
 		}
 		break;
-	case SceneManager::BOSS_KINDS::RUNBOO:
+	case M::BOSS_KINDS::RUNBOO:
 
 		break;
-	case SceneManager::BOSS_KINDS::BAMMOON:
+	case M::BOSS_KINDS::BAMMOON:
 		if (ins.Ellipse(player_->GetUnit(), bammoon_->GetUnit())) {
 			player_->Hit(2, bammoon_->GetUnit().pos_);
 		}
@@ -379,10 +429,14 @@ void BattledomeScene::PlayerToBossAttack(void)
 {
 	// プレイヤーとボスの攻撃の当たり判定処理  
 	auto& ins = Collision::GetInstance();
-	auto& mana = SceneManager::GetInstance().GetInstance();
+	using M = SceneManager;
+	auto& mana = M::GetInstance().GetInstance();
 	switch (mana.GetNowBoss())
 	{
-	case SceneManager::BOSS_KINDS::NOKOPY:
+	case M::BOSS_KINDS::TUTORIAL:
+
+		break;
+	case M::BOSS_KINDS::NOKOPY:
 		for (int i = 0; i < nokopy_->GetObj().size(); i++) {
 			if (nokopy_->GetObj()[i].isCircle_) {
 				if (ins.Circle(nokopy_->GetObj()[i], player_->GetUnit())) {
@@ -399,10 +453,10 @@ void BattledomeScene::PlayerToBossAttack(void)
 			}
 		}
 		break;
-	case SceneManager::BOSS_KINDS::RUNBOO:
+	case M::BOSS_KINDS::RUNBOO:
 
 		break;
-	case SceneManager::BOSS_KINDS::BAMMOON:
+	case M::BOSS_KINDS::BAMMOON:
 		int i = 0;
 		for (auto& bAtc : bammoon_->GetObj()) {
 			switch (bammoon_->GetAtState())
@@ -448,7 +502,8 @@ void BattledomeScene::PlayerToBamboo(void)
 	if (player_->GetHaveB())return;
 
 	auto& ins = Collision::GetInstance();
-	auto& mana = SceneManager::GetInstance().GetInstance();
+	using M = SceneManager;
+	auto& mana = M::GetInstance().GetInstance();
 
 	for (auto& b : bamboo_->GetBamboos()) {
 		if (ins.CircleAndRect(b->GetUnit(), player_->GetUnit(), false)) {
@@ -460,7 +515,7 @@ void BattledomeScene::PlayerToBamboo(void)
 
 	for (auto& b : player_->GetBpAtt()) {
 		if (ins.CircleAndRect(player_->DefaultAtt(), b->GetObj())) {
-			mana.HitStop(SceneManager::HIT_STOP_TIME);
+			mana.HitStop(M::HIT_STOP_TIME);
 			b->Parry(player_->GetUnit().pos_);
 		}
 	}
