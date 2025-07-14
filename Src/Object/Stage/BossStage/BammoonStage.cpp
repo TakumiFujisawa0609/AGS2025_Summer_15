@@ -43,7 +43,6 @@ void BammoonStage::BackDraw(void)
     }
 }
 
-
 void BammoonStage::Load(void) 
 {
     int load[STAGE_CHIP_ALL];
@@ -64,9 +63,6 @@ void BammoonStage::Load(void)
         backImg_[i] = LoadGraph(_T(filePath.c_str()));
     }
 
-    if (!LoadMapData()) {
-        return;
-    }
 }
 
 bool BammoonStage::LoadMapData(void) 
@@ -91,4 +87,8 @@ bool BammoonStage::LoadMapData(void)
     }
 
     return true;
+}
+
+void BammoonStage::AddRelease(void)
+{
 }

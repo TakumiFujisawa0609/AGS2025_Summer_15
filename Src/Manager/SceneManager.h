@@ -83,6 +83,7 @@ public:
 	//ƒ{ƒX‚ÌŽí—Þ
 	enum class BOSS_KINDS
 	{
+		TUTORIAL,
 		NOKOPY,
 		BAMMOON,
 		RUNBOO,

@@ -18,7 +18,7 @@ TutorialStage::~TutorialStage()
 {
 }
 
-void TutorialStage::Draw(void)
+void TutorialStage::BackDraw(void)
 {
 	int num = (STAGE_CHIP_SIZE * mapData_[0].size()) / HAIKEI_SIZE_X + 1;
 
@@ -44,9 +44,6 @@ void TutorialStage::Draw(void)
 			DrawRotaGraph(d.x, d.y, 1, 0, backImg_[i], true);
 		}
 	}
-
-
-	StageBase::Draw();
 }
 
 #include <tchar.h> // Add this include for TCHAR compatibility
@@ -71,9 +68,6 @@ void TutorialStage::Load(void)
         backImg_[i] = LoadGraph(_T(filePath.c_str()));
     }
 
-    if (!LoadMapData()) {
-        return;
-    }
 }
 
 bool TutorialStage::LoadMapData(void)
@@ -99,4 +93,8 @@ bool TutorialStage::LoadMapData(void)
 	}
 
 	return true;
+}
+
+void TutorialStage::AddRelease(void)
+{
 }

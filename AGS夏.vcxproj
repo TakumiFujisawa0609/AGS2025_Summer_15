@@ -137,6 +137,7 @@
     <ClCompile Include="Src\Manager\Decoration\BlastEffect\BlastEffect.cpp" />
     <ClCompile Include="Src\Manager\Decoration\BlastEffect\BlastEffectManagercpp.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Bammoon\Attack\BamBlast.cpp" />
+    <ClCompile Include="Src\Object\Boss\BigBoss\Bammoon\Attack\Bamline.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Bammoon\Attack\Csphere.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Bammoon\Attack\Pbullet.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Bammoon\Attack\Stripe.cpp" />
@@ -163,8 +164,10 @@
     <ClCompile Include="Src\Object\Boss\Tutorial\Attack\Tackle.cpp" />
     <ClCompile Include="Src\Object\Boss\Tutorial\BossTutorial.cpp" />
     <ClCompile Include="Src\Object\Enemy\EnemyBase.cpp" />
+    <ClCompile Include="Src\Object\Player\SelectPlayer\SelectPlayer.cpp" />
     <ClCompile Include="Src\Object\Stage\BossStage\BammoonStage.cpp" />
     <ClCompile Include="Src\Object\Stage\BossStage\NokoPyStage.cpp" />
+    <ClCompile Include="Src\Object\Stage\SelectStage\SelectStage.cpp" />
     <ClCompile Include="Src\Object\Stage\StageBase.cpp" />
     <ClCompile Include="Src\Object\Stage\BossStage\Stage1.cpp" />
     <ClCompile Include="Src\Scene\BattledomeScene.cpp" />
@@ -202,6 +205,7 @@
     <ClInclude Include="Src\Manager\Decoration\BlastEffect\BlastEffect.h" />
     <ClInclude Include="Src\Manager\Decoration\BlastEffect\BlastEffectManager.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Bammoon\Attack\BamBlast.h" />
+    <ClInclude Include="Src\Object\Boss\BigBoss\Bammoon\Attack\Bamline.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Bammoon\Attack\Csphere.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Bammoon\Attack\Pbullet.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Bammoon\Attack\Stripe.h" />
@@ -229,8 +233,10 @@
     <ClInclude Include="Src\Object\Boss\Tutorial\Attack\Tackle.h" />
     <ClInclude Include="Src\Object\Boss\Tutorial\BossTutorial.h" />
     <ClInclude Include="Src\Object\Enemy\EnemyBase.h" />
+    <ClInclude Include="Src\Object\Player\SelectPlayer\SelectPlayer.h" />
     <ClInclude Include="Src\Object\Stage\BossStage\BammoonStage.h" />
     <ClInclude Include="Src\Object\Stage\BossStage\NokoPyStage.h" />
+    <ClInclude Include="Src\Object\Stage\SelectStage\SelectStage.h" />
     <ClInclude Include="Src\Object\Stage\StageBase.h" />
     <ClInclude Include="Src\Object\Stage\BossStage\Stage1.h" />
     <ClInclude Include="Src\Scene\BattledomeScene.h" />

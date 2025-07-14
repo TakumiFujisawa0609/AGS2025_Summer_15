@@ -267,9 +267,10 @@ private:
 	// ŠÖ”
 
 	// •Ï”
-	int arrowImage_;
+	int arrowImg_[4];
 	Vector2F vec_;
 	bool haveB_;
+	int arrowAnim_;
 	std::vector<BPAttack*> BpAtIns_;
 	int BambooImg_;
 	//---------------------------------------

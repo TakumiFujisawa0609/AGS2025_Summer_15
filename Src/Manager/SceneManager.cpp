@@ -403,23 +403,23 @@ void SceneManager::ZoomCtr(void)
 
 	Vector2F drawRange = { (Application::SCREEN_SIZE_X / scale_) / 2,(Application::SCREEN_SIZE_Y / scale_) / 2 };
 
-	drawRange.x -= 50.0f;
-	if (worldZoomPos.x - drawRange.x <= 0) {
+	drawRange.x -= 75.0f;
+	if (worldZoomPos.x - drawRange.x < 0) {
 		zoomPos_.x -= (worldZoomPos.x - drawRange.x);
 	}
-	drawRange.x += 50.0f;
 
 	if (worldZoomPos.x + drawRange.x >= StageBase::STAGE_CHIP_SIZE * mapNum_.x) {
 		zoomPos_.x -= ((worldZoomPos.x + drawRange.x) - (StageBase::STAGE_CHIP_SIZE * mapNum_.x));
 	}
 
-	drawRange.y -= 50.0f;
+	float zure = 45.0f;
+	drawRange.y -= zure;
 	if (worldZoomPos.y - drawRange.y < 0) {
 		zoomPos_.y -= (worldZoomPos.y - drawRange.y);
 	}
-	drawRange.y += 50.0f;
+	drawRange.y += zure;
 
-	if (worldZoomPos.y + drawRange.y > StageBase::STAGE_CHIP_SIZE * mapNum_.y) {
+	if (worldZoomPos.y + drawRange.y >= StageBase::STAGE_CHIP_SIZE * mapNum_.y) {
 		zoomPos_.y -= ((worldZoomPos.y + drawRange.y) - (StageBase::STAGE_CHIP_SIZE * mapNum_.y));
 	}
 }

@@ -5,6 +5,7 @@
 class BamBlast;
 class Pbullet;
 class Stripe;
+class Csphere;
 
 class Bammoon : public BossBase
 {
@@ -44,9 +45,21 @@ public:
 		PBULLET,
 		STRIPE,
 		CSPHERE,
+		BAMLINE,
 
 		MAX,
 	};
+
+	const int ATTACKDMG[(int)ATTACK::MAX] =
+	{
+		3,//SWEEP
+		3,//BLAST
+		2,//PBULLET
+		5,//STRIPE
+		1//CSPHERE
+	};
+
+	static constexpr int DEATH_DIRECTION_TIME = 150;
 
 	Bammoon();
 	~Bammoon();
@@ -59,7 +72,8 @@ public:
 	void DrawHp(void)override;
 
 	std::vector<Base> GetObj(void) override;
-	AttackBase* GetAttackIns(void)override;
+	int GetObjDamage(void) { return (attackState_ != ATTACK::NON) ? ATTACKDMG[(int)attackState_] : 0; }
+	AttackBase* GetAttackIns(void)override { return nullptr; }
 
 	void SetDamage(int dmg)override;
 	void ObjHit(int i)override;
@@ -119,6 +133,7 @@ private:
 	BamBlast* blast_;
 	Pbullet* pBullet_;
 	Stripe* stripe_;
+	Csphere* csphere_;
 
 	//ダメージ状態～～
 	void Damage(void) override;
@@ -132,7 +147,7 @@ private:
 	//関数
 
 	//変数
-
+	int deathCou_;
 
 
 	//指定した座標の方向を向く
