@@ -15,7 +15,7 @@ Default::~Default()
 
 void Default::Init()
 {
-	obj_.radius_ = 70.0f;
+	obj_.radius_ = 90.0f;
 	obj_.size_ = { obj_.radius_,obj_.radius_ };
 }
 

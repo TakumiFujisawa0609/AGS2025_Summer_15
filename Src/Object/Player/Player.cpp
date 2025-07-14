@@ -723,6 +723,10 @@ void Player::Animation()
 		}
 	}
 
+	static int interval = 0;
+	interval++;
+	if (!(interval >= ANIMATION_SPEED))return;
+	else interval = 0;
 	if (haveB_) { if (++arrowAnim_ >= 4)arrowAnim_ = 0; }
 }
 

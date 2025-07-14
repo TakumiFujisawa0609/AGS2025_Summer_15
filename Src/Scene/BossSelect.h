@@ -3,7 +3,8 @@
 #include"SceneBase.h"
 
 class SelectStage;
-class Player;
+class SelectPlayer;
+class BlastEffectManager;
 
 class BossSelect : public SceneBase
 {
@@ -19,14 +20,20 @@ public:
 
 private:
 	SelectStage* stage_;
-	Player* player_;
+	SelectPlayer* player_;
+
+	BlastEffectManager* blast_;
 
 	int haveBcou_;
 
 	int tutorialImg_;
+	Vector2F tutorialPos_;
 	int nokopyImg_;
+	Vector2F nokopyPos_;
 	int runbooImg_;
+	Vector2F runbooPos_;
 	int bammoonImg_;
+	Vector2F bammoonPos_;
 
 
 
