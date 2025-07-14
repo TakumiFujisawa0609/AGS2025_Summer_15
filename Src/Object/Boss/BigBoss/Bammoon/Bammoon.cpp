@@ -52,6 +52,7 @@ void Bammoon::Init(void)
 	animeInterval_ = 0;
 
 	counter_ = 0;
+	pinch_ = false;
 
 	TargetLook(*playerPosPtr_);
 }
@@ -170,10 +171,15 @@ void Bammoon::Attack(void)
 		mot = false;
 		vec = {};
 	}
+	static int pinchAttack = 5;
+	if (pinchAttack <= 0) { pinchAttack = 5; }
+
+	int exeAttack = 0;
 
 	switch (attackState_)
 	{
 	case Bammoon::ATTACK::SWEEP:
+		exeAttack++;
 		if (counter_ == 0) {
 			Vector2F v = *playerPosPtr_ - unit_.pos_;
 			float size = sqrtf(v.x * v.x + v.y * v.y);
@@ -196,25 +202,30 @@ void Bammoon::Attack(void)
 
 			counter_ = 0;
 
-			idleTime_ = 400;
+			if (pinch_) { pinchAttack--; }
+
+			idleTime_ = (!pinch_ || pinchAttack <= 0) ? 400 : 10;
 			ChangeState(STATE::IDLE);
 			return;
 		}
-		break;
+		if (!pinch_ || exeAttack >= 2) { break; }
 	case Bammoon::ATTACK::BLAST: {
+		exeAttack++;
 		int rate = 15;	//何フレームに一回打つか
 		if (counter_ % rate == 0) blast_->On(counter_ / rate, *playerPosPtr_);
 		if (blast_->End()) {
 			counter_ = 0;
 			unit_.isGravity_ = true;
 			unit_.isXAttenu = true;
-			idleTime_ = 300;
+			if (pinch_) { pinchAttack--; }
+			idleTime_ = (!pinch_||pinchAttack<=0) ? 300 : 10;
 			ChangeState(STATE::IDLE);
 			return;
 		}
-		break;
+		if (!pinch_ || exeAttack >= 2) { break; }
 	}
 	case Bammoon::ATTACK::PBULLET: {
+		exeAttack++;
 		int rate = 5;	//何フレームに一回打つか
 		if (counter_ % rate == 0) {
 			pBullet_->On(counter_ / rate, *playerPosPtr_);
@@ -223,25 +234,30 @@ void Bammoon::Attack(void)
 			counter_ = 0;
 			unit_.isGravity_ = true;
 			unit_.isXAttenu = true;
-			idleTime_ = 300;
+			if (pinch_) { pinchAttack--; }
+			idleTime_ = (!pinch_ || pinchAttack <= 0) ? 300 : 10;
 			ChangeState(STATE::IDLE);
 			return;
 		}
-		break;
+		if (!pinch_ || exeAttack >= 2) { break; }
 	}
 	case Bammoon::ATTACK::STRIPE: {
+		exeAttack++;
 		int rate = 5;
 		if (counter_ % rate == 0) { stripe_->On(counter_ / rate); }
 		if (stripe_->End()) {
 			counter_ = 0;
 			unit_.isGravity_ = true;
 			unit_.isXAttenu = true;
-			idleTime_ = 300;
+			if (pinch_) { pinchAttack--; }
+			idleTime_ = (!pinch_ || pinchAttack <= 0) ? 300 :10;
 			ChangeState(STATE::IDLE);
 			return;
 		}
+		if (!pinch_ || exeAttack >= 2) { break; }
 	}
 	case Bammoon::ATTACK::CSPHERE: {
+		exeAttack++;
 		int rate = 50;
 		if (counter_ % rate == 0) {
 			if (counter_ == 0) { csphere_->On(*playerPosPtr_); }
@@ -251,13 +267,15 @@ void Bammoon::Attack(void)
 			counter_ = 0;
 			unit_.isGravity_ = true;
 			unit_.isXAttenu = true;
-			idleTime_ = 300;
+			if (pinch_) { pinchAttack--; }
+			idleTime_ = (!pinch_ || pinchAttack <= 0) ? 300 : 10;
 			ChangeState(STATE::IDLE);
 			return;
 		}
 	}
 	}
 	counter_++;
+	exeAttack = 0;
 }
 
 void Bammoon::Damage(void)
@@ -274,7 +292,7 @@ void Bammoon::Damage(void)
 
 
 	if (unit_.isGround_ && unit_.yAccel_ >= 0) {
-		idleTime_ = 400;
+		idleTime_ = (pinch_) ? 10 : 300;
 		ChangeState(STATE::IDLE);
 		attackState_ = ATTACK::NON;
 		ChangeMotion(MOTION::IDLE);
@@ -291,49 +309,43 @@ void Bammoon::Death(void)
 std::vector<Base> Bammoon::GetObj(void)
 {
 	std::vector<Base> ret = {};
-	switch (attackState_)
-	{
-	case Bammoon::ATTACK::NON:
-		break;
-	case Bammoon::ATTACK::SWEEP:
-		break;
-	case Bammoon::ATTACK::BLAST:
-		ret = blast_->Get();
-		break;
-	case Bammoon::ATTACK::PBULLET:
-		ret = pBullet_->Get();
-		break;
-	case Bammoon::ATTACK::STRIPE:
-		ret = stripe_->Get();
-		break;
-	case Bammoon::ATTACK::CSPHERE:
-		ret.emplace_back(csphere_->GetObj());
-		break;
-	default:
-		break;
+
+	for (auto& b : blast_->Get()) {
+		ret.emplace_back(b);
 	}
+	for (auto& b : pBullet_->Get()) {
+		ret.emplace_back(b);
+	}
+	for (auto& b : stripe_->Get()) {
+		ret.emplace_back(b);
+	}
+	ret.emplace_back(csphere_->GetObj());
+
 	return ret;
 }
 
 
 void Bammoon::ObjHit(int i)
 {
-	switch (attackState_)
-	{
-	case Bammoon::ATTACK::SWEEP:
-		break;
-	case Bammoon::ATTACK::BLAST:
+	if (i < blast_->Get().size()) {
 		blast_->Hit(i);
-		break;
-	case Bammoon::ATTACK::PBULLET:
-		pBullet_->Hit(i);
-		break;
-	case Bammoon::ATTACK::STRIPE:
-		break;
-	case Bammoon::ATTACK::CSPHERE:
-		csphere_->Hit();
-		break;
+		return;
 	}
+	else {
+		i -= blast_->Get().size();
+	}
+
+	if (i < pBullet_->Get().size()) {
+		pBullet_->Hit(i);
+		return;
+	}
+	else {
+		i -= pBullet_->Get().size();
+	}
+
+	if (i < stripe_->Get().size()) { return; }
+
+	csphere_->Hit();
 }
 
 void Bammoon::SetDamage(int dmg)
@@ -343,69 +355,85 @@ void Bammoon::SetDamage(int dmg)
 	unit_.hp_ -= dmg;
 	unit_.inviCounter_ = 10;
 
+	if (unit_.hp_ < HP_MAX * 0.3f) {
+		if (!pinch_) {
+			pinch_ = true;
+			SetDown(*playerPosPtr_);
+		}
+	}
+
 	if (unit_.hp_ <= 0) {
 		auto& mana = SceneManager::GetInstance();
 		mana.HitStop(60);
 		mana.ZoomPos(unit_.pos_);
 		mana.ZoomScale(2.0f);
-		ChangeState(STATE::DEATH);
-		deathCou_ = DEATH_DIRECTION_TIME;
 		SetDown(*playerPosPtr_);
+		deathCou_ = DEATH_DIRECTION_TIME;
+		ChangeState(STATE::DEATH);
 	}
 }
 
 void Bammoon::AttackUpdate(void)
 {
-	switch (attackState_)
-	{
-	case Bammoon::ATTACK::NON:
-		break;
-	case Bammoon::ATTACK::SWEEP:
-		break;
-	case Bammoon::ATTACK::BLAST:
-		blast_->Update();
-		break;
-	case Bammoon::ATTACK::PBULLET:
-		pBullet_->Update();
-		break;
-	case Bammoon::ATTACK::STRIPE:
-		stripe_->Update();
-		break;
-	case Bammoon::ATTACK::CSPHERE:
-		csphere_->Update();
-		break;
-	case Bammoon::ATTACK::MAX:
-		break;
-	default:
-		break;
-	}
+	//switch (attackState_)
+	//{
+	//case Bammoon::ATTACK::NON:
+	//	break;
+	//case Bammoon::ATTACK::SWEEP:
+	//	break;
+	//case Bammoon::ATTACK::BLAST:
+	//	blast_->Update();
+	//	break;
+	//case Bammoon::ATTACK::PBULLET:
+	//	pBullet_->Update();
+	//	break;
+	//case Bammoon::ATTACK::STRIPE:
+	//	stripe_->Update();
+	//	break;
+	//case Bammoon::ATTACK::CSPHERE:
+	//	csphere_->Update();
+	//	break;
+	//case Bammoon::ATTACK::MAX:
+	//	break;
+	//default:
+	//	break;
+	//}
+	blast_->Update();
+	pBullet_->Update();
+	stripe_->Update();
+	csphere_->Update();
+
 }
 
 void Bammoon::AttackDraw(void)
 {
-	switch (attackState_)
-	{
-	case Bammoon::ATTACK::NON:
-		break;
-	case Bammoon::ATTACK::SWEEP:
-		break;
-	case Bammoon::ATTACK::BLAST:
-		blast_->Draw();
-		break;
-	case Bammoon::ATTACK::PBULLET:
-		pBullet_->Draw();
-		break;
-	case Bammoon::ATTACK::STRIPE:
-		stripe_->Draw();
-		break;
-	case Bammoon::ATTACK::CSPHERE:
-		csphere_->Draw();
-		break;
-	case Bammoon::ATTACK::MAX:
-		break;
-	default:
-		break;
-	}
+	//switch (attackState_)
+	//{
+	//case Bammoon::ATTACK::NON:
+	//	break;
+	//case Bammoon::ATTACK::SWEEP:
+	//	break;
+	//case Bammoon::ATTACK::BLAST:
+	//	blast_->Draw();
+	//	break;
+	//case Bammoon::ATTACK::PBULLET:
+	//	pBullet_->Draw();
+	//	break;
+	//case Bammoon::ATTACK::STRIPE:
+	//	stripe_->Draw();
+	//	break;
+	//case Bammoon::ATTACK::CSPHERE:
+	//	csphere_->Draw();
+	//	break;
+	//case Bammoon::ATTACK::MAX:
+	//	break;
+	//default:
+	//	break;
+	//}
+	blast_->Draw();
+	pBullet_->Draw();
+	stripe_->Draw();
+	csphere_->Draw();
 }
 
 void Bammoon::AttackRand(void)
@@ -435,6 +463,7 @@ void Bammoon::SetDown(Vector2F pos)
 	BossBase::SetDown(pos);
 	TargetLook(*playerPosPtr_);
 	ChangeMotion(MOTION::DAMAGE);
+	ChangeState(STATE::DAMAGE);
 	attackState_ = ATTACK::NON;
 	if (state_ == STATE::ATTACK) {
 		auto& mana = SceneManager::GetInstance();

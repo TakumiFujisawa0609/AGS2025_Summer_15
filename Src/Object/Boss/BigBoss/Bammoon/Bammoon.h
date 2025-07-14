@@ -10,7 +10,7 @@ class Csphere;
 class Bammoon : public BossBase
 {
 public:
-	static constexpr int HP_MAX = 1000;
+	static constexpr int HP_MAX = 700;
 
 	static const int LOAD_SIZE_X = 512;
 	static const int LOAD_SIZE_Y = 512;
@@ -105,6 +105,8 @@ private:
 
 
 	int counter_;
+
+	bool pinch_;
 
 	//ë“ã@èÛë‘ópÅ`Å`
 	void Idle(void) override;
