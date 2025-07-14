@@ -162,6 +162,8 @@ void BattledomeScene::Draw(void)
 
 	stage_->Draw();
 
+	player_->Draw();
+
 	blastMng_->Draw();
 
 	switch (sMng.GetNowBoss())
@@ -381,7 +383,7 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 		}
 		break;
 	}
-	}
+	
 }
 
 void BattledomeScene::PlayerAttackToBoss(void)
