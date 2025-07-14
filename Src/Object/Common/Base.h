@@ -27,7 +27,11 @@ struct Base
 	//パラメータ(定数扱い)
 	float speed_;		//移動速度
 
-	bool isCircle_;		//true=円形 false=矩形
+	bool isCircle_=false;		//true=円形 false=矩形
+	bool isCapsule_=false;	//カプセル
+	Vector2F capsuleStartPos_;
+	Vector2F capsuleEndPos_;
+
 	float radius_;		//半径
 	Vector2F size_;		//大きさ
 };

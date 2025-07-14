@@ -243,16 +243,34 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 				if (ins.Circle(nokopy_->GetObj()[i], player_->DefaultAtt())) {
 					mana.HitStop(SceneManager::HIT_STOP_TIME);
 					nokopy_->ObjHit(i);
-					bamboo_->Create(nokopy_->GetObj()[i].pos_, 3);
+					bamboo_->Create(nokopy_->GetObj()[i].pos_, 1);
 					player_->SetInvici(50);
 				}
+				for (auto& bpAtc : player_->GetBpAtt()) {
+					if (ins.CircleAndRect(nokopy_->GetUnit(), bpAtc->GetObj())) {
+						if (bpAtc->GetPower() >= 3) { mana.SHAKE(); }
+						if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
+						bpAtc->Off();
+						nokopy_->ObjHit(i);
+					}
+				}
 			}
+
 			else {
 				if (ins.CircleAndRect(player_->DefaultAtt(), nokopy_->GetObj()[i])) {
 					mana.HitStop(SceneManager::HIT_STOP_TIME);
 					nokopy_->ObjHit(i);
 					//bamboo_->Create(boss_.GetAttackObj()[i].pos_, 3);
 					player_->SetInvici(50);
+				}
+				//“ÁŽêUŒ‚
+				for (auto& bpAtc : player_->GetBpAtt()) {
+					if (ins.Rect(bpAtc->GetObj(), nokopy_->GetUnit())) {
+						if (bpAtc->GetPower() >= 3) { mana.SHAKE(); }
+						if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
+						bpAtc->Off();
+						nokopy_->ObjHit(i);
+					}
 				}
 			}
 
@@ -294,13 +312,17 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			//’ÊíUŒ‚
 			if (ins.Circle(player_->DefaultAtt(), nokopy_->GetUnit())) {
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
-				nokopy_->SetDamage(0);
+				nokopy_->SetDamage(5);
 				bamboo_->Create(nokopy_->GetUnit().pos_, 1);
+				if (nokopy_->GetAttackState() == Nokopy::ATTACK::RUSHOOT) {
+					nokopy_->OnRushReflection();
+				}
 			}
 			for (auto& bpAtc : player_->GetBpAtt()) {
 				if (ins.CircleAndRect(nokopy_->GetUnit(), bpAtc->GetObj())) {
-					//if (bpAtc->GetBp() >= 3)mana.SHAKE();
-					mana.HitStop(SceneManager::HIT_STOP_TIME);
+					if (bpAtc->GetPower() >= 3) { mana.SHAKE(); }
+					if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
+					bpAtc->Off();
 					nokopy_->SetDamage(bpAtc->GetDamage());
 				}
 			}
@@ -312,12 +334,16 @@ void BattledomeScene::PlayerAttackToBoss(void)
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
 				nokopy_->SetDamage(5);
 				bamboo_->Create(nokopy_->GetUnit().pos_, 1);
+				if (nokopy_->GetAttackState() == Nokopy::ATTACK::RUSHOOT) {
+					nokopy_->OnRushReflection();
+				}
 			}
 			//“ÁŽêUŒ‚
 			for (auto& bpAtc : player_->GetBpAtt()) {
 				if (ins.Rect(bpAtc->GetObj(), nokopy_->GetUnit())) {
-					if (bpAtc->GetPower() >= 4)mana.SHAKE();
-					mana.HitStop(SceneManager::HIT_STOP_TIME);
+					if (bpAtc->GetPower() >= 3) { mana.SHAKE(); }
+					if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
+					bpAtc->Off();
 					nokopy_->SetDamage(bpAtc->GetDamage());
 				}
 			}
@@ -424,6 +450,13 @@ void BattledomeScene::PlayerToBossAttack(void)
 	{
 	case SceneManager::BOSS_KINDS::NOKOPY:
 		for (int i = 0; i < nokopy_->GetObj().size(); i++) {
+			if (nokopy_->GetObj()[i].isCapsule_) {
+				if (ins.CircleAndCapsule(player_->GetUnit(), nokopy_->GetAttackIns()->Get()[i]))
+				{
+					player_->Hit(5, nokopy_->GetObj()[i].pos_);
+					nokopy_->ObjHit(i);
+				}
+			}
 			if (nokopy_->GetObj()[i].isCircle_) {
 				if (ins.Circle(nokopy_->GetObj()[i], player_->GetUnit())) {
 					player_->Hit(5, nokopy_->GetObj()[i].pos_);
@@ -432,7 +465,7 @@ void BattledomeScene::PlayerToBossAttack(void)
 			}
 			else {
 
-				if (ins.CircleAndRect(nokopy_->GetObj()[i], player_->GetUnit())) {
+				if (ins.CircleAndRect(player_->GetUnit(), nokopy_->GetObj()[i])) {
 					player_->Hit(5, nokopy_->GetObj()[i].pos_);
 					nokopy_->ObjHit(i);
 				}

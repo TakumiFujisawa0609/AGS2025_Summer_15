@@ -72,6 +72,9 @@ public:
 	/// <returns></returns>
 	const bool CircleAndRect(const Base& circle, const Base& rect, bool invici = true)const;
 
+    // 円形とカプセルの当たり判定
+	const bool CircleAndCapsule(const Base& circle, const Base& capsule, bool invici = true)const;
+
 private:
 	static Collision* instance;
 

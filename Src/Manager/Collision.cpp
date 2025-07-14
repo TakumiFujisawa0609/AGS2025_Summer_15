@@ -242,10 +242,36 @@ const bool Collision::CircleAndRect(const Base& circle, const Base& rect, bool i
 }
 
 
+	// 円とカプセルの当たり判定
+	const bool Collision::CircleAndCapsule(const Base& circle, const Base& capsule, bool invici) const
+	{
+		// カプセルの中心線ベクトルを計算
+		Vector2F seg = { capsule.capsuleEndPos_.x - capsule.capsuleStartPos_.x,
+					capsule.capsuleEndPos_.y - capsule.capsuleStartPos_.y };
+		// カプセル始点から円中心へのベクトル
+		Vector2F toCircle = { circle.pos_.x - capsule.capsuleStartPos_.x,
+			circle.pos_.y - capsule.capsuleStartPos_.y };
+		// 中心線の長さの2乗
+		float segLen = seg.x * seg.x + seg.y * seg.y;
+		float t = 0.0f;
+		if (segLen > 0.0f) {
+			// 円中心からカプセル中心線への射影係数（0～1にクランプ）
+			t = (toCircle.x * seg.x + toCircle.y * seg.y) / segLen;
+			t = (t < 0.0f) ? 0.0f : (t > 1.0f ? 1.0f : t);
+		}
+		// カプセル中心線上の最近点
+		Vector2F closest = { capsule.capsuleStartPos_.x + seg.x * t,
+			capsule.capsuleStartPos_.y + seg.y * t };
 
-
-
-
+		// 最近点と円中心の距離の2乗
+		float dx = closest.x - circle.pos_.x;
+		float dy = closest.y - circle.pos_.y;
+		float dis = dx * dx + dy * dy;
+		// 半径の和
+		float r = capsule.radius_ + circle.radius_;
+		// 距離が半径の和以下なら衝突
+		return dis <= r * r;
+	}
 
 //private-----------------------------------------------------------------------------------------------------------
 

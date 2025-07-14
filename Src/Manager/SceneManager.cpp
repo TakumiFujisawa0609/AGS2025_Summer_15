@@ -278,6 +278,13 @@ bool SceneManager::GetExit(void)
 	return pause_->GetExit();
 }
 
+bool SceneManager::ThatsNotRight(int classId,int i)
+{
+	perValues[classId] = nowValues[classId];
+	nowValues[classId] = i;
+	return perValues[classId] != nowValues[classId];
+}
+
 SceneManager::SceneManager(void)
 {
 
