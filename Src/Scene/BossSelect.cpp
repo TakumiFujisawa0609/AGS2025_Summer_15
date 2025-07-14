@@ -51,6 +51,8 @@ void BossSelect::Init()
 	runbooPos_ = { 50.0f,300.0f };
 	bammoonImg_ = LoadGraph("Data/Image/Stage/Select/SelectBammoon.png");
 	bammoonPos_ = { Application::SCREEN_SIZE_X / 2,100.0f };
+
+	nowSelectImage_ = LoadGraph("Data/Image/Stage/Select/NowSelect.png");
 }
 
 void BossSelect::Update()
@@ -64,20 +66,30 @@ void BossSelect::Update()
 	{
 	case SelectPlayer::RUNBOO:
 		player_->SetVec(runbooPos_);
+		nowSelectPos_ = runbooPos_;
 		break;
 	case SelectPlayer::BAMMOON:
 		player_->SetVec(bammoonPos_);
+		nowSelectPos_ = bammoonPos_;
 		break;
 	case SelectPlayer::TUTORIAL:
 		player_->SetVec(tutorialPos_);
+		nowSelectPos_ = tutorialPos_;
 		break;
 	case SelectPlayer::NOKOPY:
 		player_->SetVec(nokopyPos_);
+		nowSelectPos_ = nokopyPos_;
 		break;
 	}
 	this->Collision();
 
 	blast_->Update();
+
+	static int inter = 0;
+	if (++inter > 4) {
+		inter = 0;
+		if (++nowSelectCount_ > 100) { nowSelectCount_ = 0; }
+	}
 }
 
 void BossSelect::Draw()
@@ -93,6 +105,9 @@ void BossSelect::Draw()
 	DrawRotaGraphF(nokopyPos_.x, nokopyPos_.y, (b == B::NOKOPY) ? 1.2 : 1, AsoUtility::Deg2RadF(-45.0f), nokopyImg_, true);
 	DrawRotaGraphF(runbooPos_.x, runbooPos_.y, (b == B::RUNBOO) ? 1.2 : 1, 0, runbooImg_, true);
 	DrawRotaGraphF(bammoonPos_.x, bammoonPos_.y, (b == B::BAMMOON) ? 1.2 : 1, 0, bammoonImg_, true);
+
+
+	DrawRotaGraphF(nowSelectPos_.x, nowSelectPos_.y-20 + (sin(nowSelectCount_) * 10), 1, 0, nowSelectImage_, true);
 
 	player_->Draw();
 
