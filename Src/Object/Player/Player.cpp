@@ -75,6 +75,7 @@ void Player::Init()
 	evasionCounter_ = 0;
 	evaConpFlg_ = false;
 	evasionPossiFlg_ = true;
+	evasionCoolTime_ = 0;
 
 	// ƒ_ƒ[ƒWŠÖŒW
 	knockBack_ = false;
@@ -126,14 +127,6 @@ void Player::Update()
 
 	UnitBase::Update();
 
-	//if (startPos_.x >= unit_.disppos_.x)
-	//{
-	//	unit_.disppos_.x = startPos_.x;
-	//}
-	//if (startPos_.x + Application::SCREEN_SIZE_X <= unit_.disppos_.x)
-	//{
-	//	unit_.disppos_.x = startPos_.x + Application::SCREEN_SIZE_X;
-	//}
 }
 
 void Player::Draw()
@@ -141,9 +134,10 @@ void Player::Draw()
 	if (unit_.isAlive_) {
 
 
-		if (jumpAnim_ > 0) {
-			DrawRotaGraph(unit_.disppos_.x - 5, unit_.disppos_.y + 192 / 4, 1, 0, jumpImg_[(int)jumpAnim_], true);
-		}
+		//if (jumpAnim_ > 0) {
+		//	DrawRotaGraph(unit_.disppos_.x - 5, unit_.disppos_.y + 192 / 4, 1, 0, jumpImg_[(int)jumpAnim_], true);
+		//}
+
 
 		if(haveB_)DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y - 50, 1, 0, BambooImg_, true);
 		DrawPlayer();
@@ -279,11 +273,14 @@ void Player::DoStateAttack()
 // ‰ñ”ðó‘Ô
 void Player::DoStateEvasion()
 {
+	if (--evasionCoolTime_ > 0)return;
+
 	auto& ins = InputManager::GetInstance();
 
 	if ((ins.IsTrgDown(KEY_INPUT_K) || (nowEvasionKey_ && !prevEvasionKey_)) && evasionPossiFlg_) {
 		ChangeState(Player::STATE::EVASION);
 		evasionPossiFlg_ = false;
+		evasionCoolTime_ = EVASION_COOL_TIME;
 	}
 }
 

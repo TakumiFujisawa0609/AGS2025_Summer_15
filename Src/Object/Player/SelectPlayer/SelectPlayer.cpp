@@ -49,15 +49,15 @@ void SelectPlayer::Update()
 		auto& ins = InputManager::GetInstance();
 		JoyPadInputManager();
 
-		if ((ins.IsTrgDown(KEY_INPUT_LEFT)) || (downLeftKey_)) {
+		if ((ins.IsTrgDown(KEY_INPUT_LEFT)) || (ins.IsTrgDown(KEY_INPUT_A)) || (downLeftKey_)) {
 			if (NullSelect(nowSelect_ - 1)) { nowSelect_ = (B_KINDS)(nowSelect_ - 1); };
 		}
 	
-		if ((ins.IsTrgDown(KEY_INPUT_RIGHT)) || (downRightKey_)) {
+		if ((ins.IsTrgDown(KEY_INPUT_RIGHT)) || (ins.IsTrgDown(KEY_INPUT_D)) || (downRightKey_)) {
 			if (NullSelect(nowSelect_ + 1)) { nowSelect_ = (B_KINDS)(nowSelect_ + 1); };
 		}
 
-		if ((ins.IsTrgDown(KEY_INPUT_J)) || (nowAttackKey_)) {
+		if ((ins.IsTrgDown(KEY_INPUT_J)) || (ins.IsTrgDown(KEY_INPUT_SPACE)) || (ins.IsTrgDown(KEY_INPUT_RETURN)) || (nowAttackKey_)) {
 			haveB_ = false;
 		}
 

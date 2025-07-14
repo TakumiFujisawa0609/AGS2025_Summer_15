@@ -79,7 +79,7 @@ public:
 
 	static constexpr float MAX_JUMP_POWER = 70.0f;		//最大ジャンプ力
 	static constexpr int INPUT_JUMPKEY_FRAME = 6;		//ジャンプキーを受け付けるフレーム数
-	static constexpr int JUMP_NUM =3;					//ジャンプ可能回数
+	static constexpr int JUMP_NUM =2;					//ジャンプ可能回数
 
 	static constexpr int JUMP_ANIM = 5;
 	
@@ -113,6 +113,7 @@ public:
 	// 定数
 	static constexpr float EVASION_SPEED = 20.0f;		//スピード
 	static constexpr int EVASION_TIME = 10;				//回避時間
+	static constexpr int EVASION_COOL_TIME = 60;
 	//----------------------------------------------------------------------------------------------
 
 	// ダメージ状態で使用する～～---------------------------------------------------------------
@@ -283,6 +284,7 @@ private:
 	int evasionCounter_;
 	bool evasionPossiFlg_;
 	bool evaConpFlg_;
+	int evasionCoolTime_;
 	//--------------------------------------
 
 	// ダメージ処理関係---------------------
