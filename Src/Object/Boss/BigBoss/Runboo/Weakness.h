@@ -26,7 +26,9 @@ public:
 	enum ATTACK
 	{
 		NON,
+		LASER,
 		BOUND,
+		MAX,
 	};
 
 	Weakness();
@@ -63,6 +65,9 @@ private:
 	Vector2F start_;
 
 	int image_;
+	int attackCounter_;
+
+	void AttackManager(void);
 
 	//ë“ã@èÛë‘
 	void Idle(void)override;

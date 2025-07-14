@@ -32,18 +32,19 @@ void Weakness::Init(Vector2F disppos, float moveSpeed)
 	bullet_->Init(&unit_.pos_);
 
 	laser_ = new Laser(moveSpeed_);
-	laser_->Init(&unit_.pos_);
+	//laser_->Init(&unit_.pos_);
 
 	unit_.size_ = { SIZE_X,SIZE_Y };
 	unit_.radius_ = 64.0f;
 
 	cnt_ = GetRand(16.0f);
+	attackCounter_ = 0;
 
 	//unit_.pos_ + start_;
 	unit_.hp_ = HP_MAX;
 	unit_.isAlive_ = true;
 
-	ChangeState(STATE::IDLE);
+	ChangeState(STATE::ATTACK);
 
 	unit_.isGravity_ = false;
 	unit_.isStageCollision_ = false;
@@ -68,10 +69,8 @@ void Weakness::Update()
 	// カウント更新
 	cnt_ += 0.1f;
 
-	BossBase::Update();
 
 	// ランダムにゆらゆら動く
-	//const float noiseX = (GetRand(200) - 100) / 500.0f;
 	const float noiseY = (GetRand(200) - 100) / 500.0f;
 
 	// 元の位置から縦にゆらゆら動かす
@@ -93,7 +92,9 @@ void Weakness::Update()
 		ChangeState(STATE::DEATH);
 	}
 	bullet_->Update(unit_.pos_);
-	laser_->Update(unit_.pos_);
+
+	AttackManager();
+	BossBase::Update();
 
 }
 
@@ -108,16 +109,33 @@ void Weakness::Draw()
 
 	if (!unit_.isAlive_)return;
 
-	DrawBar(
-		unit_.disppos_.x - SIZE_X / 2 - 50,
-		unit_.disppos_.y - SIZE_Y / 2,
-		unit_.disppos_.x + SIZE_X / 2 + 50,
-		unit_.disppos_.y - SIZE_Y / 2 + 16,
-		unit_.hp_, HP_MAX, RGB(0, 0, 255)
-	);
+
+	switch (attack_)
+	{
+	case Weakness::NON:
+		DrawBar(
+			unit_.disppos_.x - SIZE_X / 2 - 50,
+			unit_.disppos_.y - SIZE_Y / 2,
+			unit_.disppos_.x + SIZE_X / 2 + 50,
+			unit_.disppos_.y - SIZE_Y / 2 + 16,
+			unit_.hp_, HP_MAX, RGB(0, 0, 255)
+		);
+		break;
+	case Weakness::LASER:
+		DrawBar(
+			unit_.disppos_.x - SIZE_X / 2 - 50,
+			unit_.disppos_.y - SIZE_Y / 2,
+			unit_.disppos_.x + SIZE_X / 2 + 50,
+			unit_.disppos_.y - SIZE_Y / 2 + 16,
+			unit_.hp_, HP_MAX, RGB(255, 0, 255)
+		);
+		break;
+	}
 
 	bullet_->Draw();
 	laser_->Draw();
+
+
 }
 
 void Weakness::Release()
@@ -160,6 +178,15 @@ void Weakness::SetDamage(int dmg)
 	unit_.inviCounter_ = INVI_COUNTER;
 }
 
+void Weakness::AttackManager(void)
+{
+	if (attack_ == ATTACK::NON && attackCounter_ > 180 && laser_->End() == false)
+	{
+		attack_ = (ATTACK)GetRand((int)(ATTACK::MAX) - 1);
+		attackCounter_ = 0;
+	}
+}
+
 void Weakness::Idle(void)
 {
 
@@ -171,6 +198,36 @@ void Weakness::Move(void)
 
 void Weakness::Attack(void)
 {
+	switch (attack_)
+	{
+	case Weakness::NON:
+		attackCounter_++;
+		break;
+	case Weakness::LASER:
+
+		attackCounter_++;
+
+		if (attackCounter_ <= 1)
+		{
+			laser_->Init(&unit_.pos_);
+		}
+		
+		laser_->Update(unit_.pos_);
+
+		if (laser_->End() == true)
+		{
+			attack_= ATTACK::NON;
+			attackCounter_ = 0;
+		}
+		break;
+	case Weakness::ATTACK::BOUND:
+		attackCounter_++;
+		if (attackCounter_ > 180)
+		{
+			attack_ = ATTACK::NON;
+		}
+		break;
+	}
 }
 
 void Weakness::Damage(void)

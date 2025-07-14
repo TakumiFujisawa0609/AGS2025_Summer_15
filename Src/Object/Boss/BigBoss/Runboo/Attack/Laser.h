@@ -8,7 +8,7 @@ class Laser : public AttackBase
 public:
 	static constexpr int MAX_NUM = 3;
 	static constexpr float ATTACK_SPEED = 10.0f;
-	static constexpr int INTERVAL = 30;
+	static constexpr int INTERVAL = 100;
 
 	static constexpr float SIZE_X = 100.0f;
 	static constexpr float SIZE_Y = 10.0f;
@@ -48,6 +48,7 @@ private:
 
 	int shootTimer_ = 0;
 	int nextIndex_ = 0;
+	int fireCount_ = 0;        // ”­Ë‰ñ”ƒJƒEƒ“ƒg
 
 	void ChangeDispPos() override;
 };

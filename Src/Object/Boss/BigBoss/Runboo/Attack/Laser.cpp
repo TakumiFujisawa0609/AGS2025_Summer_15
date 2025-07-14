@@ -13,27 +13,28 @@ Laser::~Laser()
 
 void Laser::Init(const Vector2F* pos)
 {
-	//image_ = LoadGraph();
+    attackStartPos_ = *pos;
 
-	attackStartPos_ = *pos;
+    obj_.resize(MAX_NUM);
 
-	obj_.resize(MAX_NUM);
+    for (auto& laser : obj_)
+    {
+        laser.isAlive_ = true;
+        laser.isDraw_ = false;
+        laser.size_ = { SIZE_X, SIZE_Y };
+        laser.pos_ = attackStartPos_;
+    }
 
-	for (auto& laser : obj_)
-	{
-		laser.isAlive_ = true;
-		laser.isDraw_ = false;
-		laser.size_ = { SIZE_X, SIZE_Y };
-		laser.pos_ = attackStartPos_;
-	}
-
-	cnt_ = 0;
+    cnt_ = 0;
+    shootTimer_ = 0;
+    nextIndex_ = 0;
+    fireCount_ = 0;
+    end_ = false;  // 初期化
 }
 
 void Laser::Update(Vector2F boss)
 {
     shootTimer_++;
-
     if (shootTimer_ >= INTERVAL && nextIndex_ < MAX_NUM)
     {
         if (!obj_[nextIndex_].isDraw_)
@@ -42,7 +43,6 @@ void Laser::Update(Vector2F boss)
             obj_[nextIndex_].isDraw_ = true;
             obj_[nextIndex_].pos_ = boss;
 
-            // 方向ベクトル計算
             Vector2F dir = *target_ - boss;
             float len = sqrtf(dir.x * dir.x + dir.y * dir.y);
             if (len != 0)
@@ -56,6 +56,17 @@ void Laser::Update(Vector2F boss)
 
             nextIndex_++;
             shootTimer_ = 0;
+        }
+
+        // 一度の発射で全部撃ったらカウント
+        if (nextIndex_ >= MAX_NUM)
+        {
+            fireCount_++;
+
+            if (fireCount_ >= 2)
+            {
+                end_ = true;
+            }
         }
     }
 
@@ -102,6 +113,7 @@ void Laser::Update(Vector2F boss)
         nextIndex_ = 0;
     }
 
+
     ChangeDispPos();
 
 }
@@ -112,7 +124,7 @@ void Laser::Draw(void)
 {
 	for (auto& laser : obj_)
 	{
-		if (laser.isDraw_)
+		if (laser.isAlive_)
 		{
 			DrawFormatString(0, 0, GetColor(255, 255, 255), "x: %.1f y: %.1f", laser.disppos_.x, laser.disppos_.y);
 			DrawBox(
@@ -144,8 +156,9 @@ void Laser::Hit(int i)
 
 bool Laser::End(void)
 {
+    //end_ = fireCount_ >= 2 && allInactive;
 
-	return false;
+	return end_;
 }
 
 void Laser::SetIsAlive(bool isAlive)

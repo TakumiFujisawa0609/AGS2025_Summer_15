@@ -17,7 +17,7 @@ public:
 	static constexpr int HALF_X = 70;
 	static constexpr int HALF_Y = Application::SCREEN_SIZE_Y / 2;
 
-	static constexpr int HP_MAX = 300;
+	static constexpr int HP_MAX = 3;
 
 	Runboo();
 	~Runboo();
