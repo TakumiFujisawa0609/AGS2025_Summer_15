@@ -451,22 +451,22 @@ void BattledomeScene::PlayerToBossAttack(void)
 	{
 	case SceneManager::BOSS_KINDS::NOKOPY:
 		for (int i = 0; i < nokopy_->GetObj().size(); i++) {
-			if (nokopy_->GetObj()[i].isCapsule_) {
-				if (ins.CircleAndCapsule(player_->GetUnit(), nokopy_->GetAttackIns()->Get()[i]))
-				{
-					player_->Hit(5, nokopy_->GetObj()[i].pos_);
-					nokopy_->ObjHit(i);
-				}
-			}
+			//if (nokopy_->GetObj()[i].isCapsule_) {
+			//	if (ins.CircleAndCapsule(player_->GetUnit(), nokopy_->GetAttackIns()->Get()[i]))
+			//	{
+			//		player_->Hit(5, nokopy_->GetObj()[i].pos_);
+			//		nokopy_->ObjHit(i);
+			//	}
+			//}
 			if (nokopy_->GetObj()[i].isCircle_) {
-				if (ins.Circle(nokopy_->GetObj()[i], player_->GetUnit())) {
+				if (ins.CircleAndRect(nokopy_->GetObj()[i], player_->GetUnit())) {
 					player_->Hit(5, nokopy_->GetObj()[i].pos_);
 					nokopy_->ObjHit(i);
 				}
 			}
 			else {
 
-				if (ins.CircleAndRect(player_->GetUnit(), nokopy_->GetObj()[i])) {
+ 				if (ins.Rect(player_->GetUnit(), nokopy_->GetObj()[i])) {
 					player_->Hit(5, nokopy_->GetObj()[i].pos_);
 					nokopy_->ObjHit(i);
 				}

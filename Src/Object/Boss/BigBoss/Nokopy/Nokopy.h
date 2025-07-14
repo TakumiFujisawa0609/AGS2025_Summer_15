@@ -114,7 +114,7 @@ private:
     Spine* spine_;
     bool targetLine_ = false;
     Vector2F targetVec_;
-
+    float angle_;
 
     bool isDive_;       //ö‚Á‚Ä‚¢‚é‚©
     void IsGround(Collision::DIR dir) override;

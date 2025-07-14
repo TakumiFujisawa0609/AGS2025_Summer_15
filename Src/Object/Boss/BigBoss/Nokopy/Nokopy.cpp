@@ -184,7 +184,7 @@ void Nokopy::BossDraw(void)
 		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.2, 0.0, img_[DRAW_IDLE], true);
 		break;
 	case Nokopy::DRAW_RUSHOOT:
-		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.18, 0.0, img_[DRAW_RUSHOOT], true);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.18, angle_, img_[DRAW_RUSHOOT], true);
 		break;
 	case Nokopy::DRAW_SPINE:
 		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.2, 0.0, img_[DRAW_IDLE], true);
@@ -210,8 +210,8 @@ void Nokopy::Idle(void)
 	if (moveCounter_ < 2) {
 		attackCounter_ = 0;
 		ChangeState(BossBase::STATE::ATTACK);
-		ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
-		//ChangeAttackState(SPINE);
+		//ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
+		ChangeAttackState(SPINE);
 		return;
 	}
 	//移動遷移
@@ -388,6 +388,7 @@ void Nokopy::UpdateRushoot(void)
        num = 0;
        SetDown(*playerPosPtr_);
        ChangeState(STATE::DAMAGE);
+	   angle_ = 0;
    }
    if (num >= 5) {
        unit_.nextpos_.x = SPAWN_POS_RIGHT;
@@ -395,6 +396,7 @@ void Nokopy::UpdateRushoot(void)
        attackCounter_ = 0;
        vecN = { 0, 0 };
        num = 0;
+	   angle_ = 0;
        ChangeState(STATE::IDLE);
    }
    if (attackCounter_ == 0) {
@@ -411,6 +413,9 @@ void Nokopy::UpdateRushoot(void)
        targetVec_ = playerPos - pos;
        float length = sqrtf(targetVec_.x * targetVec_.x + targetVec_.y * targetVec_.y);
        vecN = targetVec_ / length;
+        // 角度をunit_.pos_からplayerPosへのベクトルで計算
+        angle_ = atan2(playerPos.y - pos.y, playerPos.x - pos.x);
+		angle_ += AsoUtility::Deg2RadF(90);
        // 画面外まで延長（例: 画面対角線の2倍分延長）
        float extendLength =Application::SCREEN_SIZE_X * 2.0f;
        targetPos_ = pos + vecN * extendLength;
@@ -418,7 +423,7 @@ void Nokopy::UpdateRushoot(void)
        targetLine_ = true;
    } else if (attackCounter_ < 120) {
        targetLine_ = false;
-       unit_.nextpos_ += vecN * unit_.speed_ * (num + 1);
+       unit_.nextpos_ += vecN * unit_.speed_ * (num + 2);
    } else {
        num++;
        attackCounter_ = 0;

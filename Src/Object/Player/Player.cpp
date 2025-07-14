@@ -747,7 +747,7 @@ void Player::DrawPlayer(void)
 
 	bool Trance = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? false : true;
 	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y-18, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true, Trance);
-
+	DrawCircle(unit_.disppos_.x, unit_.disppos_.y,unit_.radius_, 0xff0000, true);
 	if (invic && !evaConpFlg_)SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
