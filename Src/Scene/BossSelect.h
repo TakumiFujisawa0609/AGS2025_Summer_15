@@ -35,7 +35,9 @@ private:
 	int bammoonImg_;
 	Vector2F bammoonPos_;
 
-
+	int nowSelectImage_;
+	Vector2F nowSelectPos_;
+	int nowSelectCount_;
 
 	void Collision(void);
 };
