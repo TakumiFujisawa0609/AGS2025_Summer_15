@@ -2,7 +2,7 @@
 #include<DxLib.h>
 #include"../../../../../Common/Vector2.h"
 
-struct Bullet {
+struct BulletStruct {
 	Vector2F pos;
 	Vector2F vel;
 	bool isActive;

@@ -9,6 +9,7 @@ class Player;
 class BambooManager;
 class BlastEffectManager;
 
+class BossTutorial;
 class Nokopy;
 class Runboo;
 class Bammoon;
@@ -31,6 +32,7 @@ private:
 	BambooManager* bamboo_;
 	StageBase* stage_;
 
+	BossTutorial* tutorial_;
 	Nokopy* nokopy_;
 	Runboo* runboo_;
 	Bammoon* bammoon_;

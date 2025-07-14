@@ -6,6 +6,7 @@
 #include"Attack/BamBlast.h"
 #include"Attack/Pbullet.h"
 #include"Attack/Stripe.h"
+#include"Attack/Csphere.h"
 
 Bammoon::Bammoon()
 {
@@ -31,6 +32,9 @@ void Bammoon::Init(void)
 
 	stripe_ = new Stripe();
 	stripe_->Init(&unit_.pos_);
+
+	csphere_ = new Csphere();
+	csphere_->Init(&unit_.pos_);
 
 	unit_.size_ = { SIZE_X,SIZE_Y };
 	unit_.radius_ = unit_.size_.x/2;
@@ -70,6 +74,10 @@ void Bammoon::Draw(void)
 
 void Bammoon::Release(void)
 {
+	csphere_->Release();
+	delete csphere_;
+	csphere_ = nullptr;
+
 	stripe_->Release();
 	delete stripe_;
 	stripe_ = nullptr;
@@ -129,6 +137,7 @@ void Bammoon::Move(void)
 	if (motion_ != MOTION::JUMP && jumpmotion && !jump) {
 		jump = true;
 		unit_.yAccel_ = -50.0f;
+		unit_.xAccel_ = 25.0f * ((unit_.pos_.x < Application::SCREEN_SIZE_X / 2) ? 1.0f : -1.0f);
 	}
 
 
@@ -222,10 +231,23 @@ void Bammoon::Attack(void)
 	}
 	case Bammoon::ATTACK::STRIPE: {
 		int rate = 5;
-		if (counter_ % rate == 0) {
-			stripe_->On(counter_ / rate);
-		}
+		if (counter_ % rate == 0) { stripe_->On(counter_ / rate); }
 		if (stripe_->End()) {
+			counter_ = 0;
+			unit_.isGravity_ = true;
+			unit_.isXAttenu = true;
+			idleTime_ = 300;
+			ChangeState(STATE::IDLE);
+			return;
+		}
+	}
+	case Bammoon::ATTACK::CSPHERE: {
+		int rate = 50;
+		if (counter_ % rate == 0) {
+			if (counter_ == 0) { csphere_->On(*playerPosPtr_); }
+			else { csphere_->CorceChange(*playerPosPtr_); }
+		}
+		if (csphere_->End()) {
 			counter_ = 0;
 			unit_.isGravity_ = true;
 			unit_.isXAttenu = true;
@@ -255,16 +277,20 @@ void Bammoon::Damage(void)
 		idleTime_ = 400;
 		ChangeState(STATE::IDLE);
 		attackState_ = ATTACK::NON;
-		ChangeMotion(MOTION::DAMAGE);
+		ChangeMotion(MOTION::IDLE);
 	}
 }
 
 void Bammoon::Death(void)
 {
+	if (--deathCou_ <= 0) {
+		unit_.isAlive_ = false;
+	}
 }
 
 std::vector<Base> Bammoon::GetObj(void)
 {
+	std::vector<Base> ret = {};
 	switch (attackState_)
 	{
 	case Bammoon::ATTACK::NON:
@@ -272,31 +298,28 @@ std::vector<Base> Bammoon::GetObj(void)
 	case Bammoon::ATTACK::SWEEP:
 		break;
 	case Bammoon::ATTACK::BLAST:
-		return blast_->Get();
+		ret = blast_->Get();
 		break;
 	case Bammoon::ATTACK::PBULLET:
-		return pBullet_->Get();
+		ret = pBullet_->Get();
 		break;
 	case Bammoon::ATTACK::STRIPE:
-		return stripe_->Get();
+		ret = stripe_->Get();
+		break;
+	case Bammoon::ATTACK::CSPHERE:
+		ret.emplace_back(csphere_->GetObj());
 		break;
 	default:
 		break;
 	}
-	return std::vector<Base>();
+	return ret;
 }
 
-AttackBase* Bammoon::GetAttackIns(void)
-{
-	return nullptr;
-}
 
 void Bammoon::ObjHit(int i)
 {
 	switch (attackState_)
 	{
-	case Bammoon::ATTACK::NON:
-		break;
 	case Bammoon::ATTACK::SWEEP:
 		break;
 	case Bammoon::ATTACK::BLAST:
@@ -307,9 +330,8 @@ void Bammoon::ObjHit(int i)
 		break;
 	case Bammoon::ATTACK::STRIPE:
 		break;
-	case Bammoon::ATTACK::MAX:
-		break;
-	default:
+	case Bammoon::ATTACK::CSPHERE:
+		csphere_->Hit();
 		break;
 	}
 }
@@ -327,6 +349,8 @@ void Bammoon::SetDamage(int dmg)
 		mana.ZoomPos(unit_.pos_);
 		mana.ZoomScale(2.0f);
 		ChangeState(STATE::DEATH);
+		deathCou_ = DEATH_DIRECTION_TIME;
+		SetDown(*playerPosPtr_);
 	}
 }
 
@@ -346,6 +370,9 @@ void Bammoon::AttackUpdate(void)
 		break;
 	case Bammoon::ATTACK::STRIPE:
 		stripe_->Update();
+		break;
+	case Bammoon::ATTACK::CSPHERE:
+		csphere_->Update();
 		break;
 	case Bammoon::ATTACK::MAX:
 		break;
@@ -371,6 +398,9 @@ void Bammoon::AttackDraw(void)
 	case Bammoon::ATTACK::STRIPE:
 		stripe_->Draw();
 		break;
+	case Bammoon::ATTACK::CSPHERE:
+		csphere_->Draw();
+		break;
 	case Bammoon::ATTACK::MAX:
 		break;
 	default:
@@ -391,8 +421,11 @@ void Bammoon::AttackRand(void)
 	else if (r <= 700) {
 		attackState_ = ATTACK::PBULLET;
 	}
-	else if (r <= 1000) {
+	else if (r <= 850) {
 		attackState_ = ATTACK::STRIPE;
+	}
+	else if (r <= 1000) {
+		attackState_ = ATTACK::CSPHERE;
 	}
 }
 
@@ -401,13 +434,14 @@ void Bammoon::SetDown(Vector2F pos)
 {
 	BossBase::SetDown(pos);
 	TargetLook(*playerPosPtr_);
+	ChangeMotion(MOTION::DAMAGE);
+	attackState_ = ATTACK::NON;
 	if (state_ == STATE::ATTACK) {
 		auto& mana = SceneManager::GetInstance();
 		mana.HitStop(60);
 		Vector2F point = unit_.pos_ + (pos - unit_.pos_);
 		mana.ZoomPos(point);
 		mana.ZoomScale(2.0f);
-
 	}
 }
 
@@ -451,20 +485,13 @@ void Bammoon::IsGround(Collision::DIR dir)
 
 
 
-
-
-
-
-
-
-
-
 void Bammoon::LoadBammoonImage(void)
 {
 	const std::string PATH = "Data/Image/Boss/Bammoon/";
 
 	int motion = 0;
 
+	//------------------------------------------------------------------------------------------------------
 	motion = (int)MOTION::IDLE;
 
 	int idleLoad[IDLE_LOAD_NUM];
@@ -472,7 +499,9 @@ void Bammoon::LoadBammoonImage(void)
 	LoadDivGraph((PATH + "Run/Run.png").c_str(), IDLE_LOAD_NUM, 2, 2, LOAD_SIZE_X, LOAD_SIZE_Y, idleLoad);
 
 	image_[motion].insert(image_[motion].end(), idleLoad, idleLoad + IDLE_LOAD_NUM);
+	//------------------------------------------------------------------------------------------------------
 
+	//------------------------------------------------------------------------------------------------------
 	motion = (int)MOTION::JUMP;
 
 	int jumpLoad[IDLE_LOAD_NUM];
@@ -480,7 +509,9 @@ void Bammoon::LoadBammoonImage(void)
 	LoadDivGraph((PATH + "Run/Run.png").c_str(), IDLE_LOAD_NUM, 2, 2, LOAD_SIZE_X, LOAD_SIZE_Y, jumpLoad);
 
 	image_[motion].insert(image_[motion].end(), jumpLoad, jumpLoad + IDLE_LOAD_NUM);
+	//------------------------------------------------------------------------------------------------------
 
+	//------------------------------------------------------------------------------------------------------
 	motion = (int)MOTION::ATTACK;
 
 	for (int i = 1; i <= ATTACK_LOAD_NUM; i++) {
@@ -488,6 +519,14 @@ void Bammoon::LoadBammoonImage(void)
 		int load = LoadGraph(filePath.c_str());
 		image_[motion].emplace_back(load);
 	}
+	//------------------------------------------------------------------------------------------------------
+
+	//------------------------------------------------------------------------------------------------------
+	motion = (int)MOTION::DAMAGE;
+
+	image_[motion].emplace_back(LoadGraph((PATH + "Damage/Damage.png").c_str()));
+	//------------------------------------------------------------------------------------------------------
+
 }
 
 void Bammoon::DrawBammoonImage(void)

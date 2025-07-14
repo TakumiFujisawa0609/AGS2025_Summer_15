@@ -65,10 +65,11 @@ void Player::Init()
 
 	// “ÁŽêUŒ‚ŠÖŒW
 	BambooImg_ = LoadGraph("Data/Image/Player/BambooBar.png");
-	arrowImage_ = LoadGraph("Data/Image/Player/–îˆó.png");
+	LoadDivGraph("Data/Image/Player/–îˆó.png", 4, 4, 1, 183, 51, arrowImg_);
 	vec_ = {};
 
 	haveB_ = false;
+	arrowAnim_ = 0;
 
 	// ‰ñ”ðŠÖŒW
 	evasionCounter_ = 0;
@@ -115,13 +116,9 @@ void Player::Update()
 
 	Animation();
 
-
 	(this->*stateFuncPtr)();
+
 	Respawn();
-	if (CheckHitKey(KEY_INPUT_P) == 1) {
-		SceneManager::GetInstance().ZoomPos(unit_.disppos_);
-		SceneManager::GetInstance().ZoomScale(1.4);
-	}
 
 	for (auto& t : BpAtIns_) {
 		t->Update();
@@ -129,14 +126,14 @@ void Player::Update()
 
 	UnitBase::Update();
 
-	if (startPos_.x >= unit_.disppos_.x)
-	{
-		unit_.disppos_.x = startPos_.x;
-	}
-	if (startPos_.x + Application::SCREEN_SIZE_X <= unit_.disppos_.x)
-	{
-		unit_.disppos_.x = startPos_.x + Application::SCREEN_SIZE_X;
-	}
+	//if (startPos_.x >= unit_.disppos_.x)
+	//{
+	//	unit_.disppos_.x = startPos_.x;
+	//}
+	//if (startPos_.x + Application::SCREEN_SIZE_X <= unit_.disppos_.x)
+	//{
+	//	unit_.disppos_.x = startPos_.x + Application::SCREEN_SIZE_X;
+	//}
 }
 
 void Player::Draw()
@@ -148,11 +145,11 @@ void Player::Draw()
 			DrawRotaGraph(unit_.disppos_.x - 5, unit_.disppos_.y + 192 / 4, 1, 0, jumpImg_[(int)jumpAnim_], true);
 		}
 
-		if (haveB_) {
-			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 0.02, atan2(vec_.y, vec_.x), arrowImage_, true);
-			DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y - 50, 1, 0, BambooImg_, true);
-		}
+		if(haveB_)DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y - 50, 1, 0, BambooImg_, true);
 		DrawPlayer();
+		if (haveB_)DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1, atan2(vec_.y, vec_.x), arrowImg_[arrowAnim_], true);
+			
+		
 		defaultAttack_->Draw();
 
 		for (auto& t : BpAtIns_) {
@@ -164,7 +161,7 @@ void Player::Draw()
 }
 void Player::Release()
 {
-	DeleteGraph(arrowImage_);
+	for (auto& id : arrowImg_) { DeleteGraph(id); }
 
 	for (auto& b : BpAtIns_) {
 		b->Release();
@@ -725,6 +722,12 @@ void Player::Animation()
 			ChangeState(Player::STATE::MOVE);
 		}
 	}
+
+	static int interval = 0;
+	interval++;
+	if (!(interval >= ANIMATION_SPEED))return;
+	else interval = 0;
+	if (haveB_) { if (++arrowAnim_ >= 4)arrowAnim_ = 0; }
 }
 
 

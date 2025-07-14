@@ -1,8 +1,17 @@
 #include"BossSelect.h"
 
 #include<DxLib.h>
+#include<cmath>
 
 #include"../Manager/SceneManager.h"
+#include"../Manager/Collision.h"
+#include"../Manager/Camera.h"
+#include"../Utility/AsoUtility.h"
+
+#include"../Manager/Decoration/BlastEffect/BlastEffectManager.h"
+
+#include"../Object/Stage/SelectStage/SelectStage.h"
+#include"../Object/Player/SelectPlayer/SelectPlayer.h"
 
 BossSelect::BossSelect()
 {
@@ -14,43 +23,148 @@ BossSelect::~BossSelect()
 
 void BossSelect::Init()
 {
+	stage_ = new SelectStage();
+	stage_->Init();
 
+	player_ = new SelectPlayer();
+	player_->Init();
+
+	blast_ = new BlastEffectManager();
+	blast_->Init();
+
+	Collision::CreateInstance();
+	auto& colli = Collision::GetInstance();
+	colli.Init();
+	colli.SetStage(stage_->GetMapData());
+
+	auto& camera = Camera::GetInstance();
+	camera.Init();
+	camera.SetMapNum(stage_->GetMapNum());
+
+	haveBcou_ = 0;
+
+	tutorialImg_ = LoadGraph("Data/Image/Stage/Select/SelectTutorial.png");
+	tutorialPos_ = { 1200.0f,250.0f };
+	nokopyImg_ = LoadGraph("Data/Image/Stage/Select/SelectNokopy.png");
+	nokopyPos_ = { 1050.0f,550.0f };
+	runbooImg_ = LoadGraph("Data/Image/Stage/Select/SelectRunboo.png");
+	runbooPos_ = { 50.0f,300.0f };
+	bammoonImg_ = LoadGraph("Data/Image/Stage/Select/SelectBammoon.png");
+	bammoonPos_ = { Application::SCREEN_SIZE_X / 2,100.0f };
 }
 
 void BossSelect::Update()
 {
-	using M = SceneManager;
-	auto& m = M::GetInstance();
+	player_->Update();
 
-	if (CheckHitKey(KEY_INPUT_1) == 1) {
-		m.SetBossKinds(M::BOSS_KINDS::NOKOPY);
-		m.ChangeScene(M::SCENE_ID::BATTLEDONE);
+	using B = SelectPlayer::B_KINDS;
+	B b = player_->NowSelect();
+	Vector2F target = {};
+	switch (b)
+	{
+	case SelectPlayer::RUNBOO:
+		player_->SetVec(runbooPos_);
+		break;
+	case SelectPlayer::BAMMOON:
+		player_->SetVec(bammoonPos_);
+		break;
+	case SelectPlayer::TUTORIAL:
+		player_->SetVec(tutorialPos_);
+		break;
+	case SelectPlayer::NOKOPY:
+		player_->SetVec(nokopyPos_);
+		break;
 	}
-	if (CheckHitKey(KEY_INPUT_2) == 1) {
-		m.SetBossKinds(M::BOSS_KINDS::RUNBOO);
-		m.ChangeScene(M::SCENE_ID::BATTLEDONE);
-	}
-	if (CheckHitKey(KEY_INPUT_3) == 1) {
-		m.SetBossKinds(M::BOSS_KINDS::BAMMOON);
-		m.ChangeScene(M::SCENE_ID::BATTLEDONE);
-	}
+	this->Collision();
+
+	blast_->Update();
 }
 
 void BossSelect::Draw()
 {
 	using a = Application;
 
-	DrawBox(0, 0, a::SCREEN_SIZE_X, a::SCREEN_SIZE_Y, RGB(0, 255, 0), true);
+	stage_->BackDraw();
 
-	int fontsize = 32;
-	SetFontSize(32);
-	DrawString(0, 0, "‚P‚Åƒ{ƒX‚P", RGB(255, 255, 255));
-	DrawString(0, fontsize, "‚Q‚Åƒ{ƒX‚Q", RGB(255, 255, 255));
-	DrawString(0, fontsize * 2, "‚R‚Åƒoƒ“ƒ€[ƒ“", RGB(255, 255, 255));
-	SetFontSize(16);
+	using B = SelectPlayer::B_KINDS;
+	B b = player_->NowSelect();
+
+	DrawRotaGraphF(tutorialPos_.x, tutorialPos_.y, (b == B::TUTORIAL) ? 1.2 : 1, 0, tutorialImg_, true);
+	DrawRotaGraphF(nokopyPos_.x, nokopyPos_.y, (b == B::NOKOPY) ? 1.2 : 1, AsoUtility::Deg2RadF(-45.0f), nokopyImg_, true);
+	DrawRotaGraphF(runbooPos_.x, runbooPos_.y, (b == B::RUNBOO) ? 1.2 : 1, 0, runbooImg_, true);
+	DrawRotaGraphF(bammoonPos_.x, bammoonPos_.y, (b == B::BAMMOON) ? 1.2 : 1, 0, bammoonImg_, true);
+
+	player_->Draw();
+
+	blast_->Draw();
+
+	stage_->Draw();
 }
 
 void BossSelect::Release()
 {
+	DeleteGraph(bammoonImg_);
+	DeleteGraph(runbooImg_);
+	DeleteGraph(nokopyImg_);
+	DeleteGraph(tutorialImg_);
 
+	Collision::DeleteInstance();
+
+	blast_->Release();
+	delete blast_;
+
+	player_->Release();
+	delete player_;
+
+	stage_->Release();
+	delete stage_;
+
+}
+
+
+void BossSelect::Collision()
+{
+	using M = SceneManager;
+	auto& sMng = M::GetInstance();
+
+	Vector2F b = player_->GetBamboo().pos_;
+
+	Vector2F vec = {};
+	float dis = 0.0f;
+
+	vec = runbooPos_ - b;
+	dis = sqrtf(vec.x * vec.x + vec.y * vec.y);
+
+	if (dis < SelectPlayer::BAMBOO_SPEED) {
+		blast_->On(b);
+		sMng.SetBossKinds(M::BOSS_KINDS::RUNBOO);
+		sMng.ChangeScene(M::SCENE_ID::BATTLEDONE);
+	}
+
+	vec = bammoonPos_ - b;
+	dis = sqrtf(vec.x * vec.x + vec.y * vec.y);
+
+	if (dis < SelectPlayer::BAMBOO_SPEED) {
+		blast_->On(b);
+		sMng.SetBossKinds(M::BOSS_KINDS::BAMMOON);
+		sMng.ChangeScene(M::SCENE_ID::BATTLEDONE);
+	}
+
+	vec = tutorialPos_ - b;
+	dis = sqrtf(vec.x * vec.x + vec.y * vec.y);
+
+	if (dis < SelectPlayer::BAMBOO_SPEED) {
+		blast_->On(b);
+		sMng.SetBossKinds(M::BOSS_KINDS::TUTORIAL);
+		sMng.ChangeScene(M::SCENE_ID::BATTLEDONE);
+	}
+
+	vec = nokopyPos_ - b;
+	dis = sqrtf(vec.x * vec.x + vec.y * vec.y);
+
+	if (dis < SelectPlayer::BAMBOO_SPEED) {
+		blast_->On(b);
+		sMng.SetBossKinds(M::BOSS_KINDS::NOKOPY);
+		sMng.ChangeScene(M::SCENE_ID::BATTLEDONE);
+	}
 }

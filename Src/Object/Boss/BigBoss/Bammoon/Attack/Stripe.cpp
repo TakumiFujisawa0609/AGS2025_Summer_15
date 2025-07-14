@@ -28,8 +28,6 @@ void Stripe::Init(const Vector2F* pos)
 
 		o.isAlive_ = false;
 		o.inviCounter_ = 0;
-		o.pos_ = S_POS[i];
-
 		i++;
 	}
 
@@ -53,7 +51,8 @@ void Stripe::Update(void)
 		}
 		else {
 			if (o.inviCounter_ > 0) {
-				if (--o.inviCounter_ <= 0) { o.isAlive_ = false; }
+				o.inviCounter_ -= 5;
+				if (o.inviCounter_ <= 0) { o.isAlive_ = false; }
 			}
 			else {
 				o.pos_.y -= SPEED;
@@ -76,7 +75,7 @@ void Stripe::Draw(void)
 		i++;
 		if (!o.isAlive_) {
 			if (o.isDraw_) {
-				DrawRotaGraph(S_POS[i].x, Application::SCREEN_SIZE_Y - 128, 1, 0, nokoImg_, true);
+				DrawRotaGraph(((side_) ? SIZE_X * (i + 1) : Application::SCREEN_SIZE_X - (SIZE_X * (i + 1))), Application::SCREEN_SIZE_Y - 128, 1, 0, nokoImg_, true);
 			}
 		}
 		else {
@@ -99,9 +98,11 @@ void Stripe::On(int i)
 {
 	if (i >= obj_.size())return;
 
-	if (i == 0) { end_ = 0; }
-
-	obj_[i].pos_ = S_POS[i];
+	if (i == 0) {
+		side_ = (bool)GetRand(1);
+		end_ = 0;
+	}
+	obj_[i].pos_ = { ((side_) ? SIZE_X * (i + 1) : Application::SCREEN_SIZE_X - (SIZE_X * (i + 1)))  , POS_Y };
 	obj_[i].disppos_ = obj_[i].pos_ - Camera::GetInstance().GetPos();
 
 	obj_[i].inviCounter_ = 50;
