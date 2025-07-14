@@ -60,6 +60,11 @@ void Runboo::Update()
 		w->Update();
 	}
 
+	for (int i = 0; i < weak_.size(); i++)
+	{
+
+	}
+
 	if (unit_.inviCounter_ > 0)
 	{
 		unit_.inviCounter_--;

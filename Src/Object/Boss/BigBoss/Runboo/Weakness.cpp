@@ -133,9 +133,8 @@ void Weakness::Draw()
 	}
 
 	bullet_->Draw();
+
 	laser_->Draw();
-
-
 }
 
 void Weakness::Release()
@@ -160,14 +159,33 @@ AttackBase* Weakness::GetAttackIns(void)
 
 std::vector<Base> Weakness::GetObj(void)
 {
+	std::vector<Base> ret;
 
+	switch (attack_)
+	{
+	case Weakness::NON:
+		break;
+	case Weakness::LASER:
+		ret = laser_->Get();
+		break;
+	case Weakness::BOUND:
+		break;
+	case Weakness::MAX:
+		break;
+	}
 
+	return ret;
+}
+
+std::vector<Base> Weakness::GetBulletObj(void)
+{
 	return bullet_->Get();
 }
 
 void Weakness::ObjHit(int i)
 {
-	bullet_->Hit();
+	//bullet_->Hit();
+	laser_->Hit(i);
 }
 
 void Weakness::SetDamage(int dmg)

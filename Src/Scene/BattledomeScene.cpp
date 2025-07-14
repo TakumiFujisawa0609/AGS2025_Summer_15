@@ -364,11 +364,22 @@ void BattledomeScene::PlayerAttackToBoss(void)
 	case SceneManager::BOSS_KINDS::RUNBOO:
 		for (auto& weak : runboo_->GetWeakness())
 		{
+			int i = 0;
 			//プレイヤーの通常攻撃と弱点の当たり判定
 			if (ins.Circle(player_->DefaultAtt(), weak->GetUnit()))
 			{
 				weak->SetDamage(1.0f);
 				bamboo_->Create(player_->GetUnit().pos_, 1, 30);
+			}
+
+			//プレイヤーと弱点の攻撃当たり判定
+			for (auto& weakObj : weak->GetObj()) {
+				if (ins.Rect(player_->DefaultAtt(), weakObj))
+				{
+					weak->ObjHit(i);
+					bamboo_->Create(weakObj.pos_, 2, 80);
+				}
+				i++;
 			}
 
 			//プレイヤーの特殊攻撃と弱点の当たり判定
@@ -441,18 +452,12 @@ void BattledomeScene::PlayerToBoss(void)
 			player_->Hit(10, runboo_->GetUnit().pos_);
 		}
 
+		//プレイヤーと弱点の当たり判定
 		for (auto& weak : runboo_->GetWeakness())
 		{
 			if (ins.Circle(player_->GetUnit(), weak->GetUnit()))
 			{
 				player_->Hit(5.0f, weak->GetUnit().pos_);
-			}
-		
-			for (auto& weakObj : weak->GetObj()) {
-				if (ins.Circle(player_->GetUnit(), weakObj))
-				{
-					player_->Hit(5.0f, weakObj.pos_);
-				}
 			}
 		}
 		break;
@@ -497,7 +502,26 @@ void BattledomeScene::PlayerToBossAttack(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
+	{
+		for (auto& weak : runboo_->GetWeakness())
+		{
+			//プレイヤーと弱点の攻撃当たり判定
+			for (auto& weakObj : weak->GetObj()) {
+				if (ins.CircleAndRect(player_->GetUnit(), weakObj))
+				{
+					player_->Hit(5.0f, weakObj.pos_);
+				}
+			}
 
+			for (auto& weakBull : weak->GetBulletObj())
+			{
+				if (ins.Circle(player_->GetUnit(), weakBull))
+				{
+					player_->Hit(5.0f, weakBull.pos_);
+				}
+			}
+		}
+	}
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		int i = 0;

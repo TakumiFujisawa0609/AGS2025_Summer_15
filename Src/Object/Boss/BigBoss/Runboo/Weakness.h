@@ -43,6 +43,8 @@ public:
 
 	AttackBase* GetAttackIns(void)override;
 	std::vector<Base>GetObj(void)override;
+	std::vector<Base> GetBulletObj(void);
+
 	void ObjHit(int i);
 	void SetDamage(int dmg)override;
 	void ChengeAttack(ATTACK attack)
