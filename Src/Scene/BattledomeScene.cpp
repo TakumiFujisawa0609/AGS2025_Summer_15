@@ -148,6 +148,7 @@ void BattledomeScene::Draw(void)
 	switch (sMng.GetNowBoss())
 	{
 	case SceneManager::BOSS_KINDS::NOKOPY:
+		nokopy_->DrawHp();
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
 		runboo_->Draw();

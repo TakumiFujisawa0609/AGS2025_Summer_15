@@ -23,6 +23,6 @@ public:
 private:
 
     std::vector<Base>obj_;
-
+    int couner_;
 };
 
