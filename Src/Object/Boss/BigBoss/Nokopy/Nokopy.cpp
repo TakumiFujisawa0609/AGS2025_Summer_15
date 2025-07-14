@@ -206,8 +206,8 @@ void Nokopy::Idle(void)
 	if (moveCounter_ < 2) {
 		attackCounter_ = 0;
 		ChangeState(BossBase::STATE::ATTACK);
-		//ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
-		ChangeAttackState(WAVEMBOO);
+		ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
+		//ChangeAttackState(WAVEMBOO);
 		return;
 	}
 	//ˆÚ“®‘JˆÚ
