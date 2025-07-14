@@ -7,9 +7,7 @@
 #include "Camera.h"
 
 #include "../Scene/TitleScene.h"
-#include"../Scene/ModeSelect.h"
 #include"../Scene/BossSelect.h"
-#include "../Scene/TutorialScene.h"
 #include"../Scene/BattledomeScene.h"
 #include "../Scene/GameClear.h"
 #include "../Scene/GameOverScene.h"
@@ -35,7 +33,7 @@ SceneManager& SceneManager::GetInstance(void)
 void SceneManager::Init(void)
 {
 
-	sceneId_ = SCENE_ID::TUTORIAL;
+	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
 	cntl_ = CNTL::NONE;
 
@@ -328,14 +326,6 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		scene_ = new TitleScene();
 		break;
 		
-	case SCENE_ID::MODESELECT:
-		scene_ = new ModeSelect();
-		break;
-
-	case SCENE_ID::TUTORIAL:
-		scene_ = new TutorialScene();
-		break;
-
 	case SCENE_ID::BOSSSELECT:
 		scene_ = new BossSelect();
 		break;
@@ -393,7 +383,6 @@ void SceneManager::Fade(void)
 void SceneManager::ZoomCtr(void)
 {
 	bool on = true;
-	if (sceneId_ == SCENE_ID::TUTORIAL)on = false;
 	if (sceneId_ == SCENE_ID::BATTLEDONE)on = false;
 	if (on)return;
 

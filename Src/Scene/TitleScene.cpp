@@ -17,7 +17,7 @@ TitleScene::~TitleScene(void)
 
 void TitleScene::Init(void)
 {
-
+	image_ = LoadGraph("Data/Image/Title.png");
 }
 
 void TitleScene::Update(void)
@@ -41,11 +41,18 @@ void TitleScene::Update(void)
 
 void TitleScene::Draw(void)
 {
-	DrawString(0,0,"タイトルシーン",RGB(255,255,255));
+	DrawGraph(0, 0, image_, true);
+
+	std::string letter = "-- SPACE or B to START --";
+	int fontSize = 32;
+	SetFontSize(fontSize);
+	DrawString((Application::SCREEN_SIZE_X / 2) -225, (int)(Application::SCREEN_SIZE_Y * 0.9f), letter.c_str(), RGB(255, 255, 255));
+	SetFontSize(16);
 
 }
 
 void TitleScene::Release(void)
 {
+	DeleteGraph(image_);
 }
 

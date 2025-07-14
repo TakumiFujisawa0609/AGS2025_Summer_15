@@ -7,8 +7,6 @@
 #include"../../Manager/Collision.h"
 #include"../../Manager/SceneManager.h"
 #include"../Stage/Tutorial/TutorialStage.h"
-#include"../../Scene/TutorialScene.h"
-
 
 
 Player::Player()

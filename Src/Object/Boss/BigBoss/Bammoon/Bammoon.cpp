@@ -55,6 +55,8 @@ void Bammoon::Init(void)
 	pinch_ = false;
 
 	TargetLook(*playerPosPtr_);
+
+	ChangeDispPos();
 }
 
 void Bammoon::Update(void)

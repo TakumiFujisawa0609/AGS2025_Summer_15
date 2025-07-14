@@ -50,7 +50,7 @@ void BossSelect::Init()
 	runbooImg_ = LoadGraph("Data/Image/Stage/Select/SelectRunboo.png");
 	runbooPos_ = { 50.0f,300.0f };
 	bammoonImg_ = LoadGraph("Data/Image/Stage/Select/SelectBammoon.png");
-	bammoonPos_ = { Application::SCREEN_SIZE_X / 2,100.0f };
+	bammoonPos_ = { 650,120.0f };
 
 	nowSelectImage_ = LoadGraph("Data/Image/Stage/Select/NowSelect.png");
 }

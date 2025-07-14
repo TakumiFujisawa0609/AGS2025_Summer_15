@@ -23,7 +23,7 @@ void SelectPlayer::Init()
 	LoadDivGraph("Data/Image/Player/–îˆó.png", 4, 4, 1, 183, 51, arrowImg_);
 
 
-	pos_ = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y - 110 };
+	pos_ = { Application::SCREEN_SIZE_X / 2 - 20,Application::SCREEN_SIZE_Y - 110 };
 	animeCou_ = 0;
 	animeInterval_ = 0;
 	haveB_ = true;
@@ -71,8 +71,10 @@ void SelectPlayer::Update()
 
 void SelectPlayer::Draw()
 {
-	DrawRotaGraph(bamboo_.pos_.x, bamboo_.pos_.y, 1, atan2(vec_.y, vec_.x), bambooImg_, true);
-	DrawRotaGraphF(pos_.x, pos_.y-18, 2.3, 0, image_[animeCou_], true);
+	DrawRotaGraphF(bamboo_.pos_.x, bamboo_.pos_.y, 1, atan2(vec_.y, vec_.x), bambooImg_, true);
+
+	bool reverse = (nowSelect_ != RUNBOO);
+	DrawRotaGraphF(pos_.x, pos_.y-18, 2.3, 0, image_[animeCou_], true,reverse);
 	if (haveB_) { DrawRotaGraph(pos_.x, pos_.y, 1, atan2(vec_.y, vec_.x), arrowImg_[arrowAnime_], true); }
 }
 

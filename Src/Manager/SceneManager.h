@@ -23,8 +23,6 @@ public:
 	{
 		NONE = -1,
 		TITLE,
-		MODESELECT,
-		TUTORIAL,
 		BOSSSELECT,
 		BATTLEDONE,
 		GAMEOVER,
@@ -87,6 +85,8 @@ public:
 		NOKOPY,
 		BAMMOON,
 		RUNBOO,
+
+		MAX,
 	};
 
 	const BOSS_KINDS GetNowBoss(void)const { return nowBossKinds_; }
