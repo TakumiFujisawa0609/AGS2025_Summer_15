@@ -198,7 +198,7 @@ void Weakness::SetDamage(int dmg)
 
 void Weakness::AttackManager(void)
 {
-	if (attack_ == ATTACK::NON && attackCounter_ > 180 && laser_->End() == false)
+	if (attack_ == ATTACK::NON && attackCounter_ > 180)
 	{
 		attack_ = (ATTACK)GetRand((int)(ATTACK::MAX) - 1);
 		attackCounter_ = 0;

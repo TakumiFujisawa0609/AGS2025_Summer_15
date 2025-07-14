@@ -17,7 +17,7 @@ public:
 	static constexpr float AMPLITUDE = 1.0f;          
 	static constexpr float MOVE_Y_SPEED = 0.05f;
 
-	static constexpr int HP_MAX = 10;
+	static constexpr int HP_MAX = 500;
 	static constexpr int HP_POS_X = 10;
 	static constexpr int HP_POS_Y = 15;
 

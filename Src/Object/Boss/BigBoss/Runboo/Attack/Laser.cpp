@@ -14,6 +14,9 @@ Laser::~Laser()
 void Laser::Init(const Vector2F* pos)
 {
     attackStartPos_ = *pos;
+    end_ = false;
+
+    image_ = LoadGraph("Data/Image/Boss/Runboo/Laser.png");
 
     obj_.resize(MAX_NUM);
 
@@ -21,6 +24,7 @@ void Laser::Init(const Vector2F* pos)
     {
         laser.isAlive_ = false;
         laser.size_ = { SIZE_X, SIZE_Y };
+        laser.radius_ = 24.0f * BIG_RATE;
         laser.pos_ = attackStartPos_;
         laser.isDraw_ = false;
     }
@@ -127,14 +131,23 @@ void Laser::Draw(void)
 	{
 		if (laser.isAlive_)
 		{
-			DrawFormatString(0, 0, GetColor(255, 255, 255), "x: %.1f y: %.1f", laser.disppos_.x, laser.disppos_.y);
+		/*	DrawFormatString(0, 0, GetColor(255, 255, 255), "x: %.1f y: %.1f", laser.disppos_.x, laser.disppos_.y);
 			DrawBox(
 				laser.disppos_.x - SIZE_X / 2,
 				laser.disppos_.y - SIZE_Y / 2,
 				laser.disppos_.x + SIZE_X / 2,
 				laser.disppos_.y + SIZE_Y / 2,
 				RGB(255, 0, 0), true
-			);
+			);*/
+
+            if (end_)return;
+
+            DrawRotaGraph(
+                laser.disppos_.x,
+                laser.disppos_.y,
+                BIG_RATE, 0.0f, image_,
+                true
+            );
 		}
 
 	}
@@ -142,7 +155,7 @@ void Laser::Draw(void)
 
 void Laser::Release(void)
 {
-	//DeleteGraph(image_);
+	DeleteGraph(image_);
 }
 
 const std::vector<Base> Laser::Get() const

@@ -274,7 +274,9 @@ void BattledomeScene::Scroll(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
-		camera.Follow(Camera::X, 1.0f);
+	{
+		camera.Follow(Camera::X, Runboo::MOVE_SPEED);
+	}
 		break;
 	case SceneManager::BOSS_KINDS::NOKOPY:
 	case SceneManager::BOSS_KINDS::BAMMOON:
@@ -466,18 +468,18 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		{
 			int i = 0;
 			//プレイヤーの通常攻撃と弱点の当たり判定
-			if (ins.Circle(player_->DefaultAtt(), weak->GetUnit()))
-			{
-				weak->SetDamage(1.0f);
-				bamboo_->Create(player_->GetUnit().pos_, 1, 30);
-			}
+			//if (ins.Circle(player_->DefaultAtt(), weak->GetUnit()))
+			//{
+			//	weak->SetDamage(1.0f);
+			//	bamboo_->Create(player_->GetUnit().pos_, 1, 30);
+			//}
 
 			//プレイヤーと弱点の攻撃当たり判定
 			for (auto& weakObj : weak->GetObj()) {
 				if (ins.Rect(player_->DefaultAtt(), weakObj))
 				{
 					weak->ObjHit(i);
-					bamboo_->Create(weakObj.pos_, 2, 80);
+					bamboo_->Create(weakObj.pos_, 1, 50);
 				}
 				i++;
 			}
@@ -495,11 +497,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 
 		//本体（壁）と通常攻撃の当たり判定
 		if (ins.CircleAndRect(player_->DefaultAtt(), runboo_->GetUnit())) {
-			bamboo_->Create(player_->GetUnit().pos_, 1);
-			//弱点がすべて破壊されたら、本体にダメージが入る
-			if (runboo_->GetWeakAllDeath()) {
-				runboo_->SetDamage(5);
-			}
+			bamboo_->Create(player_->GetUnit().pos_, 1 , 50);
 		}
 		break;
 	case M::BOSS_KINDS::BAMMOON:

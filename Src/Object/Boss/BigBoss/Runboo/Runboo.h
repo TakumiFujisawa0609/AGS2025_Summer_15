@@ -3,6 +3,7 @@
 #include<DxLib.h>
 #include<vector>
 #include"../BossBase.h"
+#include"Weakness.h"
 
 class Weakness;
 
@@ -17,7 +18,7 @@ public:
 	static constexpr int HALF_X = 70;
 	static constexpr int HALF_Y = Application::SCREEN_SIZE_Y / 2;
 
-	static constexpr int HP_MAX = 3;
+	static constexpr int HP_MAX = Weakness::HP_MAX * WEAK_MAX;
 
 	Runboo();
 	~Runboo();
@@ -47,6 +48,8 @@ private:
 	float moveSpeed_;
 
 	int image_;
+
+	int maxHp_;
 	
 	//ë“ã@èÛë‘
 	void Idle(void) override;
