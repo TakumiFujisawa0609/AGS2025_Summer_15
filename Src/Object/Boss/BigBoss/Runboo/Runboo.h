@@ -6,6 +6,7 @@
 #include"Weakness.h"
 
 class Weakness;
+class Pillar;
 
 class Runboo : public BossBase
 {
@@ -44,6 +45,8 @@ public:
 private:
 	//インスタンス
 	std::vector<Weakness*> weak_;
+
+	Pillar* pillar_;
 
 	float moveSpeed_;
 

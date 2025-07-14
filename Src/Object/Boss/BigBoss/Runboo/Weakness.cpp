@@ -3,6 +3,7 @@
 #include"../../../../Manager/Camera.h"
 #include"Attack/WeakBullet.h"
 #include"Attack/Laser.h"
+#include"Attack/Pillar.h"
 
 Weakness::Weakness()
 {
@@ -22,27 +23,21 @@ void Weakness::Init(Vector2F disppos, float moveSpeed)
 
 	Camera::CreateInstance();
 
+	//画像の読み込み
 	image_ = LoadGraph((Application::PATH_IMAGE + "Boss/Runboo/Weakness.png").c_str());
 
-	unit_.nextpos_ = disppos;
-	unit_.pos_ = unit_.nextpos_;
-	ChangeDispPos();
-
-	bullet_ = new WeakBullet(moveSpeed_);
-	bullet_->Init(&unit_.pos_);
-
-	laser_ = new Laser(moveSpeed_);
-	//laser_->Init(&unit_.pos_);
-
-	unit_.size_ = { SIZE_X,SIZE_Y };
-	unit_.radius_ = 64.0f;
-
+	//変数の初期化
 	cnt_ = GetRand(16.0f);
 	attackCounter_ = 0;
 
 	//unit_.pos_ + start_;
 	unit_.hp_ = HP_MAX;
 	unit_.isAlive_ = true;
+	unit_.size_ = { SIZE_X,SIZE_Y };
+	unit_.radius_ = 64.0f;
+	unit_.nextpos_ = disppos;
+	unit_.pos_ = unit_.nextpos_;
+	ChangeDispPos();
 
 	ChangeState(STATE::ATTACK);
 
@@ -51,7 +46,17 @@ void Weakness::Init(Vector2F disppos, float moveSpeed)
 
 	attack_ = ATTACK::NON;
 
+	//インスタンスの初期化
+	bullet_ = new WeakBullet(moveSpeed_);
+	bullet_->Init(&unit_.pos_);
+
+	laser_ = new Laser(moveSpeed_);
+
+	pillar_ = new Pillar(moveSpeed_);
+	//pillar_->Init(&unit_.pos_);
+
 	laser_->SetTarget(playerPosPtr_);
+	pillar_->SetTarget(playerPosPtr_);
 
 }
 
@@ -65,7 +70,6 @@ void Weakness::Update(Vector2F boss)
 
 void Weakness::Update() 
 {
-
 	// カウント更新
 	cnt_ += 0.1f;
 
@@ -96,6 +100,7 @@ void Weakness::Update()
 	AttackManager();
 	BossBase::Update();
 
+
 }
 
 void Weakness::Draw()
@@ -109,32 +114,17 @@ void Weakness::Draw()
 
 	if (!unit_.isAlive_)return;
 
-
-	switch (attack_)
-	{
-	case Weakness::NON:
-		DrawBar(
-			unit_.disppos_.x - SIZE_X / 2 - 50,
-			unit_.disppos_.y - SIZE_Y / 2,
-			unit_.disppos_.x + SIZE_X / 2 + 50,
-			unit_.disppos_.y - SIZE_Y / 2 + 16,
-			unit_.hp_, HP_MAX, RGB(0, 0, 255)
-		);
-		break;
-	case Weakness::LASER:
-		DrawBar(
-			unit_.disppos_.x - SIZE_X / 2 - 50,
-			unit_.disppos_.y - SIZE_Y / 2,
-			unit_.disppos_.x + SIZE_X / 2 + 50,
-			unit_.disppos_.y - SIZE_Y / 2 + 16,
-			unit_.hp_, HP_MAX, RGB(255, 0, 255)
-		);
-		break;
-	}
+	//DrawBar(
+	//	unit_.disppos_.x - SIZE_X / 2 - 50,
+	//	unit_.disppos_.y - SIZE_Y / 2,
+	//	unit_.disppos_.x + SIZE_X / 2 + 50,
+	//	unit_.disppos_.y - SIZE_Y / 2 + 16,
+	//	unit_.hp_, HP_MAX, RGB(0, 0, 255)
+	//);
 
 	bullet_->Draw();
-
 	laser_->Draw();
+	pillar_->Draw();
 }
 
 void Weakness::Release()
@@ -146,6 +136,10 @@ void Weakness::Release()
 	laser_->Release();
 	delete laser_;
 	laser_ = nullptr;
+
+	pillar_->Release();
+	delete pillar_;
+	pillar_ = nullptr;
 
 	DeleteGraph(image_);
 
@@ -168,7 +162,8 @@ std::vector<Base> Weakness::GetObj(void)
 	case Weakness::LASER:
 		ret = laser_->Get();
 		break;
-	case Weakness::BOUND:
+	case Weakness::PILLAR:
+		ret = pillar_->Get();
 		break;
 	case Weakness::MAX:
 		break;
@@ -185,7 +180,22 @@ std::vector<Base> Weakness::GetBulletObj(void)
 void Weakness::ObjHit(int i)
 {
 	//bullet_->Hit();
-	laser_->Hit(i);
+
+	switch (attack_)
+	{
+	case Weakness::NON:
+		break;
+	case Weakness::LASER:
+		laser_->Hit(i);
+		break;
+	case Weakness::PILLAR:
+		pillar_->Hit(i);
+		break;
+	case Weakness::MAX:
+		break;
+	default:
+		break;
+	}
 }
 
 void Weakness::SetDamage(int dmg)
@@ -198,7 +208,7 @@ void Weakness::SetDamage(int dmg)
 
 void Weakness::AttackManager(void)
 {
-	if (attack_ == ATTACK::NON && attackCounter_ > 180)
+	if (attack_ == ATTACK::NON && attackCounter_ > 320)
 	{
 		attack_ = (ATTACK)GetRand((int)(ATTACK::MAX) - 1);
 		attackCounter_ = 0;
@@ -238,11 +248,18 @@ void Weakness::Attack(void)
 			attackCounter_ = 0;
 		}
 		break;
-	case Weakness::ATTACK::BOUND:
+	case Weakness::ATTACK::PILLAR:
 		attackCounter_++;
-		if (attackCounter_ > 180)
+		if (attackCounter_ <= 1)
+		{
+			pillar_->Init(&unit_.pos_);
+		}
+		pillar_->Update(unit_.pos_);
+
+		if (pillar_->End())
 		{
 			attack_ = ATTACK::NON;
+			attackCounter_ = 0;
 		}
 		break;
 	}

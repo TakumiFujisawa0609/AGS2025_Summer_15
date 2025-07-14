@@ -104,7 +104,7 @@ void WeakBullet::Update(Vector2F boss)
 
     ChangeDispPos();
 
-    AttackBase::Update();
+    //AttackBase::Update();
 }
 
 void WeakBullet::Update() {}

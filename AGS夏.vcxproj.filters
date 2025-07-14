@@ -168,9 +168,6 @@
     <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\BamBeam.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\BamBreath.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Nokopy.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -205,6 +202,24 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Attack\Laser.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Spine.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Boss\BigBoss\Bammoon\Attack\Bamline.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Player\SelectPlayer\SelectPlayer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Stage\SelectStage\SelectStage.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Takenoko.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Attack\Pillar.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -365,9 +380,6 @@
     <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\BamBeam.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\BamBreath.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Nokopy.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -405,6 +417,24 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Attack\Laser.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Spine.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Boss\BigBoss\Bammoon\Attack\Bamline.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Player\SelectPlayer\SelectPlayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Stage\SelectStage\SelectStage.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Takenoko.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Attack\Pillar.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
