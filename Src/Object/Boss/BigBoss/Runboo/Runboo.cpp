@@ -1,11 +1,13 @@
 #include "Runboo.h"
 #include<DxLib.h>
 #include "../../Tutorial/BossTutorial.h"
+#include "../../../../Manager/SceneManager.h"
 #include"Weakness.h"
 
 
 Runboo::Runboo()
 {
+
 }
 
 Runboo::~Runboo()
@@ -19,14 +21,7 @@ void Runboo::Init()
 	image_ = LoadGraph((Application::PATH_IMAGE + "Boss/Runboo/Runboo.png").c_str());
 	moveSpeed_ = MOVE_SPEED;
 
-	BossBase::Init();
-	for (int ii = 0; ii < WEAK_MAX; ii++)
-	{
-		Vector2F weakPos = { 150, (float)(Application::SCREEN_SIZE_Y / 5.0f) * (ii + 1) };
 
-		weak_.emplace_back(new Weakness());
-		weak_[weak_.size() - 1]->Init(weakPos, moveSpeed_);
-	}
 
 	unit_.nextpos_ = { HALF_X, HALF_Y };
 	unit_.pos_ = unit_.nextpos_;
@@ -37,6 +32,17 @@ void Runboo::Init()
 	unit_.isAlive_ = true;
 	unit_.isGravity_ = false;
 	unit_.isStageCollision_ = false;
+
+	ChangeState(STATE::IDLE);
+
+	for (int ii = 0; ii < WEAK_MAX; ii++)
+	{
+		Vector2F weakPos = { unit_.pos_.x, (float)(Application::SCREEN_SIZE_Y / 5.0f) * (ii + 1) };
+
+		weak_.emplace_back(new Weakness());
+		weak_[weak_.size() - 1]->SetPlayerPosPtr(playerPosPtr_);
+		weak_[weak_.size() - 1]->Init(weakPos, moveSpeed_);
+	}
 }
 
 void Runboo::Update()
@@ -53,6 +59,16 @@ void Runboo::Update()
 		w->Update(unit_.pos_);
 		w->Update();
 	}
+
+	if (unit_.inviCounter_ > 0)
+	{
+		unit_.inviCounter_--;
+	}
+
+	if (unit_.inviCounter_ <= 0 && unit_.hp_ <= 0)
+	{
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
+	}
 }
 
 void Runboo::Draw()
@@ -64,6 +80,8 @@ void Runboo::Draw()
 		true, true
 	);
 
+	for (int ii = 0; ii < WEAK_MAX; ii++)weak_[ii]->Draw();
+
 	DrawBar(
 		100,
 		Application::SCREEN_SIZE_Y - 80,
@@ -72,7 +90,6 @@ void Runboo::Draw()
 		unit_.hp_, HP_MAX, RGB(100, 100, 200)
 	);
 
-	for (int ii = 0; ii < WEAK_MAX; ii++)weak_[ii]->Draw();
 }
 
 void Runboo::Release()
@@ -86,6 +103,7 @@ void Runboo::Release()
 	weak_.clear();
 
 	DeleteGraph(image_);
+
 }
 
 AttackBase* Runboo::GetAttackIns(void)
@@ -111,6 +129,16 @@ void Runboo::ObjHit(int i)
 
 void Runboo::SetDamage(int dmg)
 {
+	unit_.hp_ -= dmg;
+	unit_.inviCounter_ = INVI_COUNTER;
+}
+
+bool Runboo::GetWeakAllDeath(void)
+{
+	return (weak_[0]->GetUnit().isAlive_ == false &&
+			weak_[1]->GetUnit().isAlive_ == false &&
+			weak_[2]->GetUnit().isAlive_ == false);
+
 }
 
 //std::vector<Base*> Runboo::GetObj(void)

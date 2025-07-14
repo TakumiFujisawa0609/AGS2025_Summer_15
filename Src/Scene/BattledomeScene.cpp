@@ -53,6 +53,7 @@ void BattledomeScene::Init(void)
 		runboo_ = new Runboo();
 		runboo_->SetPlayerPosPtr(&player_->GetUnit().pos_);
 		runboo_->Init();
+
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		stage_ = new BammoonStage();
@@ -143,7 +144,6 @@ void BattledomeScene::Draw(void)
 	stage_->Draw();
 
 	blastMng_->Draw();
-	player_->Draw();
 
 	switch (sMng.GetNowBoss())
 	{
@@ -151,6 +151,18 @@ void BattledomeScene::Draw(void)
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
 		runboo_->Draw();
+		break;
+	case SceneManager::BOSS_KINDS::BAMMOON:
+		break;
+	}
+
+	player_->Draw();
+
+	switch (sMng.GetNowBoss())
+	{
+	case SceneManager::BOSS_KINDS::NOKOPY:
+		break;
+	case SceneManager::BOSS_KINDS::RUNBOO:
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		bammoon_->DrawHp();
@@ -352,18 +364,30 @@ void BattledomeScene::PlayerAttackToBoss(void)
 	case SceneManager::BOSS_KINDS::RUNBOO:
 		for (auto& weak : runboo_->GetWeakness())
 		{
+			//プレイヤーの通常攻撃と弱点の当たり判定
 			if (ins.Circle(player_->DefaultAtt(), weak->GetUnit()))
 			{
 				weak->SetDamage(1.0f);
-				bamboo_->Create(player_->GetUnit().pos_, 100);
+				bamboo_->Create(player_->GetUnit().pos_, 1, 30);
 			}
-			//特殊攻撃
+
+			//プレイヤーの特殊攻撃と弱点の当たり判定
 			for (auto& bpAtc : player_->GetBpAtt()) {
 				if (ins.CircleAndRect(weak->GetUnit(), bpAtc->GetObj())) {
 					if (bpAtc->GetPower() >= 4)mana.SHAKE();
+					bpAtc->Off();
 					mana.HitStop(SceneManager::HIT_STOP_TIME);
 					weak->SetDamage(bpAtc->GetDamage());
 				}
+			}
+		}	
+
+		//本体（壁）と通常攻撃の当たり判定
+		if (ins.CircleAndRect(player_->DefaultAtt(), runboo_->GetUnit())) {
+			bamboo_->Create(player_->GetUnit().pos_, 1);
+			//弱点がすべて破壊されたら、本体にダメージが入る
+			if (runboo_->GetWeakAllDeath()) {
+				runboo_->SetDamage(5);
 			}
 		}
 		break;
