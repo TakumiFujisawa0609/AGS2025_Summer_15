@@ -70,6 +70,7 @@ public:
 	void Init()override;
 	void Update()override;
 	void Draw()override;
+	void DrawHP();
 	void Release()override;
 
 
@@ -144,7 +145,6 @@ private:
 	void Death();
 	void DiedDraw();
 
-	void DrawHP();
 
 	//Attack‚Ìó‘Ô•Ê‚ÌŠÖ”
 	void SlashUpdate(void);

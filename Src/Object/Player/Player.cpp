@@ -147,7 +147,11 @@ void Player::Draw()
 		for (auto& t : BpAtIns_) {
 			t->Draw();
 		}
-
+	}
+}
+void Player::DrawHp(void)
+{
+	if (unit_.isAlive_) {
 		DrawBar(5, 5, 670, 50, unit_.hp_, HP_MAX, RGB(0, 255, 0));
 	}
 }

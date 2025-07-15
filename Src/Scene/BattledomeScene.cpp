@@ -179,6 +179,7 @@ void BattledomeScene::Draw(void)
 	switch (sMng.GetNowBoss())
 	{
 	case M::BOSS_KINDS::TUTORIAL:
+		tutorial_->DrawHP();
 		break;
 	case M::BOSS_KINDS::NOKOPY:
 		break;
@@ -189,8 +190,9 @@ void BattledomeScene::Draw(void)
 		bammoon_->DrawHp();
 		break;
 	}
+	player_->DrawHp();
 
-	int fontSize = 32;
+	int fontSize = 50;
 	SetFontSize(fontSize);
 	DrawFormatString(0 - 2, (Application::SCREEN_SIZE_Y - fontSize) - 2, RGB(0, 0, 0), "TIME::%.2fs", time_);
 	DrawFormatString(0, Application::SCREEN_SIZE_Y - fontSize, RGB(255, 255, 255), "TIME::%.2fs", time_);

@@ -2,6 +2,7 @@
 #include<DxLib.h>
 #include "../../Tutorial/BossTutorial.h"
 #include "../../../../Manager/SceneManager.h"
+#include"../../../../Manager/Score/Score.h"
 #include"Weakness.h"
 
 
@@ -72,7 +73,8 @@ void Runboo::Update()
 
 	if (unit_.inviCounter_ <= 0 && unit_.hp_ <= 0)
 	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
+		//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
+		ChangeState(STATE::DEATH);
 	}
 }
 
@@ -169,6 +171,7 @@ void Runboo::Damage(void)
 
 void Runboo::Death(void)
 {
+	unit_.isAlive_ = false;
 }
 
 void Runboo::HpUpdate(void)
