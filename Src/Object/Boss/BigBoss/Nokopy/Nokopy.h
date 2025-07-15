@@ -28,6 +28,7 @@ public:
         DRAW_WAVEMBOO,
         DRAW_SPINE,
         DRAW_RUSHOOT,
+        DRAW_DEATH,
 
         DRAW_MAX,
     };

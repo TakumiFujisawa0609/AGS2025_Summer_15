@@ -39,6 +39,8 @@ void Nokopy::Init(void)
 	img_[DRAW::DRAW_WAVEMBOO] = LoadGraph((path + "Wave.png").c_str());
 	img_[DRAW::DRAW_RUSHOOT] = LoadGraph((path + "Rush.png").c_str());
 	img_[DRAW::DRAW_SPINE] = LoadGraph((path + "Spine.png").c_str());
+	img_[DRAW::DRAW_KNOCKBACK] = LoadGraph((path + "Damage.png").c_str());
+	img_[DRAW::DRAW_DEATH]= LoadGraph((path + "Damage.png").c_str());
 
 	DrawPat_ = DRAW_IDLE;
 	//-------------------------------------------------------------------
@@ -70,25 +72,58 @@ void Nokopy::Update(void)
 	if (!unit_.isAlive_)return;
 	BossBase::Update();
 	if (unit_.inviCounter_ > 0)unit_.inviCounter_--;
+	auto& p = playerPosPtr_;
+	//if (unit_.pos_.x >p->x)
+	//{
+	//	dir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
+	//}
+	//else {
+	//	dir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
+	//}
+	if (state_ == STATE::DEATH) {
+		unit_.isAlive_ = false;
+	}
 }
 
 void Nokopy::Draw(void)
 {
+	if (targetLine_) {
+		DrawLine(unit_.pos_.x, unit_.pos_.y, targetPos_.x+10, targetPos_.y+10, GetColor(0, 255, 30));
+	}
 	if (unit_.isAlive_) {
 		BossDraw();
 		beam_->Draw();
 		wave_->Draw();
 		spine_->Draw();
 	}
-	if (targetLine_) {
-		DrawLine(unit_.pos_.x, unit_.pos_.y, targetPos_.x+10, targetPos_.y+10, GetColor(0, 255, 30));
-	}
 }
 
 void Nokopy::Release(void)
 {
 	//画像の開放
-	for (int i = 0; i < DRAW::DRAW_MAX; i++)DeleteGraph(img_[i]);
+	for (int i = 0; i < DRAW::DRAW_MAX; i++) DeleteGraph(img_[i]);
+
+	// 攻撃用インスタンスの解放
+	if (beam_) {
+		beam_->Release();
+		delete beam_;
+		beam_ = nullptr;
+	}
+	if (rush_) {
+		rush_->Release();
+		delete rush_;
+		rush_ = nullptr;
+	}
+	if (wave_) {
+		wave_->Release();
+		delete wave_;
+		wave_ = nullptr;
+	}
+	if (spine_) {
+		spine_->Release();
+		delete spine_;
+		spine_ = nullptr;
+	}
 }
 
 std::vector<Base> Nokopy::GetObj(void)
@@ -143,9 +178,13 @@ void Nokopy::SetDamage(int dmg)
 	unit_.inviCounter_ = 30;
 
 	if (unit_.hp_ <= 0) {
-		unit_.isAlive_ = false;
+		auto& mana = SceneManager::GetInstance();
+		mana.HitStop(60);
+		mana.ZoomPos(unit_.pos_);
+		mana.ZoomScale(2.0f);
+		DrawPat_ = DRAW::DRAW_DEATH;
+		ChangeState(STATE::DEATH);
 	}
-
 
 }
 
@@ -169,25 +208,34 @@ void Nokopy::ObjHit(int i)
 
 void Nokopy::BossDraw(void)
 {
+		int d = 0;
+		d= (dir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) ? 1 : 0;
 	switch (DrawPat_)
 	{
 	case Nokopy::DRAW_IDLE:
-        DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true);
+        DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true,d);
 		break;
 	case Nokopy::DRAW_MOVE:
-		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.2, 0.0, img_[DRAW_IDLE], true);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.2, 0.0, img_[DRAW_RUSHOOT], true);
 		break;
 	case Nokopy::DRAW_BAMBEAM:
-		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.2, 0.0, img_[DRAW_IDLE], true);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true);
 		break;
 	case Nokopy::DRAW_WAVEMBOO:
-		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.2, 0.0, img_[DRAW_IDLE], true);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true);
 		break;
 	case Nokopy::DRAW_RUSHOOT:
-		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.18, angle_, img_[DRAW_RUSHOOT], true);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.2, angle_, img_[DRAW_RUSHOOT], true);
 		break;
 	case Nokopy::DRAW_SPINE:
-		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.2, 0.0, img_[DRAW_IDLE], true);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true);
+		break;
+
+	case Nokopy::DRAW_KNOCKBACK:
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0, img_[DRAW_KNOCKBACK], true);
+		break;
+	case Nokopy::DRAW_DEATH:
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0, img_[DRAW_DEATH], true);
 	}
 }
 
@@ -211,7 +259,7 @@ void Nokopy::Idle(void)
 		attackCounter_ = 0;
 		ChangeState(BossBase::STATE::ATTACK);
 		//ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
-		ChangeAttackState(SPINE);
+		ChangeAttackState(BAMBEAM);
 		return;
 	}
 	//移動遷移
@@ -296,23 +344,23 @@ void Nokopy::Attack(void)
 
 void Nokopy::Damage(void)
 {
+	DrawPat_ = DRAW::DRAW_KNOCKBACK;
 	static int counter = 0;
 	counter++;
 	if (counter > 15) {
 		isDive_ = false;
 		unit_.isStageCollision_ = true;
 	}
-	if (unit_.yAccel_ == 0) {
-	ChangeState(STATE::IDLE);
 
+	if (counter > 120) {
+		DrawPat_ = DRAW::DRAW_IDLE;
+		ChangeState(STATE::IDLE);
+		counter = 0;
 	}
 }
 
 void Nokopy::Death(void)
 {
-	if (unit_.hp_ <= 0) {
-		ChangeState(BossBase::STATE::DEATH);
-	}
 }
 
 void Nokopy::ChangeAttackState(ATTACK atc)

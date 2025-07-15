@@ -1,16 +1,20 @@
 #include "Spine.h"
+#include"../../../../../Utility/AsoUtility.h"
 
 Spine::Spine()
 {
 	obj_.resize(MAX_NUM);
 	for (int i = 0; i < obj_.size(); i++) {
 		auto& o = obj_[i];
-		o.size_={ 64,0 };
+		o.radius_ = 32;
+		o.isCircle_ = true;
 		o.pos_.x += i * 168;
 		o.pos_.y = 672;
 		o.isAlive_ = false;
+		isParry_ = true;
 	}
 	couner_ = 0;
+	img_ = LoadGraph("Data/Image/Boss/Nokopy/Takenoko.png");
 }
 
 Spine::~Spine()
@@ -20,8 +24,7 @@ Spine::~Spine()
 void Spine::Init(const Vector2F* pos)
 {
 	for (auto& o : obj_) {
-		o.isAlive_ = true;
-		o.size_ = { 64,0 };
+		o.isAlive_ = false;
 		o.pos_.y = 672;
 
 	}
@@ -39,8 +42,8 @@ void Spine::Update(void)
 		else if (couner_ < 60) {
 		}
 		else if (couner_ < 70) {
-			o.pos_.y -= 100;
-			o.size_.y = -(o.pos_.y- 672);
+			o.isAlive_ = true;
+			o.pos_.y -= 50;
 		}
 	}
 
@@ -49,15 +52,17 @@ void Spine::Update(void)
 
 void Spine::Draw(void)
 {
+	if (couner_ > 0) {
+
 	for (auto& o : obj_) {
-		if (o.isAlive_) {
-		DrawBox(o.pos_.x, o.pos_.y, o.pos_.x + o.size_.x, 672, 0x00ff00, true);
-		}
+			DrawRotaGraph(o.pos_.x, o.pos_.y, 0.1,0, img_, true);
+	}
 	}
 }
 
 void Spine::Release(void)
 {
+	DeleteGraph(img_);
 }
 
 void Spine::Off(void)

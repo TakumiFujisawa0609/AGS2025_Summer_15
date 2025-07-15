@@ -24,5 +24,6 @@ private:
 
     std::vector<Base>obj_;
     int couner_;
+    int img_;
 };
 
