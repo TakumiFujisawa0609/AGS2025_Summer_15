@@ -21,8 +21,12 @@ void GameClear::Init(void)
 void GameClear::Update(void)
 {
 	// ÉVÅ[ÉìëJà⁄
+	int input = GetJoypadInputState(DX_INPUT_PAD1);
+
+	padKey_= (((input & 0x40) == 0) && ((input & 0x20) == 0)) ? false : true;
+
 	InputManager& ins = InputManager::GetInstance();
-	if (ins.IsTrgDown(KEY_INPUT_SPACE))
+	if ((ins.IsTrgDown(KEY_INPUT_SPACE)) || (padKey_))
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}

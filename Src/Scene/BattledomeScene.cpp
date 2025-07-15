@@ -14,8 +14,8 @@
 #include"../Object/Boss/Tutorial/BossTutorial.h"
 #include"../Object/Stage/Tutorial/TutorialStage.h"
 
-#include"../Object/Stage/Tutorial/TutorialStage.h"
 #include"../Object/Boss/BigBoss/Runboo/Runboo.h"
+#include"../Object/Stage/BossStage/Stage1.h"
 
 #include"../Object/Boss/BigBoss/Bammoon/Bammoon.h"
 #include"../Object/Stage/BossStage/BammoonStage.h"
@@ -61,7 +61,7 @@ void BattledomeScene::Init(void)
 
 		break;
 	case M::BOSS_KINDS::RUNBOO:
-		stage_ = new TutorialStage();
+		stage_ = new Stage1();
 		runboo_ = new Runboo();
 		runboo_->SetPlayerPosPtr(&player_->GetUnit().pos_);
 		runboo_->Init();
@@ -275,34 +275,9 @@ void BattledomeScene::Scroll(void)
 	using M = SceneManager;
 	auto& sMng = M::GetInstance();
 
-	switch (sMng.GetNowBoss())
-	{
-	case SceneManager::BOSS_KINDS::TUTORIAL:
-		if (!tutorial_->GetEnCount()) {
-			if (player_->GetUnit().disppos_.x > Application::SCREEN_SIZE_X / 7 * 3 &&
-				!((camera.GetPos().x + Application::SCREEN_SIZE_X) >= TutorialStage::STAGE_CHIP_SIZE * stage_->GetMapNum().x)) {
-				camera.Follow(Camera::dir::X, (player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_);
-			}
-
-			if (player_->GetUnit().disppos_.x < Application::SCREEN_SIZE_X / 7 * 2 &&
-				!(camera.GetPos().x <= 0)) {
-				camera.Follow(Camera::dir::X, -((player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_));
-			}
-		}
-		else {
-			if (!camera.BossSet()) {
-				camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
-			}
-		}
-		break;
-	case SceneManager::BOSS_KINDS::RUNBOO:
+	if (sMng.GetNowBoss() == M::BOSS_KINDS::RUNBOO) {
 		camera.Follow(Camera::X, 1.0f);
-		break;
-	case SceneManager::BOSS_KINDS::NOKOPY:
-	case SceneManager::BOSS_KINDS::BAMMOON:
-		break;
 	}
-
 }
 
 void BattledomeScene::PlayerAttackToBossAttack(void)
@@ -647,12 +622,12 @@ void BattledomeScene::PlayerToBossAttack(void)
 	case M::BOSS_KINDS::BAMMOON:
 		int i = 0;
 		for (auto& bAtc : bammoon_->GetObj()) {
-			switch (bammoon_->GetAtState())
-			{
-			case Bammoon::ATTACK::SWEEP:
-			case Bammoon::ATTACK::BLAST:
-			case Bammoon::ATTACK::PBULLET:
-			case Bammoon::ATTACK::CSPHERE:
+			//switch (bammoon_->GetAtState())
+			//{
+			//case Bammoon::ATTACK::SWEEP:
+			//case Bammoon::ATTACK::BLAST:
+			//case Bammoon::ATTACK::PBULLET:
+			//case Bammoon::ATTACK::CSPHERE:
 				if (ins.CircleAndRect(bAtc, player_->GetUnit())) {
 					player_->Hit(bammoon_->GetObjDamage(), bAtc.pos_);
 					bammoon_->ObjHit(i);
@@ -663,8 +638,8 @@ void BattledomeScene::PlayerToBossAttack(void)
 						pAtc->Hit();
 					}
 				}
-				break;
-			case Bammoon::ATTACK::STRIPE:
+				//break;
+			//case Bammoon::ATTACK::STRIPE:
 				if (ins.Rect(bAtc, player_->GetUnit())) {
 					player_->Hit(bammoon_->GetObjDamage(), bAtc.pos_);
 					bammoon_->ObjHit(i);
@@ -676,8 +651,8 @@ void BattledomeScene::PlayerToBossAttack(void)
 						pAtc->Hit();
 					}
 				}
-				break;
-			}
+				//break;
+			//}
 
 			i++;
 		}

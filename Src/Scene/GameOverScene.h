@@ -17,5 +17,6 @@ public:
 
 private:
 	int image_;
+	bool padKey_;
 };
 

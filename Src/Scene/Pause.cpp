@@ -149,7 +149,7 @@ void Pause::Draw(void)
 		DrawRotaGraph(
 			dispPos[ii].x,
 			dispPos[ii].y,
-			0.5f, 0.0f, image_[ii], true
+			(select_==ii)?0.7:0.5f, 0.0f, image_[ii], true
 		);
 	}
 }

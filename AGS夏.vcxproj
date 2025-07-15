@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\Manager\Score\Score.cpp" />
+    <ClCompile Include="Src\Manager\SoundManager.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Spine.cpp" />
     <ClCompile Include="Src\Manager\Decoration\BlastEffect\BlastEffect.cpp" />
     <ClCompile Include="Src\Manager\Decoration\BlastEffect\BlastEffectManagercpp.cpp" />
@@ -201,6 +202,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Manager\Score\Score.h" />
+    <ClInclude Include="Src\Manager\SoundManager.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Spine.h" />
     <ClInclude Include="Src\Manager\Decoration\BlastEffect\BlastEffect.h" />
     <ClInclude Include="Src\Manager\Decoration\BlastEffect\BlastEffectManager.h" />

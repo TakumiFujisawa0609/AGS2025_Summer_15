@@ -112,5 +112,5 @@ void SelectPlayer::JoyPadInputManager()
 	downRightKey_ = (!prevRightKey_ && nowRightKey_);
 	upRightKey_ = (prevRightKey_ && !nowRightKey_);
 
-	nowAttackKey_ = ((input & 0x40) == 0) ? false : true;
+	nowAttackKey_ = (((input & 0x40) == 0) && ((input & 0x20) == 0)) ? false : true;
 }

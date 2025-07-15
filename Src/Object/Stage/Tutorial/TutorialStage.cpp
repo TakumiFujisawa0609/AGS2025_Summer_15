@@ -73,7 +73,7 @@ void TutorialStage::Load(void)
 bool TutorialStage::LoadMapData(void)
 {
 	//ファイストリームの取得
-	std::ifstream ifs = std::ifstream("Data/CSV/Tutorial.csv");
+	std::ifstream ifs = std::ifstream("Data/CSV/TutorialStage.csv");
 	if (!ifs)return false;
 
 	std::string line;
