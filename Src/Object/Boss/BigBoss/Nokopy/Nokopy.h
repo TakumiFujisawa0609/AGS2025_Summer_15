@@ -14,7 +14,7 @@ public:
     static constexpr int SIZE_Y = 200;
 
 
-    static constexpr int BOSS_HP = 500;
+    static constexpr int BOSS_HP = 250;
     static constexpr float SPAWN_POS_Y = 300;
     static constexpr float SPAWN_POS_RIGHT = 1150;
     static constexpr float SPAWN_POS_LEFT = 150;
@@ -28,6 +28,7 @@ public:
         DRAW_WAVEMBOO,
         DRAW_SPINE,
         DRAW_RUSHOOT,
+        DRAW_DEATH,
 
         DRAW_MAX,
     };
@@ -114,7 +115,7 @@ private:
     Spine* spine_;
     bool targetLine_ = false;
     Vector2F targetVec_;
-
+    float angle_;
 
     bool isDive_;       //êˆÇ¡ÇƒÇ¢ÇÈÇ©
     void IsGround(Collision::DIR dir) override;

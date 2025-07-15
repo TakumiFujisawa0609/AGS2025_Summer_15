@@ -15,7 +15,7 @@ NokoPyStage::~NokoPyStage()
 {
 }
 
-void NokoPyStage::Draw(void)
+void NokoPyStage::BackDraw(void)
 {
     int num = (STAGE_CHIP_SIZE * mapData_[0].size()) / HAIKEI_SIZE_X + 1;
 
@@ -41,8 +41,6 @@ void NokoPyStage::Draw(void)
             DrawRotaGraph(d.x, d.y, 1, 0, backImg_[i], true);
         }
     }
-
-    StageBase::Draw();
 }
 
 void NokoPyStage::Load(void)

@@ -7,6 +7,7 @@
 
 Wavemboo::Wavemboo()
 {
+    image_ = LoadGraph("Data/Image/Boss/Nokopy/happa.png");
 }
 
 Wavemboo::~Wavemboo()
@@ -35,15 +36,14 @@ void Wavemboo::Draw(void)
 {
     for (int i = 0; i < obj_.size(); i++) {
         if (!obj_[i].isAlive_)continue;
-        DrawCircle(obj_[i].pos_.x, obj_[i].pos_.y, obj_[i].radius_, GetColor(255, 0, 20), true);
-        //DrawFormatString(obj_[i].pos_.x, obj_[i].pos_.y, GetColor(0, 255, 0), "%d",i);
+        DrawRotaGraph(obj_[i].pos_.x, obj_[i].pos_.y, 0.1, AsoUtility::Deg2RadF(90), image_, true);
 
     }
 }
 
 void Wavemboo::Release(void)
 {
-
+    DeleteGraph(image_);
 }  
 
 

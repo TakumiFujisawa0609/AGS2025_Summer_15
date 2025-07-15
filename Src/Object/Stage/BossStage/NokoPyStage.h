@@ -14,7 +14,7 @@ public:
 	NokoPyStage();
 	~NokoPyStage();
 
-	void Draw(void)override;
+	void BackDraw(void)override;
 
 
 private:

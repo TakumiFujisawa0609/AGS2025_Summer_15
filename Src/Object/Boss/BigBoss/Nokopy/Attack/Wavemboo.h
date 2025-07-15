@@ -27,5 +27,6 @@ private:
     bool lookOn_;
     void UpdatePositionTakenokos(void);
     DIR dir_;
+    int image_;
 };
 

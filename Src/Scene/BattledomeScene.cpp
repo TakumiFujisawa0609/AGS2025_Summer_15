@@ -138,6 +138,9 @@ void BattledomeScene::Update(void)
 	player_->Update();
 	bamboo_->Update();
 	blastMng_->Update();
+	if (player_->GetUnit().hp_ <= 0) {
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+	}
 
 	UnitCollision();
 	//ƒXƒNƒ[ƒ‹ˆ—‚Í“c’†‚É”C‚¹‚½
@@ -181,7 +184,8 @@ void BattledomeScene::Draw(void)
 	case M::BOSS_KINDS::TUTORIAL:
 		tutorial_->DrawHP();
 		break;
-	case M::BOSS_KINDS::NOKOPY:
+	case SceneManager::BOSS_KINDS::NOKOPY:
+		nokopy_->DrawHp();
 		break;
 	case M::BOSS_KINDS::RUNBOO:
 		runboo_->Draw();
@@ -444,8 +448,8 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			//’ÊíUŒ‚
 			if (ins.Circle(player_->DefaultAtt(), nokopy_->GetUnit())) {
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
-				nokopy_->SetDamage(0);
-				bamboo_->Create(nokopy_->GetUnit().pos_, 1);
+				nokopy_->SetDamage(5);
+				bamboo_->Create(nokopy_->GetUnit().pos_, 1,30);
 				if (nokopy_->GetAttackState() == Nokopy::ATTACK::RUSHOOT) {
 					nokopy_->OnRushReflection();
 				}
@@ -464,7 +468,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			if (ins.CircleAndRect(player_->DefaultAtt(), nokopy_->GetUnit())) {
 				mana.HitStop(M::HIT_STOP_TIME);
 				nokopy_->SetDamage(5);
-				bamboo_->Create(nokopy_->GetUnit().pos_, 1);
+				bamboo_->Create(nokopy_->GetUnit().pos_, 1,30);
 				if (nokopy_->GetAttackState() == Nokopy::ATTACK::RUSHOOT) {
 					nokopy_->OnRushReflection();
 				}
@@ -615,22 +619,22 @@ void BattledomeScene::PlayerToBossAttack(void)
 	}
 	case M::BOSS_KINDS::NOKOPY:
 		for (int i = 0; i < nokopy_->GetObj().size(); i++) {
-			if (nokopy_->GetObj()[i].isCapsule_) {
-				if (ins.CircleAndCapsule(player_->GetUnit(), nokopy_->GetAttackIns()->Get()[i]))
-				{
-					player_->Hit(5, nokopy_->GetObj()[i].pos_);
-					nokopy_->ObjHit(i);
-				}
-			}
+			//if (nokopy_->GetObj()[i].isCapsule_) {
+			//	if (ins.CircleAndCapsule(player_->GetUnit(), nokopy_->GetAttackIns()->Get()[i]))
+			//	{
+			//		player_->Hit(5, nokopy_->GetObj()[i].pos_);
+			//		nokopy_->ObjHit(i);
+			//	}
+			//}
 			if (nokopy_->GetObj()[i].isCircle_) {
-				if (ins.Circle(nokopy_->GetObj()[i], player_->GetUnit())) {
+				if (ins.CircleAndRect(nokopy_->GetObj()[i], player_->GetUnit())) {
 					player_->Hit(5, nokopy_->GetObj()[i].pos_);
 					nokopy_->ObjHit(i);
 				}
 			}
 			else {
 
-				if (ins.CircleAndRect(player_->GetUnit(), nokopy_->GetObj()[i])) {
+ 				if (ins.Rect(player_->GetUnit(), nokopy_->GetObj()[i])) {
 					player_->Hit(5, nokopy_->GetObj()[i].pos_);
 					nokopy_->ObjHit(i);
 				}

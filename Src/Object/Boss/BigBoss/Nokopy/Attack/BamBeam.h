@@ -22,6 +22,7 @@ private:
     bool lookOn_;
     Vector2F target_;
     Vector2F drawPos_;
+    int img_;
 
 };
 
