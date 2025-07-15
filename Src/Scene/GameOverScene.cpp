@@ -14,6 +14,7 @@ GameOverScene::~GameOverScene(void)
 
 void GameOverScene::Init(void)
 {
+	image_ = LoadGraph("Data/Image/GameOver.png");
 }
 
 void GameOverScene::Update(void)
@@ -28,9 +29,10 @@ void GameOverScene::Update(void)
 
 void GameOverScene::Draw(void)
 {
-	DrawString(0, 0, "GameOver", 0xffffff, true);
+	DrawGraph(0, 0, image_, true);
 }
 
 void GameOverScene::Release(void)
 {
+	DeleteGraph(image_);
 }

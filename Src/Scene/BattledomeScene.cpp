@@ -6,6 +6,7 @@
 #include"../Manager/Collision.h"
 #include"../Manager/Camera.h"
 #include"../Manager/Decoration/BlastEffect/BlastEffectManager.h"
+#include"../Manager/Score/Score.h"
 
 #include"../Object/Player/Player.h"
 #include"../Object/Bamboo/BambooManager.h"
@@ -35,6 +36,8 @@ BattledomeScene::~BattledomeScene()
 
 void BattledomeScene::Init(void)
 {
+	time_ = 0.0f;
+
 	using M = SceneManager;
 	auto& sMng = M::GetInstance();
 
@@ -92,6 +95,7 @@ void BattledomeScene::Init(void)
 	camera.Init();
 	camera.SetMapNum(stage_->GetMapNum());
 
+
 }
 
 void BattledomeScene::Update(void)
@@ -104,24 +108,28 @@ void BattledomeScene::Update(void)
 	case M::BOSS_KINDS::TUTORIAL:
 		tutorial_->Update();
 		if (!tutorial_->GetUnit().isAlive_) {
+			Score::GetIns().SetScore(time_);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
 		}
 		break;
 	case M::BOSS_KINDS::NOKOPY:
 		nokopy_->Update();
 		if (!nokopy_->GetUnit().isAlive_) {
+			Score::GetIns().SetScore(time_);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
 		}
 		break;
 	case M::BOSS_KINDS::RUNBOO:
 		runboo_->Update();
 		if (!runboo_->GetUnit().isAlive_) {
+			Score::GetIns().SetScore(time_);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
 		}
 		break;
 	case M::BOSS_KINDS::BAMMOON:
 		bammoon_->Update();
 		if (!bammoon_->GetUnit().isAlive_) {
+			Score::GetIns().SetScore(time_);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
 		}
 		break;
@@ -134,6 +142,8 @@ void BattledomeScene::Update(void)
 	UnitCollision();
 	//スクロール処理は田中に任せた
 	Scroll();
+
+	time_ += sMng.GetDeltaTime();
 }
 
 void BattledomeScene::Draw(void)
@@ -179,6 +189,12 @@ void BattledomeScene::Draw(void)
 		bammoon_->DrawHp();
 		break;
 	}
+
+	int fontSize = 32;
+	SetFontSize(fontSize);
+	DrawFormatString(0 - 2, (Application::SCREEN_SIZE_Y - fontSize) - 2, RGB(0, 0, 0), "TIME::%.2fs", time_);
+	DrawFormatString(0, Application::SCREEN_SIZE_Y - fontSize, RGB(255, 255, 255), "TIME::%.2fs", time_);
+	SetFontSize(16);
 }
 
 void BattledomeScene::Release(void)

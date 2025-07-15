@@ -61,6 +61,7 @@ void Bammoon::Init(void)
 
 void Bammoon::Update(void)
 {
+	if (CheckHitKey(KEY_INPUT_P) == 1)	SetDamage(700);
 	Animation();
 	AttackUpdate();
 	BossBase::Update();

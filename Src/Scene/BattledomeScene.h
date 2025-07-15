@@ -28,6 +28,8 @@ public:
 	void UnitCollision(void);
 	
 private:
+	float time_;
+
 	Player* player_;
 	BambooManager* bamboo_;
 	StageBase* stage_;

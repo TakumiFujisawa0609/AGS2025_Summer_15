@@ -1,5 +1,7 @@
 #include"Score.h"
 
+Score* Score::ins_ = nullptr;
+
 Score::Score()
 {
 }
@@ -44,6 +46,17 @@ void Score::SetScore(const float score)
 			break;
 		}
 	}
+}
+
+std::vector<float> Score::GetRanking(SceneManager::BOSS_KINDS k)
+{
+	std::vector<float>ret = {};
+
+	for (auto& s : ranking_[(int)k]) {
+		ret.emplace_back(s);
+	}
+
+	return ret;
 }
 
 void Score::Release(void)

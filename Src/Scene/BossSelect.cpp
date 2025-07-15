@@ -7,6 +7,7 @@
 #include"../Manager/Collision.h"
 #include"../Manager/Camera.h"
 #include"../Utility/AsoUtility.h"
+#include"../Manager/Score/Score.h"
 
 #include"../Manager/Decoration/BlastEffect/BlastEffectManager.h"
 
@@ -42,6 +43,8 @@ void BossSelect::Init()
 	camera.SetMapNum(stage_->GetMapNum());
 
 	haveBcou_ = 0;
+
+	scoreImage_ = LoadGraph("Data/Image/Score.png");
 
 	tutorialImg_ = LoadGraph("Data/Image/Stage/Select/SelectTutorial.png");
 	tutorialPos_ = { 1200.0f,250.0f };
@@ -95,11 +98,39 @@ void BossSelect::Update()
 void BossSelect::Draw()
 {
 	using a = Application;
+	using BKINDS = SceneManager::BOSS_KINDS;
 
 	stage_->BackDraw();
 
 	using B = SelectPlayer::B_KINDS;
 	B b = player_->NowSelect();
+
+	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2+30, 0.7, 0, scoreImage_, true);
+
+	auto& score = Score::GetIns();
+	std::vector<float> s = {};
+	switch (b)
+	{
+	case SelectPlayer::RUNBOO:
+		s = score.GetRanking(BKINDS::RUNBOO);
+		break;
+	case SelectPlayer::BAMMOON:
+		s = score.GetRanking(BKINDS::BAMMOON);
+		break;
+	case SelectPlayer::TUTORIAL:
+		s = score.GetRanking(BKINDS::TUTORIAL);
+		break;
+	case SelectPlayer::NOKOPY:
+		s = score.GetRanking(BKINDS::NOKOPY);
+		break;
+	}
+	int fontSize = 32;
+	SetFontSize(fontSize);
+	for (int i = 0; i < s.size(); i++) {
+		DrawFormatString(710 , 340 + (i * (fontSize + 15)), RGB(255, 255, 255), (s[i] == -1) ? "---":"%.2fs", s[i]);
+	}
+	SetFontSize(16);
+
 
 	DrawRotaGraphF(tutorialPos_.x, tutorialPos_.y, (b == B::TUTORIAL) ? 1.2 : 1, 0, tutorialImg_, true);
 	DrawRotaGraphF(nokopyPos_.x, nokopyPos_.y, (b == B::NOKOPY) ? 1.2 : 1, AsoUtility::Deg2RadF(-45.0f), nokopyImg_, true);

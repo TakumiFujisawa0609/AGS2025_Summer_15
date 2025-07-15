@@ -19,6 +19,8 @@ public:
 
 
 private:
+	int scoreImage_;
+
 	SelectStage* stage_;
 	SelectPlayer* player_;
 
