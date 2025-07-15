@@ -114,6 +114,9 @@ void BattledomeScene::Update(void)
 	player_->Update();
 	bamboo_->Update();
 	blastMng_->Update();
+	if (player_->GetUnit().hp_ <= 0) {
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+	}
 
 	UnitCollision();
 	//スクロール処理は田中に任せた
@@ -314,7 +317,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			if (ins.Circle(player_->DefaultAtt(), nokopy_->GetUnit())) {
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
 				nokopy_->SetDamage(5);
-				bamboo_->Create(nokopy_->GetUnit().pos_, 1);
+				bamboo_->Create(nokopy_->GetUnit().pos_, 1,30);
 				if (nokopy_->GetAttackState() == Nokopy::ATTACK::RUSHOOT) {
 					nokopy_->OnRushReflection();
 				}
@@ -334,7 +337,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			if (ins.CircleAndRect(player_->DefaultAtt(), nokopy_->GetUnit())) {
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
 				nokopy_->SetDamage(5);
-				bamboo_->Create(nokopy_->GetUnit().pos_, 1);
+				bamboo_->Create(nokopy_->GetUnit().pos_, 1,30);
 				if (nokopy_->GetAttackState() == Nokopy::ATTACK::RUSHOOT) {
 					nokopy_->OnRushReflection();
 				}

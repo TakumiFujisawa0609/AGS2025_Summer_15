@@ -74,6 +74,7 @@ void BamBeam::Draw(void)
 
 void BamBeam::Release(void)
 {
+	DeleteGraph(img_);
 }
 
 const std::vector<Base> BamBeam::Get(void) const

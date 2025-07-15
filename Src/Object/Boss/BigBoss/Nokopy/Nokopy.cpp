@@ -219,20 +219,20 @@ void Nokopy::BossDraw(void)
 		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.2, 0.0, img_[DRAW_RUSHOOT], true);
 		break;
 	case Nokopy::DRAW_BAMBEAM:
-		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true,d);
 		break;
 	case Nokopy::DRAW_WAVEMBOO:
-		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true,d);
 		break;
 	case Nokopy::DRAW_RUSHOOT:
 		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.2, angle_, img_[DRAW_RUSHOOT], true);
 		break;
 	case Nokopy::DRAW_SPINE:
-		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true,d);
 		break;
 
 	case Nokopy::DRAW_KNOCKBACK:
-		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0, img_[DRAW_KNOCKBACK], true);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0, img_[DRAW_KNOCKBACK], true,d);
 		break;
 	case Nokopy::DRAW_DEATH:
 		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0, img_[DRAW_DEATH], true);
@@ -258,8 +258,8 @@ void Nokopy::Idle(void)
 	if (moveCounter_ < 2) {
 		attackCounter_ = 0;
 		ChangeState(BossBase::STATE::ATTACK);
-		//ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
-		ChangeAttackState(BAMBEAM);
+		ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
+		//ChangeAttackState(BAMBEAM);
 		return;
 	}
 	//ˆÚ“®‘JˆÚ
