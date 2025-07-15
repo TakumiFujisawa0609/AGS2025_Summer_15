@@ -199,6 +199,7 @@ void Nokopy::ObjHit(int i)
 		wave_->Hit(i);
 		break;
 	case Nokopy::RUSHOOT:
+		rush_->Hit();
 		break;
 	case Nokopy::SPINE:
 		spine_->Hit(i);
