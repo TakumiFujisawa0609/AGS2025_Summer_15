@@ -105,7 +105,7 @@ void BossSelect::Draw()
 	using B = SelectPlayer::B_KINDS;
 	B b = player_->NowSelect();
 
-	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2+30, 0.7, 0, scoreImage_, true);
+	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2 + 30, 1, 0, scoreImage_, true);
 
 	auto& score = Score::GetIns();
 	std::vector<float> s = {};
