@@ -1,12 +1,17 @@
+#include "Player.h"
+
 #include<string>
 
-#include "Player.h"
-#include"../../Manager/InputManager.h"
 #include"../../Application.h"
+
+#include"../../Manager/InputManager.h"
 #include"../../Manager/Camera.h"
 #include"../../Manager/Collision.h"
 #include"../../Manager/SceneManager.h"
+#include"../../Manager/SoundManager.h"
+
 #include"../Stage/Tutorial/TutorialStage.h"
+
 
 
 Player::Player()
@@ -83,6 +88,10 @@ void Player::Init()
 
 	// モーション
 	ChangeMotion(MOTION::IDLE);
+
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::SLASH);
 }
 
 void Player::Update()
@@ -250,6 +259,8 @@ void Player::DoStateAttack()
 		// 攻撃状態に遷移する
 		ChangeState(Player::STATE::ATTACK);
 
+		SoundManager::GetIns().Play(SoundManager::SLASH,true);
+
 		// 最終段までいっている または 前の段の攻撃から一定時間過ぎていたら フラグリセット
 		if ((isAttack_[ATTACK::MAX - 1]) || (attackKeyCounter_ > INPUT_ATTACK_FRAME)) {
 			for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; }
@@ -354,6 +365,7 @@ void Player::Attack()
 
 	if (GetAnimeRatio() >= 0.4f && GetAnimeRatio() <= 0.6f) {
 		defaultAttack_->On();
+		SoundManager::GetIns().Play(SoundManager::SLASH);
 	}
 
 	defaultAttack_->Update();

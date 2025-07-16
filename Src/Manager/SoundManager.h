@@ -16,7 +16,10 @@ public:
 	enum SOUND
 	{
 		NON=-1,
-		TEST,
+		SLASH,
+		DAMAGE,
+		EVASION,
+		BPHIT,
 
 		MAX,
 	};
@@ -33,7 +36,7 @@ public:
 	/// <param name="s">種類</param>
 	/// <param name="loop">ループ再生</param>
 	/// <param name="topPlay">最初から再生するか</param>
-	void Play(SOUND s, bool loop = false, bool topPlay = true);
+	void Play(SOUND s,bool over=false, bool loop = false, bool topPlay = true);
 
 	/// <summary>
 	/// 指定したサウンドを停止

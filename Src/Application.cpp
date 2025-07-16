@@ -5,6 +5,9 @@
 #include "Manager/SceneManager.h"
 #include "Application.h"
 #include"Manager/Decoration/EffectManager.h"
+
+#include"Manager/SoundManager.h"
+
 Application* Application::instance_ = nullptr;
 
 const std::string Application::PATH_IMAGE = "Data/Image/";
@@ -56,6 +59,9 @@ void Application::Init(void)
 	// シーン管理初期化
 	SceneManager::CreateInstance();
 
+	// サウンド初期化
+	SoundManager::CreateIns();
+
 }
 
 void Application::Run(void)
@@ -80,7 +86,7 @@ void Application::Run(void)
 
 void Application::Destroy(void)
 {
-
+	SoundManager::DeleteIns();
 	InputManager::GetInstance().Destroy();
 	SceneManager::GetInstance().Destroy();
 	

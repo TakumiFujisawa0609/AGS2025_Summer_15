@@ -2,6 +2,8 @@
 
 #include<DxLib.h>
 
+SoundManager* SoundManager::ins_ = nullptr;
+
 SoundManager::SoundManager()
 {
 }
@@ -16,17 +18,17 @@ void SoundManager::Load(SOUND s)
 	if (sounds_[s].id_ != -1) return;
 
 	// 読み込み
-	sounds_[s].id_ = LoadSoundMem(("Data/Sound" + sounds_[s].path_).c_str());
+	sounds_[s].id_ = LoadSoundMem(("Data/Sound/" + sounds_[s].path_).c_str());
 	sounds_[s].type_ = s;
 }
 
-void SoundManager::Play(SOUND s, bool loop,bool topPlay)
+void SoundManager::Play(SOUND s,bool over, bool loop,bool topPlay)
 {
 	// 読み込まれていなかったら再生しない
 	if (sounds_[s].id_ == -1) return;
 
 	// 再生中だったら再生しない
-	if (CheckSoundMem(sounds_[s].id_) == 1)return;
+	if ((CheckSoundMem(sounds_[s].id_) == 1) && !over)return;
 
 	// 情報を記録
 	sounds_[s].loop_ = loop;
@@ -87,7 +89,10 @@ void SoundManager::Init(void)
 	}
 
 	// 使用するデータのパスを入れておく("Data/Sound/～～"←ここから先のパス)
-	sounds_[SOUND::TEST].path_ = "test.mp3";
+	sounds_[SOUND::SLASH].path_ = "斬撃.mp3";
+	sounds_[SOUND::DAMAGE].path_ = "被弾.mp3";
+	sounds_[SOUND::BPHIT].path_ = "竹ヒット.mp3";
+	sounds_[SOUND::EVASION].path_ = "回避.mp3";
 }
 
 void SoundManager:: Release(void)
