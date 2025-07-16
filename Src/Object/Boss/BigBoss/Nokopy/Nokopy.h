@@ -14,7 +14,7 @@ public:
     static constexpr int SIZE_Y = 200;
 
 
-    static constexpr int BOSS_HP = 250;
+    static constexpr int BOSS_HP = 500;
     static constexpr float SPAWN_POS_Y = 300;
     static constexpr float SPAWN_POS_RIGHT = 1150;
     static constexpr float SPAWN_POS_LEFT = 150;
@@ -56,6 +56,7 @@ public:
     std::vector<Base> GetObj(void) override;
     AttackBase* GetAttackIns(void)override;
     int GetAttackState(void)override;
+    bool GetDive(void) { return isDive_; }
 
     //セッター関数
     void SetDamage(int dmg)override;
@@ -69,7 +70,7 @@ private:
     //状態ごとのハンドル番号
     int img_[DRAW::DRAW_MAX];
     DRAW DrawPat_;
-
+    int takenokoImg_;
     //ボスの描画
     void BossDraw(void);
 
@@ -116,7 +117,7 @@ private:
     bool targetLine_ = false;
     Vector2F targetVec_;
     float angle_;
-
+    int rushNum_ = 0;
     bool isDive_;       //潜っているか
     void IsGround(Collision::DIR dir) override;
 };

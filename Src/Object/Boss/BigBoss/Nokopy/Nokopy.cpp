@@ -40,8 +40,8 @@ void Nokopy::Init(void)
 	img_[DRAW::DRAW_RUSHOOT] = LoadGraph((path + "Rush.png").c_str());
 	img_[DRAW::DRAW_SPINE] = LoadGraph((path + "Spine.png").c_str());
 	img_[DRAW::DRAW_KNOCKBACK] = LoadGraph((path + "Damage.png").c_str());
-	img_[DRAW::DRAW_DEATH]= LoadGraph((path + "Damage.png").c_str());
-
+	img_[DRAW::DRAW_DEATH] = LoadGraph((path + "Damage.png").c_str());
+	takenokoImg_ = LoadGraph("Data/Image/Boss/Nokopy/Takenoko.png");;
 	DrawPat_ = DRAW_IDLE;
 	//-------------------------------------------------------------------
 	//ˆÚ“®‚Ì‰Šú‰»
@@ -87,11 +87,29 @@ void Nokopy::Update(void)
 
 void Nokopy::Draw(void)
 {
+	static Vector2F targetDrawPos = { 0,0 };
+	if (SceneManager::GetInstance().ThatsNotRight(1, targetLine_))targetDrawPos = unit_.pos_;
+
 	if (targetLine_) {
-		DrawLine(unit_.pos_.x, unit_.pos_.y, targetPos_.x+10, targetPos_.y+10, GetColor(0, 255, 30));
+		DrawLine(unit_.pos_.x, unit_.pos_.y, targetPos_.x + 10, targetPos_.y + 10, GetColor(0, 255, 30));
+		Vector2F vecN = { 0,0 };
+		float length = sqrtf(targetVec_.x * targetVec_.x + targetVec_.y * targetVec_.y);
+		vecN = targetVec_ / length;
+
+		targetDrawPos += vecN * 50;
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 180);
+		DrawRotaGraph(targetDrawPos.x, targetDrawPos.y, 0.1, angle_, takenokoImg_, true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
 	}
 	if (unit_.isAlive_) {
+		bool invic = false;
+		if (!(unit_.inviCounter_ / 5 % 2 == 0))invic = true;
+
+		if (invic)SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+
 		BossDraw();
+		if (invic)SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		beam_->Draw();
 		wave_->Draw();
 		spine_->Draw();
@@ -209,31 +227,31 @@ void Nokopy::ObjHit(int i)
 
 void Nokopy::BossDraw(void)
 {
-		int d = 0;
-		d= (dir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) ? 1 : 0;
+	int d = 0;
+	d = (dir_ == AsoUtility::DIRECTION::E_DIR_RIGHT) ? 1 : 0;
 	switch (DrawPat_)
 	{
 	case Nokopy::DRAW_IDLE:
-        DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true,d);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true, d);
 		break;
 	case Nokopy::DRAW_MOVE:
 		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.2, 0.0, img_[DRAW_RUSHOOT], true);
 		break;
 	case Nokopy::DRAW_BAMBEAM:
-		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true,d);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true, d);
 		break;
 	case Nokopy::DRAW_WAVEMBOO:
-		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true,d);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true, d);
 		break;
 	case Nokopy::DRAW_RUSHOOT:
 		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.2, angle_, img_[DRAW_RUSHOOT], true);
 		break;
 	case Nokopy::DRAW_SPINE:
-		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true,d);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0.0, img_[DRAW_IDLE], true, d);
 		break;
 
 	case Nokopy::DRAW_KNOCKBACK:
-		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0, img_[DRAW_KNOCKBACK], true,d);
+		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0, img_[DRAW_KNOCKBACK], true, d);
 		break;
 	case Nokopy::DRAW_DEATH:
 		DrawRotaGraph(unit_.pos_.x, unit_.pos_.y, 0.22, 0, img_[DRAW_DEATH], true);
@@ -259,8 +277,8 @@ void Nokopy::Idle(void)
 	if (moveCounter_ < 2) {
 		attackCounter_ = 0;
 		ChangeState(BossBase::STATE::ATTACK);
-		ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
-		//ChangeAttackState(BAMBEAM);
+		//ChangeAttackState(static_cast<ATTACK>(GetRand(static_cast<int>(ATTACK::MAX - 1))));
+		ChangeAttackState(RUSHOOT);
 		return;
 	}
 	//ˆÚ“®‘JˆÚ
@@ -425,60 +443,66 @@ void Nokopy::UpdateWavemboo(void)
 
 void Nokopy::UpdateRushoot(void)
 {
-   static int num = 0;
-   static int rushCounter = 0;
-   Vector2F centerPos = { Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2 };
-   static Vector2F vecN = { 0, 0 };
 
-   if (isRushReflection_) {
-       unit_.isGravity_ = true;
-       attackCounter_ = 0;
-       vecN = { 0, 0 };
-       num = 0;
-       SetDown(*playerPosPtr_);
-       ChangeState(STATE::DAMAGE);
-	   angle_ = 0;
-   }
-   if (num >= 5) {
-       unit_.nextpos_.x = SPAWN_POS_RIGHT;
-       unit_.nextpos_.y = SPAWN_POS_Y;
-       attackCounter_ = 0;
-       vecN = { 0, 0 };
-       num = 0;
-	   angle_ = 0;
-       ChangeState(STATE::IDLE);
-   }
-   if (attackCounter_ == 0) {
-       rush_->Init(&unit_.pos_);
-   } else if (attackCounter_ < 30) {
-       isDive_ = true;
-       unit_.isStageCollision_ = false;
-       unit_.nextpos_.y += (unit_.pos_.y <= Application::SCREEN_SIZE_Y) ? unit_.speed_ : 0;
-   } else if (attackCounter_ < 31) {
-       Vector2F pos = ShapesPosition::GetOnePositionCircle(centerPos.x, centerPos.y, Application::SCREEN_SIZE_X / 2, GetRand(AsoUtility::Deg2RadF(360)));
-       unit_.nextpos_ = pos;
-       // targetPos‚ð‰„’·ã‚ÉL‚Î‚·
-       Vector2F playerPos = *playerPosPtr_;
-       targetVec_ = playerPos - pos;
-       float length = sqrtf(targetVec_.x * targetVec_.x + targetVec_.y * targetVec_.y);
-       vecN = targetVec_ / length;
-        // Šp“x‚ðunit_.pos_‚©‚çplayerPos‚Ö‚ÌƒxƒNƒgƒ‹‚ÅŒvŽZ
-        angle_ = atan2(playerPos.y - pos.y, playerPos.x - pos.x);
+	static int rushCounter = 0;
+	Vector2F centerPos = { Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2 };
+	static Vector2F vecN = { 0, 0 };
+
+	if (isRushReflection_) {
+		unit_.isGravity_ = true;
+		attackCounter_ = 0;
+		vecN = { 0, 0 };
+		rushNum_ = 0;
+		SetDown(*playerPosPtr_);
+		ChangeState(STATE::DAMAGE);
+		angle_ = 0;
+	}
+	if (rushNum_ >= 5) {
+		unit_.nextpos_.x = SPAWN_POS_RIGHT;
+		unit_.nextpos_.y = SPAWN_POS_Y;
+		attackCounter_ = 0;
+		vecN = { 0, 0 };
+		rushNum_ = 0;
+		angle_ = 0;
+		ChangeState(STATE::IDLE);
+	}
+	if (attackCounter_ == 0) {
+		unit_.isInvincible_ = 30;
+		rush_->Init(&unit_.pos_);
+	}
+	else if (attackCounter_ < 30 && rushNum_ == 0) {
+		isDive_ = true;
+		unit_.isStageCollision_ = false;
+		unit_.nextpos_.y += (unit_.pos_.y <= Application::SCREEN_SIZE_Y) ? unit_.speed_ : 0;
+	}
+	else if (attackCounter_ < 31) {
+		unit_.nextpos_ = ShapesPosition::GetOnePositionCircle(centerPos.x, centerPos.y, Application::SCREEN_SIZE_X / 2, GetRand(AsoUtility::Deg2RadF(360)));
+		unit_.nextpos_ *= 1.5;
+		// targetPos‚ð‰„’·ã‚ÉL‚Î‚·
+		Vector2F playerPos = *playerPosPtr_;
+		targetVec_ = playerPos - unit_.nextpos_;
+		float length = sqrtf(targetVec_.x * targetVec_.x + targetVec_.y * targetVec_.y);
+		vecN = targetVec_ / length;
+		// Šp“x‚ðunit_.pos_‚©‚çplayerPos‚Ö‚ÌƒxƒNƒgƒ‹‚ÅŒvŽZ
+		angle_ = atan2(playerPos.y - unit_.nextpos_.y, playerPos.x - unit_.nextpos_.x);
 		angle_ += AsoUtility::Deg2RadF(90);
-       // ‰æ–ÊŠO‚Ü‚Å‰„’·i—á: ‰æ–Ê‘ÎŠpü‚Ì2”{•ª‰„’·j
-       float extendLength =Application::SCREEN_SIZE_X * 2.0f;
-       targetPos_ = pos + vecN * extendLength;
-   } else if (attackCounter_ < 50) {
-       targetLine_ = true;
-   } else if (attackCounter_ < 120) {
-       targetLine_ = false;
-       unit_.nextpos_ += vecN * unit_.speed_ * (num + 2);
-   } else {
-       num++;
-       attackCounter_ = 0;
-   }
+		// ‰æ–ÊŠO‚Ü‚Å‰„’·i—á: ‰æ–Ê‘ÎŠpü‚Ì2.5”{•ª‰„’·j
+		float extendLength = Application::SCREEN_SIZE_X * 2.0f;
+		targetPos_ = unit_.nextpos_ + vecN * extendLength;
+	}
+	else if (attackCounter_ < 60) {
+		targetLine_ = true;
+	}
+	else if (attackCounter_ < 120) {
+		targetLine_ = false;
+		unit_.nextpos_ += vecN * unit_.speed_ * (rushNum_ + 3);
+	}
+	else {
+		rushNum_++;
+		attackCounter_ = 0;
+	}
 
-   rush_->Update();
+	rush_->Update();
 }
 
 void Nokopy::UpdateSpine(void)

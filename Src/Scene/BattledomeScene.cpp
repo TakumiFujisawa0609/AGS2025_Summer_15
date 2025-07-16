@@ -429,10 +429,13 @@ void BattledomeScene::PlayerAttackToBoss(void)
 				nokopy_->OnRushReflection();
 			}
 		}
+		if (nokopy_->GetDive())return;
 		for (auto& bpAtc : player_->GetBpAtt()) {
 			if (ins.CircleAndRect(nokopy_->GetUnit(), bpAtc->GetObj())) {
 				//if (bpAtc->GetBp() >= 3)mana.SHAKE();
 				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				if (bpAtc->GetPower() >= 3) { mana.SHAKE(); }
+				if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
 				nokopy_->SetDamage(bpAtc->GetDamage());
 				blastMng_->On(bpAtc->GetObj().pos_);
 				bpAtc->Off();
