@@ -510,6 +510,7 @@ void Player::Jump()
 		// ダウントリガーでジャンプ開始
 		if ((ins.IsTrgDown(KEY_INPUT_SPACE)) || (!prevJumpKey_ && nowJumpKey_)) {
 			isJump_[i] = true;
+			SoundManager::GetIns().Play(SoundManager::EVASION, true);
 		}
 		// ジャンプしていなかったらループから抜ける
 		if (!isJump_[i])break;
@@ -527,8 +528,8 @@ void Player::Jump()
 			unit_.yAccel_ = -(MAX_JUMP_POWER / (float)INPUT_JUMPKEY_FRAME);
 
 			jumpAnim_ = JUMP_ANIM;
-			// その回のジャンプ処理をしたのでそれ以降のループに入らないようにする
 
+			// その回のジャンプ処理をしたのでそれ以降のループに入らないようにする
 			break;
 		}
 	}

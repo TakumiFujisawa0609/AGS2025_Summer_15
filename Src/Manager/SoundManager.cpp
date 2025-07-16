@@ -105,6 +105,7 @@ void SoundManager::Init(void)
 	sounds_[SOUND::EVASION].path_ = "‰ñ”ğ.mp3";
 	sounds_[SOUND::BPTHROW].path_ = "’|“Š‚°.mp3";
 	sounds_[SOUND::RUN].path_ = "‘«‰¹.mp3";
+
 	sounds_[SOUND::BAMMOONPUNCH].path_ = "Bammoon/‘ÅŒ‚.mp3";
 	sounds_[SOUND::BAMMOONMOVE].path_ = "Bammoon/ˆÚ“®.mp3";
 	sounds_[SOUND::BAMMOONLANDING].path_ = "Bammoon/’…’n.mp3";
@@ -112,6 +113,15 @@ void SoundManager::Init(void)
 	sounds_[SOUND::BAMMOONBLASTTHROW].path_ = "’|“Š‚°.mp3";
 	sounds_[SOUND::BAMMOONBLAST].path_ = "”š”­.mp3";
 	sounds_[SOUND::BAMMOONDAMAGE].path_ = "”í’e.mp3";
+
+	sounds_[SOUND::TUTORIALJUMP].path_ = "“¥‚İ‚İ.mp3";
+	sounds_[SOUND::TUTORIALLANDING].path_ = "Bammoon/’…’n.mp3";
+	sounds_[SOUND::TUTORIALDAMAGE].path_ = "”í’e.mp3";
+	sounds_[SOUND::TUTORIALSLASH].path_ = "aŒ‚.mp3";
+	sounds_[SOUND::TUTORIALBLAST].path_ = "”š”­.mp3";
+	sounds_[SOUND::TUTORIALBLASTTHSROW].path_ = "’|“Š‚°.mp3";
+
+
 	sounds_[SOUND::BGM1].path_ = "BGMŒó•â‚P.mp3";
 }
 

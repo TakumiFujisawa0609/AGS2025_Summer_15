@@ -1,8 +1,11 @@
 #include"Blast.h"
+
 #include"../../../../Manager/Camera.h"
-#include"../BossTutorial.h"
 #include"../../../../Manager/SceneManager.h"
-#include "Blast.h"
+#include"../../../../Manager/SoundManager.h"
+
+#include"../BossTutorial.h"
+
 
 Blast::Blast()
 {
@@ -15,6 +18,7 @@ Blast::Blast()
 Blast::~Blast()
 {
 }
+using S = SoundManager;
 
 void Blast::Init(const Vector2F* pos)
 {
@@ -36,19 +40,26 @@ void Blast::Init(const Vector2F* pos)
 	expansion_ = 1.0f;
 
 	lookOn_ = false;
+
+
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::TUTORIALBLASTTHSROW);
+	sound.Load(S::SOUND::TUTORIALBLAST);
 }
 
 void Blast::Update(void)
 {
 	if (!obj_.isAlive_) {
 		if (lookOn_) {
+
 			obj_.pos_ = *boss;
 
 			if (boss->x < target_.x)obj_.pos_.x + BossTutorial::SIZE_X / 2;
 			else					obj_.pos_.x - BossTutorial::SIZE_X / 2;
 
 			attackCounter_++;
-			if (attackCounter_ > 100) { On(); attackCounter_ = 0; }
+			auto& sound = S::GetIns();
+			if (attackCounter_ > 100) { On(); attackCounter_ = 0; sound.Play(S::SOUND::TUTORIALBLASTTHSROW, true, 200); }
 		}
 	}
 	else {
@@ -61,6 +72,8 @@ void Blast::Update(void)
 			obj_.radius_ = (float)(BLAST_SIZE / 4.0f);
 			lookOn_ = false;
 			blast_ = true;
+			auto& sound = S::GetIns();
+			sound.Play(S::SOUND::TUTORIALBLAST, true, 200);
 		}
 		else {
 			vec = { vec.x / dis,vec.y / dis };
@@ -120,6 +133,12 @@ void Blast::Draw(void)
 
 void Blast::Release(void)
 {
+
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::TUTORIALBLASTTHSROW);
+	sound.Delete(S::SOUND::TUTORIALBLAST);
+
 	for (int i = 0; i < BLAST_NUM_MAX; i++) {
 		DeleteGraph(blastImg_[i]);
 	}
@@ -127,4 +146,14 @@ void Blast::Release(void)
 
 }
 
+void Blast::Hit(void)
+{
+	obj_.size_ = { (float)BLAST_SIZE,(float)BLAST_SIZE };
+	obj_.radius_ = (float)(BLAST_SIZE / 2);
+	lookOn_ = false;
+	blast_ = true;
+	obj_.inviCounter_ = 1;
 
+	auto& sound = S::GetIns();
+	sound.Play(S::SOUND::TUTORIALBLAST, true, 200);
+}

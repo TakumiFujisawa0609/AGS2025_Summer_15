@@ -3,6 +3,8 @@
 #include<DxLib.h>
 
 #include"../../../../Manager/Camera.h"
+#include"../../../../Manager/SoundManager.h"
+
 #include"../BossTutorial.h"
 
 Slash::Slash()
@@ -28,6 +30,10 @@ void Slash::Init(const Vector2F* pos)
 	animCounter_ = 0;
 	startCnt = CHARGE;
 
+
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::TUTORIALSLASH);
 }
 
 void Slash::Update()
@@ -36,6 +42,8 @@ void Slash::Update()
 	obj_.isDraw_ = true;
 
 	if (obj_.isAlive_) {
+		if (animCounter_ == 0)SoundManager::GetIns().Play(SoundManager::SOUND::TUTORIALSLASH, true, 200);
+
 		switch (dir_)
 		{
 		case Slash::LEFT:
@@ -78,6 +86,10 @@ void Slash::Draw()
 
 void Slash::Release()
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::TUTORIALSLASH);
+
 	for (int ii = 0; ii < ANIM_ALL; ii++) {
 		DeleteGraph(img[ii]);
 	}

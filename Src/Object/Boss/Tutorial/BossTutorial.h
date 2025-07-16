@@ -1,5 +1,6 @@
 #pragma once
-#include"../../Enemy/EnemyBase.h"
+
+#include"../../UnitBase.h"
 #include<map>
 
 #include"Attack/Slash.h"
@@ -7,8 +8,9 @@
 #include"Attack/Blast.h"
 #include"Attack/Tackle.h"
 
+class Player;
 
-class BossTutorial : public EnemyBase
+class BossTutorial : public UnitBase
 {
 public:
 
@@ -90,6 +92,8 @@ public:
 	using AttackFunc = void(BossTutorial::*)();
 
 
+	void SetPlayer(Player* p) { player_ = p; }
+
 	virtual void SetDown(Vector2F pos);
 
 	DRAWPAT GetDrawpat(void) { return DrawPat_; }
@@ -120,6 +124,8 @@ private:
 	bool endFlg;
 
 	void BossDraw();
+
+	Player* player_;
 
 
 	//ƒ{ƒX‚Ì—§‚¿ˆÊ’u‚ÌU‚è•ª‚¯
