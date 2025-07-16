@@ -2,6 +2,8 @@
 
 #include"SceneBase.h"
 
+#include"../Manager/SceneManager.h"
+
 class SelectStage;
 class SelectPlayer;
 class BlastEffectManager;
@@ -19,28 +21,29 @@ public:
 
 
 private:
-	int scoreImage_;
-
 	SelectStage* stage_;
 	SelectPlayer* player_;
-
 	BlastEffectManager* blast_;
 
-	int haveBcou_;
 
-	int tutorialImg_;
-	Vector2F tutorialPos_;
-	int nokopyImg_;
-	Vector2F nokopyPos_;
-	int runbooImg_;
-	Vector2F runbooPos_;
-	int bammoonImg_;
-	Vector2F bammoonPos_;
+	int scoreImage_;
+
+	struct INFO
+	{
+		SceneManager::BOSS_KINDS type_;
+		int image_;
+		int thum_;
+		Vector2F pos_;
+	};
+
+	INFO bossInfo_[(int)SceneManager::BOSS_KINDS::MAX];
 
 	int nowSelectImage_;
 	Vector2F nowSelectPos_;
 	int nowSelectCount_;
 
 	void Collision(void);
+
+	int comingSoon_;
 };
 

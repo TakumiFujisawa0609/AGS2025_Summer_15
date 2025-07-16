@@ -59,6 +59,7 @@ void SoundManager::Stop(SOUND s)
 void SoundManager::AllStop(void)
 {
 	for (auto& sound : sounds_) {
+		if (sound.id_ == -1)continue;
 		if (CheckSoundMem(sound.id_) == 0)continue;
 
 		sound.paused_ = true;
@@ -71,7 +72,7 @@ void SoundManager::PausePlay(void)
 	for (auto& sound : sounds_) {
 		if (!sound.paused_)continue;
 
-		Play(sound.type_, false, sound.loop_, false);
+		Play(sound.type_, false, sound.volume_, sound.loop_, false);
 	}
 }
 
@@ -83,6 +84,8 @@ void SoundManager::Delete(SOUND s)
 	// ’†g‚ğÁ‹‚µ‚Ä-1‚ğ“ü‚ê‚Æ‚­
 	DeleteSoundMem(sounds_[s].id_);
 	sounds_[s].id_ = -1;
+	sounds_[s].paused_ = false;
+	sounds_[s].volume_ = 255;
 }
 
 void SoundManager::Init(void)
@@ -92,14 +95,24 @@ void SoundManager::Init(void)
 	for (auto& sound : sounds_) {
 		sound.id_ = -1;
 		sound.paused_ = false;
+		sound.volume_ = 255;
 	}
 
 	// g—p‚·‚éƒf[ƒ^‚ÌƒpƒX‚ğ“ü‚ê‚Ä‚¨‚­("Data/Sound/``"©‚±‚±‚©‚çæ‚ÌƒpƒX)
 	sounds_[SOUND::SLASH].path_ = "aŒ‚.mp3";
 	sounds_[SOUND::DAMAGE].path_ = "”í’e.mp3";
-	sounds_[SOUND::BPHIT].path_ = "’|ƒqƒbƒg.mp3";
+	sounds_[SOUND::BPHIT].path_ = "”š”­.mp3";
 	sounds_[SOUND::EVASION].path_ = "‰ñ”ğ.mp3";
+	sounds_[SOUND::BPTHROW].path_ = "’|“Š‚°.mp3";
 	sounds_[SOUND::RUN].path_ = "‘«‰¹.mp3";
+	sounds_[SOUND::BAMMOONPUNCH].path_ = "Bammoon/‘ÅŒ‚.mp3";
+	sounds_[SOUND::BAMMOONMOVE].path_ = "Bammoon/ˆÚ“®.mp3";
+	sounds_[SOUND::BAMMOONLANDING].path_ = "Bammoon/’…’n.mp3";
+	sounds_[SOUND::BAMMOONCSPHERE].path_ = "Bammoon/Csphere.mp3";
+	sounds_[SOUND::BAMMOONBLASTTHROW].path_ = "’|“Š‚°.mp3";
+	sounds_[SOUND::BAMMOONBLAST].path_ = "”š”­.mp3";
+	sounds_[SOUND::BAMMOONDAMAGE].path_ = "”í’e.mp3";
+	sounds_[SOUND::BGM1].path_ = "BGMŒó•â‚P.mp3";
 }
 
 void SoundManager:: Release(void)

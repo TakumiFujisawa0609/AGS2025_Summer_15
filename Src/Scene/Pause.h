@@ -24,7 +24,7 @@ public:
 	void Release(void);
 
 	STATE GetPauseState(void) { return pauseState_; }
-	void SetPauseState(STATE state) { pauseState_ = state; }
+	void SetPauseState(STATE state);
 
 	bool GetExit(void) { return isExit; }
 

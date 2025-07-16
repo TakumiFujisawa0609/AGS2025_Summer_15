@@ -2,6 +2,8 @@
 
 #include<DxLib.h>
 
+#include"../../../../../Manager/SoundManager.h"
+
 Csphere::Csphere()
 {
 }
@@ -35,6 +37,10 @@ void Csphere::Init(const Vector2F* pos)
 	floMove_ = {};
 
 	end_ = false;
+
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::BAMMOONCSPHERE);
 }
 
 void Csphere::Update(void)
@@ -68,6 +74,10 @@ void Csphere::Draw(void)
 
 void Csphere::Release(void)
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::BAMMOONCSPHERE);
+
 	for (int& id : img_) { DeleteGraph(id); }
 }
 
@@ -114,6 +124,7 @@ void Csphere::On(Vector2F pPos)
 	end_ = false;
 	aliveCou_ = ALIVE_TIME;
 	obj_.inviCounter_ = 0;
+	SoundManager::GetIns().Play(SoundManager::SOUND::BAMMOONCSPHERE, true, 200);
 }
 
 void Csphere::Hit(void)

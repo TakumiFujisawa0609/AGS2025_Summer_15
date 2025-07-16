@@ -4,6 +4,8 @@
 #include<cmath>
 
 #include"../../../../../Manager/Camera.h"
+#include"../../../../../Manager/SoundManager.h"
+
 
 BamBlast::BamBlast()
 {
@@ -13,6 +15,8 @@ BamBlast::BamBlast()
 BamBlast::~BamBlast()
 {
 }
+
+using SOUND = SoundManager::SOUND;
 
 void BamBlast::Init(const Vector2F* pos)
 {
@@ -38,6 +42,11 @@ void BamBlast::Init(const Vector2F* pos)
 		b.blast_ = false;
 		b.animeCounter_ = 0;
 	}
+
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(SOUND::BAMMOONBLAST);
+	sound.Load(SOUND::BAMMOONBLASTTHROW);
 }
 void BamBlast::Update(void)
 {
@@ -57,6 +66,7 @@ void BamBlast::Update(void)
 				blastCount_++;
 				o.size_ *= 2.0f;
 				bList[i].blast_ = true;
+				SoundManager::GetIns().Play(SOUND::BAMMOONBLAST, true, 200);
 			}
 
 		}
@@ -89,6 +99,11 @@ void BamBlast::Draw(void)
 }
 void BamBlast::Release(void)
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(SOUND::BAMMOONBLASTTHROW);
+	sound.Delete(SOUND::BAMMOONBLAST);
+
 	for (int i = 0; i < BLAST_NUM_MAX; i++) {
 		DeleteGraph(blastImg_[i]);
 	}
@@ -121,6 +136,8 @@ void BamBlast::On(int i, Vector2F pPos)
 	obj_[i].inviCounter_ = 0;
 
 	obj_[i].isAlive_ = true;
+
+	SoundManager::GetIns().Play(SOUND::BAMMOONBLASTTHROW, true, 200);
 }
 
 void BamBlast::Hit(int i)

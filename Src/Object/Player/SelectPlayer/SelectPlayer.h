@@ -31,7 +31,7 @@ public:
 	void Draw(void);
 	void Release(void);
 
-	B_KINDS NowSelect(void) { return nowSelect_; }
+	SceneManager::BOSS_KINDS NowSelect(void) { return nowSelect_; }
 
 	void SetVec(Vector2F target);
 
@@ -40,9 +40,7 @@ public:
 	Base GetBamboo(void) { return bamboo_; }
 
 private:
-	B_KINDS nowSelect_;
-
-	bool NullSelect(int b);
+	SceneManager::BOSS_KINDS nowSelect_;
 
 	int image_[ANIME_NUM];
 	int animeInterval_;
@@ -59,6 +57,8 @@ private:
 	Base bamboo_;
 
 	void JoyPadInputManager(void);
+	bool nowUpKey_, prevUpKey_, downUpKey_, upUpKey_;
+	bool nowDownKey_, prevDownKey_, downDownKey_, upDownKey_;
 	bool nowLeftKey_, prevLeftKey_, downLeftKey_, upLeftKey_;
 	bool nowRightKey_, prevRightKey_, downRightKey_, upRightKey_;
 	bool nowAttackKey_;

@@ -3,6 +3,8 @@
 #include<DxLib.h>
 #include<string>
 
+#include"../../../../Manager/SoundManager.h"
+
 #include"Attack/BamBlast.h"
 #include"Attack/Pbullet.h"
 #include"Attack/Stripe.h"
@@ -57,6 +59,13 @@ void Bammoon::Init(void)
 	TargetLook(*playerPosPtr_);
 
 	ChangeDispPos();
+
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::BAMMOONPUNCH);
+	sound.Load(S::SOUND::BAMMOONMOVE);
+	sound.Load(S::SOUND::BAMMOONLANDING);
+	sound.Load(S::SOUND::BAMMOONDAMAGE);
 }
 
 void Bammoon::Update(void)
@@ -78,6 +87,13 @@ void Bammoon::Draw(void)
 
 void Bammoon::Release(void)
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::BAMMOONDAMAGE);
+	sound.Delete(S::SOUND::BAMMOONLANDING);
+	sound.Delete(S::SOUND::BAMMOONMOVE);
+	sound.Delete(S::SOUND::BAMMOONPUNCH);
+
 	csphere_->Release();
 	delete csphere_;
 	csphere_ = nullptr;
@@ -142,6 +158,7 @@ void Bammoon::Move(void)
 		jump = true;
 		unit_.yAccel_ = -50.0f;
 		unit_.xAccel_ = 25.0f * ((unit_.pos_.x < Application::SCREEN_SIZE_X / 2) ? 1.0f : -1.0f);
+		SoundManager::GetIns().Play(SoundManager::SOUND::BAMMOONMOVE, true, 200);
 	}
 
 
@@ -198,6 +215,7 @@ void Bammoon::Attack(void)
 
 
 		if (unit_.isGround_) {
+			SoundManager::GetIns().Play(SoundManager::SOUND::BAMMOONPUNCH, true, 200);
 			ChangeMotion(MOTION::ATTACK, false);
 
 			unit_.isGravity_ = true;
@@ -374,65 +392,20 @@ void Bammoon::SetDamage(int dmg)
 		deathCou_ = DEATH_DIRECTION_TIME;
 		ChangeState(STATE::DEATH);
 	}
+
+	SoundManager::GetIns().Play(SoundManager::SOUND::BAMMOONDAMAGE, true, 200);
 }
 
 void Bammoon::AttackUpdate(void)
 {
-	//switch (attackState_)
-	//{
-	//case Bammoon::ATTACK::NON:
-	//	break;
-	//case Bammoon::ATTACK::SWEEP:
-	//	break;
-	//case Bammoon::ATTACK::BLAST:
-	//	blast_->Update();
-	//	break;
-	//case Bammoon::ATTACK::PBULLET:
-	//	pBullet_->Update();
-	//	break;
-	//case Bammoon::ATTACK::STRIPE:
-	//	stripe_->Update();
-	//	break;
-	//case Bammoon::ATTACK::CSPHERE:
-	//	csphere_->Update();
-	//	break;
-	//case Bammoon::ATTACK::MAX:
-	//	break;
-	//default:
-	//	break;
-	//}
 	blast_->Update();
 	pBullet_->Update();
 	stripe_->Update();
 	csphere_->Update();
-
 }
 
 void Bammoon::AttackDraw(void)
 {
-	//switch (attackState_)
-	//{
-	//case Bammoon::ATTACK::NON:
-	//	break;
-	//case Bammoon::ATTACK::SWEEP:
-	//	break;
-	//case Bammoon::ATTACK::BLAST:
-	//	blast_->Draw();
-	//	break;
-	//case Bammoon::ATTACK::PBULLET:
-	//	pBullet_->Draw();
-	//	break;
-	//case Bammoon::ATTACK::STRIPE:
-	//	stripe_->Draw();
-	//	break;
-	//case Bammoon::ATTACK::CSPHERE:
-	//	csphere_->Draw();
-	//	break;
-	//case Bammoon::ATTACK::MAX:
-	//	break;
-	//default:
-	//	break;
-	//}
 	blast_->Draw();
 	pBullet_->Draw();
 	stripe_->Draw();
@@ -499,6 +472,7 @@ void Bammoon::IsGround(Collision::DIR dir)
 		unit_.yAccel_ = 0.0f;
 		if (unit_.isGround_ == false) {
 			unit_.isGround_ = true;
+			SoundManager::GetIns().Play(SoundManager::SOUND::BAMMOONLANDING, true, 200);
 			SceneManager::GetInstance().SHAKE();
 		}
 		break;

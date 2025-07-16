@@ -67,6 +67,15 @@ void BPAttack::On(Vector2F pPos, Vector2F vec)
 	this->vec_ = vec * DEFAULT_SPEED;
 
 	obj_.pos_ = pPos;
+	ChangeDispPos();
+	if (obj_.disppos_.x < DEFAULT_SIZE_X / 2) {
+		obj_.pos_.x += (DEFAULT_SIZE_X / 2) - obj_.disppos_.x;
+		ChangeDispPos();
+	}
+	if (obj_.disppos_.x > Application::SCREEN_SIZE_X - DEFAULT_SIZE_X / 2) {
+		obj_.pos_.x -= obj_.disppos_.x - (Application::SCREEN_SIZE_X - DEFAULT_SIZE_X / 2);
+		ChangeDispPos();
+	}
 
 	aliveCounter_ = ALIVE_TIME;
 	power_ = 1;

@@ -93,7 +93,9 @@ void Player::Init()
 	auto& sound = S::GetIns();
 	sound.Load(S::SOUND::SLASH);
 	sound.Load(S::SOUND::EVASION);
+	sound.Load(S::SOUND::BPTHROW);
 	sound.Load(S::SOUND::RUN);
+	sound.Load(S::SOUND::DAMAGE);
 }
 
 void Player::Update()
@@ -142,16 +144,17 @@ void Player::Draw()
 {
 	if (unit_.isAlive_) {
 
-
-		//if (jumpAnim_ > 0) {
-		//	DrawRotaGraph(unit_.disppos_.x - 5, unit_.disppos_.y + 192 / 4, 1, 0, jumpImg_[(int)jumpAnim_], true);
-		//}
-
-
 		if(haveB_)DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y - 50, 1, 0, BambooImg_, true);
 		DrawPlayer();
 		if (haveB_)DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1, atan2(vec_.y, vec_.x), arrowImg_[arrowAnim_], true);
-			
+
+		if (evasionCoolTime_ > 0) {
+			Vector2F start, end;
+			start = { unit_.disppos_.x - LOAD_SIZE_X / 3,(unit_.disppos_.y - SIZE_Y / 2) - 5 };
+			end = { unit_.disppos_.x + LOAD_SIZE_X / 3,unit_.disppos_.y - SIZE_Y / 2 };
+			DrawBar(start.x, start.y, end.x, end.y, evasionCoolTime_, EVASION_COOL_TIME, RGB(255, 0, 0), RGB(255, 255, 255, RGB(0, 0, 0)));
+		}
+		
 		
 		defaultAttack_->Draw();
 
@@ -170,7 +173,9 @@ void Player::Release()
 {
 	using S = SoundManager;
 	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::DAMAGE);
 	sound.Delete(S::SOUND::RUN);
+	sound.Delete(S::SOUND::BPTHROW);
 	sound.Delete(S::SOUND::EVASION);
 	sound.Delete(S::SOUND::SLASH);
 
@@ -261,6 +266,7 @@ void Player::DoStateAttack()
 		if (ins.IsNew(KEY_INPUT_J) || (nowAttackKey_)) {
 			ChangeState(Player::STATE::BP_ATTACK);
 			SoundManager::GetIns().Stop(SoundManager::SOUND::RUN);
+			SoundManager::GetIns().Play(SoundManager::SOUND::BPTHROW, true, 200);
 			ChangeMotion(MOTION::IDLE);
 		}
 	}
@@ -838,4 +844,6 @@ void Player::Hit(int damage, Vector2F bPos)
 
 	knockBack_ = true;
 	knockBackDir_ = (unit_.pos_.x < bPos.x) ? AsoUtility::DIRECTION::E_DIR_LEFT : AsoUtility::DIRECTION::E_DIR_RIGHT;
+
+	SoundManager::GetIns().Play(SoundManager::SOUND::DAMAGE, true, 200);
 }

@@ -2,6 +2,7 @@
 #include<string>
 #include "../Application.h"
 #include "../Manager/SceneManager.h"
+#include "../Manager/SoundManager.h"
 
 void Pause::Load(void)
 {
@@ -94,7 +95,7 @@ void Pause::Update(void)
 		switch (select_)
 		{
 		case Pause::CONTINUE:
-			if (isDecision) pauseState_ = STATE::E_UPDATE;
+			if (isDecision) { SetPauseState(STATE::E_UPDATE); }
 			if (isDown || (prevPadDown == 0 && nowPadDown != 0)) select_ = NEWGAME;
 			break;
 		case Pause::NEWGAME:
@@ -162,6 +163,18 @@ void Pause::Release(void)
 	}
 
 	Camera::DeleteInstance();
+}
+
+void Pause::SetPauseState(STATE state)
+{
+	pauseState_ = state;
+	if (state == STATE::E_PAUSE) {
+		SoundManager::GetIns().AllStop();
+	}
+	else if (state==STATE::E_UPDATE)
+	{
+		SoundManager::GetIns().PausePlay();
+	}
 }
 
 void Pause::KeyInput(void)

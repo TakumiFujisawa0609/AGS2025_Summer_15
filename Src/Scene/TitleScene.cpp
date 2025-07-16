@@ -1,11 +1,14 @@
-#include <string>
+#include "TitleScene.h"
+
 #include <DxLib.h>
+#include <string>
+
 #include "../Application.h"
 #include "../Utility/AsoUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/Camera.h"
-#include "TitleScene.h"
+#include "../Manager/SoundManager.h"
 
 TitleScene::TitleScene(void)
 {
@@ -18,6 +21,11 @@ TitleScene::~TitleScene(void)
 void TitleScene::Init(void)
 {
 	image_ = LoadGraph("Data/Image/Title.png");
+
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::BGM1);
+	sound.Play(S::SOUND::BGM1, false, 100, true);
 }
 
 void TitleScene::Update(void)
@@ -53,6 +61,9 @@ void TitleScene::Draw(void)
 
 void TitleScene::Release(void)
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::BGM1);
 	DeleteGraph(image_);
 }
 

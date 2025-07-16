@@ -7,6 +7,7 @@
 #include"../Manager/Camera.h"
 #include"../Manager/Decoration/BlastEffect/BlastEffectManager.h"
 #include"../Manager/Score/Score.h"
+#include"../Manager/SoundManager.h"
 
 #include"../Object/Player/Player.h"
 #include"../Object/Bamboo/BambooManager.h"
@@ -95,6 +96,9 @@ void BattledomeScene::Init(void)
 	camera.Init();
 	camera.SetMapNum(stage_->GetMapNum());
 
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::BPHIT);
 
 }
 
@@ -205,6 +209,10 @@ void BattledomeScene::Draw(void)
 
 void BattledomeScene::Release(void)
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::BPHIT);
+
 	Collision::DeleteInstance();
 
 	blastMng_->Release();
@@ -374,8 +382,8 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 			if (ins.Circle(bAtc, player_->DefaultAtt())) {
 				mana.HitStop(mana.HIT_STOP_TIME);
 				player_->SetInvici(50);
-				bamboo_->Create(bAtc.pos_, 1);
 				bammoon_->ObjHit(i);
+				bamboo_->Create(bAtc.pos_, 1,30);
 			}
 			i++;
 		}
@@ -496,6 +504,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			if (ins.Ellipse(bpAtc->GetObj(), bammoon_->GetUnit())) {
 				if (bpAtc->GetPower() >= 3) { mana.SHAKE(); }
 				if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
+				SoundManager::GetIns().Play(SoundManager::SOUND::BPHIT, true, 200);
 				bpAtc->Off();
 				bammoon_->SetDamage(bpAtc->GetDamage());
 				blastMng_->On(bpAtc->GetObj().pos_);

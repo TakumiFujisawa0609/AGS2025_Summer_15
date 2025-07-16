@@ -4,6 +4,7 @@
 
 #include"../../../../../Manager/Camera.h"
 #include"../../../../../Manager/SceneManager.h"
+#include"../../../../../Manager/SoundManager.h"
 
 Stripe::Stripe()
 {
@@ -32,6 +33,10 @@ void Stripe::Init(const Vector2F* pos)
 	}
 
 	end_ = 0;
+
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::BAMMOONLANDING);
 }
 
 void Stripe::Update(void) 
@@ -45,6 +50,7 @@ void Stripe::Update(void)
 					o.inviCounter_ = 0;
 					o.isDraw_ = false;
 					o.isAlive_ = true;
+					SoundManager::GetIns().Play(SoundManager::SOUND::BAMMOONLANDING, true, 200);
 				}
 			}
 
@@ -88,6 +94,10 @@ void Stripe::Draw(void)
 
 void Stripe::Release(void) 
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::BAMMOONLANDING);
+
 	obj_.clear();
 
 	DeleteGraph(nokoImg_);

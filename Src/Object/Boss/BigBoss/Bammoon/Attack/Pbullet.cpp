@@ -5,6 +5,7 @@
 #include"../../../../../Manager/Camera.h"
 #include"../../../../../Manager/Collision.h"
 #include"../../../../../Utility/AsoUtility.h"
+#include"../../../../../Manager/SoundManager.h"
 
 Pbullet::Pbullet() {
 }
@@ -49,6 +50,10 @@ void Pbullet::Init(const Vector2F* pos)
 			return;
 		}
 	}
+
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::BAMMOONCSPHERE);
 }
 
 void Pbullet::Update(void)
@@ -105,6 +110,11 @@ void Pbullet::Draw(void)
 
 void Pbullet::Release(void) 
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::BAMMOONCSPHERE);
+
+
 	for (int i = 0; i < HIT_ANIME_NUM; i++) {
 		DeleteGraph(hitImg_[i]);
 	}
@@ -141,6 +151,8 @@ void Pbullet::On(int i, Vector2F pPos)
 
 	obj_[i].isAlive_ = true;
 	hit_[i] = false;
+
+	SoundManager::GetIns().Play(SoundManager::SOUND::BAMMOONCSPHERE, true, 200);
 }
 
 void Pbullet::Hit(int i)
