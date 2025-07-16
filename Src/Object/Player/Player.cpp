@@ -1,12 +1,17 @@
+#include "Player.h"
+
 #include<string>
 
-#include "Player.h"
-#include"../../Manager/InputManager.h"
 #include"../../Application.h"
+
+#include"../../Manager/InputManager.h"
 #include"../../Manager/Camera.h"
 #include"../../Manager/Collision.h"
 #include"../../Manager/SceneManager.h"
+#include"../../Manager/SoundManager.h"
+
 #include"../Stage/Tutorial/TutorialStage.h"
+
 
 
 Player::Player()
@@ -83,6 +88,10 @@ void Player::Init()
 
 	// ƒ‚[ƒVƒ‡ƒ“
 	ChangeMotion(MOTION::IDLE);
+
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::SLASH);
 }
 
 void Player::Update()
@@ -354,6 +363,7 @@ void Player::Attack()
 
 	if (GetAnimeRatio() >= 0.4f && GetAnimeRatio() <= 0.6f) {
 		defaultAttack_->On();
+		SoundManager::GetIns().Play(SoundManager::SLASH);
 	}
 
 	defaultAttack_->Update();

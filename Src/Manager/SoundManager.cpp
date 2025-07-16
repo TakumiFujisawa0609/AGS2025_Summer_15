@@ -2,6 +2,8 @@
 
 #include<DxLib.h>
 
+SoundManager* SoundManager::ins_ = nullptr;
+
 SoundManager::SoundManager()
 {
 }
@@ -87,7 +89,10 @@ void SoundManager::Init(void)
 	}
 
 	// 使用するデータのパスを入れておく("Data/Sound/～～"←ここから先のパス)
-	sounds_[SOUND::TEST].path_ = "test.mp3";
+	sounds_[SOUND::SLASH].path_ = "斬撃.mp3";
+	sounds_[SOUND::DAMAGE].path_ = "被弾.mp3";
+	sounds_[SOUND::BPHIT].path_ = "竹ヒット.mp3";
+	sounds_[SOUND::EVASION].path_ = "回避.mp3";
 }
 
 void SoundManager:: Release(void)

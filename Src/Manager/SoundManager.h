@@ -16,7 +16,10 @@ public:
 	enum SOUND
 	{
 		NON=-1,
-		TEST,
+		SLASH,
+		DAMAGE,
+		EVASION,
+		BPHIT,
 
 		MAX,
 	};
