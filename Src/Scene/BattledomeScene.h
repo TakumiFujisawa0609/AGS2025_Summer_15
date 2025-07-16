@@ -2,10 +2,17 @@
 
 #include"SceneBase.h"
 
+#include"../Object/Boss/BigBoss/BossBase.h"
+
 class StageBase;
-class BossBase;
 class Player;
 class BambooManager;
+class BlastEffectManager;
+
+class BossTutorial;
+class Nokopy;
+class Runboo;
+class Bammoon;
 
 class BattledomeScene : public SceneBase
 {
@@ -21,11 +28,18 @@ public:
 	void UnitCollision(void);
 	
 private:
+	float time_;
+
 	Player* player_;
 	BambooManager* bamboo_;
 	StageBase* stage_;
-	BossBase* boss_;
 
+	BossTutorial* tutorial_;
+	Nokopy* nokopy_;
+	Runboo* runboo_;
+	Bammoon* bammoon_;
+
+	BlastEffectManager* blastMng_;
 	//“–‚½‚è”»’è
 	void PlayerToBoss(void);
 	void PlayerAttackToBoss(void);

@@ -3,13 +3,12 @@
 #include <chrono>
 #include<EffekseerForDXLib.h>
 
+#include"Score/Score.h"
 #include "../Common/Fader.h"
 #include "Camera.h"
 
 #include "../Scene/TitleScene.h"
-#include"../Scene/ModeSelect.h"
 #include"../Scene/BossSelect.h"
-#include "../Scene/TutorialScene.h"
 #include"../Scene/BattledomeScene.h"
 #include "../Scene/GameClear.h"
 #include "../Scene/GameOverScene.h"
@@ -35,7 +34,7 @@ SceneManager& SceneManager::GetInstance(void)
 void SceneManager::Init(void)
 {
 
-	sceneId_ = SCENE_ID::TUTORIAL;
+	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
 	cntl_ = CNTL::NONE;
 
@@ -48,6 +47,8 @@ void SceneManager::Init(void)
 	// ƒJƒƒ‰
 	Camera::CreateInstance();
 	Camera::GetInstance().Init();
+
+	Score::CreateInstance();
 
 	//’Ž‹“_‚ð‰Šú‰»-----------------
 	zoomPos_ = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
@@ -205,10 +206,10 @@ void SceneManager::Draw(void)
 	if (shakeCounter_ > 0) {
 		shakeCounter_--;
 
-		shake = shakeCounter_ / 5 % 2;
+		shake = shakeCounter_ / 3 % 2;
 		shake *= 2;
 		shake -= 1;
-		shake *= 5;
+		shake *= 2;
 		DrawRotaGraph(dPos.x, dPos.y, scale_, 0, mainScreen_, true);
 	}
 
@@ -278,6 +279,13 @@ bool SceneManager::GetExit(void)
 	return pause_->GetExit();
 }
 
+bool SceneManager::ThatsNotRight(int classId,int i)
+{
+	perValues[classId] = nowValues[classId];
+	nowValues[classId] = i;
+	return perValues[classId] != nowValues[classId];
+}
+
 SceneManager::SceneManager(void)
 {
 
@@ -321,14 +329,6 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		scene_ = new TitleScene();
 		break;
 		
-	case SCENE_ID::MODESELECT:
-		scene_ = new ModeSelect();
-		break;
-
-	case SCENE_ID::TUTORIAL:
-		scene_ = new TutorialScene();
-		break;
-
 	case SCENE_ID::BOSSSELECT:
 		scene_ = new BossSelect();
 		break;
@@ -386,7 +386,6 @@ void SceneManager::Fade(void)
 void SceneManager::ZoomCtr(void)
 {
 	bool on = true;
-	if (sceneId_ == SCENE_ID::TUTORIAL)on = false;
 	if (sceneId_ == SCENE_ID::BATTLEDONE)on = false;
 	if (on)return;
 
@@ -396,23 +395,23 @@ void SceneManager::ZoomCtr(void)
 
 	Vector2F drawRange = { (Application::SCREEN_SIZE_X / scale_) / 2,(Application::SCREEN_SIZE_Y / scale_) / 2 };
 
-	drawRange.x -= 50.0f;
-	if (worldZoomPos.x - drawRange.x <= 0) {
+	drawRange.x -= 75.0f;
+	if (worldZoomPos.x - drawRange.x < 0) {
 		zoomPos_.x -= (worldZoomPos.x - drawRange.x);
 	}
-	drawRange.x += 50.0f;
 
 	if (worldZoomPos.x + drawRange.x >= StageBase::STAGE_CHIP_SIZE * mapNum_.x) {
 		zoomPos_.x -= ((worldZoomPos.x + drawRange.x) - (StageBase::STAGE_CHIP_SIZE * mapNum_.x));
 	}
 
-	drawRange.y -= 50.0f;
+	float zure = 45.0f;
+	drawRange.y -= zure;
 	if (worldZoomPos.y - drawRange.y < 0) {
 		zoomPos_.y -= (worldZoomPos.y - drawRange.y);
 	}
-	drawRange.y += 50.0f;
+	drawRange.y += zure;
 
-	if (worldZoomPos.y + drawRange.y > StageBase::STAGE_CHIP_SIZE * mapNum_.y) {
+	if (worldZoomPos.y + drawRange.y >= StageBase::STAGE_CHIP_SIZE * mapNum_.y) {
 		zoomPos_.y -= ((worldZoomPos.y + drawRange.y) - (StageBase::STAGE_CHIP_SIZE * mapNum_.y));
 	}
 }

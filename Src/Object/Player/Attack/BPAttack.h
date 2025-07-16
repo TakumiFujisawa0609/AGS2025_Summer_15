@@ -19,11 +19,13 @@ public:
 	static constexpr float DEFAULT_SIZE_Y = 24;
 
 
-	static constexpr int DEFAULT_DAMAGE = 5;
+	static constexpr int DEFAULT_DAMAGE = 10;
 
 	static constexpr float DEFAULT_SPEED = 30.0f;
 
-	static constexpr int ALIVE_TIME = 300;
+	static constexpr int ALIVE_TIME = 600;
+	static constexpr int BOUNCE_MAX = 5;
+	static constexpr int POWER_MAX = 6;
 
 	BPAttack();
 	~BPAttack();
@@ -33,25 +35,29 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
-	void On(Vector2F pPos, AsoUtility::DIRECTION dir, int bp);
+	void On(Vector2F pPos, Vector2F vec);
 	void Off(void) { obj_.isAlive_ = false; }
 
-	int GetBp(void) { return bp_; }
+	int GetPower(void) { return power_; }
 
-	int GetDamage(void) { return DEFAULT_DAMAGE * bp_; }
+	void Hit(void) {
+		if (power_ < POWER_MAX) { power_++; }
+		 bounce_++; 
+	}
 
-	void Hit(void) { aliveHit_--; }
-	// 攻撃タイプを切り替えるメソッド
-	void SetAttackType(BP_ATTACK_TYPE type);
+	void Parry(Vector2F pos);
+
+	int GetDamage(void) { return DEFAULT_DAMAGE * power_; }
+
 private:
 	BP_ATTACK_TYPE bpAttackType_; 
 	PlayerAttackBase* attack_;    
 	int image_;
-	int bp_;
 	int aliveCounter_;
-	int aliveHit_;
 
+	Vector2F vec_;
 
-	AsoUtility::DIRECTION dir_;
+	int power_;
+	int bounce_;
 };
 

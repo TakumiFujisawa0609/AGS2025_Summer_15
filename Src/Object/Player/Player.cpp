@@ -7,8 +7,6 @@
 #include"../../Manager/Collision.h"
 #include"../../Manager/SceneManager.h"
 #include"../Stage/Tutorial/TutorialStage.h"
-#include"../../Scene/TutorialScene.h"
-
 
 
 Player::Player()
@@ -64,26 +62,18 @@ void Player::Init()
 	attackKeyCounter_ = 0;
 
 	// 特殊攻撃関係
-	BambooImg_ = LoadGraph("Data/Image/Player/The_Bamboo.png");
-	BambooPowerImg_ = LoadGraph("Data/Image/Player/BambooBar.png");
+	BambooImg_ = LoadGraph("Data/Image/Player/BambooBar.png");
+	LoadDivGraph("Data/Image/Player/矢印.png", 4, 4, 1, 183, 51, arrowImg_);
+	vec_ = {};
 
-	for (int i = 1; i <= CHARGE_ANIM; i++) {
-		std::string filePath = "Data/Image/Effect/bpCharge/charge" + std::to_string(i) + ".png";
-		chargeImg_[i] = LoadGraph(filePath.c_str());
-	}
-	//err = LoadDivGraph("Data/Image/Effect/charge.png", 255, 20, 13, 128 * 2, 128 * 2, chargeImg_);
-	//if (err == -1) {
-	//	return;
-	//}
-	chargeAnim_ = 0;
-	bp_ = BP_MAX;
-	bpConsCounter_ = 1;
-	chargeTime_ = 0;
+	haveB_ = false;
+	arrowAnim_ = 0;
 
 	// 回避関係
 	evasionCounter_ = 0;
 	evaConpFlg_ = false;
 	evasionPossiFlg_ = true;
+	evasionCoolTime_ = 0;
 
 	// ダメージ関係
 	knockBack_ = false;
@@ -101,16 +91,17 @@ void Player::Update()
 	else { evaConpFlg_ = false; }
 	JoyPadInputManager();
 
+	auto& ins = InputManager::GetInstance();
 
-	static int anime = 0;
-	if (chargeTime_ > 0) {
-		if (++anime > CHARGE_ANIM_SPEED) {
-			anime = 0;
-			if (++chargeAnim_ > CHARGE_ANIM) {
-				chargeAnim_ = 0;
-			}
-		}
-	}
+	vec_ = {};
+
+	if ((ins.IsNew(KEY_INPUT_W)) || (nowUpKey_))vec_.y--;
+	if ((ins.IsNew(KEY_INPUT_S)) || (nowDownKey_))vec_.y++;
+	if ((ins.IsNew(KEY_INPUT_A)) || (nowLeftKey_))vec_.x--;
+	if ((ins.IsNew(KEY_INPUT_D)) || (nowRightKey_))vec_.x++;
+
+	if (vec_.x == 0.0f && vec_.y == 0.0f)vec_.x = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? -1.0f : 1.0f;
+
 	if (isJump_) {
 		jumpAnim_ -= 0.5;
 		if (jumpAnim_ <= 0) {
@@ -118,18 +109,16 @@ void Player::Update()
 		}
 	}
 
+
+
 	StateManager();
 	ChangeBPAttackType();
 	ChangeBPAttackLevel();
 	Animation();
 
-
 	(this->*stateFuncPtr)();
+
 	Respawn();
-	if (CheckHitKey(KEY_INPUT_P) == 1) {
-		SceneManager::GetInstance().ZoomPos(unit_.disppos_);
-		SceneManager::GetInstance().ZoomScale(1.4);
-	}
 
 	for (auto& t : BpAtIns_) {
 		t->Update();
@@ -137,87 +126,40 @@ void Player::Update()
 
 	UnitBase::Update();
 
-	if (startPos_.x >= unit_.disppos_.x)
-	{
-		unit_.disppos_.x = startPos_.x;
-	}
-	if (startPos_.x + Application::SCREEN_SIZE_X <= unit_.disppos_.x)
-	{
-		unit_.disppos_.x = startPos_.x + Application::SCREEN_SIZE_X;
-	}
 }
 
 void Player::Draw()
 {
 	if (unit_.isAlive_) {
 
-		if (jumpAnim_ > 0) {
-			DrawRotaGraph(unit_.disppos_.x - 5, unit_.disppos_.y + 192 / 4, 1, 0, jumpImg_[(int)jumpAnim_], true);
-		}
 
+		//if (jumpAnim_ > 0) {
+		//	DrawRotaGraph(unit_.disppos_.x - 5, unit_.disppos_.y + 192 / 4, 1, 0, jumpImg_[(int)jumpAnim_], true);
+		//}
+
+
+		if(haveB_)DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y - 50, 1, 0, BambooImg_, true);
 		DrawPlayer();
+		if (haveB_)DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1, atan2(vec_.y, vec_.x), arrowImg_[arrowAnim_], true);
+			
+		
 		defaultAttack_->Draw();
-
-		if (chargeTime_ > 0) {
-			SetDrawBlendMode(DX_BLENDMODE_ADD, 200);
-			DrawRotaGraph(unit_.disppos_.x + ((dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? 10 : -10), unit_.disppos_.y, 4, 0, chargeImg_[chargeAnim_], true);
-			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-		}
 
 		for (auto& t : BpAtIns_) {
 			t->Draw();
 		}
-
+	}
+}
+void Player::DrawHp(void)
+{
+	if (unit_.isAlive_) {
 		DrawBar(5, 5, 670, 50, unit_.hp_, HP_MAX, RGB(0, 255, 0));
-
-		Vector2F bPos = { 5,50 };
-		int len = 10;
-		for (int i = 0; i < bp_; i++) {
-			if ((i >= bp_ - bpConsCounter_) && (!(chargeTime_ / 10 % 2 == 0))) break;
-
-			if (i < len)DrawGraph(bPos.x + i * BAMBOO_SIZE_X, bPos.y, BambooPowerImg_, true);
-			else		DrawGraph(bPos.x + (i - len) * BAMBOO_SIZE_X, bPos.y + BAMBOO_SIZE_Y / 2, BambooPowerImg_, true);
-		}
-
-		int debugY = 120;
-		const char* bpTypeStr = "";
-		switch (bpAttackType_) {
-		case BP_ATTACK_TYPE::THROW_BAMBOO:
-			bpTypeStr = "THROW_BAMBOO";
-			break;
-		case BP_ATTACK_TYPE::GROW_BAMBOO:
-			bpTypeStr = "GROW_BAMBOO";
-			break;
-		case BP_ATTACK_TYPE::FIRECRACKER:
-			bpTypeStr = "FIRECRACKER";
-			break;
-		default:
-			bpTypeStr = "UNKNOWN";
-			break;
-		}
-		DrawFormatString(5, debugY, RGB(255, 255, 0), "bpAttackType_: %s (%d)", bpTypeStr, (int)bpAttackType_);
-
-		// bpAttackLevel_のデバッグ表示を追加
-		const char* bpLevelStr = "";
-		switch (bpAttackLevel_) {
-		case BP_ATTACK_LEVEL::LEVEL1:
-			bpLevelStr = "LEVEL1";
-			break;
-		case BP_ATTACK_LEVEL::LEVEL2:
-			bpLevelStr = "LEVEL2";
-			break;
-		case BP_ATTACK_LEVEL::LEVEL3:
-			bpLevelStr = "LEVEL3";
-			break;
-		default:
-			bpLevelStr = "UNKNOWN";
-			break;
-		}
-		DrawFormatString(5, debugY + 20, RGB(0, 255, 255), "bpAttackLevel_: %s (%d)", bpLevelStr, (int)bpAttackLevel_);
 	}
 }
 void Player::Release()
 {
+	for (auto& id : arrowImg_) { DeleteGraph(id); }
+
 	for (auto& b : BpAtIns_) {
 		b->Release();
 		delete b;
@@ -227,6 +169,7 @@ void Player::Release()
 
 	defaultAttack_->Release();
 	delete defaultAttack_;
+
 	//画像解放
 	for (int i = 0; i < (int)MOTION::MAX; i++) {
 		for (auto id : image_[i]) {
@@ -234,9 +177,7 @@ void Player::Release()
 		}
 		image_[i].clear();
 	}
-	for (int i = 0; i < 255; i++) {
-		DeleteGraph(chargeImg_[i]);
-	}
+
 	for (int i = 0; i < 5; i++) {
 		DeleteGraph(jumpImg_[i]);
 	}
@@ -259,7 +200,6 @@ void Player::StateManager(void)
 	case Player::STATE::DAMAGE:
 		break;
 	}
-	DoStateBPAttack();
 
 }
 
@@ -297,68 +237,53 @@ void Player::DoStateAttack()
 	int input = GetJoypadInputState(DX_INPUT_PAD1);
 
 
-	if (!(ins.IsTrgDown(KEY_INPUT_J)) && !(!prevAttackKey_ && nowAttackKey_)) return;
 
-	// 攻撃状態に遷移する
-	ChangeState(Player::STATE::ATTACK);
-
-	// 最終段までいっている または 前の段の攻撃から一定時間過ぎていたら フラグリセット
-	if ((isAttack_[ATTACK::MAX - 1]) || (attackKeyCounter_ > INPUT_ATTACK_FRAME)) {
-		for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; }
-	}
-
-	// １段目から探索して適切な段数をattack_に代入する
-	for (int i = 0; i < ATTACK::MAX; i++) {
-		if (!isAttack_[i]) {
-
-			isAttack_[i] = true;
-
-			attackKeyCounter_ = 0;
-
-			attack_ = (ATTACK)i;
-
-			break;
+	if (haveB_) {
+		if (ins.IsNew(KEY_INPUT_J) || (nowAttackKey_)) {
+			ChangeState(Player::STATE::BP_ATTACK);
+			ChangeMotion(MOTION::IDLE);
 		}
 	}
+	else {
 
-}
+		if (!(ins.IsTrgDown(KEY_INPUT_J)) && !(!prevAttackKey_ && nowAttackKey_)) return;
 
-// 特殊攻撃状態
-void Player::DoStateBPAttack(void)
-{
-	auto& ins = InputManager::GetInstance();
+		// 攻撃状態に遷移する
+		ChangeState(Player::STATE::ATTACK);
 
-	// Hキーまたはバンブー攻撃ボタンが押されていて、BPが1以上ある場合
-	if ((ins.IsNew(KEY_INPUT_H) || nowBambooKey_) && bp_ > 0) {
-		chargeTime_++; // チャージ時間を加算
-		// チャージ時間が規定値を超えた場合
-		if (chargeTime_ > CHARGE_TIME) {
-			chargeTime_ = 0; // チャージ時間リセット
+		// 最終段までいっている または 前の段の攻撃から一定時間過ぎていたら フラグリセット
+		if ((isAttack_[ATTACK::MAX - 1]) || (attackKeyCounter_ > INPUT_ATTACK_FRAME)) {
+			for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; }
+		}
 
-			bpConsCounter_++; // 消費BPカウンタを増やす
-			// BPの最大値を超えないように制限
-			if (bpConsCounter_ > bp_) bpConsCounter_ = bp_;
+		// １段目から探索して適切な段数をattack_に代入する
+		for (int i = 0; i < ATTACK::MAX; i++) {
+			if (!isAttack_[i]) {
 
-			// 消費BPの最大値を超えないように制限
-			if (bpConsCounter_ > MAX_BP_CONS) bpConsCounter_ = MAX_BP_CONS;
+				isAttack_[i] = true;
+
+				attackKeyCounter_ = 0;
+
+				attack_ = (ATTACK)i;
+
+				break;
+			}
 		}
 	}
-
-	// Hキーが離された、またはバンブー攻撃ボタンが離された時、かつBPが1以上ある場合
-	if (((ins.IsTrgUp(KEY_INPUT_H)) || (prevBambooKey_ && !nowBambooKey_)) && bp_ > 0) {
-		ChangeState(Player::STATE::BP_ATTACK); // BP攻撃状態に遷移
-		chargeTime_ = 0; // チャージ時間リセット
-	}
 }
+
 
 // 回避状態
 void Player::DoStateEvasion()
 {
+	if (--evasionCoolTime_ > 0)return;
+
 	auto& ins = InputManager::GetInstance();
 
 	if ((ins.IsTrgDown(KEY_INPUT_K) || (nowEvasionKey_ && !prevEvasionKey_)) && evasionPossiFlg_) {
 		ChangeState(Player::STATE::EVASION);
 		evasionPossiFlg_ = false;
+		evasionCoolTime_ = EVASION_COOL_TIME;
 	}
 }
 
@@ -420,11 +345,15 @@ void Player::Attack()
 		// モーション更新
 		ChangeMotion(MOTION::SECOND_ATTACK, false);
 		break;
+	case Player::THREE:
+		// モーション更新
+		ChangeMotion(MOTION::THREE_ATTACK, false);
+		break;
 	}
 
 	defaultAttack_->Off();
 
-	if (GetAnimeRatio() > 0.4f && GetAnimeRatio() < 0.6f) {
+	if (GetAnimeRatio() >= 0.4f && GetAnimeRatio() <= 0.6f) {
 		defaultAttack_->On();
 	}
 
@@ -468,104 +397,33 @@ void Player::ChangeBPAttackLevel()
 // 特殊攻撃の発動処理
 void Player::BambooAttack(void)
 {
-	bp_ -= bpConsCounter_;
+	auto& ins = InputManager::GetInstance();
 
-	switch (bpAttackType_) {
-	case BP_ATTACK_TYPE::THROW_BAMBOO:
-		ThrowBambooAttack(); // 竹を投げる攻撃
-		break;
-	case BP_ATTACK_TYPE::GROW_BAMBOO:
-		GrowBambooAttack(); // 竹を生やす攻撃
-		break;
-	case BP_ATTACK_TYPE::FIRECRACKER:
-		FirecrackerAttack(); // 爆竹攻撃
-		break;
-	default:
-		break;
-	}
+	if (ins.IsTrgUp(KEY_INPUT_J) || (prevAttackKey_ && !nowAttackKey_)) {
 
-	bpConsCounter_ = 1;
-	ChangeState(Player::STATE::MOVE);
-}
+		haveB_ = false;
 
-// 1種類目: 投げる竹
-void Player::ThrowBambooAttack()
-{
-	// レベルをbpAttackLevel_で切り替える
-	int power = 1;
-	switch (bpAttackLevel_) {
-	case BP_ATTACK_LEVEL::LEVEL1:
-		power = 1;
-		break;
-	case BP_ATTACK_LEVEL::LEVEL2:
-		power = 2;
-		break;
-	case BP_ATTACK_LEVEL::LEVEL3:
-		power = 3;
-		break;
-	}
-	bool recycled = false;
-	// 既存のBPAttackインスタンスを再利用できるかチェック
-	for (int i = 0; i < BpAtIns_.size(); i++) {
-		if (!BpAtIns_[i]->GetObj().isAlive_) {
-			// 死亡しているBPAttackを再利用
-			BpAtIns_[i]->On(unit_.pos_, dir_, power);
-			recycled = true;
-			break;
+		bool recycll = false;
+
+		for (int i = 0; i < BpAtIns_.size(); i++) {
+			if (!BpAtIns_[i]->GetObj().isAlive_) {
+				BpAtIns_[i]->On(unit_.pos_, vec_);
+				recycll = true;
+				break;
+			}
 		}
+
+		if (!recycll) {
+			BpAtIns_.emplace_back(new BPAttack());
+			BpAtIns_[BpAtIns_.size() - 1]->Init(BambooImg_);
+			BpAtIns_[BpAtIns_.size() - 1]->On(unit_.pos_, vec_);
+		}
+
+		ChangeState(Player::STATE::MOVE);
+		return;
 	}
-	if (!recycled) {
-		// 再利用できるものがなければ新規生成
-		BpAtIns_.emplace_back(new BPAttack());
-		BpAtIns_.back()->Init(BambooImg_);
-		BpAtIns_.back()->On(unit_.pos_, dir_, power);
-	}
-}
 
 
-// 2種類目: 竹を生やす
-void Player::GrowBambooAttack()
-{
-	// レベルごとに分岐するが、本数や範囲は変えない
-	Vector2F pos = unit_.pos_;
-	pos.x += (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT ? -50 : 50);
-	int power = 1;
-	switch (bpAttackLevel_) {
-	case BP_ATTACK_LEVEL::LEVEL1:
-		power = 1;
-		break;
-	case BP_ATTACK_LEVEL::LEVEL2:
-		power = 2;
-		break;
-	case BP_ATTACK_LEVEL::LEVEL3:
-		power = 3;
-		break;
-	}
-	BpAtIns_.emplace_back(new BPAttack());
-	BpAtIns_.back()->Init(BambooImg_);
-	BpAtIns_.back()->On(pos, dir_, power);
-}
-
-// 3種類目: 爆竹
-void Player::FirecrackerAttack()
-{
-	int power = 1;
-	switch (bpAttackLevel_) {
-	case BP_ATTACK_LEVEL::LEVEL1: // Small
-		power = 1;
-		break;
-	case BP_ATTACK_LEVEL::LEVEL2: // Medium
-		power = 2;
-		break;
-	case BP_ATTACK_LEVEL::LEVEL3: // Large
-		power = 3;
-		break;
-	}
-	// FirecrackerAttackInstanceは仮のクラス名。実装に合わせて修正してください。
-	// ここでは簡易的にBPAttackを使います。
-	BpAtIns_.emplace_back(new BPAttack());
-	BpAtIns_.back()->Init(BambooImg_); // 爆竹用画像に差し替えてください
-	BpAtIns_.back()->On(unit_.pos_, dir_, power);
 }
 
 
@@ -845,6 +703,18 @@ void Player::LoadPlayerImage(void)
 	image_[motion].insert(image_[motion].end(), SecondeAttaclLoad, SecondeAttaclLoad + SECONDE_ATTACK_LOAD_NUM);
 	//-----------------------------------------------------------------------------
 
+	//攻撃３段目状態の画像を読み込み-----------------------------------------------
+	motion = (int)MOTION::THREE_ATTACK;
+
+	int ThreeAttaclLoad[THREE_ATTACK_LOAD_NUM];
+
+	LoadDivGraph((basePath + "ThreeAttack.png").c_str(),
+		THREE_ATTACK_LOAD_NUM, THREE_ATTACK_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, ThreeAttaclLoad);
+
+	image_[motion].insert(image_[motion].end(), ThreeAttaclLoad, ThreeAttaclLoad + THREE_ATTACK_LOAD_NUM);
+	//-----------------------------------------------------------------------------
+
 	//被ダメ状態の画像を読み込み-----------------------------------------------
 	motion = (int)MOTION::DAMAGE;
 
@@ -886,6 +756,12 @@ void Player::Animation()
 			ChangeState(Player::STATE::MOVE);
 		}
 	}
+
+	static int interval = 0;
+	interval++;
+	if (!(interval >= ANIMATION_SPEED))return;
+	else interval = 0;
+	if (haveB_) { if (++arrowAnim_ >= 4)arrowAnim_ = 0; }
 }
 
 
@@ -906,9 +782,9 @@ void Player::DrawPlayer(void)
 
 	if (invic && !evaConpFlg_)SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
 
-	bool Trance = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? true : false;
-	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y - SIZE_Y / 2, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true, Trance);
-
+	bool Trance = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? false : true;
+	DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y-18, SIZE_SCALE, 0, image_[(int)motion_][animeCounter_], true, Trance);
+	//DrawCircle(unit_.disppos_.x, unit_.disppos_.y,unit_.radius_, 0xff0000, true);
 	if (invic && !evaConpFlg_)SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
@@ -924,6 +800,12 @@ void Player::JoyPadInputManager(void)
 
 	prevRightKey_ = nowRightKey_;
 	nowRightKey_ = ((input & PAD_INPUT_RIGHT) == 0) ? false : true;
+
+	prevUpKey_ = nowUpKey_;
+	nowUpKey_ = ((input & PAD_INPUT_UP) == 0) ? false : true;
+
+	prevDownKey_ = nowDownKey_;
+	nowDownKey_ = ((input & PAD_INPUT_DOWN) == 0) ? false : true;
 
 	prevAttackKey_ = nowAttackKey_;
 	nowAttackKey_ = ((input & 0x40) == 0) ? false : true;

@@ -14,5 +14,9 @@ public:
 	void Update(void) override;
 	void Draw(void) override;
 	void Release(void) override;
+
+private:
+	int image_;
+	bool padKey_;
 };
 

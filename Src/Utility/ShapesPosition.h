@@ -32,8 +32,8 @@ public:
 /// <returns></returns>
 	static std::vector<Vector2F>GetPositionWave(float startX, float startY, float amplitude, float wavelength, float phase, int numPoints, float interval);
 
-private:
 	static	Vector2F GetOnePositionCircle(float centerX, float centerY, float radius, float angle);
+private:
 
 
 };

@@ -17,7 +17,7 @@ TitleScene::~TitleScene(void)
 
 void TitleScene::Init(void)
 {
-
+	image_ = LoadGraph("Data/Image/Title.png");
 }
 
 void TitleScene::Update(void)
@@ -29,23 +29,30 @@ void TitleScene::Update(void)
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
 		scnM.SetController(SceneManager::CNTL::KEY);
-		scnM.ChangeScene(SceneManager::SCENE_ID::MODESELECT);
+		scnM.ChangeScene(SceneManager::SCENE_ID::BOSSSELECT);
 	}
 
 	if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
 	{
 		scnM.SetController(SceneManager::CNTL::PAD);
-		scnM.ChangeScene(SceneManager::SCENE_ID::TUTORIAL);
+		scnM.ChangeScene(SceneManager::SCENE_ID::BOSSSELECT);
 	}
 }
 
 void TitleScene::Draw(void)
 {
-	DrawString(0,0,"タイトルシーン",RGB(255,255,255));
+	DrawGraph(0, 0, image_, true);
+
+	std::string letter = "-- SPACE or B to START --";
+	int fontSize = 32;
+	SetFontSize(fontSize);
+	DrawString((Application::SCREEN_SIZE_X / 2) -225, (int)(Application::SCREEN_SIZE_Y * 0.9f), letter.c_str(), RGB(255, 255, 255));
+	SetFontSize(16);
 
 }
 
 void TitleScene::Release(void)
 {
+	DeleteGraph(image_);
 }
 

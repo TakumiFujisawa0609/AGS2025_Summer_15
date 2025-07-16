@@ -14,6 +14,7 @@ public:
 	~StageBase();
 
 	void Init(void);
+	virtual void BackDraw(void);
 	virtual void Draw(void);
 	void Release(void);
 
@@ -24,6 +25,7 @@ public:
 protected:
 	virtual void Load(void) = 0;
 	virtual bool LoadMapData(void) = 0;
+	virtual void AddRelease(void) = 0;
 
 	int haikei_;
 

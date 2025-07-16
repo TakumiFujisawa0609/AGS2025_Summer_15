@@ -64,4 +64,13 @@ private:
 	int prevDown[2];
 	int nowDown[2];
 
+
+	int prevPadDown;
+	int nowPadDown;
+
+	int prevPadUp;
+	int nowPadUp;
+
+	int prevPadDecision;
+	int nowPadDecision;
 };

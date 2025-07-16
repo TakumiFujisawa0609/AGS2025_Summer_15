@@ -16,5 +16,7 @@ public:
 	void Release(void) override;
 
 private:
+	int image_;
+	bool padKey_;
 };
 

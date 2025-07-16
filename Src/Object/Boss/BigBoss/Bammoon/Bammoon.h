@@ -3,19 +3,22 @@
 #include"../BossBase.h"
 
 class BamBlast;
+class Pbullet;
+class Stripe;
+class Csphere;
 
 class Bammoon : public BossBase
 {
 public:
-	static constexpr int HP_MAX = 1000;
+	static constexpr int HP_MAX = 700;
 
 	static const int LOAD_SIZE_X = 512;
 	static const int LOAD_SIZE_Y = 512;
 
 	static constexpr float SCALE = 0.5f;
 
-	static constexpr int SIZE_X = LOAD_SIZE_X * SCALE;
-	static constexpr int SIZE_Y = LOAD_SIZE_Y * SCALE;
+	static constexpr int SIZE_X = (LOAD_SIZE_X * SCALE) - 50;
+	static constexpr int SIZE_Y = (LOAD_SIZE_Y * SCALE) - 30;
 
 	enum class MOTION
 	{
@@ -40,9 +43,23 @@ public:
 		SWEEP,
 		BLAST,
 		PBULLET,
+		STRIPE,
+		CSPHERE,
+		BAMLINE,
 
 		MAX,
 	};
+
+	const int ATTACKDMG[(int)ATTACK::MAX] =
+	{
+		3,//SWEEP
+		3,//BLAST
+		2,//PBULLET
+		5,//STRIPE
+		1//CSPHERE
+	};
+
+	static constexpr int DEATH_DIRECTION_TIME = 150;
 
 	Bammoon();
 	~Bammoon();
@@ -52,15 +69,19 @@ public:
 	void Draw(void)override;
 	void Release(void)override;
 
+	void DrawHp(void)override;
+
 	std::vector<Base> GetObj(void) override;
-	AttackBase* GetAttackIns(void)override;
+	int GetObjDamage(void) { return (attackState_ != ATTACK::NON) ? ATTACKDMG[(int)attackState_] : 0; }
+	AttackBase* GetAttackIns(void)override { return nullptr; }
 
 	void SetDamage(int dmg)override;
 	void ObjHit(int i)override;
 
-	int GetAttackState(void)override { return (int)attackState_; }
+	ATTACK GetAtState(void) { return attackState_; }
 
 	void SetDown(Vector2F pos)override;
+
 
 private:
 	//É{ÉXï`âÊä÷åW-------------------------------------------------------------------
@@ -84,6 +105,8 @@ private:
 
 
 	int counter_;
+
+	bool pinch_;
 
 	//ë“ã@èÛë‘ópÅ`Å`
 	void Idle(void) override;
@@ -110,7 +133,9 @@ private:
 	//ïœêî
 	ATTACK attackState_;
 	BamBlast* blast_;
-
+	Pbullet* pBullet_;
+	Stripe* stripe_;
+	Csphere* csphere_;
 
 	//É_ÉÅÅ[ÉWèÛë‘Å`Å`
 	void Damage(void) override;
@@ -124,7 +149,7 @@ private:
 	//ä÷êî
 
 	//ïœêî
-
+	int deathCou_;
 
 
 	//éwíËÇµÇΩç¿ïWÇÃï˚å¸Çå¸Ç≠

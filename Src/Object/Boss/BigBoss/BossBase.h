@@ -2,6 +2,7 @@
 #include"../../UnitBase.h"
 #include "../Tutorial/Attack/AttackBase.h"
 
+
 class BossBase : public UnitBase
 {
 public:
@@ -17,6 +18,9 @@ public:
 
 	BossBase();
 	~BossBase();
+
+	//virtual void Init(Vector2F disppos, float moveSpeed) {};
+	//virtual void Update(Vector2F boss) {};
 
 	virtual void Init(void)override;
 	virtual void Update(void)override;
@@ -37,6 +41,9 @@ public:
 	virtual int GetAttackState(void) { return 0; };
 
 	virtual void SetDown(Vector2F pos);
+
+
+	virtual void DrawHp(void) {};
 
 protected:
 	//ó‘Ô‚²‚Æ‚ÌŠÖ”‚ğŒÄ‚Ô‚½‚ß‚ÌŠÖ”ƒ|ƒCƒ“ƒ^

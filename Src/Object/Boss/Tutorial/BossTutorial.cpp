@@ -22,7 +22,7 @@ void BossTutorial::Init()
 
 	unit_.isAlive_ = true;
 	unit_.isDraw_ = true;
-	unit_.pos_ = { 15500,250 };
+	unit_.pos_ = { 1000,250 };
 	unit_.nextpos_ = unit_.pos_;
 	unit_.size_ = { SIZE_X, SIZE_Y };
 	unit_.radius_ = unit_.size_.x / 2;
@@ -103,10 +103,6 @@ void BossTutorial::Update()
 
 void BossTutorial::Draw()
 {
-	if (encount_) {
-		DrawHP();
-	
-	}
 
 	if (unit_.isDraw_)
 	{
@@ -432,22 +428,25 @@ void BossTutorial::HpUpdate()
 
 void BossTutorial::DrawHP()
 {
-	//鮭鮭
-	int shakeX = 0;
-	int shakeY = 0;
-	if (hpShakeTimer_ > 0) {
-		hpShakeTimer_--;
-		shakeX = GetRand(6) - 3;
-		shakeY = GetRand(4) - 2;
-	}
+	if (encount_) {
 
-	DrawBar(
-		Application::SCREEN_SIZE_X / 4 + shakeX,
-		Application::SCREEN_SIZE_Y - 50 + shakeY,
-		Application::SCREEN_SIZE_X / 4 * 3 + shakeX,
-		Application::SCREEN_SIZE_Y - 20 + shakeY,
-		dispHp_, BOSS_HP, RGB(100, 100, 255)
-	);
+		//鮭鮭
+		int shakeX = 0;
+		int shakeY = 0;
+		if (hpShakeTimer_ > 0) {
+			hpShakeTimer_--;
+			shakeX = GetRand(6) - 3;
+			shakeY = GetRand(4) - 2;
+		}
+
+		DrawBar(
+			Application::SCREEN_SIZE_X / 4 + shakeX,
+			Application::SCREEN_SIZE_Y - 50 + shakeY,
+			Application::SCREEN_SIZE_X / 4 * 3 + shakeX,
+			Application::SCREEN_SIZE_Y - 20 + shakeY,
+			dispHp_, BOSS_HP, RGB(100, 100, 255)
+		);
+	}
 }
 
 void BossTutorial::SlashUpdate(void)

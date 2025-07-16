@@ -2,10 +2,12 @@
 #include"../../../UnitBase.h"
 #include"../../../../Manager/Camera.h"
 #include"Attack/WeakBullet.h"
+#include"Attack/Laser.h"
 
 Weakness::Weakness()
 {
 	bullet_ = nullptr;
+	laser_ = nullptr;
 }
 
 Weakness::~Weakness()
@@ -13,63 +15,126 @@ Weakness::~Weakness()
 }
 
 //初期化
-void Weakness::Init(Vector2F disppos)
+void Weakness::Init(Vector2F disppos, float moveSpeed)
 {
+	BossBase::Init();
+	moveSpeed_ = moveSpeed;
+
 	Camera::CreateInstance();
+
+	image_ = LoadGraph((Application::PATH_IMAGE + "Boss/Runboo/Weakness.png").c_str());
 
 	unit_.nextpos_ = disppos;
 	unit_.pos_ = unit_.nextpos_;
+	ChangeDispPos();
+
+	bullet_ = new WeakBullet(moveSpeed_);
+	bullet_->Init(&unit_.pos_);
+
+	laser_ = new Laser(moveSpeed_);
+	//laser_->Init(&unit_.pos_);
 
 	unit_.size_ = { SIZE_X,SIZE_Y };
+	unit_.radius_ = 64.0f;
 
-	////画面の左端を見る
-	//start_.x = 0.0f;
-	//start_.y = 0.0f;
-
-	cnt_ = GetRand(16);
+	cnt_ = GetRand(16.0f);
+	attackCounter_ = 0;
 
 	//unit_.pos_ + start_;
 	unit_.hp_ = HP_MAX;
 	unit_.isAlive_ = true;
 
-	ChangeState(STATE::IDLE);
-
-	//WeakBullet* bullet = new WeakBullet();
-	//bullet->Init(&unit_.disppos_);
+	ChangeState(STATE::ATTACK);
 
 	unit_.isGravity_ = false;
 	unit_.isStageCollision_ = false;
 
-	bullet_ = new WeakBullet();
-	bullet_->Init(&unit_.pos_);
+	attack_ = ATTACK::NON;
+
+	laser_->SetTarget(playerPosPtr_);
+
 }
 
 void Weakness::Init(void) {}
 
 void Weakness::Update(Vector2F boss)
 {
-	unit_.nextpos_.x += 1.0f;
-
-	BossBase::Update();
-
-	bullet_->Update();
+	if (!unit_.isAlive_)return;
+	unit_.nextpos_.x = boss.x;
 }
 
-void Weakness::Update() {}
+void Weakness::Update() 
+{
+
+	// カウント更新
+	cnt_ += 0.1f;
+
+
+	// ランダムにゆらゆら動く
+	const float noiseY = (GetRand(200) - 100) / 500.0f;
+
+	// 元の位置から縦にゆらゆら動かす
+	//unit_.nextpos_.x += sinf(cnt_) * AMPLITUDE + noiseX;
+	unit_.nextpos_.y += cosf(cnt_ * 0.8f) * AMPLITUDE + noiseY;
+
+	if (unit_.inviCounter_ > 0)
+	{
+		unit_.inviCounter_--;
+	}
+
+	if (unit_.hp_ <= 0)
+	{
+		bullet_->SetIsAlive(false);
+		if (unit_.hp_ <= 0) {
+			unit_.isAlive_ = false;
+		}
+
+		ChangeState(STATE::DEATH);
+	}
+	bullet_->Update(unit_.pos_);
+
+	AttackManager();
+	BossBase::Update();
+
+}
 
 void Weakness::Draw()
 {
-	//ボス描画（とりあえずDrawBox）
-	DrawBox(
-		unit_.disppos_.x - unit_.size_.x / 2,
-		unit_.disppos_.y - unit_.size_.y / 2,
-		unit_.disppos_.x + unit_.size_.x / 2,
-		unit_.disppos_.y + unit_.size_.y / 2,
-		RGB(255, 0, 255),
-		true
+	DrawRotaGraph(
+		unit_.disppos_.x,
+		unit_.disppos_.y,
+		1.0f, 0.0f,
+		image_, true
 	);
 
+	if (!unit_.isAlive_)return;
+
+
+	switch (attack_)
+	{
+	case Weakness::NON:
+		DrawBar(
+			unit_.disppos_.x - SIZE_X / 2 - 50,
+			unit_.disppos_.y - SIZE_Y / 2,
+			unit_.disppos_.x + SIZE_X / 2 + 50,
+			unit_.disppos_.y - SIZE_Y / 2 + 16,
+			unit_.hp_, HP_MAX, RGB(0, 0, 255)
+		);
+		break;
+	case Weakness::LASER:
+		DrawBar(
+			unit_.disppos_.x - SIZE_X / 2 - 50,
+			unit_.disppos_.y - SIZE_Y / 2,
+			unit_.disppos_.x + SIZE_X / 2 + 50,
+			unit_.disppos_.y - SIZE_Y / 2 + 16,
+			unit_.hp_, HP_MAX, RGB(255, 0, 255)
+		);
+		break;
+	}
+
 	bullet_->Draw();
+
+	laser_->Draw();
 }
 
 void Weakness::Release()
@@ -77,6 +142,12 @@ void Weakness::Release()
 	bullet_->Release();
 	delete bullet_;
 	bullet_ = nullptr;
+
+	laser_->Release();
+	delete laser_;
+	laser_ = nullptr;
+
+	DeleteGraph(image_);
 
 	Camera::DeleteInstance();
 }
@@ -88,16 +159,33 @@ AttackBase* Weakness::GetAttackIns(void)
 
 std::vector<Base> Weakness::GetObj(void)
 {
-	std::vector<Base>ret;
+	std::vector<Base> ret;
 
-	ret = bullet_->Get();
+	switch (attack_)
+	{
+	case Weakness::NON:
+		break;
+	case Weakness::LASER:
+		ret = laser_->Get();
+		break;
+	case Weakness::BOUND:
+		break;
+	case Weakness::MAX:
+		break;
+	}
 
 	return ret;
 }
 
+std::vector<Base> Weakness::GetBulletObj(void)
+{
+	return bullet_->Get();
+}
+
 void Weakness::ObjHit(int i)
 {
-
+	//bullet_->Hit();
+	laser_->Hit(i);
 }
 
 void Weakness::SetDamage(int dmg)
@@ -105,26 +193,21 @@ void Weakness::SetDamage(int dmg)
 	if (unit_.hp_ <= 0 || unit_.isInvincible_) return;
 
 	unit_.hp_ -= dmg;
+	unit_.inviCounter_ = INVI_COUNTER;
+}
 
-	if (unit_.hp_ <= 0)
+void Weakness::AttackManager(void)
+{
+	if (attack_ == ATTACK::NON && attackCounter_ > 180 && laser_->End() == false)
 	{
-		unit_.isAlive_ = false;
-		ChangeState(STATE::DEATH); // 状態遷移も必要なら
+		attack_ = (ATTACK)GetRand((int)(ATTACK::MAX) - 1);
+		attackCounter_ = 0;
 	}
 }
 
 void Weakness::Idle(void)
 {
-	// カウント更新
-	cnt_ += 0.1f;
 
-	// ランダムにゆらゆら動くオフセットを加える
-	const float noiseX = (GetRand(200) - 100) / 500.0f;
-	const float noiseY = (GetRand(200) - 100) / 500.0f;
-
-	// 元の位置にsin波を少し加える + ノイズ
-	unit_.nextpos_.x += sinf(cnt_) * AMPLITUDE + noiseX;
-	unit_.nextpos_.y += cosf(cnt_ * 0.8f) * AMPLITUDE + noiseY;
 }
 
 void Weakness::Move(void)
@@ -133,13 +216,50 @@ void Weakness::Move(void)
 
 void Weakness::Attack(void)
 {
+	switch (attack_)
+	{
+	case Weakness::NON:
+		attackCounter_++;
+		break;
+	case Weakness::LASER:
 
+		attackCounter_++;
+
+		if (attackCounter_ <= 1)
+		{
+			laser_->Init(&unit_.pos_);
+		}
+		
+		laser_->Update(unit_.pos_);
+
+		if (laser_->End() == true)
+		{
+			attack_= ATTACK::NON;
+			attackCounter_ = 0;
+		}
+		break;
+	case Weakness::ATTACK::BOUND:
+		attackCounter_++;
+		if (attackCounter_ > 180)
+		{
+			attack_ = ATTACK::NON;
+		}
+		break;
+	}
 }
 
 void Weakness::Damage(void)
 {
+
+
 }
 
+//死んだ後の処理
 void Weakness::Death(void)
 {
+	auto& camera_ = Camera::GetInstance();
+
+	unit_.pos_.x += moveSpeed_;
+
+	unit_.pos_.x += camera_.GetPos().x + Application::SCREEN_SIZE_X / 2;
 }

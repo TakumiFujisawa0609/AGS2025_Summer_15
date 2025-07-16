@@ -1,11 +1,77 @@
 #pragma once
 
+#include<map>
+#include<string>
+
 class SoundManager
 {
+private:
+	SoundManager();
+	~SoundManager();
 public:
+	static void CreateIns(void) { if (ins_ == nullptr) { ins_ = new SoundManager(); ins_->Init(); } }
+	static SoundManager& GetIns(void) { CreateIns(); return *ins_; }
+	static void DeleteIns(void) { if (ins_ != nullptr) { ins_->Release(); delete ins_; } }
 
+	enum SOUND
+	{
+		NON=-1,
+		TEST,
 
+		MAX,
+	};
+
+	/// <summary>
+	/// 指定したサウンドをロード
+	/// </summary>
+	/// <param name="s">種類</param>
+	void Load(SOUND s);
+
+	/// <summary>
+	/// 指定したサウンドを再生
+	/// </summary>
+	/// <param name="s">種類</param>
+	/// <param name="loop">ループ再生</param>
+	/// <param name="topPlay">最初から再生するか</param>
+	void Play(SOUND s, bool loop = false, bool topPlay = true);
+
+	/// <summary>
+	/// 指定したサウンドを停止
+	/// </summary>
+	/// <param name="s">種類</param>
+	void Stop(SOUND s);
+
+	/// <summary>
+	/// 再生中のサウンドをすべて停止
+	/// </summary>
+	void AllStop(void);
+
+	/// <summary>
+	/// AllStop()で一時停止したサウンドをすべて再生再開
+	/// </summary>
+	void PausePlay(void);
+
+	/// <summary>
+	/// 指定したサウンドを消去
+	/// </summary>
+	/// <param name="s">種類</param>
+	void Delete(SOUND s);
 
 private:
+	static SoundManager* ins_;
 
+	struct Sinfo
+	{
+		SOUND type_;
+		std::string path_;
+		int id_;
+		bool loop_;
+		bool paused_;
+	};
+
+	Sinfo sounds_[SOUND::MAX];
+
+
+	void Init(void);
+	void Release(void);
 };

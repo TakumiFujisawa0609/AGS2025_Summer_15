@@ -12,8 +12,8 @@ class Player:public UnitBase
 public:
 
 	//プレイヤー画像サイズ
-	static constexpr int LOAD_SIZE_X = 120;
-	static constexpr int LOAD_SIZE_Y = 80;		
+	static constexpr int LOAD_SIZE_X = 128;
+	static constexpr int LOAD_SIZE_Y = 64;		
 
 	//バンブーパワー画像サイズ
 	static constexpr int BAMBOO_SIZE_X = 64;
@@ -27,14 +27,15 @@ public:
 	static constexpr int SIZE_Y = 40 * SIZE_SCALE;
 	
 	//各モーションのアニメーション枚数
-	static constexpr int IDLE_LOAD_NUM = 10;
-	static constexpr int RUN_LOAD_NUM = 10;
+	static constexpr int IDLE_LOAD_NUM = 8;
+	static constexpr int RUN_LOAD_NUM = 8;
 	static constexpr int JUMP_LOAD_NUM = 3;
 	static constexpr int FALL_LOAD_NUM = 3;
-	static constexpr int FIRST_ATTACK_LOAD_NUM = 4;
-	static constexpr int SECONDE_ATTACK_LOAD_NUM = 6;
-	static constexpr int EVASION_LOAD_NUM = 3;
-	static constexpr int DAMAGE_LOAD_NUM = 1;
+	static constexpr int FIRST_ATTACK_LOAD_NUM = 5;
+	static constexpr int SECONDE_ATTACK_LOAD_NUM = 5;
+	static constexpr int THREE_ATTACK_LOAD_NUM = 6;
+	static constexpr int EVASION_LOAD_NUM = 7;
+	static constexpr int DAMAGE_LOAD_NUM = 4;
 
 
 	//何フレームに１回アニメーションを動かすか
@@ -49,6 +50,7 @@ public:
 		FALL,			//落下状態
 		FIRST_ATTACK,	//攻撃1段目
 		SECOND_ATTACK,	//攻撃2段目
+		THREE_ATTACK,
 		SPECIAL_ATTACK,	//特殊攻撃
 		DAMAGE,			//被ダメージ
 		EVASION,		//回避
@@ -77,7 +79,7 @@ public:
 
 	static constexpr float MAX_JUMP_POWER = 70.0f;		//最大ジャンプ力
 	static constexpr int INPUT_JUMPKEY_FRAME = 6;		//ジャンプキーを受け付けるフレーム数
-	static constexpr int JUMP_NUM =3;					//ジャンプ可能回数
+	static constexpr int JUMP_NUM =2;					//ジャンプ可能回数
 
 	static constexpr int JUMP_ANIM = 5;
 	
@@ -86,7 +88,7 @@ public:
 
 	// 攻撃状態で使用する～～-------------------------------------------------------------------
 	// 定数
-	enum ATTACK { NON = -1, FIRST, SECONDE, MAX, };		//攻撃の段数
+	enum ATTACK { NON = -1, FIRST, SECONDE, THREE, MAX, };		//攻撃の段数
 	static constexpr int INPUT_ATTACK_FRAME = 20;		//次の段につながる時間(フレーム数)
 
 	// 関数
@@ -103,14 +105,15 @@ public:
 	static constexpr int CHARGE_ANIM_SPEED = 2;
 	// 関数
 	std::vector<BPAttack*> GetBpAtt(void) { return BpAtIns_; }
-	const int &GetBp(void)const { return bp_; }
-	void BpOptain(int bp) { this->bp_ += bp; if (this->bp_ > BP_MAX) { this->bp_ = BP_MAX; } }
+	bool GetHaveB(void) { return haveB_; }
+	void BpOptain(void) { if (!haveB_)haveB_ = true; }
 	//---------------------------------------------------------------------------------------------	 
 	
 	// 回避状態で使用する～～-------------------------------------------------------------------
 	// 定数
 	static constexpr float EVASION_SPEED = 20.0f;		//スピード
 	static constexpr int EVASION_TIME = 10;				//回避時間
+	static constexpr int EVASION_COOL_TIME = 60;
 	//----------------------------------------------------------------------------------------------
 
 	// ダメージ状態で使用する～～---------------------------------------------------------------
@@ -130,6 +133,7 @@ public:
 	void Init(void)override;
 	void Update(void)override;
 	void Draw(void)override;
+	void DrawHp(void);
 	void Release(void)override;
 
 
@@ -166,6 +170,8 @@ private:
 	bool nowJumpKey_, prevJumpKey_;
 	bool nowLeftKey_, prevLeftKey_;
 	bool nowRightKey_, prevRightKey_;
+	bool nowUpKey_, prevUpKey_;
+	bool nowDownKey_, prevDownKey_;
 	bool nowAttackKey_, prevAttackKey_;
 	bool nowBambooKey_, prevBambooKey_;
 	bool nowEvasionKey_, prevEvasionKey_;
@@ -194,9 +200,6 @@ private:
 
 	// 攻撃状態に遷移する条件
 	void DoStateAttack(void);
-
-	// 特殊攻撃状態に遷移する条件
-	void DoStateBPAttack(void);
 
 	// 回避状態に遷移する条件
 	void DoStateEvasion(void);
@@ -269,36 +272,12 @@ private:
 	// 関数
 
 	// 変数
+	int arrowImg_[4];
+	Vector2F vec_;
+	bool haveB_;
+	int arrowAnim_;
 	std::vector<BPAttack*> BpAtIns_;
 	int BambooImg_;
-	int BambooPowerImg_;
-
-	int chargeImg_[CHARGE_ANIM];
-	int chargeAnim_;
-	int bp_;
-	int chargeTime_;
-	int bpConsCounter_;
-
-	// 特殊攻撃の種類とレベルを定義
-	enum class BP_ATTACK_TYPE {
-		THROW_BAMBOO = 0,
-		GROW_BAMBOO,
-		FIRECRACKER,
-		MAX
-	};
-	enum class BP_ATTACK_LEVEL {
-		LEVEL1 = 0, // toss, Germination, Small
-		LEVEL2,     // pitch, Germination, Medium
-		LEVEL3,     // launch, Germination, Large
-		MAX
-	};
-
-	// プレイヤークラスのメンバ変数に追加
-	BP_ATTACK_TYPE bpAttackType_ = BP_ATTACK_TYPE::THROW_BAMBOO;
-	BP_ATTACK_LEVEL bpAttackLevel_ = BP_ATTACK_LEVEL::LEVEL1;
-    void ThrowBambooAttack(void);
-    void GrowBambooAttack(void);
-    void FirecrackerAttack(void);
 	//---------------------------------------
 
 	// 回避処理関係--------------------------
@@ -309,6 +288,7 @@ private:
 	int evasionCounter_;
 	bool evasionPossiFlg_;
 	bool evaConpFlg_;
+	int evasionCoolTime_;
 	//--------------------------------------
 
 	// ダメージ処理関係---------------------

@@ -1,4 +1,5 @@
 #pragma once
+#include<map>
 #include<DxLib.h>
 #include <chrono>
 #include"../Common/Vector2.h"
@@ -22,8 +23,6 @@ public:
 	{
 		NONE = -1,
 		TITLE,
-		MODESELECT,
-		TUTORIAL,
 		BOSSSELECT,
 		BATTLEDONE,
 		GAMEOVER,
@@ -82,14 +81,24 @@ public:
 	//ボスの種類
 	enum class BOSS_KINDS
 	{
+		TUTORIAL,
 		NOKOPY,
 		BAMMOON,
 		RUNBOO,
+
+		MAX,
 	};
 
 	const BOSS_KINDS GetNowBoss(void)const { return nowBossKinds_; }
 	void SetBossKinds(BOSS_KINDS k) { nowBossKinds_ = k; }
-
+	
+	/// <summary>
+	/// 前フレームと現フレームの値を判定
+	/// </summary>
+	/// <param name="classId">判別用引数(クラスごとに数を変えないと競合して正しく比べれない)</param>
+	/// <param name="i">比べたい値</param>
+	/// <returns>true=それは違うぜ/false=同じ値</returns>
+	bool ThatsNotRight(int classId,int i);
 private:
 
 	// 静的インスタンス
@@ -152,4 +161,7 @@ private:
 
 
 	BOSS_KINDS nowBossKinds_;
+
+	std::map<int, int>perValues;
+	std::map<int, int>nowValues;
 };

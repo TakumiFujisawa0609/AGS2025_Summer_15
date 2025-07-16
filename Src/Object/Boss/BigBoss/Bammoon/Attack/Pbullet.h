@@ -2,15 +2,25 @@
 
 #include"../../../Tutorial/Attack/AttackBase.h"
 
-class Pbullet : AttackBase
+
+class Pbullet : public AttackBase
 {
 public:
+	static constexpr int NUM = 11;
+
+	static constexpr float PBULLET_SIZE_X = 48;
+	static constexpr float PBULLET_SIZE_Y = 32;
+
+	static constexpr int ANIME_INTERVAL = 2;
+
 	static constexpr int PBULLET_ANIME_NUM = 4;
 
 	static constexpr int HIT_ANIME_NUM = 5;
 
 
-	static constexpr float SPEED = 5.0f;
+	static constexpr float SPEED = 3.0f;
+
+	static constexpr float RAD = 10.0f * (DX_PI_F / 180.0f);
 
 	Pbullet();
 	~Pbullet();
@@ -29,6 +39,14 @@ private:
 	std::vector<Base> obj_;
 
 	std::vector<Vector2F> move_;
+	std::vector<int> animeCou_;
+	std::vector<int> animeInterval_;
 
+	int pBulletImg_[PBULLET_ANIME_NUM];
+	int hitImg_[HIT_ANIME_NUM];
+
+	std::vector<bool>hit_;
+
+	int num_;
 };
 

@@ -23,11 +23,13 @@ public:
 	TutorialStage();
 	~TutorialStage();
 
-	void Draw(void)override;
+	void BackDraw(void)override;
+
 
 private:
 	void Load(void)override;
 	bool LoadMapData(void)override;
+	void AddRelease(void)override;
 
 	int backImg_[8];
 };

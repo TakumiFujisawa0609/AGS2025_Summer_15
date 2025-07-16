@@ -54,6 +54,8 @@ void InputManager::Init(void)
 
 	ins.Add(KEY_INPUT_K);
 
+	ins.Add(KEY_INPUT_RETURN);
+
 	InputManager::MouseInfo info;
 
 	// ¶ƒNƒŠƒbƒN

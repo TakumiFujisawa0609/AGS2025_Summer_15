@@ -16,6 +16,13 @@ StageBase::~StageBase()
 void StageBase::Init(void)
 {
 	Load();
+	if (!LoadMapData()) {
+		return;
+	}
+}
+
+void StageBase::BackDraw(void)
+{
 }
 
 void StageBase::Draw(void)
@@ -44,12 +51,14 @@ void StageBase::Release(void)
 	}
 	mapData_.clear();
 
-	for (auto i : chipId_) {
+	for (auto& i : chipId_) {
 		DeleteGraph(i);
 	}
 	chipId_.clear();
 
 	DeleteGraph(haikei_);
+
+	AddRelease();
 }
 
 Vector2 StageBase::GetMapNum(void)

@@ -11,6 +11,13 @@ class Runboo : public BossBase
 public:
 
 	static constexpr int WEAK_MAX = 3;
+	static constexpr float MOVE_SPEED = 1.0f;
+	static constexpr int INVI_COUNTER = 60;
+
+	static constexpr int HALF_X = 70;
+	static constexpr int HALF_Y = Application::SCREEN_SIZE_Y / 2;
+
+	static constexpr int HP_MAX = 3;
 
 	Runboo();
 	~Runboo();
@@ -23,14 +30,23 @@ public:
 	//std::vector<Base*>GetObj(void)override;
 
 	AttackBase* GetAttackIns(void)override;
-	std::vector<Base>GetObj(void)override;
+	std::vector<Base>GetObj(void)override { return std::vector<Base>{}; };
 	void ObjHit(int i)override;
 	void SetDamage(int dmg)override;
 	bool IsInvici(void) { return unit_.inviCounter_ > 0; }
 
+	float GetMoveSpeed(void) { return moveSpeed_; }
+	bool GetWeakAllDeath(void);
+
+	std::vector<Weakness*> GetWeakness(void) { return weak_; }
+
 private:
 	//インスタンス
 	std::vector<Weakness*> weak_;
+
+	float moveSpeed_;
+
+	int image_;
 	
 	//待機状態
 	void Idle(void) override;
@@ -49,5 +65,5 @@ private:
 
 	void HpUpdate(void);
 
-	void IsGround(Collision::DIR dir)override {}
+	void IsGround(Collision::DIR dir)override {};
 };

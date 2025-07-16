@@ -3,7 +3,6 @@
 
 class TitleScene : public SceneBase
 {
-
 public:
 
 	// コンストラクタ
@@ -19,5 +18,5 @@ public:
 
 private:
 
-
+	int image_;
 };
