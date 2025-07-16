@@ -484,12 +484,14 @@ void Player::Run()
 	// モーション更新
 	if (isMove) {
 		ChangeMotion(MOTION::RUN);
-		if(unit_.isGround_)SoundManager::GetIns().Play(SoundManager::RUN, false, 200, true);
+		if(unit_.isGround_)SoundManager::GetIns().Play(SoundManager::RUN, false, 180, true);
 	}
 	else {
 		ChangeMotion(MOTION::IDLE);
 		SoundManager::GetIns().Stop(SoundManager::SOUND::RUN);
 	}
+
+	if (!unit_.isGround_) { SoundManager::GetIns().Stop(SoundManager::SOUND::RUN); }
 }
 
 void Player::Jump()
