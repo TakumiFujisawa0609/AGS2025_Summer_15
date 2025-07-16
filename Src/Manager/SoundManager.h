@@ -20,6 +20,7 @@ public:
 		DAMAGE,
 		EVASION,
 		BPHIT,
+		RUN,
 
 		MAX,
 	};

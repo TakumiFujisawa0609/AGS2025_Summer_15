@@ -93,6 +93,7 @@ void Player::Init()
 	auto& sound = S::GetIns();
 	sound.Load(S::SOUND::SLASH);
 	sound.Load(S::SOUND::EVASION);
+	sound.Load(S::SOUND::RUN);
 }
 
 void Player::Update()
@@ -167,6 +168,13 @@ void Player::DrawHp(void)
 }
 void Player::Release()
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::RUN);
+	sound.Delete(S::SOUND::EVASION);
+	sound.Delete(S::SOUND::SLASH);
+
+
 	for (auto& id : arrowImg_) { DeleteGraph(id); }
 
 	for (auto& b : BpAtIns_) {
@@ -229,12 +237,14 @@ void Player::DoStateMove()
 		ins.IsTrgDown(KEY_INPUT_SPACE)) {
 
 		ChangeState(Player::STATE::MOVE);
+		return;
 	}
 
 	if ((!prevLeftKey_ && nowLeftKey_) ||
 		(!prevRightKey_ && nowRightKey_) ||
 		(!prevJumpKey_ && nowJumpKey_)) {
 		ChangeState(Player::STATE::MOVE);
+		return;
 	}
 
 }
@@ -250,6 +260,7 @@ void Player::DoStateAttack()
 	if (haveB_) {
 		if (ins.IsNew(KEY_INPUT_J) || (nowAttackKey_)) {
 			ChangeState(Player::STATE::BP_ATTACK);
+			SoundManager::GetIns().Stop(SoundManager::SOUND::RUN);
 			ChangeMotion(MOTION::IDLE);
 		}
 	}
@@ -260,7 +271,8 @@ void Player::DoStateAttack()
 		// 攻撃状態に遷移する
 		ChangeState(Player::STATE::ATTACK);
 
-		SoundManager::GetIns().Play(SoundManager::SLASH,true);
+		SoundManager::GetIns().Stop(SoundManager::SOUND::RUN);
+		SoundManager::GetIns().Play(SoundManager::SLASH, true, 200);
 
 		// 最終段までいっている または 前の段の攻撃から一定時間過ぎていたら フラグリセット
 		if ((isAttack_[ATTACK::MAX - 1]) || (attackKeyCounter_ > INPUT_ATTACK_FRAME)) {
@@ -470,8 +482,14 @@ void Player::Run()
 	}
 
 	// モーション更新
-	if (isMove)ChangeMotion(MOTION::RUN);
-	else ChangeMotion(MOTION::IDLE);
+	if (isMove) {
+		ChangeMotion(MOTION::RUN);
+		if(unit_.isGround_)SoundManager::GetIns().Play(SoundManager::RUN, false, 200, true);
+	}
+	else {
+		ChangeMotion(MOTION::IDLE);
+		SoundManager::GetIns().Stop(SoundManager::SOUND::RUN);
+	}
 }
 
 void Player::Jump()

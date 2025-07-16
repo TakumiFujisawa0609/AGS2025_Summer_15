@@ -53,7 +53,7 @@ void SoundManager::Stop(SOUND s)
 	if (CheckSoundMem(sounds_[s].id_) == 0)return;
 
 	// ’âŽ~
-	DeleteSoundMem(sounds_[s].id_);
+	StopSoundMem(sounds_[s].id_);
 }
 
 void SoundManager::AllStop(void)
@@ -99,6 +99,7 @@ void SoundManager::Init(void)
 	sounds_[SOUND::DAMAGE].path_ = "”í’e.mp3";
 	sounds_[SOUND::BPHIT].path_ = "’|ƒqƒbƒg.mp3";
 	sounds_[SOUND::EVASION].path_ = "‰ñ”ð.mp3";
+	sounds_[SOUND::RUN].path_ = "‘«‰¹.mp3";
 }
 
 void SoundManager:: Release(void)
