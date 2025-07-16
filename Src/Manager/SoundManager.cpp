@@ -93,7 +93,7 @@ void SoundManager::Init(void)
 void SoundManager:: Release(void)
 {
 	// Á‹‚³‚ê‚Ä‚¢‚È‚¢‚à‚Ì‚ğ‚·‚×‚Ä‰ğ•ú‚·‚é
-	for (auto& id : ids_) {
-		if (id != -1) { DeleteSoundMem(id); }
+	for (auto& sound : sounds_) {
+		if (sound.id_ != -1) { DeleteSoundMem(sound.id_); }
 	}
 }

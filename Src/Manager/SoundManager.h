@@ -71,14 +71,6 @@ private:
 
 	Sinfo sounds_[SOUND::MAX];
 
-	// ハンドルID
-	int ids_[SOUND::MAX];
-
-	// ポーズなどで強制的な一時停止してるかどうか
-	bool paused_[SOUND::MAX];
-
-	// パス
-	std::string path_[SOUND::MAX];
 
 	void Init(void);
 	void Release(void);
