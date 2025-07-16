@@ -21,16 +21,64 @@ public:
 		MAX,
 	};
 
+	/// <summary>
+	/// 指定したサウンドをロード
+	/// </summary>
+	/// <param name="s">種類</param>
 	void Load(SOUND s);
-	void Play(SOUND s, bool loop = false, bool topPlay = false);
+
+	/// <summary>
+	/// 指定したサウンドを再生
+	/// </summary>
+	/// <param name="s">種類</param>
+	/// <param name="loop">ループ再生</param>
+	/// <param name="topPlay">最初から再生するか</param>
+	void Play(SOUND s, bool loop = false, bool topPlay = true);
+
+	/// <summary>
+	/// 指定したサウンドを停止
+	/// </summary>
+	/// <param name="s">種類</param>
+	void Stop(SOUND s);
+
+	/// <summary>
+	/// 再生中のサウンドをすべて停止
+	/// </summary>
+	void AllStop(void);
+
+	/// <summary>
+	/// AllStop()で一時停止したサウンドをすべて再生再開
+	/// </summary>
+	void PausePlay(void);
+
+	/// <summary>
+	/// 指定したサウンドを消去
+	/// </summary>
+	/// <param name="s">種類</param>
 	void Delete(SOUND s);
 
 private:
 	static SoundManager* ins_;
 
+	struct Sinfo
+	{
+		SOUND type_;
+		std::string path_;
+		int id_;
+		bool loop_;
+		bool paused_;
+	};
+
+	Sinfo sounds_[SOUND::MAX];
+
+	// ハンドルID
 	int ids_[SOUND::MAX];
 
-	std::string path[SOUND::MAX];
+	// ポーズなどで強制的な一時停止してるかどうか
+	bool paused_[SOUND::MAX];
+
+	// パス
+	std::string path_[SOUND::MAX];
 
 	void Init(void);
 	void Release(void);
