@@ -34,6 +34,7 @@ public:
 	/// 指定したサウンドを再生
 	/// </summary>
 	/// <param name="s">種類</param>
+	/// <param name="s">再生中のうえから再生するかどうか</param>
 	/// <param name="loop">ループ再生</param>
 	/// <param name="topPlay">最初から再生するか</param>
 	void Play(SOUND s,bool over=false, bool loop = false, bool topPlay = true);
