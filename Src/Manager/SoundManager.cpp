@@ -18,17 +18,17 @@ void SoundManager::Load(SOUND s)
 	if (sounds_[s].id_ != -1) return;
 
 	// “Ç‚İ‚İ
-	sounds_[s].id_ = LoadSoundMem(("Data/Sound" + sounds_[s].path_).c_str());
+	sounds_[s].id_ = LoadSoundMem(("Data/Sound/" + sounds_[s].path_).c_str());
 	sounds_[s].type_ = s;
 }
 
-void SoundManager::Play(SOUND s, bool loop,bool topPlay)
+void SoundManager::Play(SOUND s,bool over, bool loop,bool topPlay)
 {
 	// “Ç‚İ‚Ü‚ê‚Ä‚¢‚È‚©‚Á‚½‚çÄ¶‚µ‚È‚¢
 	if (sounds_[s].id_ == -1) return;
 
 	// Ä¶’†‚¾‚Á‚½‚çÄ¶‚µ‚È‚¢
-	if (CheckSoundMem(sounds_[s].id_) == 1)return;
+	if ((CheckSoundMem(sounds_[s].id_) == 1) && !over)return;
 
 	// î•ñ‚ğ‹L˜^
 	sounds_[s].loop_ = loop;

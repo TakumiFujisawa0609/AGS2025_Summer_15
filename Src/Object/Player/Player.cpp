@@ -259,6 +259,8 @@ void Player::DoStateAttack()
 		// 攻撃状態に遷移する
 		ChangeState(Player::STATE::ATTACK);
 
+		SoundManager::GetIns().Play(SoundManager::SLASH,true);
+
 		// 最終段までいっている または 前の段の攻撃から一定時間過ぎていたら フラグリセット
 		if ((isAttack_[ATTACK::MAX - 1]) || (attackKeyCounter_ > INPUT_ATTACK_FRAME)) {
 			for (int i = 0; i < ATTACK::MAX; i++) { isAttack_[i] = false; }
