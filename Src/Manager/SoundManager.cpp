@@ -22,7 +22,7 @@ void SoundManager::Load(SOUND s)
 	sounds_[s].type_ = s;
 }
 
-void SoundManager::Play(SOUND s,bool over, bool loop,bool topPlay)
+void SoundManager::Play(SOUND s, bool over, int volume, bool loop, bool topPlay)
 {
 	// “Ç‚İ‚Ü‚ê‚Ä‚¢‚È‚©‚Á‚½‚çÄ¶‚µ‚È‚¢
 	if (sounds_[s].id_ == -1) return;
@@ -33,6 +33,12 @@ void SoundManager::Play(SOUND s,bool over, bool loop,bool topPlay)
 	// î•ñ‚ğ‹L˜^
 	sounds_[s].loop_ = loop;
 	sounds_[s].paused_ = false;
+
+	// ‰¹—Ê‚ğİ’è
+	if (sounds_[s].volume_ != volume) {
+		sounds_[s].volume_ = volume;
+		ChangeVolumeSoundMem(sounds_[s].volume_, sounds_[s].id_);
+	}
 
 	// Ä¶
 	PlaySoundMem(sounds_[s].id_, (sounds_[s].loop_) ? DX_PLAYTYPE_LOOP : DX_PLAYTYPE_BACK, topPlay);
@@ -65,7 +71,7 @@ void SoundManager::PausePlay(void)
 	for (auto& sound : sounds_) {
 		if (!sound.paused_)continue;
 
-		Play(sound.type_, sound.loop_, false);
+		Play(sound.type_, false, sound.loop_, false);
 	}
 }
 

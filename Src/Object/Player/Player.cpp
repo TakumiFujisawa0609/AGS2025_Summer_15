@@ -92,6 +92,7 @@ void Player::Init()
 	using S = SoundManager;
 	auto& sound = S::GetIns();
 	sound.Load(S::SOUND::SLASH);
+	sound.Load(S::SOUND::EVASION);
 }
 
 void Player::Update()
@@ -292,6 +293,7 @@ void Player::DoStateEvasion()
 
 	if ((ins.IsTrgDown(KEY_INPUT_K) || (nowEvasionKey_ && !prevEvasionKey_)) && evasionPossiFlg_) {
 		ChangeState(Player::STATE::EVASION);
+		SoundManager::GetIns().Play(SoundManager::EVASION, true);
 		evasionPossiFlg_ = false;
 		evasionCoolTime_ = EVASION_COOL_TIME;
 	}
