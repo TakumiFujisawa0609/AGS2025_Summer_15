@@ -1,6 +1,7 @@
 #pragma once
 
 #include<map>
+#include<string>
 
 class SoundManager
 {
@@ -15,20 +16,21 @@ public:
 	enum SOUND
 	{
 		NON=-1,
-
+		TEST,
 
 		MAX,
 	};
 
 	void Load(SOUND s);
-	void Play(SOUND s, bool loop = false);
+	void Play(SOUND s, bool loop = false, bool topPlay = false);
 	void Delete(SOUND s);
 
 private:
 	static SoundManager* ins_;
 
-	int id_[SOUND::MAX];
+	int ids_[SOUND::MAX];
 
+	std::string path[SOUND::MAX];
 
 	void Init(void);
 	void Release(void);
