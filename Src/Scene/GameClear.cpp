@@ -2,6 +2,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include"../Manager/Score/Score.h"
+#include"../Manager/SoundManager.h"
 
 #include "GameClear.h"
 
@@ -16,6 +17,10 @@ GameClear::~GameClear(void)
 void GameClear::Init(void)
 {
 	image_ = LoadGraph("Data/Image/GameClear.png");
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::BGM1);
+	sound.Play(S::SOUND::BGM1, false, 100, true);
 }
 
 void GameClear::Update(void)
@@ -45,5 +50,9 @@ void GameClear::Draw(void)
 
 void GameClear::Release(void)
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::BGM1);
+
 	DeleteGraph(image_);
 }

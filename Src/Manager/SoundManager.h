@@ -39,6 +39,7 @@ public:
 		TUTORIALDAMAGE,
 
 		BGM1,
+		BATTLEBGM,
 
 		MAX,
 	};

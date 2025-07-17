@@ -7,6 +7,7 @@
 #include"../Manager/Camera.h"
 #include"../Utility/AsoUtility.h"
 #include"../Manager/Score/Score.h"
+#include"../Manager/SoundManager.h"
 
 #include"../Manager/Decoration/BlastEffect/BlastEffectManager.h"
 
@@ -25,6 +26,8 @@ using BOSS = SceneManager::BOSS_KINDS;
 
 void BossSelect::Init()
 {
+	this->Release();
+
 	stage_ = new SelectStage();
 	stage_->Init();
 
@@ -68,6 +71,11 @@ void BossSelect::Init()
 	bossInfo_[(int)BOSS::BAMMOON].thum_ = LoadGraph("Data/Image/Stage/Select/ThumBammoon.png");
 	bossInfo_[(int)BOSS::BAMMOON].pos_ = { 650,120.0f };
 
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::BPHIT);
+	sound.Load(S::SOUND::BGM1);
+	sound.Play(S::SOUND::BGM1, false, 100, true, false);
 }
 
 void BossSelect::Update()
@@ -131,6 +139,11 @@ void BossSelect::Draw()
 
 void BossSelect::Release()
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::BGM1);
+	sound.Delete (S::SOUND::BPHIT);
+
 	// ‰æ‘œ‚Ì‰ð•ú
 	DeleteGraph(scoreImage_);
 	DeleteGraph(nowSelectImage_);
@@ -176,6 +189,7 @@ void BossSelect::Collision()
 		dis = sqrtf(vec.x * vec.x + vec.y * vec.y);
 
 		if (dis < SelectPlayer::BAMBOO_SPEED) {
+			SoundManager::GetIns().Play(SoundManager::SOUND::BPHIT, true, 200);
 			blast_->On(b);
 			sMng.SetBossKinds(boss.type_);
 			sMng.ChangeScene(M::SCENE_ID::BATTLEDONE);

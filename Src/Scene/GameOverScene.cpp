@@ -1,6 +1,7 @@
 #include<DxLib.h>
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
+#include"../Manager/SoundManager.h"
 
 #include "GameOverScene.h"
 
@@ -15,6 +16,11 @@ GameOverScene::~GameOverScene(void)
 void GameOverScene::Init(void)
 {
 	image_ = LoadGraph("Data/Image/GameOver.png");
+
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::BGM1);
+	sound.Play(S::SOUND::BGM1, false, 100, true);
 }
 
 void GameOverScene::Update(void)
@@ -39,5 +45,9 @@ void GameOverScene::Draw(void)
 
 void GameOverScene::Release(void)
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::BGM1);
+
 	DeleteGraph(image_);
 }

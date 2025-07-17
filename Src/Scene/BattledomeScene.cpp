@@ -100,7 +100,8 @@ void BattledomeScene::Init(void)
 	using S = SoundManager;
 	auto& sound = S::GetIns();
 	sound.Load(S::SOUND::BPHIT);
-
+	sound.Load(S::SOUND::BATTLEBGM);
+	sound.Play(S::SOUND::BATTLEBGM, false, 100, true);
 }
 
 void BattledomeScene::Update(void)
@@ -212,6 +213,7 @@ void BattledomeScene::Release(void)
 {
 	using S = SoundManager;
 	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::BATTLEBGM);
 	sound.Delete(S::SOUND::BPHIT);
 
 	Collision::DeleteInstance();

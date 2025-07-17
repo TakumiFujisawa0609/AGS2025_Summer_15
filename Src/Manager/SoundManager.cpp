@@ -123,6 +123,7 @@ void SoundManager::Init(void)
 
 
 	sounds_[SOUND::BGM1].path_ = "BGMŒó•â‚P.mp3";
+	sounds_[SOUND::BATTLEBGM].path_ = "MusMus-BGM-161.mp3";
 }
 
 void SoundManager:: Release(void)

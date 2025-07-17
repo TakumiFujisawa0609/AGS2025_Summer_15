@@ -4,6 +4,7 @@
 
 #include"../../../Application.h"
 #include"../../../Manager/InputManager.h"
+#include"../../../Manager/SoundManager.h"
 
 SelectPlayer::SelectPlayer()
 {
@@ -17,6 +18,8 @@ using BOSS = SceneManager::BOSS_KINDS;
 
 void SelectPlayer::Init()
 {
+	this->Release();
+
 	LoadDivGraph((Application::PATH_PLAYER + "Idle.png").c_str(),
 		ANIME_NUM, ANIME_NUM, 1,
 		LOAD_SIZE_X, LOAD_SIZE_Y, image_);
@@ -32,6 +35,10 @@ void SelectPlayer::Init()
 	arrowAnime_ = 0;
 
 	nowSelect_ = BOSS::BAMMOON; 
+
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::BPTHROW);
 }
 
 void SelectPlayer::Update()
@@ -98,6 +105,7 @@ void SelectPlayer::Update()
 			if ((ins.IsTrgDown(KEY_INPUT_SPACE)) || (ins.IsTrgDown(KEY_INPUT_RETURN)) ||
 				(ins.IsTrgDown(KEY_INPUT_J)) || (nowAttackKey_)) {
 				haveB_ = false;
+				SoundManager::GetIns().Play(SoundManager::SOUND::BPTHROW, true, 200);
 			}
 		}
 	}
@@ -117,6 +125,10 @@ void SelectPlayer::Draw()
 
 void SelectPlayer::Release()
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::BPTHROW);
+
 	DeleteGraph(bambooImg_);
 	for (auto& id : image_) { DeleteGraph(id); }
 
