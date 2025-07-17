@@ -22,8 +22,8 @@ void SceneManager::CreateInstance()
 	if (instance_ == nullptr)
 	{
 		instance_ = new SceneManager();
+		instance_->Init();
 	}
-	instance_->Init();
 }
 
 SceneManager& SceneManager::GetInstance(void)
@@ -224,14 +224,14 @@ void SceneManager::Destroy(void)
 {
 
 	scene_->Release();
+	delete scene_;
+
 	pause_->Release();
+	delete pause_;
 
 	DeleteGraph(mainScreen_);
 
-	delete pause_;
-
-	delete scene_;
-
+	
 	delete fader_;
 
 	delete instance_;

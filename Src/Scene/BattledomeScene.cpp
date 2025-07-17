@@ -37,6 +37,8 @@ BattledomeScene::~BattledomeScene()
 
 void BattledomeScene::Init(void)
 {
+	this->Release();
+	
 	time_ = 0.0f;
 
 	using M = SceneManager;
@@ -214,17 +216,23 @@ void BattledomeScene::Release(void)
 
 	Collision::DeleteInstance();
 
-	blastMng_->Release();
-	delete blastMng_;
-	blastMng_ = nullptr;
+	if (blastMng_) {
+		blastMng_->Release();
+		delete blastMng_;
+		blastMng_ = nullptr;
+	}
 
-	bamboo_->Release();
-	delete bamboo_;
-	bamboo_ = nullptr;
+	if (bamboo_) {
+		bamboo_->Release();
+		delete bamboo_;
+		bamboo_ = nullptr;
+	}
 
-	player_->Release();
-	delete player_;
-	player_ = nullptr;
+	if (player_) {
+		player_->Release();
+		delete player_;
+		player_ = nullptr;
+	}
 
 	using M = SceneManager;
 	auto& sMng = M::GetInstance();
@@ -232,31 +240,40 @@ void BattledomeScene::Release(void)
 	switch (sMng.GetNowBoss())
 	{
 	case M::BOSS_KINDS::TUTORIAL:
-		tutorial_->Release();
-		delete tutorial_;
-		tutorial_ = nullptr;
+		if (tutorial_) {
+			tutorial_->Release();
+			delete tutorial_;
+			tutorial_ = nullptr;
+		}
 		break;
 	case M::BOSS_KINDS::NOKOPY:
-		nokopy_->Release();
-		delete nokopy_;
-		nokopy_ = nullptr;
+		if (nokopy_) {
+			nokopy_->Release();
+			delete nokopy_;
+			nokopy_ = nullptr;
+		}
 		break;
 	case M::BOSS_KINDS::RUNBOO:
-		runboo_->Release();
-		delete runboo_;
-		runboo_ = nullptr;
+		if (runboo_) {
+			runboo_->Release();
+			delete runboo_;
+			runboo_ = nullptr;
+		}
 		break;
 	case M::BOSS_KINDS::BAMMOON:
-		bammoon_->Release();
-		delete bammoon_;
-		bammoon_ = nullptr;
+		if (bammoon_) {
+			bammoon_->Release();
+			delete bammoon_;
+			bammoon_ = nullptr;
+		}
 		break;
 	}
 
-
-	stage_->Release();
-	delete stage_;
-	stage_ = nullptr;
+	if (stage_) {
+		stage_->Release();
+		delete stage_;
+		stage_ = nullptr;
+	}
 }
 
 void BattledomeScene::UnitCollision(void)
