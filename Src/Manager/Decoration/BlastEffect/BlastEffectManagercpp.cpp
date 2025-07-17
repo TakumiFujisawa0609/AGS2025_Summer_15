@@ -18,7 +18,9 @@ void BlastEffectManager::Init(void)
 	int load[BLAST_NUM_MAX] = {};
 	LoadDivGraph("Data/Image/Effect/Blast.png", BLAST_NUM_MAX, BLAST_NUM_X, BLAST_NUM_Y, BLAST_SIZE, BLAST_SIZE, load);
 	image_.insert(image_.end(), load, load + BLAST_NUM_MAX);
-
+	//int load[BLAST_NUM_MAX] = {};
+	//LoadDivGraph("Data/Image/Effect/Bamboo”š”­.png", BLAST_NUM_MAX, BLAST_NUM_X, BLAST_NUM_Y, 512, 512, load);
+	//image_.insert(image_.end(), load, load + BLAST_NUM_MAX);
 	blast_.reserve(10);
 }
 
