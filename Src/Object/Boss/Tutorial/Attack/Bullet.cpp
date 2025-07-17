@@ -69,7 +69,6 @@ void Bullet::Draw()
 {
 	for (int i = 0; i < BULLET_NUM; i++) {
 		if (bullets[i].isAlive_) {
-			//DrawCircleAA(bullets[i].disppos_.x, bullets[i].disppos_.y, bullets[i].radius_, 30, RGB(0, 0, 0));
 			DrawRotaGraph(bullets[i].disppos_.x, bullets[i].disppos_.y, 1, 0, image_, true);
 		}
 	}
@@ -77,8 +76,7 @@ void Bullet::Draw()
 
 void Bullet::Release()
 {
-
-
+	DeleteGraph(image_);
 }
 
 const std::vector<Base> Bullet::Get()const
