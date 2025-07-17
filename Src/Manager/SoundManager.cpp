@@ -131,6 +131,9 @@ void SoundManager::Init(void)
 	sounds_[SOUND::BATTLE].path_ = "バトル.mp3";
 	sounds_[SOUND::SELECT].path_ = "セレクト.mp3";
 
+	sounds_[SOUND::SISIODOSI].path_ = "ししおどし.mp3";
+	sounds_[SOUND::HIBIODOSI].path_ = "ひびおどし.mp3";
+
 	sounds_[SOUND::BGM1].path_ = "BGM候補１.mp3";
 }
 

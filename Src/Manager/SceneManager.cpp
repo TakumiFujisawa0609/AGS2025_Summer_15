@@ -1,5 +1,5 @@
 #include "SceneManager.h"
-
+#include"../Manager/SoundManager.h"
 #include <chrono>
 #include<EffekseerForDXLib.h>
 
@@ -43,6 +43,9 @@ void SceneManager::Init(void)
 
 	pause_ = new Pause();
 	pause_->Load();
+
+	SoundManager::GetIns().Load(SoundManager::HIBIODOSI);
+	SoundManager::GetIns().Load(SoundManager::SISIODOSI);
 
 	// ƒJƒƒ‰
 	Camera::CreateInstance();
@@ -126,8 +129,10 @@ void SceneManager::Update(void)
 		prev = now;
 		now = CheckHitKey(KEY_INPUT_ESCAPE);
 
-		if (prev == 1 && now == 0)pause_->SetPauseState(Pause::STATE::E_PAUSE);
-
+		if (prev == 1 && now == 0) {
+			pause_->SetPauseState(Pause::STATE::E_PAUSE);
+			SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI);
+		}
 		switch (state)
 		{
 		case Pause::STATE::E_PAUSE:
@@ -226,6 +231,8 @@ void SceneManager::Destroy(void)
 	scene_->Release();
 	pause_->Release();
 
+	SoundManager::GetIns().Delete(SoundManager::SOUND::SISIODOSI);
+	SoundManager::GetIns().Delete(SoundManager::SOUND::HIBIODOSI);
 	DeleteGraph(mainScreen_);
 
 	delete pause_;

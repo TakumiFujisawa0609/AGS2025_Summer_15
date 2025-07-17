@@ -48,6 +48,9 @@ public:
 		SELECT,
 		BATTLE,
 
+		SISIODOSI,
+		HIBIODOSI,
+
 		BGM1,
 
 		MAX,
