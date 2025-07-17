@@ -94,10 +94,11 @@ void SelectPlayer::Update()
 		bamboo_.pos_ = pos_;
 		bamboo_.pos_.y -= 50.0f;
 
-
-		if ((ins.IsTrgDown(KEY_INPUT_SPACE)) || (ins.IsTrgDown(KEY_INPUT_RETURN)) ||
-			(ins.IsTrgDown(KEY_INPUT_J)) || (nowAttackKey_)) {
-			haveB_ = false;
+		if (nowSelect_ != BOSS::RUNBOO) {
+			if ((ins.IsTrgDown(KEY_INPUT_SPACE)) || (ins.IsTrgDown(KEY_INPUT_RETURN)) ||
+				(ins.IsTrgDown(KEY_INPUT_J)) || (nowAttackKey_)) {
+				haveB_ = false;
+			}
 		}
 	}
 	else {

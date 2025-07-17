@@ -165,7 +165,6 @@
     <ClCompile Include="Src\Object\Boss\Tutorial\Attack\Slash.cpp" />
     <ClCompile Include="Src\Object\Boss\Tutorial\Attack\Tackle.cpp" />
     <ClCompile Include="Src\Object\Boss\Tutorial\BossTutorial.cpp" />
-    <ClCompile Include="Src\Object\Enemy\EnemyBase.cpp" />
     <ClCompile Include="Src\Object\Player\SelectPlayer\SelectPlayer.cpp" />
     <ClCompile Include="Src\Object\Stage\BossStage\BammoonStage.cpp" />
     <ClCompile Include="Src\Object\Stage\BossStage\NokoPyStage.cpp" />
@@ -177,9 +176,6 @@
     <ClCompile Include="Src\Scene\Pause.cpp" />
     <ClCompile Include="Src\Utility\ShapesPosition.cpp" />
     <ClCompile Include="Src\Manager\Collision.cpp" />
-    <ClCompile Include="Src\Object\Manager\EnemyManager.cpp" />
-    <ClCompile Include="Src\Object\Enemy\EnemyBamboo.cpp" />
-    <ClCompile Include="Src\Object\Enemy\EnemyBambooShoot.cpp" />
     <ClCompile Include="Src\Object\Player\Player.cpp" />
     <ClCompile Include="Src\Application.cpp" />
     <ClCompile Include="Src\Common\Fader.cpp" />
@@ -234,7 +230,6 @@
     <ClInclude Include="Src\Object\Boss\Tutorial\Attack\Slash.h" />
     <ClInclude Include="Src\Object\Boss\Tutorial\Attack\Tackle.h" />
     <ClInclude Include="Src\Object\Boss\Tutorial\BossTutorial.h" />
-    <ClInclude Include="Src\Object\Enemy\EnemyBase.h" />
     <ClInclude Include="Src\Object\Player\SelectPlayer\SelectPlayer.h" />
     <ClInclude Include="Src\Object\Stage\BossStage\BammoonStage.h" />
     <ClInclude Include="Src\Object\Stage\BossStage\NokoPyStage.h" />
@@ -247,9 +242,6 @@
     <ClInclude Include="Src\Scene\TitleScene.h" />
     <ClInclude Include="Src\Utility\ShapesPosition.h" />
     <ClInclude Include="Src\Manager\Collision.h" />
-    <ClInclude Include="Src\Object\Manager\EnemyManager.h" />
-    <ClInclude Include="Src\Object\Enemy\EnemyBamboo.h" />
-    <ClInclude Include="Src\Object\Enemy\EnemyBambooShoot.h" />
     <ClInclude Include="Src\Object\Common\Base.h" />
     <ClInclude Include="Src\Object\Player\Player.h" />
     <ClInclude Include="Src\Application.h" />
