@@ -7,6 +7,8 @@
 #include"Attack/Rushoot.h"
 #include"Attack/Spine.h"
 #include"../../../../Utility/ShapesPosition.h"
+#include"../../../../Manager/SoundManager.h"
+
 
 Nokopy::Nokopy()
 {
@@ -65,6 +67,15 @@ void Nokopy::Init(void)
 	};
 	attackCounter_ = 0;
 	//------------------------------------------------------------------
+
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::NOKOPYBEAM);
+	sound.Load(S::SOUND::NOKOPYDOWN);
+	sound.Load(S::SOUND::NOKOPYDAMAGE);
+	sound.Load(S::SOUND::NOKOPYRUSH);
+	sound.Load(S::SOUND::NOKOPYSPINE);
+	sound.Load(S::SOUND::NOKOPYWAVE);
 }
 
 void Nokopy::Update(void)
@@ -72,14 +83,6 @@ void Nokopy::Update(void)
 	if (!unit_.isAlive_)return;
 	BossBase::Update();
 	if (unit_.inviCounter_ > 0)unit_.inviCounter_--;
-	auto& p = playerPosPtr_;
-	//if (unit_.pos_.x >p->x)
-	//{
-	//	dir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
-	//}
-	//else {
-	//	dir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
-	//}
 	if (state_ == STATE::DEATH) {
 		unit_.isAlive_ = false;
 	}
@@ -118,6 +121,15 @@ void Nokopy::Draw(void)
 
 void Nokopy::Release(void)
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::NOKOPYBEAM);
+	sound.Delete(S::SOUND::NOKOPYDOWN);
+	sound.Delete(S::SOUND::NOKOPYDAMAGE);
+	sound.Delete(S::SOUND::NOKOPYRUSH);
+	sound.Delete(S::SOUND::NOKOPYSPINE);
+	sound.Delete(S::SOUND::NOKOPYWAVE);
+
 	//‰æ‘œ‚ÌŠJ•ú
 	for (int i = 0; i < DRAW::DRAW_MAX; i++) DeleteGraph(img_[i]);
 
@@ -203,6 +215,7 @@ void Nokopy::SetDamage(int dmg)
 		DrawPat_ = DRAW::DRAW_DEATH;
 		ChangeState(STATE::DEATH);
 	}
+	SoundManager::GetIns().Play(SoundManager::SOUND::NOKOPYDAMAGE,true,200);
 
 }
 
@@ -365,6 +378,7 @@ void Nokopy::Damage(void)
 {
 	DrawPat_ = DRAW::DRAW_KNOCKBACK;
 	static int counter = 0;
+	if (counter == 0) { SoundManager::GetIns().Play(SoundManager::SOUND::NOKOPYDOWN); }
 	counter++;
 	if (counter > 15) {
 		isDive_ = false;
@@ -376,6 +390,7 @@ void Nokopy::Damage(void)
 		ChangeState(STATE::IDLE);
 		counter = 0;
 	}
+
 }
 
 void Nokopy::Death(void)
@@ -408,9 +423,10 @@ void Nokopy::ChangeAttackState(ATTACK atc)
 
 void Nokopy::UpdateBamBeam(void)
 {
-	if (attackCounter_ == 1) {
+	if (attackCounter_ == 0) {
 		beam_->Init(&unit_.pos_);
 		beam_->LookOn(*playerPosPtr_);
+		SoundManager::GetIns().Play(SoundManager::SOUND::NOKOPYBEAM);
 	}
 	if (attackCounter_ > 1) {
 		beam_->Update();
@@ -429,6 +445,7 @@ void Nokopy::UpdateWavemboo(void)
 	if (attackCounter_ == 0) {
 		wave_->Init(&unit_.pos_);
 		wave_->LookOn(*playerPosPtr_);
+		SoundManager::GetIns().Play(SoundManager::SOUND::NOKOPYWAVE);
 	}
 	if (attackCounter_ > 1) {
 		wave_->Update();
@@ -436,7 +453,7 @@ void Nokopy::UpdateWavemboo(void)
 	if (attackCounter_ > 300) {
 		ChangeState(BossBase::STATE::IDLE);
 		wave_->Off();
-
+		SoundManager::GetIns().Stop(SoundManager::SOUND::NOKOPYWAVE);
 	}
 }
 
@@ -494,6 +511,7 @@ void Nokopy::UpdateRushoot(void)
 		targetLine_ = true;
 	}
 	else if (attackCounter_ < 120) {
+		if (attackCounter_ == 61)SoundManager::GetIns().Play(SoundManager::SOUND::NOKOPYRUSH,true);
 		targetLine_ = false;
 		unit_.nextpos_ += vecN * unit_.speed_ * (rushNum_ + 3);
 	}
@@ -507,7 +525,10 @@ void Nokopy::UpdateRushoot(void)
 
 void Nokopy::UpdateSpine(void)
 {
-	if (attackCounter_ == 0)spine_->Init(&unit_.pos_);
+	if (attackCounter_ == 0) {
+		spine_->Init(&unit_.pos_);
+		SoundManager::GetIns().Play(SoundManager::SOUND::NOKOPYSPINE);
+	}
 	if (attackCounter_ > 1) {
 		spine_->Update();
 	}
