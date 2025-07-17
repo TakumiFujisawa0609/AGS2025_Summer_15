@@ -17,6 +17,8 @@ void Pause::Load(void)
 
 	select_ = SELECT::CONTINUE;
 	pauseState_ = STATE::E_UPDATE;
+	
+
 }
 
 void Pause::Init(void)
@@ -95,7 +97,9 @@ void Pause::Update(void)
 		switch (select_)
 		{
 		case Pause::CONTINUE:
-			if (isDecision) { SetPauseState(STATE::E_UPDATE); }
+			if (isDecision) { SetPauseState(STATE::E_UPDATE);
+			SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI,true);
+			}
 			if (isDown || (prevPadDown == 0 && nowPadDown != 0)) select_ = NEWGAME;
 			break;
 		case Pause::NEWGAME:
@@ -107,11 +111,14 @@ void Pause::Update(void)
 			{
 				pauseState_ = STATE::E_UPDATE;
 				scene_.ChangeScene(SceneManager::SCENE_ID::TITLE);
+				SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI, true);
 			}
 
 			break;
 		case Pause::EXIT:
-			if (isDecision) isExit = true;
+			if (isDecision) {
+				isExit = true;
+			}
 			if (isUp || (prevPadUp == 0 && nowPadUp != 0)) select_ = NEWGAME;
 			break;
 		}

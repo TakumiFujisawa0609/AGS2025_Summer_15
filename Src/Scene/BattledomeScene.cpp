@@ -6,6 +6,7 @@
 #include"../Manager/Collision.h"
 #include"../Manager/Camera.h"
 #include"../Manager/Decoration/BlastEffect/BlastEffectManager.h"
+#include"../Manager/Decoration/BlastEffect/BamBlastEffect.h"
 #include"../Manager/Score/Score.h"
 #include"../Manager/SoundManager.h"
 
@@ -43,7 +44,7 @@ void BattledomeScene::Init(void)
 
 	using M = SceneManager;
 	auto& sMng = M::GetInstance();
-
+	LoadBamBlastImg();
 	player_ = new Player();
 	player_->Init();
 
@@ -100,7 +101,8 @@ void BattledomeScene::Init(void)
 	using S = SoundManager;
 	auto& sound = S::GetIns();
 	sound.Load(S::SOUND::BPHIT);
-
+	sound.Load(S::SOUND::BATTLE);
+	sound.Play(SoundManager::SOUND::BATTLE, false,150,true);
 }
 
 void BattledomeScene::Update(void)
@@ -114,6 +116,7 @@ void BattledomeScene::Update(void)
 		tutorial_->Update();
 		if (!tutorial_->GetUnit().isAlive_) {
 			Score::GetIns().SetScore(time_);
+			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
 		}
 		break;
@@ -122,6 +125,7 @@ void BattledomeScene::Update(void)
 		if (!nokopy_->GetUnit().isAlive_) {
 			Score::GetIns().SetScore(time_);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
+			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
 		}
 		break;
 	case M::BOSS_KINDS::RUNBOO:
@@ -129,6 +133,7 @@ void BattledomeScene::Update(void)
 		if (!runboo_->GetUnit().isAlive_) {
 			Score::GetIns().SetScore(time_);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
+			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
 		}
 		break;
 	case M::BOSS_KINDS::BAMMOON:
@@ -136,6 +141,7 @@ void BattledomeScene::Update(void)
 		if (!bammoon_->GetUnit().isAlive_) {
 			Score::GetIns().SetScore(time_);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
+			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
 		}
 		break;
 	}
@@ -143,8 +149,13 @@ void BattledomeScene::Update(void)
 	player_->Update();
 	bamboo_->Update();
 	blastMng_->Update();
+	for (auto& bm : bmBlast_)
+	{
+		bm->Update();
+	}
 	if (player_->GetUnit().hp_ <= 0) {
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+		SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
 	}
 
 	UnitCollision();
@@ -180,10 +191,13 @@ void BattledomeScene::Draw(void)
 
 	stage_->Draw();
 
+	for (auto& bm : bmBlast_)
+	{
+		bm->Draw();
+	}
 	player_->Draw();
 
 	blastMng_->Draw();
-
 	switch (sMng.GetNowBoss())
 	{
 	case M::BOSS_KINDS::TUTORIAL:
@@ -213,8 +227,14 @@ void BattledomeScene::Release(void)
 	using S = SoundManager;
 	auto& sound = S::GetIns();
 	sound.Delete(S::SOUND::BPHIT);
-
+	sound.Delete(S::SOUND::BATTLE);
+	DeleteBamBlastImg();
 	Collision::DeleteInstance();
+	for (auto& bm : bmBlast_)
+	{
+		bm->Relese();
+	}
+	bmBlast_.clear();
 
 	if (blastMng_) {
 		blastMng_->Release();
@@ -439,7 +459,8 @@ void BattledomeScene::PlayerAttackToBoss(void)
 				if (bpAtt->GetPower() >= 5) { mana.ZoomPos(bpAtt->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
 				bpAtt->Off();
 				tutorial_->SetDamage(bpAtt->GetDamage());
-				blastMng_->On(bpAtt->GetObj().pos_);
+				//blastMng_->On(bpAtt->GetObj().pos_);
+				CreateBamBlastEffect(bpAtt->GetObj().pos_, bpAtt->GetPower());
 			}
 		}
 		break;
@@ -461,7 +482,9 @@ void BattledomeScene::PlayerAttackToBoss(void)
 				if (bpAtc->GetPower() >= 3) { mana.SHAKE(); }
 				if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
 				nokopy_->SetDamage(bpAtc->GetDamage());
-				blastMng_->On(bpAtc->GetObj().pos_);
+				//blastMng_->On(bpAtc->GetObj().pos_);
+				CreateBamBlastEffect(bpAtc->GetObj().pos_, bpAtc->GetPower());
+
 				bpAtc->Off();
 			}
 		}
@@ -523,7 +546,9 @@ void BattledomeScene::PlayerAttackToBoss(void)
 				SoundManager::GetIns().Play(SoundManager::SOUND::BPHIT, true, 200);
 				bpAtc->Off();
 				bammoon_->SetDamage(bpAtc->GetDamage());
-				blastMng_->On(bpAtc->GetObj().pos_);
+				//blastMng_->On(bpAtc->GetObj().pos_);
+				CreateBamBlastEffect(bpAtc->GetObj().pos_, bpAtc->GetPower());
+
 			}
 		}
 		break;
@@ -710,4 +735,43 @@ void BattledomeScene::PlayerToBamboo(void)
 			b->Parry(player_->GetUnit().pos_);
 		}
 	}
+}
+
+
+void BattledomeScene::CreateBamBlastEffect(Vector2F pos, int bp)
+{  
+	BamBlastEffect* bmblst = nullptr;
+   for (int i = 0; i < bmBlast_.size(); i++)  
+   {  
+       if (!bmBlast_[i]->IsAlive())
+       {  
+		   bmblst = bmBlast_[i];
+		   bmblst->On(pos, bp,img_[bp-1]);
+		   bmBlast_.emplace_back(bmblst);
+		   return;
+       }  
+   }  
+   bmblst = new BamBlastEffect();
+   bmblst->On(pos, bp,img_[bp-1]);
+   bmBlast_.emplace_back(bmblst);
+}
+
+void BattledomeScene::LoadBamBlastImg(void)
+{
+	img_[0] = LoadGraph("Data/Image/Effect/BambooBlast1.png");
+	img_[1] = LoadGraph("Data/Image/Effect/BambooBlast2.png");
+	img_[2] = LoadGraph("Data/Image/Effect/BambooBlast3.png");
+	img_[3] = LoadGraph("Data/Image/Effect/BambooBlast4.png");
+	img_[4] = LoadGraph("Data/Image/Effect/BambooBlast5.png");
+	img_[5] = LoadGraph("Data/Image/Effect/BambooBlast6.png");
+}
+
+void BattledomeScene::DeleteBamBlastImg(void)
+{
+	DeleteGraph(img_[0]);
+	DeleteGraph(img_[1]);
+	DeleteGraph(img_[2]);
+	DeleteGraph(img_[3]);
+	DeleteGraph(img_[4]);
+	DeleteGraph(img_[4]);
 }

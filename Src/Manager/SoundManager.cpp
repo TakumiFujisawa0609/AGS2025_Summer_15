@@ -105,7 +105,7 @@ void SoundManager::Init(void)
 	sounds_[SOUND::EVASION].path_ = "回避.mp3";
 	sounds_[SOUND::BPTHROW].path_ = "竹投げ.mp3";
 	sounds_[SOUND::RUN].path_ = "足音.mp3";
-
+	//晩ムーン
 	sounds_[SOUND::BAMMOONPUNCH].path_ = "Bammoon/打撃.mp3";
 	sounds_[SOUND::BAMMOONMOVE].path_ = "Bammoon/移動.mp3";
 	sounds_[SOUND::BAMMOONLANDING].path_ = "Bammoon/着地.mp3";
@@ -113,14 +113,28 @@ void SoundManager::Init(void)
 	sounds_[SOUND::BAMMOONBLASTTHROW].path_ = "竹投げ.mp3";
 	sounds_[SOUND::BAMMOONBLAST].path_ = "爆発.mp3";
 	sounds_[SOUND::BAMMOONDAMAGE].path_ = "被弾.mp3";
-
+	//ちゅーとりある
 	sounds_[SOUND::TUTORIALJUMP].path_ = "踏み込み.mp3";
 	sounds_[SOUND::TUTORIALLANDING].path_ = "Bammoon/着地.mp3";
 	sounds_[SOUND::TUTORIALDAMAGE].path_ = "被弾.mp3";
 	sounds_[SOUND::TUTORIALSLASH].path_ = "斬撃.mp3";
 	sounds_[SOUND::TUTORIALBLAST].path_ = "爆発.mp3";
 	sounds_[SOUND::TUTORIALBLASTTHSROW].path_ = "竹投げ.mp3";
+	//のコピー
+	sounds_[SOUND::NOKOPYBEAM].path_ = "Nokopy/ビーム.mp3";
+	sounds_[SOUND::NOKOPYDOWN].path_ = "Nokopy/ダウン.mp3";
+	sounds_[SOUND::NOKOPYRUSH].path_ = "Nokopy/ラッシュ.mp3";
+	sounds_[SOUND::NOKOPYSPINE].path_ = "Nokopy/生える.mp3";
+	sounds_[SOUND::NOKOPYWAVE].path_ = "Nokopy/波.mp3";
+	sounds_[SOUND::NOKOPYDAMAGE].path_ = "被弾.mp3";
 
+	sounds_[SOUND::BATTLE].path_ = "バトル.mp3";
+	sounds_[SOUND::SELECT].path_ = "セレクト.mp3";
+
+	sounds_[SOUND::SISIODOSI].path_ = "ししおどし.mp3";
+	sounds_[SOUND::HIBIODOSI].path_ = "ひびおどし.mp3";
+
+ 	sounds_[SOUND::CLERA].path_ = "クリア.mp3";
 
 	sounds_[SOUND::BGM1].path_ = "BGM候補１.mp3";
 }

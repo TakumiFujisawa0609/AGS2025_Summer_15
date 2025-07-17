@@ -8,6 +8,7 @@ class StageBase;
 class Player;
 class BambooManager;
 class BlastEffectManager;
+class BamBlastEffect;
 
 class BossTutorial;
 class Nokopy;
@@ -40,6 +41,8 @@ private:
 	Bammoon* bammoon_;
 
 	BlastEffectManager* blastMng_;
+	std::vector<BamBlastEffect*>bmBlast_;
+
 	//“–‚½‚è”»’è
 	void PlayerToBoss(void);
 	void PlayerAttackToBoss(void);
@@ -49,6 +52,11 @@ private:
 	void PlayerToBamboo(void);
 
 	void Scroll(void);
+
+	void CreateBamBlastEffect(Vector2F pos,int bp);
+	void LoadBamBlastImg(void);
+	void DeleteBamBlastImg(void);
+	int img_[5];
 };
 
 
