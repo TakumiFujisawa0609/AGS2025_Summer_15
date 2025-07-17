@@ -38,8 +38,8 @@ void GameClear::Draw(void)
 	auto& score = Score::GetIns();
 	int fontSize = 75;
 	SetFontSize(fontSize);
-	DrawFormatString(180-4, 340-4, RGB(0, 0, 0, ), "TIME:%.2fs", score.GetNowScore().score_);
-	DrawFormatString(180, 340, RGB(255, 255, 255, ), "TIME:%.2fs", score.GetNowScore().score_);
+	DrawFormatString(160-4, 340-4, RGB(0, 0, 0, ), "TIME:%.2fs", score.GetNowScore().score_);
+	DrawFormatString(160, 340, RGB(255, 255, 255, ), "TIME:%.2fs", score.GetNowScore().score_);
 	SetFontSize(16);
 }
 

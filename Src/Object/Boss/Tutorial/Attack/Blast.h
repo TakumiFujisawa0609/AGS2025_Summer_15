@@ -23,13 +23,7 @@ public:
 
 	void On(void)override { obj_.isAlive_ = true; obj_.inviCounter_ = 0; }
 
-	void Hit(void) {
-		obj_.size_ = { (float)BLAST_SIZE,(float)BLAST_SIZE };
-		obj_.radius_ = (float)(BLAST_SIZE / 2);
-		lookOn_ = false;
-		blast_ = true;
-		obj_.inviCounter_ = 1;
-	}
+	void Hit(void);
 
 
 

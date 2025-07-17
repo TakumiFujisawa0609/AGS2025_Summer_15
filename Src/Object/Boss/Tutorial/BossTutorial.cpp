@@ -1,7 +1,12 @@
 ﻿#include"BossTutorial.h"
-#include"../../Player/Player.h"
+
+#include<DxLib.h>
+
 #include"../../../Manager/SceneManager.h"
 #include"../../../Manager/Camera.h"
+#include"../../../Manager/SoundManager.h"
+
+#include"../../Player/Player.h"
 
 BossTutorial::BossTutorial()
 {
@@ -63,6 +68,12 @@ void BossTutorial::Init()
 		{ BLAST,	&BossTutorial::BlastUpdate },
 		{ TACKLE,	&BossTutorial::TackleUpdate }
 	};
+
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Load(S::SOUND::TUTORIALDAMAGE);
+	sound.Load(S::SOUND::TUTORIALJUMP);
+	sound.Load(S::SOUND::TUTORIALLANDING);
 }
 
 void BossTutorial::Update()
@@ -96,7 +107,7 @@ void BossTutorial::Update()
 
 	frameCounter_ += 2;
 
-	EnemyBase::Update();
+	UnitBase::Update();
 
 	if (!unit_.isAlive_)state_ = STATE::E_DEATH;
 }
@@ -164,6 +175,12 @@ void BossTutorial::BossDraw()
 
 void BossTutorial::Release()
 {
+	using S = SoundManager;
+	auto& sound = S::GetIns();
+	sound.Delete(S::SOUND::TUTORIALLANDING);
+	sound.Delete(S::SOUND::TUTORIALJUMP);
+	sound.Delete(S::SOUND::TUTORIALDAMAGE);
+
 	tackle_->Release();
 	delete tackle_;
 	tackle_ = nullptr;
@@ -267,6 +284,8 @@ void BossTutorial::Move()
 		float jumppower = (d.y + 0.5f * gravity_ * t * t) / t;
 		unit_.yAccel_ -= jumppower;
 
+		SoundManager::GetIns().Play(SoundManager::SOUND::TUTORIALJUMP, true, 200);
+
 		TargetLook(point);
 	}
 
@@ -350,6 +369,7 @@ void BossTutorial::IsGround(Collision::DIR dir)
 		if (unit_.isGround_==false) {
 			unit_.isGround_ = true;
 			SceneManager::GetInstance().SHAKE();
+			SoundManager::GetIns().Play(SoundManager::SOUND::TUTORIALLANDING,true,200);
 		}
 		unit_.isGravity_ = false;
 
@@ -439,11 +459,14 @@ void BossTutorial::DrawHP()
 			shakeY = GetRand(4) - 2;
 		}
 
+		Vector2 start, end, size;
+		size = { 800,50 };
+		end = { Application::SCREEN_SIZE_X - 5,Application::SCREEN_SIZE_Y - 20 };
+		start = end - size;
+
 		DrawBar(
-			Application::SCREEN_SIZE_X / 4 + shakeX,
-			Application::SCREEN_SIZE_Y - 50 + shakeY,
-			Application::SCREEN_SIZE_X / 4 * 3 + shakeX,
-			Application::SCREEN_SIZE_Y - 20 + shakeY,
+			start.x + shakeX, start.y + shakeY,
+			end.x + shakeX, end.y + shakeY,
 			dispHp_, BOSS_HP, RGB(100, 100, 255)
 		);
 	}
@@ -715,6 +738,8 @@ void BossTutorial::SetDamage(int damage)
 	if (unit_.hp_ <= 0) {
 		unit_.isAlive_ = false;
 	}
+
+	SoundManager::GetIns().Play(SoundManager::SOUND::TUTORIALDAMAGE, true, 200);
 }
 
 void BossTutorial::SetDown(Vector2F pos)
