@@ -25,7 +25,7 @@ void GameClear::Update(void)
 	// ÉVÅ[ÉìëJà⁄
 	int input = GetJoypadInputState(DX_INPUT_PAD1);
 
-	padKey_= (((input & 0x40) == 0) && ((input & 0x20) == 0)) ? false : true;
+	padKey_ = (((input & 0x40) == 0) && ((input & 0x20) == 0)) ? false : true;
 
 	InputManager& ins = InputManager::GetInstance();
 	if ((ins.IsTrgDown(KEY_INPUT_SPACE)) || (padKey_))
@@ -40,7 +40,7 @@ void GameClear::Draw(void)
 	auto& score = Score::GetIns();
 	int fontSize = 75;
 	SetFontSize(fontSize);
-	DrawFormatString(160-4, 340-4, RGB(0, 0, 0, ), "TIME:%.2fs", score.GetNowScore().score_);
+	DrawFormatString(160 - 4, 340 - 4, RGB(0, 0, 0, ), "TIME:%.2fs", score.GetNowScore().score_);
 	DrawFormatString(160, 340, RGB(255, 255, 255, ), "TIME:%.2fs", score.GetNowScore().score_);
 	SetFontSize(16);
 }
