@@ -26,6 +26,8 @@ public:
 private:
 	Base bullets[BULLET_NUM];
 
+	int image_;
+
 	float radius_;
 	float stAngle_;
 

@@ -8,6 +8,7 @@
 
 Bullet::Bullet()
 {
+	image_ = LoadGraph("Data/Image/Boss/Nokopy/happa.png");
 }
 
 Bullet::~Bullet()
@@ -68,7 +69,8 @@ void Bullet::Draw()
 {
 	for (int i = 0; i < BULLET_NUM; i++) {
 		if (bullets[i].isAlive_) {
-			DrawCircleAA(bullets[i].disppos_.x, bullets[i].disppos_.y, bullets[i].radius_, 30, RGB(0, 0, 0));
+			//DrawCircleAA(bullets[i].disppos_.x, bullets[i].disppos_.y, bullets[i].radius_, 30, RGB(0, 0, 0));
+			DrawRotaGraph(bullets[i].disppos_.x, bullets[i].disppos_.y, 1, 0, image_, true);
 		}
 	}
 }

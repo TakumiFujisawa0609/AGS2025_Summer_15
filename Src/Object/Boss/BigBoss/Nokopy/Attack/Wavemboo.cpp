@@ -36,7 +36,7 @@ void Wavemboo::Draw(void)
 {
     for (int i = 0; i < obj_.size(); i++) {
         if (!obj_[i].isAlive_)continue;
-        DrawRotaGraph(obj_[i].pos_.x, obj_[i].pos_.y, 0.1, AsoUtility::Deg2RadF(90), image_, true);
+        DrawRotaGraph(obj_[i].pos_.x, obj_[i].pos_.y, 1, AsoUtility::Deg2RadF(90), image_, true);
 
     }
 }
