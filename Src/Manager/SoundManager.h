@@ -45,6 +45,8 @@ public:
 		NOKOPYRUSH,
 		NOKOPYDAMAGE,
 
+		SELECT,
+		BATTLE,
 
 		BGM1,
 

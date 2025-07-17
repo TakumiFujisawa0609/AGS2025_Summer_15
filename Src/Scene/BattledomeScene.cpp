@@ -100,7 +100,8 @@ void BattledomeScene::Init(void)
 	using S = SoundManager;
 	auto& sound = S::GetIns();
 	sound.Load(S::SOUND::BPHIT);
-
+	sound.Load(S::SOUND::BATTLE);
+	sound.Play(SoundManager::SOUND::BATTLE, false,150,true);
 }
 
 void BattledomeScene::Update(void)
@@ -114,6 +115,7 @@ void BattledomeScene::Update(void)
 		tutorial_->Update();
 		if (!tutorial_->GetUnit().isAlive_) {
 			Score::GetIns().SetScore(time_);
+			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
 		}
 		break;
@@ -122,6 +124,7 @@ void BattledomeScene::Update(void)
 		if (!nokopy_->GetUnit().isAlive_) {
 			Score::GetIns().SetScore(time_);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
+			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
 		}
 		break;
 	case M::BOSS_KINDS::RUNBOO:
@@ -129,6 +132,7 @@ void BattledomeScene::Update(void)
 		if (!runboo_->GetUnit().isAlive_) {
 			Score::GetIns().SetScore(time_);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
+			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
 		}
 		break;
 	case M::BOSS_KINDS::BAMMOON:
@@ -136,6 +140,7 @@ void BattledomeScene::Update(void)
 		if (!bammoon_->GetUnit().isAlive_) {
 			Score::GetIns().SetScore(time_);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
+			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
 		}
 		break;
 	}
@@ -149,6 +154,7 @@ void BattledomeScene::Update(void)
 	}
 	if (player_->GetUnit().hp_ <= 0) {
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+		SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
 	}
 
 	UnitCollision();
@@ -220,6 +226,7 @@ void BattledomeScene::Release(void)
 	using S = SoundManager;
 	auto& sound = S::GetIns();
 	sound.Delete(S::SOUND::BPHIT);
+	sound.Delete(S::SOUND::BATTLE);
 	DeleteBamBlastImg();
 	Collision::DeleteInstance();
 	for (auto& bm : bmBlast_)
@@ -436,7 +443,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 				if (bpAtt->GetPower() >= 5) { mana.ZoomPos(bpAtt->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
 				bpAtt->Off();
 				tutorial_->SetDamage(bpAtt->GetDamage());
-				blastMng_->On(bpAtt->GetObj().pos_);
+				//blastMng_->On(bpAtt->GetObj().pos_);
 				CreateBamBlastEffect(bpAtt->GetObj().pos_, bpAtt->GetPower());
 			}
 		}
@@ -459,7 +466,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 				if (bpAtc->GetPower() >= 3) { mana.SHAKE(); }
 				if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
 				nokopy_->SetDamage(bpAtc->GetDamage());
-				blastMng_->On(bpAtc->GetObj().pos_);
+				//blastMng_->On(bpAtc->GetObj().pos_);
 				CreateBamBlastEffect(bpAtc->GetObj().pos_, bpAtc->GetPower());
 
 				bpAtc->Off();
@@ -523,7 +530,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 				SoundManager::GetIns().Play(SoundManager::SOUND::BPHIT, true, 200);
 				bpAtc->Off();
 				bammoon_->SetDamage(bpAtc->GetDamage());
-				blastMng_->On(bpAtc->GetObj().pos_);
+				//blastMng_->On(bpAtc->GetObj().pos_);
 				CreateBamBlastEffect(bpAtc->GetObj().pos_, bpAtc->GetPower());
 
 			}

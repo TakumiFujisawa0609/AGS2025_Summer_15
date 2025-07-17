@@ -128,6 +128,8 @@ void SoundManager::Init(void)
 	sounds_[SOUND::NOKOPYWAVE].path_ = "Nokopy/”g.mp3";
 	sounds_[SOUND::NOKOPYDAMAGE].path_ = "”í’e.mp3";
 
+	sounds_[SOUND::BATTLE].path_ = "ƒoƒgƒ‹.mp3";
+	sounds_[SOUND::SELECT].path_ = "ƒZƒŒƒNƒg.mp3";
 
 	sounds_[SOUND::BGM1].path_ = "BGMŒó•â‚P.mp3";
 }
