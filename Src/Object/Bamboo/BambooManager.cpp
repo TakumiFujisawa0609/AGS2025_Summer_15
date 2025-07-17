@@ -10,6 +10,8 @@ BambooManager::~BambooManager()
 
 void BambooManager::Init(void)
 {
+	this->Release();
+
 	//image_ = LoadGraph("Data/Image/DropBamboo.png");
 	image_ = LoadGraph("Data/Image/Player/BambooBar.png");
 	if (image_ == -1) {
@@ -34,6 +36,7 @@ void BambooManager::Draw(void)
 void BambooManager::Release(void)
 {
 	for (auto b : bamboos_) {
+		if (!b)continue;
 		b->Release();
 	}
 	DeleteGraph(image_);

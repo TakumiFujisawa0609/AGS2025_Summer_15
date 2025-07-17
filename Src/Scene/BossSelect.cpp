@@ -36,7 +36,6 @@ void BossSelect::Init()
 
 	Collision::CreateInstance();
 	auto& colli = Collision::GetInstance();
-	colli.Init();
 	colli.SetStage(stage_->GetMapData());
 
 	auto& camera = Camera::GetInstance();

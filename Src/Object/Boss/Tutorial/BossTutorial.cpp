@@ -18,7 +18,7 @@ BossTutorial::~BossTutorial()
 
 void BossTutorial::Init()
 {
-	
+	this->Release();
 
 	img_[DRAWPAT::NORMAL] = LoadGraph("Data/Image/Boss/TutrialBoss.png");
 	img_[DRAWPAT::E_SLASH_START] = LoadGraph("Data/Image/Boss/BossSlash.png");
@@ -181,25 +181,32 @@ void BossTutorial::Release()
 	sound.Delete(S::SOUND::TUTORIALJUMP);
 	sound.Delete(S::SOUND::TUTORIALDAMAGE);
 
-	tackle_->Release();
-	delete tackle_;
-	tackle_ = nullptr;
+	if (tackle_) {
+		tackle_->Release();
+		delete tackle_;
+		tackle_ = nullptr;
+	}
 
-	blast_->Release();
-	delete blast_;
-	blast_ = nullptr;
+	if (blast_) {
+		blast_->Release();
+		delete blast_;
+		blast_ = nullptr;
+	}
 
-	bullet_->Release();
-	delete bullet_;
-	bullet_ = nullptr;
+	if (bullet_) {
+		bullet_->Release();
+		delete bullet_;
+		bullet_ = nullptr;
+	}
 
-	slash_->Release();
-	delete slash_;
-	slash_ = nullptr;
+	if (slash_) {
+		slash_->Release();
+		delete slash_;
+		slash_ = nullptr;
+	}
 
 	//画像の開放
 	for (int ii = 0; ii < DRAWPAT::DRAW_MAX; ii++) DeleteGraph(img_[ii]);
-
 }
 
 void BossTutorial::PattaernManager(void)

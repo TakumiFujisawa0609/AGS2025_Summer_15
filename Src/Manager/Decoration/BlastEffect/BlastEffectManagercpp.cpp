@@ -15,6 +15,8 @@ BlastEffectManager::~BlastEffectManager()
 
 void BlastEffectManager::Init(void)
 {
+	this->Release();
+
 	int load[BLAST_NUM_MAX] = {};
 	LoadDivGraph("Data/Image/Effect/Blast.png", BLAST_NUM_MAX, BLAST_NUM_X, BLAST_NUM_Y, BLAST_SIZE, BLAST_SIZE, load);
 	image_.insert(image_.end(), load, load + BLAST_NUM_MAX);
@@ -41,6 +43,7 @@ void BlastEffectManager::Draw(void)
 void BlastEffectManager::Release(void)
 {
 	for (auto& b : blast_) {
+		if (!b)continue;
 		b->Release();
 		delete b;
 	}

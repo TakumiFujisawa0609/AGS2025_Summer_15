@@ -12,11 +12,10 @@ private:
 	Collision();
 	~Collision();
 public:
-	static void CreateInstance(void) { if (instance == nullptr)instance = new Collision(); instance->Init(); }
+	static void CreateInstance(void) { if (instance == nullptr) { instance = new Collision(); instance->Init(); } }
 	static Collision& GetInstance(void) { return *instance; }
-	static void DeleteInstance(void) { if (instance != nullptr)delete instance; instance = nullptr; }
+	static void DeleteInstance(void) { if (instance != nullptr) { instance->Release(); delete instance; instance = nullptr; } }
 
-	void Init();
 	void SetStage(std::map<int, std::map<int, int>> map) { mapData = map; }
 
 	enum DIR {
@@ -79,6 +78,9 @@ private:
 	static Collision* instance;
 
 	std::map<int, std::map<int, int>> mapData;
+
+	void Init();
+	void Release(void);
 
 
 	//‰~Œ`‚Ìî•ñ‚ğ‚Ü‚Æ‚ß‚é\‘¢‘Ì(ˆø”‚Åg‚¤)

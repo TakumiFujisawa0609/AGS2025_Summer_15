@@ -16,6 +16,7 @@ Collision::~Collision()
 
 void Collision::Init()
 {
+	this->Release();
 }
 
 
@@ -273,7 +274,9 @@ const bool Collision::CircleAndRect(const Base& circle, const Base& rect, bool i
 		return dis <= r * r;
 	}
 
+
 //private-----------------------------------------------------------------------------------------------------------
+
 
 
 
@@ -301,3 +304,10 @@ const bool Collision::RectAndPixel(const RECT& rect, const Vector2F& pixel) cons
 
 
 
+void Collision::Release(void)
+{
+	for (auto& map : mapData) {
+		map.second.clear();
+	}
+	mapData.clear();
+}

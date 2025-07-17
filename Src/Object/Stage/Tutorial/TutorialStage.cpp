@@ -97,4 +97,7 @@ bool TutorialStage::LoadMapData(void)
 
 void TutorialStage::AddRelease(void)
 {
+	for (auto& id : backImg_) {
+		DeleteGraph(id);
+	}
 }

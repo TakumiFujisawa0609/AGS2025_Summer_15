@@ -90,4 +90,7 @@ bool Stage1::LoadMapData(void)
 
 void Stage1::AddRelease(void)
 {
+	for (auto& id : backImg_) {
+		DeleteGraph(id);
+	}
 }

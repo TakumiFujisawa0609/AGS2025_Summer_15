@@ -19,6 +19,8 @@ Runboo::~Runboo()
 
 void Runboo::Init()
 {
+	this->Release();
+
 	image_ = LoadGraph((Application::PATH_IMAGE + "Boss/Runboo/Runboo.png").c_str());
 	moveSpeed_ = MOVE_SPEED;
 

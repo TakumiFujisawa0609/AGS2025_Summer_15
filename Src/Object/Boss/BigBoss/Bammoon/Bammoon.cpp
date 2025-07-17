@@ -20,6 +20,8 @@ Bammoon::~Bammoon()
 
 void Bammoon::Init(void)
 {
+	this->Release();
+
 	ChangeState(STATE::IDLE);
 	LoadBammoonImage();
 	ChangeMotion(MOTION::IDLE);
@@ -94,21 +96,29 @@ void Bammoon::Release(void)
 	sound.Delete(S::SOUND::BAMMOONMOVE);
 	sound.Delete(S::SOUND::BAMMOONPUNCH);
 
-	csphere_->Release();
-	delete csphere_;
-	csphere_ = nullptr;
+	if (csphere_) {
+		csphere_->Release();
+		delete csphere_;
+		csphere_ = nullptr;
+	}
 
-	stripe_->Release();
-	delete stripe_;
-	stripe_ = nullptr;
+	if (stripe_) {
+		stripe_->Release();
+		delete stripe_;
+		stripe_ = nullptr;
+	}
 
-	pBullet_->Release();
-	delete pBullet_;
-	pBullet_ = nullptr;
+	if (pBullet_) {
+		pBullet_->Release();
+		delete pBullet_;
+		pBullet_ = nullptr;
+	}
 
-	blast_->Release();
-	delete blast_;
-	blast_ = nullptr;
+	if (blast_) {
+		blast_->Release();
+		delete blast_;
+		blast_ = nullptr;
+	}
 
 	for (int i = 0; i < (int)MOTION::MAX; i++) {
 		for (auto id : image_[i]) {

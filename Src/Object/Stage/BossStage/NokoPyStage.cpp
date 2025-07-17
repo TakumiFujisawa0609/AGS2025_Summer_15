@@ -91,4 +91,7 @@ bool NokoPyStage::LoadMapData(void)
 
 void NokoPyStage::AddRelease(void)
 {
+    for (auto& id : backImg_) {
+        DeleteGraph(id);
+    }
 }

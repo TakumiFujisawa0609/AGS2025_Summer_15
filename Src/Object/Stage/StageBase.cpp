@@ -15,6 +15,8 @@ StageBase::~StageBase()
 
 void StageBase::Init(void)
 {
+	this->Release();
+
 	Load();
 	if (!LoadMapData()) {
 		return;

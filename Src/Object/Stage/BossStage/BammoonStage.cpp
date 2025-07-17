@@ -91,4 +91,7 @@ bool BammoonStage::LoadMapData(void)
 
 void BammoonStage::AddRelease(void)
 {
+    for (auto& id : backImg_) {
+        DeleteGraph(id);
+    }
 }

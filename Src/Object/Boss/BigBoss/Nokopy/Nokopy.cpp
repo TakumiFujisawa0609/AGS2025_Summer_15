@@ -18,6 +18,8 @@ Nokopy::~Nokopy()
 
 void Nokopy::Init(void)
 {
+	this->Release();
+
 	BossBase::Init();
 	unit_.isAlive_ = true;
 	unit_.isDraw_ = true;

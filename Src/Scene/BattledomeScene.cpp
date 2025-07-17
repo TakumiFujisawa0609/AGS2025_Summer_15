@@ -89,7 +89,6 @@ void BattledomeScene::Init(void)
 
 	Collision::CreateInstance();
 	auto& colli = Collision::GetInstance();
-	colli.Init();
 	colli.SetStage(stage_->GetMapData());
 
 	auto& camera = Camera::GetInstance();

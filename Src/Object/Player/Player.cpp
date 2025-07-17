@@ -16,7 +16,6 @@
 
 Player::Player()
 {
-	LoadPlayerImage();
 }
 
 Player::~Player()
@@ -25,6 +24,10 @@ Player::~Player()
 
 void Player::Init()
 {
+	this->Release();
+
+	LoadPlayerImage();
+
 	// ’è”’l‚ðÝ’è
 	unit_.size_ = { SIZE_X,SIZE_Y };
 	unit_.radius_ = unit_.size_.x / 2;
@@ -189,8 +192,10 @@ void Player::Release()
 	BpAtIns_.clear();
 	DeleteGraph(BambooImg_);
 
-	defaultAttack_->Release();
-	delete defaultAttack_;
+	if (defaultAttack_) {
+		defaultAttack_->Release();
+		delete defaultAttack_;
+	}
 
 	//‰æ‘œ‰ð•ú
 	for (int i = 0; i < (int)MOTION::MAX; i++) {
