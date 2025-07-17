@@ -134,6 +134,8 @@ void SoundManager::Init(void)
 	sounds_[SOUND::SISIODOSI].path_ = "‚µ‚µ‚¨‚Ç‚µ.mp3";
 	sounds_[SOUND::HIBIODOSI].path_ = "‚Ð‚Ñ‚¨‚Ç‚µ.mp3";
 
+ 	sounds_[SOUND::CLERA].path_ = "ƒNƒŠƒA.mp3";
+
 	sounds_[SOUND::BGM1].path_ = "BGMŒó•â‚P.mp3";
 }
 

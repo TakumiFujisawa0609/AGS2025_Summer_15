@@ -51,6 +51,8 @@ public:
 		SISIODOSI,
 		HIBIODOSI,
 
+		CLERA,
+
 		BGM1,
 
 		MAX,

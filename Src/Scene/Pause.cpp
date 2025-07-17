@@ -111,7 +111,7 @@ void Pause::Update(void)
 			{
 				pauseState_ = STATE::E_UPDATE;
 				scene_.ChangeScene(SceneManager::SCENE_ID::TITLE);
-				SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI);
+				SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI, true);
 			}
 
 			break;
