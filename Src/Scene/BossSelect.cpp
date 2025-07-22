@@ -68,6 +68,7 @@ void BossSelect::Init()
 	bossInfo_[(int)BOSS::BAMMOON].thum_ = LoadGraph("Data/Image/Stage/Select/ThumBammoon.png");
 	bossInfo_[(int)BOSS::BAMMOON].pos_ = { 650,120.0f };
 
+	SoundManager::GetIns().Load(SoundManager::SOUND::BPHIT);
 	SoundManager::GetIns().Load(SoundManager::SOUND::SELECT);
 	SoundManager::GetIns().Play(SoundManager::SOUND::SELECT, false, 150, true);
 }
@@ -142,6 +143,7 @@ void BossSelect::Release()
 		DeleteGraph(boss.image_);
 		DeleteGraph(boss.thum_);
 	}
+	SoundManager::GetIns().Delete(SoundManager::SOUND::BPHIT);
 	SoundManager::GetIns().Delete(SoundManager::SOUND::SELECT);
 	Collision::DeleteInstance();
 
@@ -181,6 +183,7 @@ void BossSelect::Collision()
 			blast_->On(b);
 			sMng.SetBossKinds(boss.type_);
 			sMng.ChangeScene(M::SCENE_ID::BATTLEDONE);
+			SoundManager::GetIns().Play(SoundManager::SOUND::BPHIT, true);
 			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
 		}
 	}
