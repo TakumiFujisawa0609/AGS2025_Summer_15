@@ -82,7 +82,7 @@ void SelectPlayer::Update()
 				nowSelect_ = BOSS::RUNBOO;
 			}
 			if ((ins.IsTrgDown(KEY_INPUT_RIGHT)) || (ins.IsTrgDown(KEY_INPUT_D)) ||
-				(downLeftKey_)) {
+				(downRightKey_)) {
 				nowSelect_ = BOSS::TUTORIAL;
 			}
 
