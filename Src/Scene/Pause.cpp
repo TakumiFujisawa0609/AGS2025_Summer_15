@@ -3,6 +3,7 @@
 #include "../Application.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/SoundManager.h"
+#include"../Manager/Score/Score.h"
 
 void Pause::Load(void)
 {
@@ -128,6 +129,12 @@ void Pause::Update(void)
 	{
 		dispPos[ii].x = startPos_.x + obj_[ii].pos_.x + Application::SCREEN_SIZE_X / 2;
 		dispPos[ii].y = move_.y + (startPos_.y + obj_[ii].pos_.y + Application::SCREEN_SIZE_Y / 2 + ii * DISTANCE);
+	}
+
+	if (CheckHitKey(KEY_INPUT_1) == 1 &&
+		CheckHitKey(KEY_INPUT_5) == 1 &&
+		CheckHitKey(KEY_INPUT_0) == 1) {
+		Score::GetIns().RankingReset();
 	}
 }
 

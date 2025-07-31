@@ -3,6 +3,7 @@
 
 #include "Manager/InputManager.h"
 #include "Manager/SceneManager.h"
+#include"Manager/Score/Score.h"
 #include "Application.h"
 #include"Manager/Decoration/EffectManager.h"
 
@@ -62,6 +63,9 @@ void Application::Init(void)
 	// ƒTƒEƒ“ƒh‰Šú‰»
 	SoundManager::CreateIns();
 
+	Score::CreateInstance();
+
+
 }
 
 void Application::Run(void)
@@ -86,6 +90,7 @@ void Application::Run(void)
 
 void Application::Destroy(void)
 {
+	Score::DeleteIns();
 	SoundManager::DeleteIns();
 	InputManager::GetInstance().Destroy();
 	SceneManager::GetInstance().Destroy();

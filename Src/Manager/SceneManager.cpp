@@ -3,7 +3,6 @@
 #include <chrono>
 #include<EffekseerForDXLib.h>
 
-#include"Score/Score.h"
 #include "../Common/Fader.h"
 #include "Camera.h"
 
@@ -51,7 +50,6 @@ void SceneManager::Init(void)
 	Camera::CreateInstance();
 	Camera::GetInstance().Init();
 
-	Score::CreateInstance();
 
 	//’‹“_‚ğ‰Šú‰»-----------------
 	zoomPos_ = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };

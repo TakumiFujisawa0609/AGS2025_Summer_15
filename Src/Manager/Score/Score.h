@@ -25,6 +25,7 @@ public:
 	void SetScore(const float score);
 	ScoreInfo GetNowScore(void) { return nowScore_; }
 	std::vector<float>GetRanking(SceneManager::BOSS_KINDS k);
+	void RankingReset(void);
 
 	void Release(void);
 
@@ -35,5 +36,6 @@ private:
 
 	ScoreInfo nowScore_;
 
+	bool err_;
 };
 

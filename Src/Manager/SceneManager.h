@@ -165,3 +165,4 @@ private:
 	std::map<int, int>perValues;
 	std::map<int, int>nowValues;
 };
+using BOSS_KINDS = SceneManager::BOSS_KINDS;
