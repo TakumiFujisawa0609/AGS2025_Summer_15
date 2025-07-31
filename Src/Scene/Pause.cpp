@@ -36,26 +36,11 @@ void Pause::Init(void)
 
 	for (int ii = 0; ii < SELECT::MAX; ii++) dispPos[ii] = { 0.0f, 0.0f };
 
-	for (int ii = 0; ii < 2; ii++)
-	{
-		prevDecision[ii] = 0;
-		nowDecision[ii]  = 0;
+	prevDecision = nowDecision = upKeyDecision = downKeyDecision = false;
 
-		prevUp[ii] = 0;
-		nowUp[ii]  = 0;
+	prevUp = nowUp = upKeyUp = downKeyUp = false;
 
-		prevDown[ii] = 0;
-		nowDown[ii]  = 0;
-	}
-
-	prevPadDecision = 0;
-	nowPadDecision = 0;
-
-	prevPadDown = 0;
-	nowPadDown = 0;
-
-	prevPadUp = 0;
-	nowPadUp = 0;
+	prevDown = nowDown = upKeyDown = downKeyDown = false;
 }
 
 void Pause::Update(void)
@@ -71,58 +56,37 @@ void Pause::Update(void)
 	float targetY = -(obj_[select_].pos_.y + select_ * DISTANCE);
 	move_.y += (targetY - move_.y) * 0.2f;
 
-	int pad = GetJoypadInputState(DX_INPUT_PAD1);
 
-	prevPadDecision = nowPadDecision;
-	nowPadDecision = (pad & PAD_INPUT_A);
 
-	prevPadUp = nowPadUp;
-	nowPadUp = (pad & PAD_INPUT_UP);
-
-	prevPadDown = nowPadDown;
-	nowPadDown = (pad & PAD_INPUT_DOWN);
-
-	for (int ii = 0; ii < 2; ii++)
+	//選択中がどれかを見分ける
+	switch (select_)
 	{
-		//決定ボタン（アップトリガー）
-		bool isDecision = prevDecision[ii] == 1 && nowDecision[ii] == 0;
-
-		//上キー（ダウントリガー）
-		bool isUp = prevUp[ii] == 0 && nowUp[ii] == 1;
-
-		//下キー（ダウントリガー）
-		bool isDown = prevDown[ii] == 0 && nowDown[ii] == 1;
-		
-
-		//選択中がどれかを見分ける
-		switch (select_)
-		{
-		case Pause::CONTINUE:
-			if (isDecision) { SetPauseState(STATE::E_UPDATE);
-			SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI,true);
-			}
-			if (isDown || (prevPadDown == 0 && nowPadDown != 0)) select_ = NEWGAME;
-			break;
-		case Pause::NEWGAME:
-		
-			if (isUp || (prevPadUp == 0 && nowPadUp != 0))   select_ = CONTINUE;
-			if (isDown || (prevPadDown == 0 && nowPadDown != 0)) select_ = EXIT;
-
-			if (isDecision)
-			{
-				pauseState_ = STATE::E_UPDATE;
-				scene_.ChangeScene(SceneManager::SCENE_ID::TITLE);
-				SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI, true);
-			}
-
-			break;
-		case Pause::EXIT:
-			if (isDecision) {
-				isExit = true;
-			}
-			if (isUp || (prevPadUp == 0 && nowPadUp != 0)) select_ = NEWGAME;
-			break;
+	case Pause::CONTINUE:
+		if (downKeyDecision) {
+			SetPauseState(STATE::E_UPDATE);
+			SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI, true);
 		}
+		if (downKeyDown) select_ = NEWGAME;
+		break;
+	case Pause::NEWGAME:
+
+		if (downKeyUp)   select_ = CONTINUE;
+		if (downKeyDown) select_ = EXIT;
+
+		if (downKeyDecision)
+		{
+			pauseState_ = STATE::E_UPDATE;
+			scene_.ChangeScene(SceneManager::SCENE_ID::TITLE);
+			SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI, true);
+		}
+
+		break;
+	case Pause::EXIT:
+		if (downKeyDecision) {
+			isExit = true;
+		}
+		if (downKeyUp) select_ = NEWGAME;
+		break;
 	}
 
 	for (int ii = 0; ii < SELECT::MAX; ii++)
@@ -193,19 +157,27 @@ void Pause::SetPauseState(STATE state)
 
 void Pause::KeyInput(void)
 {
-	for (int ii = 0; ii < 2; ii++)
-	{
-		int keyDecision = CheckHitKey((ii) ? KEY_INPUT_SPACE : KEY_INPUT_RETURN);
-		int keyUp       = CheckHitKey((ii) ? KEY_INPUT_W : KEY_INPUT_UP);
-		int keyDown     = CheckHitKey((ii) ? KEY_INPUT_S : KEY_INPUT_DOWN);
+	int input = GetJoypadInputState(DX_INPUT_PAD1);
 
-		prevDecision[ii] = nowDecision[ii];
-		nowDecision[ii] = keyDecision;
+	prevDecision = nowDecision;
+	nowDecision = ((CheckHitKey(KEY_INPUT_SPACE) == 0) &&
+		(CheckHitKey(KEY_INPUT_RETURN) == 0) &&
+		((input & 0x40) == 0) && ((input & 0x20) == 0)) ? false : true;
+	upKeyDecision = (prevDecision && !nowDecision);
+	downKeyDecision = (!prevDecision && nowDecision);
 
-		prevUp[ii] = nowUp[ii];
-		nowUp[ii] = keyUp;
+	prevUp = nowUp;
+	nowUp = ((CheckHitKey(KEY_INPUT_W) == 0) &&
+		(CheckHitKey(KEY_INPUT_UP) == 0) &&
+		((input & PAD_INPUT_UP) == 0)) ? false : true;
+	upKeyUp = (prevUp && !nowUp);
+	downKeyUp = (!prevUp && nowUp);
 
-		prevDown[ii] = nowDown[ii];
-		nowDown[ii] = keyDown;
-	}
+	prevDown = nowDown;
+	nowDown = ((CheckHitKey(KEY_INPUT_S) == 0) &&
+		(CheckHitKey(KEY_INPUT_DOWN) == 0) &&
+		((input & PAD_INPUT_DOWN) == 0)) ? false : true;
+	upKeyDown = (prevDown && !nowDown);
+	downKeyDown = (!prevDown && nowDown);
+
 }

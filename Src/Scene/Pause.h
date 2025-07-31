@@ -56,21 +56,7 @@ private:
 
 	bool isExit;
 
-	int prevDecision[2];
-	int nowDecision[2];
-
-	int prevUp[2];
-	int nowUp[2];
-	int prevDown[2];
-	int nowDown[2];
-
-
-	int prevPadDown;
-	int nowPadDown;
-
-	int prevPadUp;
-	int nowPadUp;
-
-	int prevPadDecision;
-	int nowPadDecision;
+	bool prevDecision, nowDecision, upKeyDecision, downKeyDecision;
+	bool prevUp, nowUp, upKeyUp, downKeyUp;
+	bool prevDown, nowDown, upKeyDown, downKeyDown;
 };
