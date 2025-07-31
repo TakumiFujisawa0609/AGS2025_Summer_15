@@ -98,7 +98,7 @@ void Pause::Update(void)
 	if (CheckHitKey(KEY_INPUT_1) == 1 &&
 		CheckHitKey(KEY_INPUT_5) == 1 &&
 		CheckHitKey(KEY_INPUT_0) == 1) {
-		Score::GetIns().RankingReset();
+		Score::GetIns().RankingReset(BOSS_KINDS::MAX);
 	}
 }
 

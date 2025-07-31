@@ -20,7 +20,7 @@ Score::~Score()
 {
 }
 
-void Score::Init(void)
+void Score::Load(void)
 {
 	std::ifstream ifs = std::ifstream("Data/ranking/ranking.csv");
 	if (!ifs) {
@@ -91,12 +91,17 @@ std::vector<float> Score::GetRanking(SceneManager::BOSS_KINDS k)
 	return ret;
 }
 
-void Score::RankingReset(void)
+void Score::RankingReset(BOSS_KINDS k)
 {
-	for (auto& kinds : ranking_) { for (auto& rank : kinds) { rank = -1; } }
+	if (k == BOSS_KINDS::MAX) {
+		for (auto& kinds : ranking_) { for (auto& rank : kinds) { rank = -1; } }
+	}
+	else {
+		for (auto& rank : ranking_[(int)k]) { rank = -1; }
+	}
 }
 
-void Score::Release(void)
+void Score::Save(void)
 {
 	// ロードに失敗していたらすでにあるデータを破壊してしまう可能性があるのでセーブを行わない
 	if (err_) { return; }

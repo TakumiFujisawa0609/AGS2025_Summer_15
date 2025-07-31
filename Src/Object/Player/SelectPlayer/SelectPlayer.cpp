@@ -5,6 +5,7 @@
 #include"../../../Application.h"
 #include"../../../Manager/InputManager.h"
 #include"../../../Manager/SoundManager.h"
+#include"../../../Manager/Score/Score.h"
 
 SelectPlayer::SelectPlayer()
 {
@@ -109,6 +110,12 @@ void SelectPlayer::Update()
 	}
 	else {
 		bamboo_.pos_ += vec_;
+	}
+
+	if (CheckHitKey(KEY_INPUT_1) == 1 &&
+		CheckHitKey(KEY_INPUT_5) == 1 &&
+		CheckHitKey(KEY_INPUT_0) == 1) {
+		Score::GetIns().RankingReset(nowSelect_);
 	}
 }
 
