@@ -319,8 +319,34 @@ void BattledomeScene::Scroll(void)
 	using M = SceneManager;
 	auto& sMng = M::GetInstance();
 
-	if (sMng.GetNowBoss() == M::BOSS_KINDS::RUNBOO) {
-		camera.Follow(Camera::X, 1.0f);
+	switch (sMng.GetNowBoss())
+	{
+	case SceneManager::BOSS_KINDS::TUTORIAL:
+		if (!tutorial_->GetEnCount()) {
+			if (player_->GetUnit().disppos_.x > Application::SCREEN_SIZE_X / 7 * 3 &&
+				!((camera.GetPos().x + Application::SCREEN_SIZE_X) >= TutorialStage::STAGE_CHIP_SIZE * stage_->GetMapNum().x)) {
+				camera.Follow(Camera::dir::X, (player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_);
+			}
+
+			if (player_->GetUnit().disppos_.x < Application::SCREEN_SIZE_X / 7 * 2 &&
+				!(camera.GetPos().x <= 0)) {
+				camera.Follow(Camera::dir::X, -((player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_));
+			}
+		}
+		else {
+			if (!camera.BossSet()) {
+				camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
+			}
+		}
+		break;
+	case SceneManager::BOSS_KINDS::RUNBOO:
+	{
+		camera.Follow(Camera::X, Runboo::MOVE_SPEED);
+	}
+		break;
+	case SceneManager::BOSS_KINDS::NOKOPY:
+	case SceneManager::BOSS_KINDS::BAMMOON:
+		break;
 	}
 }
 
@@ -494,18 +520,18 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		{
 			int i = 0;
 			//プレイヤーの通常攻撃と弱点の当たり判定
-			if (ins.Circle(player_->DefaultAtt(), weak->GetUnit()))
-			{
-				weak->SetDamage(1.0f);
-				bamboo_->Create(player_->GetUnit().pos_, 1, 30);
-			}
+			//if (ins.Circle(player_->DefaultAtt(), weak->GetUnit()))
+			//{
+			//	weak->SetDamage(1.0f);
+			//	bamboo_->Create(player_->GetUnit().pos_, 1, 30);
+			//}
 
 			//プレイヤーと弱点の攻撃当たり判定
 			for (auto& weakObj : weak->GetObj()) {
 				if (ins.Rect(player_->DefaultAtt(), weakObj))
 				{
 					weak->ObjHit(i);
-					bamboo_->Create(weakObj.pos_, 2, 80);
+					bamboo_->Create(weakObj.pos_, 1, 50);
 				}
 				i++;
 			}
@@ -523,11 +549,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 
 		//本体（壁）と通常攻撃の当たり判定
 		if (ins.CircleAndRect(player_->DefaultAtt(), runboo_->GetUnit())) {
-			bamboo_->Create(player_->GetUnit().pos_, 1);
-			//弱点がすべて破壊されたら、本体にダメージが入る
-			if (runboo_->GetWeakAllDeath()) {
-				runboo_->SetDamage(5);
-			}
+			bamboo_->Create(player_->GetUnit().pos_, 1 , 50);
 		}
 		break;
 	case M::BOSS_KINDS::BAMMOON:

@@ -3,8 +3,10 @@
 #include<DxLib.h>
 #include<vector>
 #include"../BossBase.h"
+#include"Weakness.h"
 
 class Weakness;
+class Pillar;
 
 class Runboo : public BossBase
 {
@@ -17,7 +19,7 @@ public:
 	static constexpr int HALF_X = 70;
 	static constexpr int HALF_Y = Application::SCREEN_SIZE_Y / 2;
 
-	static constexpr int HP_MAX = 3;
+	static constexpr int HP_MAX = Weakness::HP_MAX * WEAK_MAX;
 
 	Runboo();
 	~Runboo();
@@ -44,9 +46,13 @@ private:
 	//インスタンス
 	std::vector<Weakness*> weak_;
 
+	Pillar* pillar_;
+
 	float moveSpeed_;
 
 	int image_;
+
+	int maxHp_;
 	
 	//待機状態
 	void Idle(void) override;

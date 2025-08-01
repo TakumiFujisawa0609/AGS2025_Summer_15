@@ -155,6 +155,7 @@
     <ClCompile Include="Src\Object\Boss\BigBoss\BossBase.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Attack\Bound.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Attack\Laser.cpp" />
+    <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Attack\Pillar.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Attack\WeakBullet.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Runboo.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Runboo\Weakness.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Attack\Bound.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Attack\Bullet.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Attack\Laser.h" />
+    <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Attack\Pillar.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Attack\WeakBullet.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Runboo.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Runboo\Weakness.h" />

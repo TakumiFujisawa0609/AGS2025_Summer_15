@@ -2,8 +2,6 @@
 #include<DxLib.h>
 #include "../../Tutorial/BossTutorial.h"
 #include "../../../../Manager/SceneManager.h"
-#include"../../../../Manager/Score/Score.h"
-#include"Weakness.h"
 
 
 Runboo::Runboo()
@@ -31,7 +29,6 @@ void Runboo::Init()
 	ChangeDispPos();
 	unit_.size_ = { HALF_X * 2 ,HALF_Y * 2 };
 
-	unit_.hp_ = HP_MAX;
 	unit_.isAlive_ = true;
 	unit_.isGravity_ = false;
 	unit_.isStageCollision_ = false;
@@ -46,6 +43,13 @@ void Runboo::Init()
 		weak_[weak_.size() - 1]->SetPlayerPosPtr(playerPosPtr_);
 		weak_[weak_.size() - 1]->Init(weakPos, moveSpeed_);
 	}
+
+	for (auto& weak : weak_)
+	{
+		unit_.hp_ += weak->GetUnit().hp_;
+	}
+
+	maxHp_ = unit_.hp_;
 }
 
 void Runboo::Update()
@@ -57,16 +61,17 @@ void Runboo::Update()
 	const float noiseX = (GetRand(200) - 100) / 500.0f;
 	unit_.nextpos_.x += sinf(weak_[0]->GetCnt()) * Weakness::AMPLITUDE + noiseX;
 
+	int totalHP = 0;
+
 	for (auto& w : weak_)
 	{ 
 		w->Update(unit_.pos_);
 		w->Update();
+
+		totalHP += w->GetUnit().hp_;
 	}
 
-	for (int i = 0; i < weak_.size(); i++)
-	{
-
-	}
+	unit_.hp_ = totalHP;
 
 	if (unit_.inviCounter_ > 0)
 	{
@@ -96,7 +101,7 @@ void Runboo::Draw()
 		Application::SCREEN_SIZE_Y - 80,
 		Application::SCREEN_SIZE_X - 100,
 		Application::SCREEN_SIZE_Y - 30,
-		unit_.hp_, HP_MAX, RGB(100, 100, 200)
+		unit_.hp_, maxHp_, RGB(100, 100, 200)
 	);
 
 }
@@ -108,7 +113,6 @@ void Runboo::Release()
 		weak_[ii]->Release();
 		delete weak_[ii];
 	}
-
 	weak_.clear();
 
 	DeleteGraph(image_);

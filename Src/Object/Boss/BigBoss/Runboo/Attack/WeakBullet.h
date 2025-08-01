@@ -15,6 +15,15 @@ public:
 	static constexpr float SIZE_X = 32.0f;
 	static constexpr float SIZE_Y = 32.0f;
 
+	static constexpr int NUM_MAX = 8;
+	static constexpr int NUM_X = 8;
+	static constexpr int NUM_Y = 1;
+
+	static constexpr float IMAGE_BIG_RATE = 2.0f;
+
+	static constexpr int IMAGE_SIZE_X = 32;
+	static constexpr int IMAGE_SIZE_Y = 32;
+
 
 	WeakBullet(float moveSpeed);
 	~WeakBullet();
@@ -37,6 +46,9 @@ private:
 
 	Base bullets_[BULLET_NUM];
 	int endCnt_;
+
+	int imageArray[NUM_MAX];
+	int arrayIndex_;
 
 	float moveSpeed_;
 

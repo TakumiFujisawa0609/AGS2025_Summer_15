@@ -14,8 +14,13 @@ WeakBullet::~WeakBullet()
 
 void WeakBullet::Init(const Vector2F* pos)
 {
+	LoadDivGraph(
+        (Application::PATH_IMAGE + "Boss/Runboo/Bullet.png").c_str(),
+		NUM_MAX, NUM_X, NUM_Y,
+		IMAGE_SIZE_X, IMAGE_SIZE_Y,
+		imageArray
+	);
 
-	image_ = LoadGraph((Application::PATH_IMAGE + "Boss/Runboo/Bullet.png").c_str());
 
     shotTimer_ = 0;
     canShot_ = true;
@@ -30,6 +35,7 @@ void WeakBullet::Init(const Vector2F* pos)
         bullets_[i].radius_ = 30;
         bullets_[i].size_ = {SIZE_X, SIZE_Y};
     }
+	arrayIndex_ = 0;
 
     endCnt_ = 0;
 }
@@ -92,24 +98,31 @@ void WeakBullet::Update(Vector2F boss)
         bullets_[i].disppos_ = bullets_[i].pos_;
     }
 
+	if (arrayIndex_ >= NUM_MAX - 1) {
+		arrayIndex_ = 0;
+	}
+
     ChangeDispPos();
 
-    AttackBase::Update();
+    //AttackBase::Update();
 }
 
 void WeakBullet::Update() {}
 
 void WeakBullet::Draw(void)
 {
+    arrayIndex_++;
 
     for (int i = 0; i < BULLET_NUM; i++) {
+        
         if (!bullets_[i].isAlive_) continue;
+
 
 		DrawRotaGraph(
 			bullets_[i].disppos_.x,
 			bullets_[i].disppos_.y,
-			0.5f, rotate_,
-			image_,
+            IMAGE_BIG_RATE, 0.0f,
+			imageArray[arrayIndex_],
 			true
 		);
 
@@ -118,7 +131,9 @@ void WeakBullet::Draw(void)
 
 void WeakBullet::Release(void)
 {
-	DeleteGraph(image_);
+	for (int i = 0; i < NUM_MAX; i++) {
+        DeleteGraph(imageArray[i]);
+	}
 }
 
 const std::vector<Base> WeakBullet::Get() const
