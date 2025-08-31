@@ -108,14 +108,21 @@ void Runboo::Draw()
 
 void Runboo::Release()
 {
-	for (int ii = 0; ii < WEAK_MAX; ii++)
+	for (auto& w : weak_)
 	{
-		weak_[ii]->Release();
-		delete weak_[ii];
+		if (w) {
+			w->Release();
+			delete w;
+			w = nullptr;
+		}
 	}
+
 	weak_.clear();
 
-	DeleteGraph(image_);
+	if (image_ != -1)
+	{
+		DeleteGraph(image_);
+	}
 
 }
 

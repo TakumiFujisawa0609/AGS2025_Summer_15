@@ -1,17 +1,17 @@
-#include "Laser.h"
+#include "TrackingBullet.h"
 #include"../../../../../Application.h"
 #include"../../../../../Manager/Camera.h"
 
-Laser::Laser(float moveSpeed)
+TrackingBullet::TrackingBullet(float moveSpeed)
 {
 
 }
 
-Laser::~Laser()
+TrackingBullet::~TrackingBullet()
 {
 }
 
-void Laser::Init(const Vector2F* pos)
+void TrackingBullet::Init(const Vector2F* pos)
 {
     attackStartPos_ = *pos;
     end_ = false;
@@ -36,7 +36,7 @@ void Laser::Init(const Vector2F* pos)
     end_ = false;  // ‰Šú‰»
 }
 
-void Laser::Update(Vector2F boss)
+void TrackingBullet::Update(Vector2F boss)
 {
     shootTimer_++;
     if (shootTimer_ >= INTERVAL && nextIndex_ < MAX_NUM)
@@ -123,9 +123,9 @@ void Laser::Update(Vector2F boss)
     
 }
 
-void Laser::Update(void) {}
+void TrackingBullet::Update(void) {}
 
-void Laser::Draw(void)
+void TrackingBullet::Draw(void)
 {
 	for (auto& laser : obj_)
 	{
@@ -153,27 +153,27 @@ void Laser::Draw(void)
 	}
 }
 
-void Laser::Release(void)
+void TrackingBullet::Release(void)
 {
 	DeleteGraph(image_);
 }
 
-const std::vector<Base> Laser::Get() const
+const std::vector<Base> TrackingBullet::Get() const
 {
 	return obj_;
 }
 
-void Laser::Hit(int i)
+void TrackingBullet::Hit(int i)
 {
 	obj_[i].isAlive_ = false;
 }
 
-bool Laser::End(void)
+bool TrackingBullet::End(void)
 {
 	return end_;
 }
 
-void Laser::SetIsAlive(bool isAlive)
+void TrackingBullet::SetIsAlive(bool isAlive)
 {
     for (auto laser : obj_)
     {
@@ -182,7 +182,7 @@ void Laser::SetIsAlive(bool isAlive)
 }
 
 
-void Laser::ChangeDispPos()
+void TrackingBullet::ChangeDispPos()
 {
 	auto& camera = Camera::GetInstance();
 	for (int i = 0; i < MAX_NUM; i++) {

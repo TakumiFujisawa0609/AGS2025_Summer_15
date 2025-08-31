@@ -159,7 +159,7 @@ private:
 	void BlastUpdate(void);
 	void TackleUpdate(void);
 
-	//攻撃パターンの関数ポインタをmapで管理
+	//攻撃関数をmapで管理
 	std::map<ATTACK, AttackFunc> attackUpdateFuncs_;
 
 

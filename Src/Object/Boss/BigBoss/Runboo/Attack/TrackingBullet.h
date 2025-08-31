@@ -3,7 +3,7 @@
 #include"../../../Tutorial/Attack/AttackBase.h"
 #include"../../../../../Application.h"
 
-class Laser : public AttackBase
+class TrackingBullet : public AttackBase
 {
 public:
 	static constexpr int MAX_NUM = 3;
@@ -21,8 +21,8 @@ public:
 	static constexpr float UPPER_BOUND = 0.0f;
 	static constexpr float LOWER_BOUND = Application::SCREEN_SIZE_Y;
 
-	Laser(float moveSpeed);
-	~Laser();
+	TrackingBullet(float moveSpeed);
+	~TrackingBullet();
 
 	void Init(const Vector2F* pos)override;
 	void Update(Vector2F boss);

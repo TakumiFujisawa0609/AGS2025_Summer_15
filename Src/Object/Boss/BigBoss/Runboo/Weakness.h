@@ -6,7 +6,7 @@
 #include"../BossBase.h"
 
 class WeakBullet;
-class Laser;
+class TrackingBullet;
 class Pillar;
 
 class Weakness : public BossBase
@@ -58,7 +58,7 @@ public:
 private:
 
 	WeakBullet* bullet_;
-	Laser* laser_;
+	TrackingBullet* laser_;
 	Pillar* pillar_;
 
 	ATTACK attack_;

@@ -159,7 +159,7 @@ void BattledomeScene::Update(void)
 	}
 
 	UnitCollision();
-	//スクロール処理は田中に任せた
+	
 	Scroll();
 
 	time_ += sMng.GetDeltaTime();
@@ -322,22 +322,22 @@ void BattledomeScene::Scroll(void)
 	switch (sMng.GetNowBoss())
 	{
 	case SceneManager::BOSS_KINDS::TUTORIAL:
-		if (!tutorial_->GetEnCount()) {
-			if (player_->GetUnit().disppos_.x > Application::SCREEN_SIZE_X / 7 * 3 &&
-				!((camera.GetPos().x + Application::SCREEN_SIZE_X) >= TutorialStage::STAGE_CHIP_SIZE * stage_->GetMapNum().x)) {
-				camera.Follow(Camera::dir::X, (player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_);
-			}
+		//if (!tutorial_->GetEnCount()) {
+		//	if (player_->GetUnit().disppos_.x > Application::SCREEN_SIZE_X / 7 * 3 &&
+		//		!((camera.GetPos().x + Application::SCREEN_SIZE_X) >= TutorialStage::STAGE_CHIP_SIZE * stage_->GetMapNum().x)) {
+		//		camera.Follow(Camera::dir::X, (player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_);
+		//	}
 
-			if (player_->GetUnit().disppos_.x < Application::SCREEN_SIZE_X / 7 * 2 &&
-				!(camera.GetPos().x <= 0)) {
-				camera.Follow(Camera::dir::X, -((player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_));
-			}
-		}
-		else {
-			if (!camera.BossSet()) {
-				camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
-			}
-		}
+		//	if (player_->GetUnit().disppos_.x < Application::SCREEN_SIZE_X / 7 * 2 &&
+		//		!(camera.GetPos().x <= 0)) {
+		//		camera.Follow(Camera::dir::X, -((player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_));
+		//	}
+		//}
+		//else {
+		//	if (!camera.BossSet()) {
+		//		camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
+		//	}
+		//}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
 	{

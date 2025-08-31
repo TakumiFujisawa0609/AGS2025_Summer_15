@@ -2,13 +2,15 @@
 #include"../../../UnitBase.h"
 #include"../../../../Manager/Camera.h"
 #include"Attack/WeakBullet.h"
-#include"Attack/Laser.h"
+#include"Attack/TrackingBullet.h"
 #include"Attack/Pillar.h"
 
 Weakness::Weakness()
 {
 	bullet_ = nullptr;
 	laser_ = nullptr;
+
+	image_ = -1;
 }
 
 Weakness::~Weakness()
@@ -24,7 +26,10 @@ void Weakness::Init(Vector2F disppos, float moveSpeed)
 	Camera::CreateInstance();
 
 	//‰æ‘œ‚Ì“Ç‚Ýž‚Ý
-	image_ = LoadGraph((Application::PATH_IMAGE + "Boss/Runboo/Weakness.png").c_str());
+	if (image_ == -1)
+	{
+		image_ = LoadGraph((Application::PATH_IMAGE + "Boss/Runboo/Weakness.png").c_str());
+	}
 
 	//•Ï”‚Ì‰Šú‰»
 	cnt_ = GetRand(16.0f);
@@ -50,7 +55,7 @@ void Weakness::Init(Vector2F disppos, float moveSpeed)
 	bullet_ = new WeakBullet(moveSpeed_);
 	bullet_->Init(&unit_.pos_);
 
-	laser_ = new Laser(moveSpeed_);
+	laser_ = new TrackingBullet(moveSpeed_);
 
 	pillar_ = new Pillar(moveSpeed_);
 	//pillar_->Init(&unit_.pos_);
