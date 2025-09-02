@@ -93,7 +93,7 @@ void Nokopy::Update(void)
 void Nokopy::Draw(void)
 {
 	static Vector2F targetDrawPos = { 0,0 };
-	if (SceneManager::GetInstance().ThatsNotRight(1, targetLine_))targetDrawPos = unit_.pos_;
+	if (SceneManager::GetIns().ThatsNotRight(1, targetLine_))targetDrawPos = unit_.pos_;
 
 	if (targetLine_) {
 		DrawLine(unit_.pos_.x, unit_.pos_.y, targetPos_.x + 10, targetPos_.y + 10, GetColor(0, 255, 30));
@@ -210,7 +210,7 @@ void Nokopy::SetDamage(int dmg)
 	unit_.inviCounter_ = 30;
 
 	if (unit_.hp_ <= 0) {
-		auto& mana = SceneManager::GetInstance();
+		auto& mana = SceneManager::GetIns();
 		mana.HitStop(60);
 		mana.ZoomPos(unit_.pos_);
 		mana.ZoomScale(2.0f);

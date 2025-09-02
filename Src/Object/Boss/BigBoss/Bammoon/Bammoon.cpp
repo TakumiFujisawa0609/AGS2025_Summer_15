@@ -394,7 +394,7 @@ void Bammoon::SetDamage(int dmg)
 	}
 
 	if (unit_.hp_ <= 0) {
-		auto& mana = SceneManager::GetInstance();
+		auto& mana = SceneManager::GetIns();
 		mana.HitStop(60);
 		mana.ZoomPos(unit_.pos_);
 		mana.ZoomScale(2.0f);
@@ -452,7 +452,7 @@ void Bammoon::SetDown(Vector2F pos)
 	ChangeState(STATE::DAMAGE);
 	attackState_ = ATTACK::NON;
 	if (state_ == STATE::ATTACK) {
-		auto& mana = SceneManager::GetInstance();
+		auto& mana = SceneManager::GetIns();
 		mana.HitStop(60);
 		Vector2F point = unit_.pos_ + (pos - unit_.pos_);
 		mana.ZoomPos(point);
@@ -483,7 +483,7 @@ void Bammoon::IsGround(Collision::DIR dir)
 		if (unit_.isGround_ == false) {
 			unit_.isGround_ = true;
 			SoundManager::GetIns().Play(SoundManager::SOUND::BAMMOONLANDING, true, 200);
-			SceneManager::GetInstance().SHAKE();
+			SceneManager::GetIns().Shake();
 		}
 		break;
 	case Collision::LEFT:

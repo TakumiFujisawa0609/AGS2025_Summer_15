@@ -67,7 +67,7 @@ void Stripe::Update(void)
 				if (o.pos_.y <= SIZE_Y / 2) {
 					o.inviCounter_ = 250;
 					end_++;
-					SceneManager::GetInstance().SHAKE();
+					SceneManager::GetIns().Shake();
 				}
 			}
 		}

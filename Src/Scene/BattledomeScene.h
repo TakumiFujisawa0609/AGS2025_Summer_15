@@ -21,6 +21,7 @@ public:
 	BattledomeScene();
 	~BattledomeScene();
 
+	void Load(void)override;
 	void Init(void) override;
 	void Update(void) override;
 	void Draw(void) override;
@@ -57,6 +58,9 @@ private:
 	void LoadBamBlastImg(void);
 	void DeleteBamBlastImg(void);
 	int img_[5];
+
+
+
 };
 
 

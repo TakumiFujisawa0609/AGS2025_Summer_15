@@ -88,7 +88,7 @@ void Blast::Update(void)
 			vec = { target_.x - obj_.pos_.x,target_.y - obj_.pos_.y };
 			dis = sqrtf(vec.x * vec.x + vec.y * vec.y);
 
-			if (dis < obj_.speed_) SceneManager::GetInstance().SHAKE();
+			if (dis < obj_.speed_) SceneManager::GetIns().Shake();
 		}
 
 

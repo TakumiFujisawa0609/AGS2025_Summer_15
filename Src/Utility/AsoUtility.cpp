@@ -4,6 +4,7 @@
 #include <vector>
 #include <math.h>
 #include <cmath>
+#include<Windows.h>
 #include <DxLib.h>
 #include "AsoUtility.h"
 
@@ -578,3 +579,60 @@ void AsoUtility::DrawLineXYZ(const VECTOR& pos, const Quaternion& rot, float len
 
 
 
+void AsoUtility::LoadImg(int& handle, std::string path)
+{
+    handle = LoadGraph(path.c_str());
+    if (handle == -1) {
+        printfDx("‰æ‘œ“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½");
+    }
+}
+
+int AsoUtility::LoadImg(std::string path)
+{
+    int ret = 0;
+
+    ret = LoadGraph(path.c_str());
+    if (ret == -1) {
+        printfDx("‰æ‘œ“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½");
+    }
+
+    return ret;
+}
+
+void AsoUtility::LoadArrayImg(std::string path, int AllNum, int XNum, int YNum, int XSize, int YSize, int* handleArray)
+{
+    int err = 0;
+
+    err = LoadDivGraph(path.c_str(), AllNum, XNum, YNum, XSize, YSize, handleArray);
+
+    if (err == -1) {
+        printfDx("‰æ‘œ“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½");
+    }
+}
+
+void AsoUtility::LoadArrayImg(std::string path, int AllNum, int XNum, int YNum, int XSize, int YSize, std::vector<int>& handleArray)
+{
+    handleArray.resize(AllNum);
+
+    int err = LoadDivGraph(path.c_str(), AllNum, XNum, YNum, XSize, YSize, handleArray.data());
+
+    if (err == -1) {
+        printfDx("‰æ‘œ“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½: %s\n", path.c_str());
+        return;
+    }
+}
+
+std::string AsoUtility::WStringToSjis(const std::wstring& ws)
+{
+    int len = WideCharToMultiByte(932, 0, ws.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    if (len <= 0) return {};
+    std::string s(len - 1, '\0');
+    WideCharToMultiByte(932, 0, ws.c_str(), -1, &s[0], len, nullptr, nullptr);
+    return s;
+}
+
+void AsoUtility::DrawString_W(int x, int y, const std::wstring& ws, unsigned int color)
+{
+    std::string s = AsoUtility::WStringToSjis(ws);
+    DrawString(x, y, s.c_str(), color);
+}

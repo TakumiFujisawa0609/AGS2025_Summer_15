@@ -3,7 +3,9 @@
 #include"../Object/UnitBase.h"
 #include"../Manager/Camera.h"
 
-class Pause
+#include"SceneBase.h"
+
+class Pause : public SceneBase
 {
 public:
 
@@ -17,11 +19,11 @@ public:
 	};
 
 
-	void Load(void);
-	void Init(void);
-	void Update(void);
-	void Draw(void);
-	void Release(void);
+	void Load(void)override;
+	void Init(void)override;
+	void Update(void)override;
+	void Draw(void)override;
+	void Release(void)override;
 
 	STATE GetPauseState(void) { return pauseState_; }
 	void SetPauseState(STATE state);

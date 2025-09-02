@@ -54,7 +54,7 @@ void Score::SetScore(const float score)
 	nowScore_.newRecord_ = false;
 
 	int i = -1;
-	for (auto& r : ranking_[(int)SceneManager::GetInstance().GetNowBoss()]) {
+	for (auto& r : ranking_[(int)SceneManager::GetIns().GetNowBoss()]) {
 		i++;
 
 		if (r == -1) {
@@ -69,9 +69,9 @@ void Score::SetScore(const float score)
 			r = nowScore_.score_;
 
 			for (int j = RANKING_NUM - 1; j > i; j--) {
-				ranking_[(int)SceneManager::GetInstance().GetNowBoss()][j] = ranking_[(int)SceneManager::GetInstance().GetNowBoss()][j - 1];
+				ranking_[(int)SceneManager::GetIns().GetNowBoss()][j] = ranking_[(int)SceneManager::GetIns().GetNowBoss()][j - 1];
 			}
-			if (i < RANKING_NUM - 1) { ranking_[(int)SceneManager::GetInstance().GetNowBoss()][i + 1] = work; }
+			if (i < RANKING_NUM - 1) { ranking_[(int)SceneManager::GetIns().GetNowBoss()][i + 1] = work; }
 
 			nowScore_.rank_ = i;
 			nowScore_.newRecord_ = true;

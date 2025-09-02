@@ -9,6 +9,8 @@
 #include"../Manager/Score/Score.h"
 #include"../Manager/SoundManager.h"
 #include"../Manager/Decoration/BlastEffect/BlastEffectManager.h"
+#include"../Manager/KeyManager.h"
+
 
 #include"../Object/Stage/SelectStage/SelectStage.h"
 #include"../Object/Player/SelectPlayer/SelectPlayer.h"
@@ -23,7 +25,7 @@ BossSelect::~BossSelect()
 
 using BOSS = SceneManager::BOSS_KINDS;
 
-void BossSelect::Init()
+void BossSelect::Load()
 {
 	stage_ = new SelectStage();
 	stage_->Init();
@@ -70,15 +72,24 @@ void BossSelect::Init()
 
 	SoundManager::GetIns().Load(SoundManager::SOUND::BPHIT);
 	SoundManager::GetIns().Load(SoundManager::SOUND::SELECT);
+}
+
+void BossSelect::Init()
+{
 	SoundManager::GetIns().Play(SoundManager::SOUND::SELECT, false, 150, true);
 }
 
 void BossSelect::Update()
 {
+	if (KEY::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+		SceneManager::GetIns().ChangeScene(SceneManager::SCENE_ID::TITLE);
+		return;
+	}
+
 	player_->Update();
 	player_->SetVec(bossInfo_[(int)player_->NowSelect()].pos_);
 
-	this->Collision();
+	if (this->Collision()) { return; }
 
 	blast_->Update();
 
@@ -143,7 +154,7 @@ void BossSelect::Release()
 		DeleteGraph(boss.image_);
 		DeleteGraph(boss.thum_);
 	}
-	SoundManager::GetIns().Delete(SoundManager::SOUND::BPHIT);
+	//SoundManager::GetIns().Delete(SoundManager::SOUND::BPHIT);
 	SoundManager::GetIns().Delete(SoundManager::SOUND::SELECT);
 	Collision::DeleteInstance();
 
@@ -165,10 +176,10 @@ void BossSelect::Release()
 }
 
 
-void BossSelect::Collision()
+bool BossSelect::Collision()
 {
 	using M = SceneManager;
-	auto& sMng = M::GetInstance();
+	auto& sMng = M::GetIns();
 
 	Vector2F b = player_->GetBamboo().pos_;
 
@@ -181,10 +192,13 @@ void BossSelect::Collision()
 
 		if (dis < SelectPlayer::BAMBOO_SPEED) {
 			blast_->On(b);
-			sMng.SetBossKinds(boss.type_);
-			sMng.ChangeScene(M::SCENE_ID::BATTLEDONE);
 			SoundManager::GetIns().Play(SoundManager::SOUND::BPHIT, true);
 			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
+			sMng.SetBossKinds(boss.type_);
+			sMng.ChangeScene(M::SCENE_ID::BATTLEDONE);
+			return true;
 		}
 	}
+
+	return false;
 }

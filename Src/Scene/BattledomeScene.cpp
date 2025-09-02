@@ -2,6 +2,7 @@
 
 #include<DxLib.h>
 
+
 #include"../Manager/SceneManager.h"
 #include"../Manager/Collision.h"
 #include"../Manager/Camera.h"
@@ -9,6 +10,9 @@
 #include"../Manager/Decoration/BlastEffect/BamBlastEffect.h"
 #include"../Manager/Score/Score.h"
 #include"../Manager/SoundManager.h"
+#include"../Manager/KeyManager.h"
+
+#include"Pause.h"
 
 #include"../Object/Player/Player.h"
 #include"../Object/Bamboo/BambooManager.h"
@@ -28,7 +32,18 @@
 #include"../Object/Boss/BigBoss/Runboo/Attack/WeakBullet.h"
 
 
-BattledomeScene::BattledomeScene()
+BattledomeScene::BattledomeScene() :
+	player_(nullptr),
+	bamboo_(nullptr),
+	stage_(nullptr),
+
+	tutorial_(nullptr),
+	nokopy_(nullptr),
+	runboo_(nullptr),
+	bammoon_(nullptr),
+
+	blastMng_(nullptr),
+	bmBlast_()
 {
 }
 
@@ -36,14 +51,14 @@ BattledomeScene::~BattledomeScene()
 {
 }
 
-void BattledomeScene::Init(void)
+void BattledomeScene::Load(void)
 {
 	this->Release();
-	
+
 	time_ = 0.0f;
 
 	using M = SceneManager;
-	auto& sMng = M::GetInstance();
+	auto& sMng = M::GetIns();
 	LoadBamBlastImg();
 	player_ = new Player();
 	player_->Init();
@@ -100,15 +115,22 @@ void BattledomeScene::Init(void)
 
 	using S = SoundManager;
 	auto& sound = S::GetIns();
-	sound.Load(S::SOUND::BPHIT);
+	//sound.Load(S::SOUND::BPHIT);
 	sound.Load(S::SOUND::BATTLE);
+}
+
+
+void BattledomeScene::Init(void)
+{
+	using S = SoundManager;
+	auto& sound = S::GetIns();
 	sound.Play(SoundManager::SOUND::BATTLE, false,150,true);
 }
 
 void BattledomeScene::Update(void)
 {
 	using M = SceneManager;
-	auto& sMng = M::GetInstance();
+	auto& sMng = M::GetIns();
 
 	switch (sMng.GetNowBoss())
 	{
@@ -118,6 +140,7 @@ void BattledomeScene::Update(void)
 			Score::GetIns().SetScore(time_);
 			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
+			return;
 		}
 		break;
 	case M::BOSS_KINDS::NOKOPY:
@@ -126,6 +149,7 @@ void BattledomeScene::Update(void)
 			Score::GetIns().SetScore(time_);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
 			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
+			return;
 		}
 		break;
 	case M::BOSS_KINDS::RUNBOO:
@@ -134,6 +158,7 @@ void BattledomeScene::Update(void)
 			Score::GetIns().SetScore(time_);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
 			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
+			return;
 		}
 		break;
 	case M::BOSS_KINDS::BAMMOON:
@@ -142,6 +167,7 @@ void BattledomeScene::Update(void)
 			Score::GetIns().SetScore(time_);
 			sMng.ChangeScene(M::SCENE_ID::CLEAR);
 			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
+			return;
 		}
 		break;
 	}
@@ -154,13 +180,19 @@ void BattledomeScene::Update(void)
 		bm->Update();
 	}
 	if (player_->GetUnit().hp_ <= 0) {
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+		SceneManager::GetIns().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 		SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
 	}
 
 	UnitCollision();
 	//スクロール処理は田中に任せた
 	Scroll();
+
+
+	if (KEY::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+		SceneManager::GetIns().PushScene(std::make_shared<Pause>());
+		return;
+	}
 
 	time_ += sMng.GetDeltaTime();
 }
@@ -172,7 +204,7 @@ void BattledomeScene::Draw(void)
 	bamboo_->Draw();
 
 	using M = SceneManager;
-	auto& sMng = M::GetInstance();
+	auto& sMng = M::GetIns();
 
 	switch (sMng.GetNowBoss())
 	{
@@ -226,7 +258,7 @@ void BattledomeScene::Release(void)
 {
 	using S = SoundManager;
 	auto& sound = S::GetIns();
-	sound.Delete(S::SOUND::BPHIT);
+	//sound.Delete(S::SOUND::BPHIT);
 	sound.Delete(S::SOUND::BATTLE);
 	DeleteBamBlastImg();
 	Collision::DeleteInstance();
@@ -255,7 +287,7 @@ void BattledomeScene::Release(void)
 	}
 
 	using M = SceneManager;
-	auto& sMng = M::GetInstance();
+	auto& sMng = M::GetIns();
 
 	switch (sMng.GetNowBoss())
 	{
@@ -317,27 +349,11 @@ void BattledomeScene::Scroll(void)
 	Camera& camera = Camera::GetInstance();
 
 	using M = SceneManager;
-	auto& sMng = M::GetInstance();
+	auto& sMng = M::GetIns();
 
 	switch (sMng.GetNowBoss())
 	{
 	case SceneManager::BOSS_KINDS::TUTORIAL:
-		if (!tutorial_->GetEnCount()) {
-			if (player_->GetUnit().disppos_.x > Application::SCREEN_SIZE_X / 7 * 3 &&
-				!((camera.GetPos().x + Application::SCREEN_SIZE_X) >= TutorialStage::STAGE_CHIP_SIZE * stage_->GetMapNum().x)) {
-				camera.Follow(Camera::dir::X, (player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_);
-			}
-
-			if (player_->GetUnit().disppos_.x < Application::SCREEN_SIZE_X / 7 * 2 &&
-				!(camera.GetPos().x <= 0)) {
-				camera.Follow(Camera::dir::X, -((player_->GetState() == Player::STATE::EVASION) ? Player::EVASION_SPEED : player_->GetUnit().speed_));
-			}
-		}
-		else {
-			if (!camera.BossSet()) {
-				camera.Follow(Camera::dir::X, player_->GetUnit().speed_);
-			}
-		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
 	{
@@ -355,7 +371,7 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 	// プレイヤーの攻撃とボスの攻撃の当たり判定処理
 	auto& ins = Collision::GetInstance();
 	using M = SceneManager;
-	auto& mana = M::GetInstance().GetInstance();
+	auto& mana = M::GetIns().GetIns();
 
 
 	switch (mana.GetNowBoss())
@@ -364,7 +380,7 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 		int i = 0;
 		for (auto& at : tutorial_->GetAttackObj()) {
 			if (ins.Circle(at, player_->DefaultAtt())) {
-				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				mana.HitStop();
 				tutorial_->ObjHit(i);
 				player_->SetInvici(50);
 				switch (tutorial_->GetAttack())
@@ -383,7 +399,7 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 
 			for (auto& bpAtt : player_->GetBpAtt()) {
 				if (ins.CircleAndRect(at, bpAtt->GetObj())) {
-					mana.HitStop(SceneManager::HIT_STOP_TIME);
+					mana.HitStop();
 					tutorial_->ObjHit(i);
 					bpAtt->Hit();
 				}
@@ -400,7 +416,7 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 
 			if (nokopy_->GetObj()[i].isCircle_) {
 				if (ins.Circle(nokopy_->GetObj()[i], player_->DefaultAtt())) {
-					mana.HitStop(M::HIT_STOP_TIME);
+					mana.HitStop();
 					nokopy_->ObjHit(i);
 					bamboo_->Create(nokopy_->GetObj()[i].pos_, 1);
 					player_->SetInvici(50);
@@ -417,7 +433,7 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 
 			else {
 				if (ins.CircleAndRect(player_->DefaultAtt(), nokopy_->GetObj()[i])) {
-					mana.HitStop(M::HIT_STOP_TIME);
+					mana.HitStop();
 					nokopy_->ObjHit(i);
 					bamboo_->Create(nokopy_->GetObj()[i].pos_, 1);
 					//bamboo_->Create(boss_.GetAttackObj()[i].pos_, 3);
@@ -442,7 +458,7 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 		int i = 0;
 		for (auto& bAtc : bammoon_->GetObj()) {
 			if (ins.Circle(bAtc, player_->DefaultAtt())) {
-				mana.HitStop(mana.HIT_STOP_TIME);
+				mana.HitStop();
 				player_->SetInvici(50);
 				bammoon_->ObjHit(i);
 				bamboo_->Create(bAtc.pos_, 1,30);
@@ -459,7 +475,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 	// プレイヤーの攻撃とボスの当たり判定処理
 	auto& ins = Collision::GetInstance();
 	using M = SceneManager;
-	auto& mana = M::GetInstance().GetInstance();
+	auto& mana = M::GetIns().GetIns();
 	switch (mana.GetNowBoss())
 	{
 	case M::BOSS_KINDS::TUTORIAL:
@@ -467,12 +483,12 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			if ((tutorial_->GetAttack() == BossTutorial::ATTACK::SLASH && tutorial_->GetDrawpat() == BossTutorial::DRAWPAT::E_SLASH_START) ||
 				tutorial_->GetAttack() == BossTutorial::ATTACK::TACKLE) {
 				tutorial_->SetDown(player_->DefaultAtt().pos_);
-				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				mana.HitStop();
 				player_->SetInvici(50);
 				bamboo_->Create(tutorial_->GetUnit().pos_, 1);
 			}
 			else {
-				mana.HitStop(SceneManager::HIT_STOP_TIME);
+				mana.HitStop();
 				tutorial_->SetDamage(5);
 				bamboo_->Create(tutorial_->GetUnit().pos_, 1, 30);
 			}
@@ -480,8 +496,8 @@ void BattledomeScene::PlayerAttackToBoss(void)
 
 		for (auto& bpAtt : player_->GetBpAtt()) {
 			if (ins.Rect(bpAtt->GetObj(), tutorial_->GetUnit())) {
-				mana.HitStop(SceneManager::HIT_STOP_TIME);
-				if (bpAtt->GetPower() >= 3) { mana.SHAKE(); }
+				mana.HitStop();
+				if (bpAtt->GetPower() >= 3) { mana.Shake(); }
 				if (bpAtt->GetPower() >= 5) { mana.ZoomPos(bpAtt->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
 				bpAtt->Off();
 				tutorial_->SetDamage(bpAtt->GetDamage());
@@ -493,7 +509,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 	case M::BOSS_KINDS::NOKOPY:
 		//通常攻撃
 		if (ins.Circle(player_->DefaultAtt(), nokopy_->GetUnit())) {
-			mana.HitStop(SceneManager::HIT_STOP_TIME);
+			mana.HitStop();
 			nokopy_->SetDamage(5);
 			bamboo_->Create(nokopy_->GetUnit().pos_, 1, 30);
 			if (nokopy_->GetAttackState() == Nokopy::ATTACK::RUSHOOT) {
@@ -504,8 +520,8 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		for (auto& bpAtc : player_->GetBpAtt()) {
 			if (ins.CircleAndRect(nokopy_->GetUnit(), bpAtc->GetObj())) {
 				//if (bpAtc->GetBp() >= 3)mana.SHAKE();
-				mana.HitStop(SceneManager::HIT_STOP_TIME);
-				if (bpAtc->GetPower() >= 3) { mana.SHAKE(); }
+				mana.HitStop();
+				if (bpAtc->GetPower() >= 3) { mana.Shake(); }
 				if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
 				nokopy_->SetDamage(bpAtc->GetDamage());
 				//blastMng_->On(bpAtc->GetObj().pos_);
@@ -539,9 +555,9 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			//プレイヤーの特殊攻撃と弱点の当たり判定
 			for (auto& bpAtc : player_->GetBpAtt()) {
 				if (ins.CircleAndRect(weak->GetUnit(), bpAtc->GetObj())) {
-					if (bpAtc->GetPower() >= 4)mana.SHAKE();
+					if (bpAtc->GetPower() >= 4)mana.Shake();
 					bpAtc->Off();
-					mana.HitStop(SceneManager::HIT_STOP_TIME);
+					mana.HitStop();
 					weak->SetDamage(bpAtc->GetDamage());
 				}
 			}
@@ -554,7 +570,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		break;
 	case M::BOSS_KINDS::BAMMOON:
 		if (ins.CircleAndRect(player_->DefaultAtt(), bammoon_->GetUnit())) {
-			mana.HitStop(M::HIT_STOP_TIME);
+			mana.HitStop();
 			bammoon_->SetDamage(5);
 			bamboo_->Create(bammoon_->GetUnit().pos_, 1, 30);
 			if (bammoon_->GetAtState() == Bammoon::ATTACK::SWEEP) {
@@ -563,7 +579,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		}
 		for (auto& bpAtc : player_->GetBpAtt()) {
 			if (ins.Ellipse(bpAtc->GetObj(), bammoon_->GetUnit())) {
-				if (bpAtc->GetPower() >= 3) { mana.SHAKE(); }
+				if (bpAtc->GetPower() >= 3) { mana.Shake(); }
 				if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
 				SoundManager::GetIns().Play(SoundManager::SOUND::BPHIT, true, 200);
 				bpAtc->Off();
@@ -582,7 +598,7 @@ void BattledomeScene::PlayerToBoss(void)
 	// プレイヤーとボスの当たり判定処理
 	auto& ins = Collision::GetInstance();
 	using M = SceneManager;
-	auto& mana = M::GetInstance().GetInstance();
+	auto& mana = M::GetIns().GetIns();
 
 	switch (mana.GetNowBoss())
 	{
@@ -634,7 +650,7 @@ void BattledomeScene::PlayerToBossAttack(void)
 	// プレイヤーとボスの攻撃の当たり判定処理  
 	auto& ins = Collision::GetInstance();
 	using M = SceneManager;
-	auto& mana = M::GetInstance().GetInstance();
+	auto& mana = M::GetIns().GetIns();
 	switch (mana.GetNowBoss())
 	{
 	case M::BOSS_KINDS::TUTORIAL: {
@@ -741,7 +757,7 @@ void BattledomeScene::PlayerToBamboo(void)
 
 	auto& ins = Collision::GetInstance();
 	using M = SceneManager;
-	auto& mana = M::GetInstance().GetInstance();
+	auto& mana = M::GetIns().GetIns();
 
 	for (auto& b : bamboo_->GetBamboos()) {
 		if (ins.CircleAndRect(b->GetUnit(), player_->GetUnit(), false)) {
@@ -753,7 +769,7 @@ void BattledomeScene::PlayerToBamboo(void)
 
 	for (auto& b : player_->GetBpAtt()) {
 		if (ins.CircleAndRect(player_->DefaultAtt(), b->GetObj())) {
-			mana.HitStop(M::HIT_STOP_TIME);
+			mana.HitStop();
 			b->Parry(player_->GetUnit().pos_);
 		}
 	}

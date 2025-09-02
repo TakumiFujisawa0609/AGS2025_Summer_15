@@ -18,6 +18,11 @@ Vector2::~Vector2(void)
 {
 }
 
+void Vector2::operator=(const int value)
+{
+	x = value; y = value;
+}
+
 Vector2 Vector2::operator+(const Vector2 value)const
 {
 	return Vector2(x + value.x, y + value.y);
@@ -27,6 +32,16 @@ void Vector2::operator+=(const Vector2 value)
 {
 	x = x + value.x;
 	y = y + value.y;
+}
+
+Vector2 Vector2::operator+(const int value) const
+{
+	return Vector2(x + value, y + value);
+}
+
+void Vector2::operator+=(const int value)
+{
+	x += value; y += value;
 }
 
 Vector2 Vector2::operator-(const Vector2 value)const
@@ -40,6 +55,26 @@ void Vector2::operator-=(const Vector2 value)
 	y = y - value.y;
 }
 
+Vector2 Vector2::operator-(const int value) const
+{
+	return Vector2(x - value, y - value);
+}
+
+void Vector2::operator-=(const int value)
+{
+	x -= value; y -= value;
+}
+
+Vector2 Vector2::operator*(const Vector2 value) const
+{
+	return Vector2(x * value.x, y * value.y);
+}
+
+void Vector2::operator*=(const Vector2 value)
+{
+	x *= value.x; y *= value.y;
+}
+
 Vector2 Vector2::operator*(const int value)const
 {
 	return Vector2(x * value, y * value);
@@ -51,6 +86,16 @@ void Vector2::operator*=(const int value)
 	y = y * value;
 }
 
+Vector2 Vector2::operator/(const Vector2 value) const
+{
+	return Vector2(x / value.x, y / value.y);
+}
+
+void Vector2::operator/=(const Vector2 value)
+{
+	x /= value.x; y /= value.y;
+}
+
 Vector2 Vector2::operator/(const int value)const
 {
 	return Vector2(x / value, y / value);
@@ -60,11 +105,6 @@ void Vector2::operator/=(const int value)
 {
 	x = x / value;
 	y = y / value;
-}
-
-void Vector2::operator/=(const float value)
-{
-	x /= value; y /= value;
 }
 
 Vector2F::Vector2F(void)

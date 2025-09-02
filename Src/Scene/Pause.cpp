@@ -24,6 +24,8 @@ void Pause::Load(void)
 
 void Pause::Init(void)
 {
+	SoundManager::GetIns().AllStop();
+
 	obj_[SELECT::CONTINUE].pos_ = { 0.0f,0.0f };
 	obj_[SELECT::NEWGAME].pos_  = { 0.0f,0.0f };
 	obj_[SELECT::EXIT].pos_     = { 0.0f,0.0f };
@@ -41,11 +43,13 @@ void Pause::Init(void)
 	prevUp = nowUp = upKeyUp = downKeyUp = false;
 
 	prevDown = nowDown = upKeyDown = downKeyDown = false;
+
+
 }
 
 void Pause::Update(void)
 {
-	SceneManager& scene_ = SceneManager::GetInstance();
+	SceneManager& scene_ = SceneManager::GetIns();
 
 	startPos_.x = 0;
 	startPos_.y = 0;
@@ -62,11 +66,15 @@ void Pause::Update(void)
 	switch (select_)
 	{
 	case Pause::CONTINUE:
-		if (downKeyDecision) {
-			SetPauseState(STATE::E_UPDATE);
-			SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI, true);
-		}
 		if (downKeyDown) select_ = NEWGAME;
+
+
+		if (downKeyDecision) {
+			scene_.PopScene();
+			SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI, true);
+			SoundManager::GetIns().PausePlay();
+		}
+
 		break;
 	case Pause::NEWGAME:
 
@@ -76,16 +84,20 @@ void Pause::Update(void)
 		if (downKeyDecision)
 		{
 			pauseState_ = STATE::E_UPDATE;
-			scene_.ChangeScene(SceneManager::SCENE_ID::TITLE);
+			SoundManager::GetIns().PauseInfoDelete();
+			scene_.JumpScene(SceneManager::SCENE_ID::BATTLEDONE);
 			SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI, true);
 		}
 
 		break;
 	case Pause::EXIT:
-		if (downKeyDecision) {
-			isExit = true;
-		}
 		if (downKeyUp) select_ = NEWGAME;
+
+		if (downKeyDecision) {
+			SoundManager::GetIns().PauseInfoDelete();
+			scene_.JumpScene(SceneManager::SCENE_ID::TITLE);
+			SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI, true);
+		}
 		break;
 	}
 

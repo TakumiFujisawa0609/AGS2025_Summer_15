@@ -4,6 +4,8 @@
 
 #include"Common/Vector2.h"
 
+class FPS;
+
 class Application
 {
 
@@ -46,6 +48,8 @@ private:
 
 	// 静的インスタンス
 	static Application* instance_;
+
+	FPS* fps_;
 
 	// 初期化失敗
 	bool isInitFail_;

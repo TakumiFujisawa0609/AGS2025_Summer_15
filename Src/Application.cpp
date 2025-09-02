@@ -2,7 +2,9 @@
 #include<EffekseerForDXLib.h>
 
 #include "Manager/InputManager.h"
+#include"Manager/KeyManager.h"
 #include "Manager/SceneManager.h"
+#include"Manager/FPS/FPS.h"
 #include"Manager/Score/Score.h"
 #include "Application.h"
 #include"Manager/Decoration/EffectManager.h"
@@ -52,13 +54,18 @@ void Application::Init(void)
 
 	// キー制御初期化
 	SetUseDirectInputFlag(true);
+	KEY::CreateIns();
 	InputManager::CreateInstance();
 
 	// リソース管理初期化
 	EffectManager::CreateInstance();
 
 	// シーン管理初期化
-	SceneManager::CreateInstance();
+	SceneManager::CreateIns();
+
+	// FPS初期化
+	fps_ = new FPS;
+	fps_->Init();
 
 	// サウンド初期化
 	SoundManager::CreateIns();
@@ -72,15 +79,21 @@ void Application::Run(void)
 {
 
 	auto& inputManager = InputManager::GetInstance();
-	auto& sceneManager = SceneManager::GetInstance();
+	auto& sceneManager = SceneManager::GetIns();
 	// ゲームループ
-	while (ProcessMessage() == 0 && !sceneManager.GetExit())
+	while (ProcessMessage() == 0)
 	{
+		// フレームレート更新
+		// 1/60秒経過していないなら再ループさせる
+		if (!fps_->UpdateFrameRate()) continue;
 
 		inputManager.Update();
+		KEY::GetIns().Update();
 		sceneManager.Update();
+		fps_->CalcFrameRate();	// フレームレート計算
 
 		sceneManager.Draw();
+		//fps_->DrawFrameRate();	// フレームレート描画
 
 		ScreenFlip();
 
@@ -92,8 +105,10 @@ void Application::Destroy(void)
 {
 	Score::DeleteIns();
 	SoundManager::DeleteIns();
+
+	KEY::DeleteIns();
 	InputManager::GetInstance().Destroy();
-	SceneManager::GetInstance().Destroy();
+	SceneManager::DeleteIns();
 	
 	Effkseer_End();
 

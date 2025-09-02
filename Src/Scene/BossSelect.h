@@ -14,6 +14,7 @@ public:
 	BossSelect();
 	~BossSelect();
 
+	void Load(void)override;
 	void Init(void) override;
 	void Update(void) override;
 	void Draw(void) override;
@@ -42,7 +43,7 @@ private:
 	Vector2F nowSelectPos_;
 	int nowSelectCount_;
 
-	void Collision(void);
+	bool Collision(void);
 
 	int comingSoon_;
 };

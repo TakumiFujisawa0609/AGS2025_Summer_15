@@ -10,6 +10,7 @@ public:
 	// デストラクタ
 	~GameOverScene(void);
 
+	void Load(void)override;
 	void Init(void) override;
 	void Update(void) override;
 	void Draw(void) override;

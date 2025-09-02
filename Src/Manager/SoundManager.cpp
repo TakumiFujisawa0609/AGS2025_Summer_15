@@ -76,6 +76,11 @@ void SoundManager::PausePlay(void)
 	}
 }
 
+void SoundManager::PauseInfoDelete(void)
+{
+	for (auto& sound : sounds_) { sound.paused_ = false; }
+}
+
 void SoundManager::Delete(SOUND s)
 {
 	// ’†g‚ª‚È‚©‚Á‚½‚ç‘ŠúƒŠƒ^[ƒ“

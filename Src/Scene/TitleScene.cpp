@@ -18,33 +18,39 @@ TitleScene::~TitleScene(void)
 {
 }
 
-void TitleScene::Init(void)
+void TitleScene::Load(void)
 {
 	image_ = LoadGraph("Data/Image/Title.png");
 
-	using S = SoundManager;
-	auto& sound = S::GetIns();
-	sound.Load(S::SOUND::BGM1);
-	sound.Play(S::SOUND::BGM1, false, 100, true);
+	SoundManager::GetIns().Load(SoundManager::SOUND::BGM1);
+}
+
+void TitleScene::Init(void)
+{
+	SoundManager::GetIns().Play(SoundManager::SOUND::BGM1, false, 100, true);
 }
 
 void TitleScene::Update(void)
 {
-	auto& scnM = SceneManager::GetInstance();
+	auto& scnM = SceneManager::GetIns();
 
 	// ÉVÅ[ÉìëJà⁄
 	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
-		scnM.SetController(SceneManager::CNTL::KEY);
+		//scnM.SetController(SceneManager::CNTL::KEY);
 		scnM.ChangeScene(SceneManager::SCENE_ID::BOSSSELECT);
+		return;
 	}
 
 	if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
 	{
-		scnM.SetController(SceneManager::CNTL::PAD);
+		//scnM.SetController(SceneManager::CNTL::PAD);
 		scnM.ChangeScene(SceneManager::SCENE_ID::BOSSSELECT);
+		return;
 	}
+
+	if (CheckHitKey(KEY_INPUT_0)) { scnM.ChangeScene(SceneManager::SCENE_ID::TUTORIAL); return; }
 }
 
 void TitleScene::Draw(void)

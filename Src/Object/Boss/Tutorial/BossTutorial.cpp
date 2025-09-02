@@ -375,7 +375,7 @@ void BossTutorial::IsGround(Collision::DIR dir)
 
 		if (unit_.isGround_==false) {
 			unit_.isGround_ = true;
-			SceneManager::GetInstance().SHAKE();
+			SceneManager::GetIns().Shake();
 			SoundManager::GetIns().Play(SoundManager::SOUND::TUTORIALLANDING,true,200);
 		}
 		unit_.isGravity_ = false;
@@ -714,7 +714,7 @@ AttackBase* BossTutorial::GetAttackIns(void)
 
 void BossTutorial::Death()
 {
-	auto& scene_ = SceneManager::GetInstance();
+	auto& scene_ = SceneManager::GetIns();
 
 	diedCounter++;
 	unit_.isGravity_ = false;

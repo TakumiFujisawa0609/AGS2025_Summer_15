@@ -135,6 +135,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\Manager\Decoration\BlastEffect\BamBlastEffect.cpp" />
+    <ClCompile Include="Src\Manager\FPS\FPS.cpp" />
+    <ClCompile Include="Src\Manager\KeyManager.cpp" />
+    <ClCompile Include="Src\Manager\Loading\Loading.cpp" />
     <ClCompile Include="Src\Manager\Score\Score.cpp" />
     <ClCompile Include="Src\Manager\SoundManager.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Spine.cpp" />
@@ -177,6 +180,18 @@
     <ClCompile Include="Src\Scene\BattledomeScene.cpp" />
     <ClCompile Include="Src\Scene\BossSelect.cpp" />
     <ClCompile Include="Src\Scene\Pause.cpp" />
+    <ClCompile Include="Src\Scene\Tutorial\Object\TutorialMaster\TutorialMaster.cpp" />
+    <ClCompile Include="Src\Scene\Tutorial\Object\TutorialPlayer\TutorialPlayer.cpp" />
+    <ClCompile Include="Src\Scene\Tutorial\Object\TutorialTask\Task1\Object\Kakashi.cpp" />
+    <ClCompile Include="Src\Scene\Tutorial\Object\TutorialTask\Task1\Task1.cpp" />
+    <ClCompile Include="Src\Scene\Tutorial\Object\TutorialTask\Task3\Object\Kakashi3.cpp" />
+    <ClCompile Include="Src\Scene\Tutorial\Object\TutorialTask\Task3\Object\Mato.cpp" />
+    <ClCompile Include="Src\Scene\Tutorial\Object\TutorialTask\Task3\Task3.cpp" />
+    <ClCompile Include="Src\Scene\Tutorial\Object\TutorialTask\Task4\Object\Kakashi4.cpp" />
+    <ClCompile Include="Src\Scene\Tutorial\Object\TutorialTask\Task4\Task4.cpp" />
+    <ClCompile Include="Src\Scene\Tutorial\Object\TutorialTask\TaskBase.cpp" />
+    <ClCompile Include="Src\Scene\Tutorial\Object\TutorialTask\TutorialTaskManager.cpp" />
+    <ClCompile Include="Src\Scene\Tutorial\TutorialScene.cpp" />
     <ClCompile Include="Src\Utility\ShapesPosition.cpp" />
     <ClCompile Include="Src\Manager\Collision.cpp" />
     <ClCompile Include="Src\Object\Player\Player.cpp" />
@@ -201,6 +216,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Manager\Decoration\BlastEffect\BamBlastEffect.h" />
+    <ClInclude Include="Src\Manager\FPS\FPS.h" />
+    <ClInclude Include="Src\Manager\KeyManager.h" />
+    <ClInclude Include="Src\Manager\Loading\Loading.h" />
     <ClInclude Include="Src\Manager\Score\Score.h" />
     <ClInclude Include="Src\Manager\SoundManager.h" />
     <ClInclude Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Spine.h" />
@@ -245,6 +263,19 @@
     <ClInclude Include="Src\Scene\BossSelect.h" />
     <ClInclude Include="Src\Scene\Pause.h" />
     <ClInclude Include="Src\Scene\TitleScene.h" />
+    <ClInclude Include="Src\Scene\Tutorial\Object\TutorialMaster\TutorialMaster.h" />
+    <ClInclude Include="Src\Scene\Tutorial\Object\TutorialPlayer\TutorialPlayer.h" />
+    <ClInclude Include="Src\Scene\Tutorial\Object\TutorialTask\Task1\Object\Kakashi.h" />
+    <ClInclude Include="Src\Scene\Tutorial\Object\TutorialTask\Task1\Task1.h" />
+    <ClInclude Include="Src\Scene\Tutorial\Object\TutorialTask\Task3\Object\Kakashi3.h" />
+    <ClInclude Include="Src\Scene\Tutorial\Object\TutorialTask\Task3\Object\Mato.h" />
+    <ClInclude Include="Src\Scene\Tutorial\Object\TutorialTask\Task3\Task3.h" />
+    <ClInclude Include="Src\Scene\Tutorial\Object\TutorialTask\Task4\Object\Kakashi4.h" />
+    <ClInclude Include="Src\Scene\Tutorial\Object\TutorialTask\Task4\Task4.h" />
+    <ClInclude Include="Src\Scene\Tutorial\Object\TutorialTask\TaskBase.h" />
+    <ClInclude Include="Src\Scene\Tutorial\Object\TutorialTask\TutorialObject.h" />
+    <ClInclude Include="Src\Scene\Tutorial\Object\TutorialTask\TutorialTaskManager.h" />
+    <ClInclude Include="Src\Scene\Tutorial\TutorialScene.h" />
     <ClInclude Include="Src\Utility\ShapesPosition.h" />
     <ClInclude Include="Src\Manager\Collision.h" />
     <ClInclude Include="Src\Object\Common\Base.h" />

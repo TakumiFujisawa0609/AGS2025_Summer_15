@@ -1,12 +1,16 @@
 #include "SceneManager.h"
-#include"../Manager/SoundManager.h"
 #include <chrono>
 #include<EffekseerForDXLib.h>
 
 #include "../Common/Fader.h"
 #include "Camera.h"
 
+#include"Loading/Loading.h"
+
+#include"../Manager/SoundManager.h"
+
 #include "../Scene/TitleScene.h"
+#include"../Scene/Tutorial/TutorialScene.h"
 #include"../Scene/BossSelect.h"
 #include"../Scene/BattledomeScene.h"
 #include "../Scene/GameClear.h"
@@ -14,95 +18,56 @@
 #include "../Scene/Pause.h"
 
 
-SceneManager* SceneManager::instance_ = nullptr;
+SceneManager* SceneManager::ins_ = nullptr;
 
-void SceneManager::CreateInstance()
+
+SceneManager::SceneManager(void):
+
+	sceneId_(SCENE_ID::NONE),
+	deltaTime_(1.0f/60)
 {
-	if (instance_ == nullptr)
-	{
-		instance_ = new SceneManager();
-		instance_->Init();
-	}
 }
 
-SceneManager& SceneManager::GetInstance(void)
-{
-	return *instance_;
-}
+
 
 void SceneManager::Init(void)
 {
 
 	sceneId_ = SCENE_ID::TITLE;
-	waitSceneId_ = SCENE_ID::NONE;
-	cntl_ = CNTL::NONE;
 
-	fader_ = new Fader();
-	fader_->Init();
-
-	pause_ = new Pause();
-	pause_->Load();
+	// ロード画面生成
+	Loading::GetInstance()->CreateInstance();
+	Loading::GetInstance()->Init();
+	Loading::GetInstance()->Load();
 
 	SoundManager::GetIns().Load(SoundManager::HIBIODOSI);
 	SoundManager::GetIns().Load(SoundManager::SISIODOSI);
+	SoundManager::GetIns().Load(SoundManager::BPHIT);
 
 	// カメラ
 	Camera::CreateInstance();
 	Camera::GetInstance().Init();
 
+	//メイクスクリーン
+	mainScreen_ = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
 
 	//注視点を初期化-----------------
 	zoomPos_ = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
 	scale_ = 1.0f;
 	//--------------------------------
 
-	isSceneChanging_ = false;
-
-
-	//メイクスクリーン
-	mainScreen_ = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, true);
 
 	// デルタタイム
 	preTime_ = std::chrono::system_clock::now();
 
-	// 3D用の設定
-	Init3D();
-
-	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::TITLE);
-
+	ChangeScene(SCENE_ID::TITLE);
 }
 
-void SceneManager::Init3D(void)
-{
-
-	// 背景色設定
-	SetBackgroundColor(0, 0, 0);
-
-	// Zバッファを有効にする
-	SetUseZBuffer3D(true);
-
-	// Zバッファへの書き込みを有効にする
-	SetWriteZBuffer3D(true);
-
-	// バックカリングを有効にする
-	SetUseBackCulling(true);
-
-	// ライトの設定
-	SetUseLighting(true);
-
-	// 正面から斜め下に向かったライト
-	ChangeLightTypeDir({ 0.00f, -1.00f, 1.00f });
-
-}
 
 void SceneManager::Update(void)
 {
-
-	if (scene_ == nullptr)
-	{
-		return;
-	}
+	// シーンがなければ終了
+	if (scenes_.empty()) { return; }
 
 	// デルタタイム
 	auto nowTime = std::chrono::system_clock::now();
@@ -110,91 +75,67 @@ void SceneManager::Update(void)
 		std::chrono::duration_cast<std::chrono::nanoseconds>(nowTime - preTime_).count() / 1000000000.0);
 	preTime_ = nowTime;
 
-	fader_->Update();
-	if (isSceneChanging_)
+
+	// ロード中
+	if (Loading::GetInstance()->IsLoading())
 	{
-		Fade();
+		// ロード更新
+		Loading::GetInstance()->Update();
+
+		// ロードの更新が終了していたら
+		if (Loading::GetInstance()->IsLoading() == false)
+		{
+			// ロード後の初期化
+			scenes_.back()->Init();
+		}
 	}
+	// 通常の更新処理
 	else
 	{
-
-
-		Pause::STATE state = pause_->GetPauseState();
-
-		static int prev = 0;
-		static int now = 0;
-
-		prev = now;
-		now = CheckHitKey(KEY_INPUT_ESCAPE);
-
-		if (prev == 1 && now == 0) {
-			pause_->SetPauseState(Pause::STATE::E_PAUSE);
-			SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI);
+		//ヒットストップ-----------------
+		if (hitStopCounter_ > 0) { hitStopCounter_--; return; }
+		//スロー--------------------------
+		if (slowCounter_ > 0) {
+			slowCounter_--;
+			if (slowCounter_ % 5 != 0) { return; }
 		}
-		switch (state)
-		{
-		case Pause::STATE::E_PAUSE:
-			pause_->Update();
-			break;
-		case Pause::STATE::E_UPDATE:
-			pause_->Init();
-
-			//ヒットストップ-----------------
-			if (hitStopCounter_ > 0) {
-				hitStopCounter_--;
-				return;
-			}
-			//スロー--------------------------
-			if (slowCounter_ > 0) {
-				slowCounter_--;
-				if (slowCounter_ % 5 != 0) {
-					return;
-				}
-			}
-			//注視点を初期化-----------------
-			zoomPos_ = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
-			scale_ = 1.0f;
-			//--------------------------------
-
-			scene_->Update();
-			break;
-		}
-
+		//注視点を初期化-----------------
+		zoomPos_ = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
+		scale_ = 1.0f;
+		//--------------------------------
+		
+		// 現在のシーンの更新
+		scenes_.back()->Update();
 	}
-
-
 
 }
 
 void SceneManager::Draw(void)
 {
-	
 	// 描画先グラフィック領域の指定
-	// (３Ｄ描画で使用するカメラの設定などがリセットされる)
 	SetDrawScreen(mainScreen_);
 
 	// 画面を初期化
 	ClearDrawScreen();
 
-	// カメラ更新
-	Camera::GetInstance().Set();
 	UpdateEffekseer2D();
 
-	Pause::STATE state = pause_->GetPauseState();
-
 	// 描画
-	scene_->Draw();
-
-	switch (state)
+	// ロード中ならロード画面を描画
+	if (Loading::GetInstance()->IsLoading())
 	{
-	case Pause::STATE::E_PAUSE:
-		pause_->Draw();
-		break;
-	case Pause::STATE::E_UPDATE:
-		break;
+		// ロードの描画
+		Loading::GetInstance()->Draw();
 	}
-
-	//DrawEffekseer2D();
+	// 通常の更新
+	else
+	{
+		// 積まれているもの全てを描画する
+		for (auto& scene : scenes_)
+		{
+			scene->Draw();
+		}
+	}
 
 	SetDrawScreen(DX_SCREEN_BACK);
 	ClearDrawScreen();
@@ -204,85 +145,163 @@ void SceneManager::Draw(void)
 	vPos = { zoomPos_.x - Application::SCREEN_SIZE_X / 2, zoomPos_.y - Application::SCREEN_SIZE_Y / 2 };
 	dPos = { Application::SCREEN_SIZE_X / 2 - vPos.x,Application::SCREEN_SIZE_Y / 2 - vPos.y };
 
+	Vector2 s = ShakePoint();
 
-	int shake = 0;
-	if (shakeCounter_ > 0) {
-		shakeCounter_--;
-
-		shake = shakeCounter_ / 3 % 2;
-		shake *= 2;
-		shake -= 1;
-		shake *= 2;
-		DrawRotaGraph(dPos.x, dPos.y, scale_, 0, mainScreen_, true);
-	}
-
-	DrawRotaGraph(dPos.x+shake, dPos.y+shake, scale_, 0, mainScreen_, true);
-
-	// 暗転・明転
-	fader_->Draw();
-
+	DrawRotaGraph(dPos.x + s.x, dPos.y + s.y, scale_, 0, mainScreen_, true);
 }
 
 void SceneManager::Destroy(void)
 {
-
-	scene_->Release();
-	delete scene_;
-
-	pause_->Release();
-	delete pause_;
+	//全てのシーンの解放・削除
+	for (auto& scene : scenes_) { scene->Release(); }
+	scenes_.clear();
 
 	SoundManager::GetIns().Delete(SoundManager::SOUND::SISIODOSI);
 	SoundManager::GetIns().Delete(SoundManager::SOUND::HIBIODOSI);
+	SoundManager::GetIns().Delete(SoundManager::SOUND::BPHIT);
 	DeleteGraph(mainScreen_);
 
+	// ロード画面の削除
+	Loading::GetInstance()->Release();
+	Loading::GetInstance()->DeleteInstance();
 	
-	delete fader_;
-
-	delete instance_;
-
 	Camera::DeleteInstance();
-
 }
 
-void SceneManager::ChangeScene(SCENE_ID nextId)
+
+// 状態遷移関数
+void SceneManager::ChangeScene(std::shared_ptr<SceneBase>scene)
 {
+	// シーンが空か？
+	if (scenes_.empty())
+	{
+		//空なので新しく入れる
+		scenes_.push_back(scene);
+	}
+	else
+	{
+		//末尾のものを新しい物に入れ替える
+ 		scenes_.back()->Release();
+		scenes_.back() = scene;
+	}
 
-	// フェード処理が終わってからシーンを変える場合もあるため、
-	// 遷移先シーンをメンバ変数に保持
-	waitSceneId_ = nextId;
-
-	// フェードアウト(暗転)を開始する
-	fader_->SetFade(Fader::STATE::FADE_OUT);
-	isSceneChanging_ = true;
-
+	// 読み込み(非同期)
+	Loading::GetInstance()->StartAsyncLoad();
+	scenes_.back()->Load();
+	Loading::GetInstance()->EndAsyncLoad();
 }
 
-SceneManager::SCENE_ID SceneManager::GetSceneID(void)
+void SceneManager::ChangeScene(SCENE_ID scene)
 {
-	return sceneId_;
+	switch (scene)
+	{
+	case SCENE_ID::TITLE:
+		ChangeScene(std::make_shared<TitleScene>());
+		break;
+	case SCENE_ID::TUTORIAL:
+		ChangeScene(std::make_shared<TutorialScene>());
+		break;
+	case SCENE_ID::BOSSSELECT:
+		ChangeScene(std::make_shared< BossSelect>());
+		break;
+	case SCENE_ID::BATTLEDONE:
+		ChangeScene(std::make_shared<BattledomeScene>());
+		break;
+	case SCENE_ID::CLEAR:
+		ChangeScene(std::make_shared<GameClear>());
+		break;
+	case SCENE_ID::GAMEOVER:
+		ChangeScene(std::make_shared<GameOverScene>());
+		break;
+	default:
+		break;
+	}
 }
 
-float SceneManager::GetDeltaTime(void) const
+void SceneManager::PushScene(std::shared_ptr<SceneBase> scene)
 {
-	//return 1.0f / 60.0f;
-	return deltaTime_;
+	//新しく積むのでもともと入っている奴はまだ削除されない
+	scenes_.push_back(scene);
+	scenes_.back()->Load();
+	scenes_.back()->Init();
 }
 
-const SceneManager::CNTL SceneManager::GetController(void) const
+void SceneManager::PushScene(SCENE_ID scene)
 {
-	return cntl_;
+	switch (scene)
+	{
+	case SCENE_ID::TITLE:
+		PushScene(std::make_shared<TitleScene>());
+		break;
+	case SCENE_ID::TUTORIAL:
+		PushScene(std::make_shared<TutorialScene>());
+		break;
+	case SCENE_ID::BOSSSELECT:
+		PushScene(std::make_shared< BossSelect>());
+		break;
+	case SCENE_ID::BATTLEDONE:
+		PushScene(std::make_shared<BattledomeScene>());
+		break;
+	case SCENE_ID::CLEAR:
+		PushScene(std::make_shared<GameClear>());
+		break;
+	case SCENE_ID::GAMEOVER:
+		PushScene(std::make_shared<GameOverScene>());
+		break;
+	default:
+		break;
+	}
 }
 
-void SceneManager::SetController(const CNTL _cntl)
+void SceneManager::PopScene(void)
 {
-	cntl_ = _cntl;
+	//積んであるものを消して、もともとあったものを末尾にする
+	if (scenes_.size() > 1)
+	{
+		scenes_.back()->Release();
+		scenes_.pop_back();
+	}
 }
 
-bool SceneManager::GetExit(void)
+void SceneManager::JumpScene(std::shared_ptr<SceneBase> scene)
 {
-	return pause_->GetExit();
+	// 全て解放
+	for (auto& scene : scenes_) { scene->Release(); }
+	scenes_.clear();
+
+	// 新しく積む
+	ChangeScene(scene);
 }
+
+void SceneManager::JumpScene(SCENE_ID scene)
+{
+	switch (scene)
+	{
+	case SCENE_ID::TITLE:
+		JumpScene(std::make_shared<TitleScene>());
+		break;
+	case SCENE_ID::TUTORIAL:
+		JumpScene(std::make_shared<TutorialScene>());
+		break;
+	case SCENE_ID::BOSSSELECT:
+		JumpScene(std::make_shared< BossSelect>());
+		break;
+	case SCENE_ID::BATTLEDONE:
+		JumpScene(std::make_shared<BattledomeScene>());
+		break;
+	case SCENE_ID::CLEAR:
+		JumpScene(std::make_shared<GameClear>());
+		break;
+	case SCENE_ID::GAMEOVER:
+		JumpScene(std::make_shared<GameOverScene>());
+		break;
+	default:
+		break;
+	}
+}
+
+
+
 
 bool SceneManager::ThatsNotRight(int classId,int i)
 {
@@ -291,102 +310,52 @@ bool SceneManager::ThatsNotRight(int classId,int i)
 	return perValues[classId] != nowValues[classId];
 }
 
-SceneManager::SceneManager(void)
-{
-
-	sceneId_ = SCENE_ID::NONE;
-	waitSceneId_ = SCENE_ID::NONE;
-
-	scene_ = nullptr;
-	fader_ = nullptr;
-	pause_ = nullptr;
-
-	isSceneChanging_ = false;
-
-	// デルタタイム
-	deltaTime_ = 1.0f / 60.0f;
-
-	
-}
-
 void SceneManager::ResetDeltaTime(void)
 {
 	deltaTime_ = 0.016f;
 	preTime_ = std::chrono::system_clock::now();
 }
 
-void SceneManager::DoChangeScene(SCENE_ID sceneId)
+
+void SceneManager::Shake(ShakeKinds kinds, ShakeSize size, int time)
 {
-
-	// シーンを変更する
-	sceneId_ = sceneId;
-
-	// 現在のシーンを解放
-	if (scene_ != nullptr)
-	{
-		scene_->Release();
-		delete scene_;
-	}
-
-	switch (sceneId_)
-	{
-	case SCENE_ID::TITLE:
-		scene_ = new TitleScene();
-		break;
-		
-	case SCENE_ID::BOSSSELECT:
-		scene_ = new BossSelect();
-		break;
-
-	case SCENE_ID::BATTLEDONE:
-		scene_ = new BattledomeScene();
-		break;
-
-	case SCENE_ID::CLEAR:
-		scene_ = new GameClear();
-		break;
-
-	case SCENE_ID::GAMEOVER:
-		scene_ = new GameOverScene();
-		break;
-	}
-
-	scene_->Init();
-
-	ResetDeltaTime();
-
-	waitSceneId_ = SCENE_ID::NONE;
-
+	if ((abs(shake_ - time) > 10) || shake_ <= 0)shake_ = time;
+	shakeKinds_ = kinds;
+	shakeSize_ = size;
 }
 
-void SceneManager::Fade(void)
+Vector2 SceneManager::ShakePoint(void)
 {
+	Vector2 ret = {};
 
-	Fader::STATE fState = fader_->GetState();
-	switch (fState)
-	{
-	case Fader::STATE::FADE_IN:
-		// 明転中
-		if (fader_->IsEnd())
+	if (shake_ > 0) {
+		int size = shake_ / 5 % 2;
+		size *= 2;
+		size -= 1;
+		switch (shakeKinds_)
 		{
-			// 明転が終了したら、フェード処理終了
-			fader_->SetFade(Fader::STATE::NONE);
-			isSceneChanging_ = false;
+		case SceneManager::WID:ret.x = size;
+			break;
+		case SceneManager::HIG:ret.y = size;
+			break;
+		case SceneManager::DIAG:ret = size;
+			break;
+		case SceneManager::ROUND:
+			size = shake_ / 3 % 12; size++;
+			ret = { (int)((shakeSize_ * 1.5f) * cos(size * 30.0f)),(int)((shakeSize_ * 1.5f) * sin(size * 30.0f)) };
+			break;
 		}
-		break;
-	case Fader::STATE::FADE_OUT:
-		// 暗転中
-		if (fader_->IsEnd())
-		{
-			// 完全に暗転してからシーン遷移
-			DoChangeScene(waitSceneId_);
-			// 暗転から明転へ
-			fader_->SetFade(Fader::STATE::FADE_IN);
-		}
-		break;
+
+		if (shakeKinds_ != ShakeKinds::ROUND) { ret *= shakeSize_; }
+
+		DrawGraph(0, 0, mainScreen_, true);
+
+		shake_--;
 	}
 
+	return ret;
 }
+
 
 void SceneManager::ZoomCtr(void)
 {
@@ -420,5 +389,3 @@ void SceneManager::ZoomCtr(void)
 		zoomPos_.y -= ((worldZoomPos.y + drawRange.y) - (StageBase::STAGE_CHIP_SIZE * mapNum_.y));
 	}
 }
-
-

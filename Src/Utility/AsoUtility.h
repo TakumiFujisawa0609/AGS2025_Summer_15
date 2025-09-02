@@ -131,6 +131,18 @@ public:
 		E_DIR_MAX,
 	};
 
+	// 画像読み込み（エラーチェック付き）
+	static void LoadImg(int& handle, std::string path);
+	// 画像読み込み（エラーチェック付き）
+	static int LoadImg(std::string path);
+	// スプライト画像読み込み（エラーチェック付き）
+	static void LoadArrayImg(std::string path, int AllNum, int XNum, int YNum, int XSize, int YSize, int* handleArray);
+	static void LoadArrayImg(std::string path, int AllNum, int XNum, int YNum, int XSize, int YSize, std::vector<int>& handleArray);
 
+
+
+	static std::string WStringToSjis(const std::wstring& ws);
+
+	static void DrawString_W(int x, int y, const std::wstring& ws, unsigned int color);
 };
 

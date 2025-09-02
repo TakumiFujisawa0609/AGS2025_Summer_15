@@ -18,15 +18,41 @@ public:
 
 	//ââéZ
 
+	// ë„ì¸---------------------------------------
+	void operator=(const int value);
+	//--------------------------------------------
+
+	// â¡éZ---------------------------------------
 	Vector2 operator+(const Vector2 value)const;
 	void operator+=(const Vector2 value);
+
+	Vector2 operator+(const int value)const;
+	void operator+=(const int value);
+	//--------------------------------------------
+
+	// å∏éZ---------------------------------------
 	Vector2 operator-(const Vector2 value)const;
 	void operator-=(const Vector2 value);
+
+	Vector2 operator-(const int value)const;
+	void operator-=(const int value);
+	//--------------------------------------------
+
+	// èÊéZ---------------------------------------
+	Vector2 operator*(const Vector2 value)const;
+	void operator*=(const Vector2 value);
+
 	Vector2 operator*(const int value)const;
 	void operator*=(const int value);
+	//--------------------------------------------
+
+	// èúéZ---------------------------------------
+	Vector2 operator/(const Vector2 value)const;
+	void operator/=(const Vector2 value);
+
 	Vector2 operator/(const int value)const;
 	void operator/=(const int value);
-	void operator/=(const float value);
+	//--------------------------------------------
 };
 
 class Vector2F

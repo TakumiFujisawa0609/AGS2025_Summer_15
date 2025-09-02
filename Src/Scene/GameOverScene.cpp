@@ -12,9 +12,13 @@ GameOverScene::~GameOverScene(void)
 {
 }
 
-void GameOverScene::Init(void)
+void GameOverScene::Load(void)
 {
 	image_ = LoadGraph("Data/Image/GameOver.png");
+}
+
+void GameOverScene::Init(void)
+{
 }
 
 void GameOverScene::Update(void)
@@ -28,7 +32,7 @@ void GameOverScene::Update(void)
 
 	if ((ins.IsTrgDown(KEY_INPUT_SPACE)) || (padKey_))
 	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+		SceneManager::GetIns().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
 }
 

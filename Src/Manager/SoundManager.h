@@ -91,6 +91,12 @@ public:
 	void PausePlay(void);
 
 	/// <summary>
+	/// AllStop()で一時停止したサウンドのポーズ情報を破棄する
+	/// </summary>
+	/// <param name=""></param>
+	void PauseInfoDelete(void);
+
+	/// <summary>
 	/// 指定したサウンドを消去
 	/// </summary>
 	/// <param name="s">種類</param>

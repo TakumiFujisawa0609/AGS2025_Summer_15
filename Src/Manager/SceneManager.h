@@ -1,4 +1,8 @@
 #pragma once
+
+#include<memory>
+#include<list>
+
 #include<map>
 #include<DxLib.h>
 #include <chrono>
@@ -7,76 +11,98 @@
 
 class SceneBase;
 class Fader;
-class Pause;
 
 class SceneManager
 {
-
 public:
-
-	static constexpr float STICK_START_POW = 0.5f;
-	static constexpr int HIT_STOP_TIME = 5;
-
-
 	// シーン管理用
 	enum class SCENE_ID
 	{
 		NONE = -1,
 		TITLE,
+		TUTORIAL,
 		BOSSSELECT,
 		BATTLEDONE,
-		GAMEOVER,
 		CLEAR,
+		GAMEOVER,
 	};
 
+public:
+
+	static void CreateIns(void) { if (ins_ == nullptr) { ins_ = new SceneManager(); ins_->Init(); } }
+	static SceneManager& GetIns(void) { return *ins_; }
+	static void DeleteIns(void) { if (ins_ != nullptr) { ins_->Destroy(); delete ins_; ins_ = nullptr; } }
+
+private:
+
+	SceneManager(void);
+	SceneManager(const SceneManager&);
+	~SceneManager(void) = default;
 
 
-	enum class CNTL
-	{
-		NONE,
-		KEY,
-		PAD,
-	};
-	
-	// インスタンスの生成
-	static void CreateInstance(void);
+	// インスタンス
+	static SceneManager* ins_;
 
-	// インスタンスの取得
-	static SceneManager& GetInstance(void);
-
+	// 生成時初期化
 	void Init(void);
-	void Init3D(void);
-	void Update(void);
-	void Draw(void);
 
 	// リソースの破棄
 	void Destroy(void);
 
+public:
+
+	void Update(void);
+	void Draw(void);
+
+
 	// 状態遷移
-	void ChangeScene(SCENE_ID nextId);
+	void ChangeScene(std::shared_ptr<SceneBase>scene);
+	void ChangeScene(SCENE_ID scene);
+
+	// シーンを新しく積む
+	void PushScene(std::shared_ptr<SceneBase>scene);
+	void PushScene(SCENE_ID scene);
+
+	// 最後に追加したシーンを削除する。
+	void PopScene(void);
+
+	// 強制的に特定のシーンに飛ぶ。リセットをかけ特定のシーンのみにする。
+	void JumpScene(std::shared_ptr<SceneBase>scene);
+	void JumpScene(SCENE_ID scene);
+
 
 	// シーンIDの取得
-	SCENE_ID GetSceneID(void);
+	SCENE_ID GetSceneID(void) { return sceneId_; }
+
+
+
 
 	// デルタタイムの取得
-	float GetDeltaTime(void) const;
+	float GetDeltaTime(void) const { return deltaTime_; }
 
-	//操作種別の取得・設定
-	const CNTL GetController(void)const;
-	void SetController(const CNTL _cntl);
+	// 演出～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+	void Slow(int time = 10, int inter = 5) { slowCounter_ = time; }
 
+	void HitStop(int stopTime = 5) { hitStopCounter_ = stopTime; }
 
-	void Slow(void) { if (slowCounter_ >= 0) { slowCounter_ = SLOW_TIME; } }
-	void HitStop(int stopTime) { hitStopCounter_ = stopTime; }
-	void SHAKE(void) { shakeCounter_ = SHAKE_TIME; }
+	// 画面揺れの種類
+	enum ShakeKinds { WID/*横揺れ*/, HIG/*縦揺れ*/, DIAG/*斜め揺れ*/, ROUND/*くるくる*/ };
+	// 画面揺れの大きさ
+	enum ShakeSize { SMALL = 3/*小さく*/, MEDIUM = 5/*中くらい*/, BIG = 8, /*大きく*/ };
+
+	/// <summary>
+	/// 画面揺らし
+	/// </summary>
+	/// <param name="kinds">揺れ方(enum ShakeKinds を使用)</param>
+	/// <param name="size">揺れる大きさ(enum ShakeSize を使用)</param>
+	/// <param name="time">揺れる時間(フレーム数)</param>
+	void Shake(ShakeKinds kinds = ShakeKinds::DIAG, ShakeSize size = ShakeSize::MEDIUM, int time = 20);
 
 	void ZoomPos(Vector2F pos) { zoomPos_ = pos; }
 	void ZoomScale(float scale) { scale_ = scale; }
-
-	bool GetExit(void);
+	//～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
 	void SetMapNum(Vector2 num) { mapNum_ = num; }
-
 
 	//ボスの種類
 	enum class BOSS_KINDS
@@ -88,7 +114,6 @@ public:
 
 		MAX,
 	};
-
 	const BOSS_KINDS GetNowBoss(void)const { return nowBossKinds_; }
 	void SetBossKinds(BOSS_KINDS k) { nowBossKinds_ = k; }
 	
@@ -99,58 +124,33 @@ public:
 	/// <param name="i">比べたい値</param>
 	/// <returns>true=それは違うぜ/false=同じ値</returns>
 	bool ThatsNotRight(int classId,int i);
+
 private:
-
-	// 静的インスタンス
-	static SceneManager* instance_;
-
+	// シーン
+	std::list<std::shared_ptr<SceneBase>>scenes_;
 	SCENE_ID sceneId_;
-	SCENE_ID waitSceneId_;
-	CNTL cntl_;
-
-	// フェード
-	Fader* fader_;
-
-	//ポーズ画面
-	Pause* pause_;
-
-	// 各種シーン
-	SceneBase* scene_;
-
-	// シーン遷移中判定
-	bool isSceneChanging_;
 
 	// デルタタイム
 	std::chrono::system_clock::time_point preTime_;
 	float deltaTime_;
-	
-	// デフォルトコンストラクタをprivateにして、
-	// 外部から生成できない様にする
-	SceneManager(void);
-	// コピーコンストラクタも同様
-	SceneManager(const SceneManager&);
-	// デストラクタも同様
-	~SceneManager(void) = default;
-
-	// デルタタイムをリセットする
 	void ResetDeltaTime(void);
 
-	// シーン遷移
-	void DoChangeScene(SCENE_ID sceneId);
 
-	// フェード
-	void Fade(void);
+	// ヒットストップカウンター
+	const int HIT_STOP_TIME = 5;
+	int hitStopCounter_;
 
-
-	int mainScreen_;
-
+	// スローカウンター
 	const int SLOW_TIME = 40;
 	int slowCounter_;
 
-	int hitStopCounter_;
-
-	const int SHAKE_TIME = 30;
-	int shakeCounter_ = 0;
+	// 画面揺れ------------------------
+	int mainScreen_;
+	int shake_;
+	ShakeKinds shakeKinds_;
+	ShakeSize shakeSize_;
+	Vector2 ShakePoint(void);
+	//---------------------------------
 
 	Vector2F zoomPos_;
 	float scale_ = 1.0f;
@@ -159,10 +159,13 @@ private:
 
 	Vector2 mapNum_;
 
-
 	BOSS_KINDS nowBossKinds_;
 
 	std::map<int, int>perValues;
 	std::map<int, int>nowValues;
 };
+
+using ShakeKinds = SceneManager::ShakeKinds;
+using ShakeSize = SceneManager::ShakeSize;
+
 using BOSS_KINDS = SceneManager::BOSS_KINDS;
