@@ -46,7 +46,6 @@ void KeyManager::Init(void)
 	SET_KEYBOARD(KEY_TYPE::ATTACK, KEY_INPUT_J);
 	SET_KEYBOARD(KEY_TYPE::ATTACK, KEY_INPUT_RETURN);
 	SET_C_BUTTON(KEY_TYPE::ATTACK, XINPUT_BUTTON_X);
-	SET_C_BUTTON(KEY_TYPE::ATTACK, XINPUT_BUTTON_Y);
 	SET_C_OTHERS(KEY_TYPE::ATTACK, CONTROLLER_OTHERS::RIGHT_TRIGGER);
 
 
@@ -63,6 +62,14 @@ void KeyManager::Init(void)
 	SET_C_BUTTON(KEY_TYPE::ENTER, XINPUT_BUTTON_B);
 	SET_C_BUTTON(KEY_TYPE::ENTER, XINPUT_BUTTON_A);
 
+	SET_KEYBOARD(KEY_TYPE::TUTORIAL_NEXT, KEY_INPUT_RETURN);
+	SET_KEYBOARD(KEY_TYPE::TUTORIAL_NEXT, KEY_INPUT_N);
+	SET_KEYBOARD(KEY_TYPE::TUTORIAL_NEXT, KEY_INPUT_B);
+	SET_KEYBOARD(KEY_TYPE::TUTORIAL_NEXT, KEY_INPUT_V);
+	SET_KEYBOARD(KEY_TYPE::TUTORIAL_NEXT, KEY_INPUT_F);
+	SET_KEYBOARD(KEY_TYPE::TUTORIAL_NEXT, KEY_INPUT_G);
+	SET_KEYBOARD(KEY_TYPE::TUTORIAL_NEXT, KEY_INPUT_R);
+	SET_C_BUTTON(KEY_TYPE::TUTORIAL_NEXT, XINPUT_BUTTON_Y);
 }
 
 void KeyManager::Update(void)
@@ -88,44 +95,7 @@ void KeyManager::Update(void)
 		for (CONTROLLER_OTHERS input : controllerOthersFormat[i]) {
 			if (b) { break; }
 
-			XINPUT_STATE state = {};
-			if (GetJoypadXInputState(DX_INPUT_PAD1, &state) != 0) { state = {}; }
-
-			switch (input)
-			{
-			case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_UP:
-				if (state.ThumbLY < 0) { b = true; }
-				break;
-			case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_DOWN:
-				if (state.ThumbLY > 0) { b = true; }
-				break;
-			case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_RIGHT:
-				if (state.ThumbLX > 0) { b = true; }
-				break;
-			case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_LEFT:
-				if (state.ThumbLX < 0) { b = true; }
-				break;
-			case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_UP:
-				if (state.ThumbRY < 0) { b = true; }
-				break;
-			case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_DOWN:
-				if (state.ThumbRY > 0) { b = true; }
-				break;
-			case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_RIGHT:
-				if (state.ThumbRX > 0) { b = true; }
-				break;
-			case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_LEFT:
-				if (state.ThumbRX < 0) { b = true; }
-				break;
-			case KeyManager::CONTROLLER_OTHERS::LEFT_TRIGGER:
-				if (state.LeftTrigger > 0) { b = true; }
-				break;
-			case KeyManager::CONTROLLER_OTHERS::RIGHT_TRIGGER:
-				if (state.RightTrigger > 0) { b = true; }
-				break;
-			default:
-				break;
-			}
+			b = ControllerOthersInput(input);
 		}
 
 		keyInfo[i].now = b;
@@ -140,4 +110,47 @@ void KeyManager::Release(void)
 	for (auto& input : keyboardFormat) { input.clear(); }
 	for (auto& input : controllerButtonFormat) { input.clear(); }
 	for (auto& input : controllerOthersFormat) { input.clear(); }
+}
+
+bool KeyManager::ControllerOthersInput(const CONTROLLER_OTHERS& input)
+{
+	XINPUT_STATE state = {};
+	if (GetJoypadXInputState(DX_INPUT_PAD1, &state) != 0) { state = {}; }
+
+	switch (input)
+	{
+	case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_UP:
+		if (state.ThumbLY < 0) { return true; }
+		break;
+	case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_DOWN:
+		if (state.ThumbLY > 0) { return true; }
+		break;
+	case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_RIGHT:
+		if (state.ThumbLX > 0) { return true; }
+		break;
+	case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_LEFT:
+		if (state.ThumbLX < 0) { return true; }
+		break;
+	case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_UP:
+		if (state.ThumbRY < 0) { return true; }
+		break;
+	case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_DOWN:
+		if (state.ThumbRY > 0) { return true; }
+		break;
+	case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_RIGHT:
+		if (state.ThumbRX > 0) { return true; }
+		break;
+	case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_LEFT:
+		if (state.ThumbRX < 0) { return true; }
+		break;
+	case KeyManager::CONTROLLER_OTHERS::LEFT_TRIGGER:
+		if (state.LeftTrigger > 0) { return true; }
+		break;
+	case KeyManager::CONTROLLER_OTHERS::RIGHT_TRIGGER:
+		if (state.RightTrigger > 0) { return true; }
+		break;
+	default:
+		return false;
+		break;
+	}
 }

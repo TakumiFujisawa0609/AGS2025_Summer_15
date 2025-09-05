@@ -4,6 +4,7 @@
 
 #include"../../Manager/SceneManager.h"
 #include"../../Manager/Collision.h"
+#include"../../Manager/KeyManager.h"
 
 #include"../../Manager/Decoration/BlastEffect/BlastEffectManager.h"
 
@@ -30,10 +31,13 @@ void TutorialScene::Load(void)
 {
 	Collision::CreateInstance();
 
+	task_ = new TutorialTaskManager();
+	task_->Load();
+
 	player_ = new TutorialPlayer();
 	player_->Init();
 
-	master_ = new TutorialMaster();
+	master_ = new TutorialMaster(task_->GetNowTask(), task_->GetTaskConp());
 	master_->Load();
 
 	stage_ = new TutorialStage();
@@ -45,10 +49,6 @@ void TutorialScene::Load(void)
 
 	bamboo_ = new BambooManager();
 	bamboo_->Init();
-
-	task_ = new TutorialTaskManager();
-	task_->Load();
-
 }
 
 void TutorialScene::Init(void)
@@ -63,14 +63,14 @@ void TutorialScene::Update(void)
 	player_->Update();
 	master_->Update();
 
-	task_->Update();
+	if (task_->Update()) { return; }
 
 	Collision();
 
 	blastEffect_->Update();
 	bamboo_->Update();
 
-	if (CheckHitKey(KEY_INPUT_ESCAPE)) {
+	if (KeyManager::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
 		SceneManager::GetIns().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
 }
@@ -189,6 +189,19 @@ void TutorialScene::Collision(void)
 		}
 		break;
 	case TutorialTaskManager::TASK::TASK2:
+		if (colli.CircleAndRect(player_->DefaultAtt(), master_->GetAttack())) {
+			sMng.HitStop();
+
+			master_->AttackHit();
+			task_->GetTask()->PowerEnd();
+		}
+		else if (colli.Rect(player_->GetUnit(), master_->GetAttack())) {
+			sMng.HitStop();
+
+			player_->Hit(0, master_->GetAttack().pos_);
+			master_->AttackHit();
+		}
+
 		break;
 	case TutorialTaskManager::TASK::TASK3:
 		for (auto& obj : task_->GetTask()->GetTutorialObject()) {
@@ -234,7 +247,24 @@ void TutorialScene::Collision(void)
 		if (bpParry) { task_->GetTask()->PowerEnd(); }
 		break;
 	case TutorialTaskManager::TASK::TASK5:
+		if (colli.Rect(player_->GetUnit(), master_->GetAttack())) {
+			if (player_->GetState() == TutorialPlayer::STATE::EVASION) {
+				sMng.HitStop();
 
+				master_->AttackHit();
+				task_->GetTask()->PowerEnd();
+			}
+			else {
+				sMng.HitStop();
+
+				player_->Hit(0, master_->GetAttack().pos_);
+				master_->AttackHit();
+			}
+		}
+		if (colli.CircleAndRect(player_->DefaultAtt(), master_->GetAttack())) {
+			sMng.HitStop();
+			master_->AttackHit();
+		}
 		break;
 	default:break;
 	}

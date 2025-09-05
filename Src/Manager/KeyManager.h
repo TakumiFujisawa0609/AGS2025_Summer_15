@@ -31,6 +31,8 @@ public:
 		PAUSE,
 		ENTER,
 
+		TUTORIAL_NEXT,
+
 		MAX,
 	};
 
@@ -61,6 +63,7 @@ private:
 		LEFT_TRIGGER,
 		RIGHT_TRIGGER,
 	};
+	bool ControllerOthersInput(const CONTROLLER_OTHERS& input);
 	std::vector<CONTROLLER_OTHERS>controllerOthersFormat[(int)KEY_TYPE::MAX];
 };
 

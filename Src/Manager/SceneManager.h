@@ -165,6 +165,8 @@ private:
 	std::map<int, int>nowValues;
 };
 
+using SCENE_ID = SceneManager::SCENE_ID;
+
 using ShakeKinds = SceneManager::ShakeKinds;
 using ShakeSize = SceneManager::ShakeSize;
 

@@ -258,6 +258,9 @@
     <ClCompile Include="Src\Scene\Tutorial\Object\TutorialTask\Task4\Object\Kakashi4.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Scene\Tutorial\Object\TutorialMaster\Attack\TutorialMasterAttack.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application.h">
@@ -510,6 +513,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Scene\Tutorial\Object\TutorialTask\Task4\Object\Kakashi4.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Scene\Tutorial\Object\TutorialMaster\Attack\TutorialMasterAttack.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

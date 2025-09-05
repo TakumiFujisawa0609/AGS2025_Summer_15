@@ -1,13 +1,15 @@
 #include"TutorialTaskManager.h"
 
 #include"../../../../Utility/AsoUtility.h"
-
+#include"../../../../Manager/KeyManager.h"
 
 TutorialTaskManager::TutorialTaskManager():
 	nowTask_(TASK::START),
 	taskIns_(),
 	linesCount_(0),
-	linesInterval_(0)
+	linesInterval_(0),
+	hukidashiImg_(-1),
+	taskConp_(true)
 {
 }
 
@@ -20,10 +22,14 @@ void TutorialTaskManager::Load(void)
 	for (auto& ins : taskIns_) { ins = nullptr; }
 
 	taskIns_[(int)TASK::TASK1] = new Task1();
+	taskIns_[(int)TASK::TASK2] = new TaskBase();
 	taskIns_[(int)TASK::TASK3] = new Task3();
 	taskIns_[(int)TASK::TASK4] = new Task4();
+	taskIns_[(int)TASK::TASK5] = new TaskBase();
 
 	AsoUtility::LoadImg(hukidashiImg_, "Data/Image/Tutorial/Task/‚«o‚µ.png");
+	AsoUtility::LoadImg(nextButtonImg_[0], "Data/Image/Tutorial/Task/Button/UnPushButton.png");
+	AsoUtility::LoadImg(nextButtonImg_[1], "Data/Image/Tutorial/Task/Button/PushButton.png");
 
 	for (auto& ins : taskIns_) {
 		if (!ins) { continue; }
@@ -43,9 +49,11 @@ void TutorialTaskManager::Init(void)
 	taskConp_ = true;
 
 	nowTask_ = TASK::START;
+
+	nextButtonCounter_ = 0;
 }
 
-void TutorialTaskManager::Update(void)
+bool TutorialTaskManager::Update(void)
 {
 	if (taskIns_[(int)nowTask_]) {
 
@@ -59,7 +67,7 @@ void TutorialTaskManager::Update(void)
 			}
 
 			if (linesCount_ >= (int)END_LINES_TABLE[(int)nowTask_].size()) {
-				if (CheckHitKey(KEY_INPUT_SPACE)) { NextTask(); }
+				if (KeyManager::GetIns().GetInfo(KEY_TYPE::TUTORIAL_NEXT).down) { if (NextTask()) { return true; } }
 			}
 		}
 
@@ -72,12 +80,15 @@ void TutorialTaskManager::Update(void)
 		}
 
 		if (linesCount_ >= (int)END_LINES_TABLE[(int)nowTask_].size()) {
-			if (CheckHitKey(KEY_INPUT_SPACE)) { NextTask(); }
+			if (KeyManager::GetIns().GetInfo(KEY_TYPE::TUTORIAL_NEXT).down) { if (NextTask()) { return true; } }
 		}
 	}
 
 	if (taskConp_) {
-		if (linesCount_ >= (int)(END_LINES_TABLE[(int)nowTask_].size())) { return; }
+		if (linesCount_ >= (int)(END_LINES_TABLE[(int)nowTask_].size())) {
+			nextButtonCounter_++;
+			return false;
+		}
 
 		if (++linesInterval_ >= LINES_INTERVAL) {
 			linesInterval_ = 0;
@@ -86,7 +97,7 @@ void TutorialTaskManager::Update(void)
 
 	}
 	else {
-		if (linesCount_ >= (int)(START_LINES_TABLE[(int)nowTask_].size())) { return; }
+		if (linesCount_ >= (int)(START_LINES_TABLE[(int)nowTask_].size())) { return false; }
 
 		if (++linesInterval_ >= LINES_INTERVAL) {
 			linesInterval_ = 0;
@@ -94,6 +105,7 @@ void TutorialTaskManager::Update(void)
 		}
 	}
 
+	return false;
 }
 
 void TutorialTaskManager::Draw(void)
@@ -118,11 +130,16 @@ void TutorialTaskManager::DrawUI(void)
 	AsoUtility::DrawString_W(460, 658, work.c_str(), 0x000000);
 	SetFontSize(16);
 
-	
+	if (linesCount_ >= (int)END_LINES_TABLE[(int)nowTask_].size() && taskConp_) {
+		DrawRotaGraph(Application::SCREEN_SIZE_X - 150, Application::SCREEN_SIZE_Y - 35, 0.15, 0, nextButtonImg_[nextButtonCounter_ / 10 % 2], true);
+	}
 }
 
 void TutorialTaskManager::Release(void)
 {
+	DeleteGraph(hukidashiImg_);
+	for (auto& id : nextButtonImg_) { DeleteGraph(id); }
+
 	for (auto& ins : taskIns_) {
 		if (!ins) { continue; }
 		ins->Release();
@@ -131,13 +148,21 @@ void TutorialTaskManager::Release(void)
 	}
 }
 
-void TutorialTaskManager::NextTask(void)
+bool TutorialTaskManager::NextTask(void)
 {
+	nowTask_ = (TASK)((int)nowTask_ + 1);
+
+	if ((int)nowTask_ >= (int)TASK::MAX) {
+		nowTask_ = (TASK)((int)nowTask_ - 1);
+		SceneManager::GetIns().ChangeScene(SCENE_ID::TITLE);
+		return true;
+	}
+
 	linesInterval_ = 0;
 	linesCount_ = 0;
 	taskConp_ = false;
-	nowTask_ = (TASK)((int)nowTask_ + 1);
+	nextButtonCounter_ = 0;
 
-	if ((int)nowTask_ >= (int)TASK::MAX) { nowTask_ = (TASK)((int)nowTask_ - 1); }
+	return false;
 }
 

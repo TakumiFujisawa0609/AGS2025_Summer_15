@@ -180,6 +180,7 @@
     <ClCompile Include="Src\Scene\BattledomeScene.cpp" />
     <ClCompile Include="Src\Scene\BossSelect.cpp" />
     <ClCompile Include="Src\Scene\Pause.cpp" />
+    <ClCompile Include="Src\Scene\Tutorial\Object\TutorialMaster\Attack\TutorialMasterAttack.cpp" />
     <ClCompile Include="Src\Scene\Tutorial\Object\TutorialMaster\TutorialMaster.cpp" />
     <ClCompile Include="Src\Scene\Tutorial\Object\TutorialPlayer\TutorialPlayer.cpp" />
     <ClCompile Include="Src\Scene\Tutorial\Object\TutorialTask\Task1\Object\Kakashi.cpp" />
@@ -263,6 +264,7 @@
     <ClInclude Include="Src\Scene\BossSelect.h" />
     <ClInclude Include="Src\Scene\Pause.h" />
     <ClInclude Include="Src\Scene\TitleScene.h" />
+    <ClInclude Include="Src\Scene\Tutorial\Object\TutorialMaster\Attack\TutorialMasterAttack.h" />
     <ClInclude Include="Src\Scene\Tutorial\Object\TutorialMaster\TutorialMaster.h" />
     <ClInclude Include="Src\Scene\Tutorial\Object\TutorialPlayer\TutorialPlayer.h" />
     <ClInclude Include="Src\Scene\Tutorial\Object\TutorialTask\Task1\Object\Kakashi.h" />
