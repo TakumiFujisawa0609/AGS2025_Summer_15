@@ -9,14 +9,12 @@
 
 #include"../Manager/SoundManager.h"
 
-#include "../Scene/TitleScene.h"
+#include "../Scene/Title/TitleScene.h"
 #include"../Scene/Tutorial/TutorialScene.h"
 #include"../Scene/BossSelect.h"
-#include"../Scene/BattledomeScene.h"
+#include"../Scene/Game/BattledomeScene.h"
 #include "../Scene/GameClear.h"
 #include "../Scene/GameOverScene.h"
-#include "../Scene/Pause.h"
-
 
 SceneManager* SceneManager::ins_ = nullptr;
 

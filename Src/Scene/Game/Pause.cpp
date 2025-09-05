@@ -1,9 +1,9 @@
 #include "Pause.h"
 #include<string>
-#include "../Application.h"
-#include "../Manager/SceneManager.h"
-#include "../Manager/SoundManager.h"
-#include"../Manager/Score/Score.h"
+#include "../../Application.h"
+#include "../../Manager/SceneManager.h"
+#include "../../Manager/SoundManager.h"
+#include "../../Manager/KeyManager.h"
 
 void Pause::Load(void)
 {
@@ -12,14 +12,11 @@ void Pause::Load(void)
 
 	std::string PATH = "Data/Image/MenuButton/";
 
-	image_[SELECT::CONTINUE] = LoadGraph((PATH + "Continue Button.png").c_str());
-	image_[SELECT::NEWGAME] = LoadGraph((PATH + "New game Button.png").c_str());
-	image_[SELECT::EXIT] = LoadGraph((PATH + "Exit Button.png").c_str());
+	image_[SELECT::CONTINUE] = LoadGraph((PATH + "ゲームにもどる.png").c_str());
+	image_[SELECT::NEWGAME] = LoadGraph((PATH + "最初からやり直す.png").c_str());
+	image_[SELECT::EXIT] = LoadGraph((PATH + "タイトルにもどる.png").c_str());
 
 	select_ = SELECT::CONTINUE;
-	pauseState_ = STATE::E_UPDATE;
-	
-
 }
 
 void Pause::Init(void)
@@ -34,17 +31,7 @@ void Pause::Init(void)
 
 	startPos_ = { 0.0f,0.0f };
 
-	isExit     = false;
-
 	for (int ii = 0; ii < SELECT::MAX; ii++) dispPos[ii] = { 0.0f, 0.0f };
-
-	prevDecision = nowDecision = upKeyDecision = downKeyDecision = false;
-
-	prevUp = nowUp = upKeyUp = downKeyUp = false;
-
-	prevDown = nowDown = upKeyDown = downKeyDown = false;
-
-
 }
 
 void Pause::Update(void)
@@ -54,22 +41,20 @@ void Pause::Update(void)
 	startPos_.x = 0;
 	startPos_.y = 0;
 
-	//使うキー
-	KeyInput();
-
 	float targetY = -(obj_[select_].pos_.y + select_ * DISTANCE);
 	move_.y += (targetY - move_.y) * 0.2f;
 
 
+	auto& key = KEY::GetIns();
 
 	//選択中がどれかを見分ける
 	switch (select_)
 	{
 	case Pause::CONTINUE:
-		if (downKeyDown) select_ = NEWGAME;
+		if (key.GetInfo(KEY_TYPE::MOVE_DOWN).down) { select_ = NEWGAME; }
 
 
-		if (downKeyDecision) {
+		if (key.GetInfo(KEY_TYPE::ENTER).down) {
 			scene_.PopScene();
 			SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI, true);
 			SoundManager::GetIns().PausePlay();
@@ -78,12 +63,11 @@ void Pause::Update(void)
 		break;
 	case Pause::NEWGAME:
 
-		if (downKeyUp)   select_ = CONTINUE;
-		if (downKeyDown) select_ = EXIT;
+		if (key.GetInfo(KEY_TYPE::MOVE_UP).down) { select_ = CONTINUE; }
+		if (key.GetInfo(KEY_TYPE::MOVE_DOWN).down) { select_ = EXIT; }
 
-		if (downKeyDecision)
+		if (key.GetInfo(KEY_TYPE::ENTER).down)
 		{
-			pauseState_ = STATE::E_UPDATE;
 			SoundManager::GetIns().PauseInfoDelete();
 			scene_.JumpScene(SceneManager::SCENE_ID::BATTLEDONE);
 			SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI, true);
@@ -91,9 +75,9 @@ void Pause::Update(void)
 
 		break;
 	case Pause::EXIT:
-		if (downKeyUp) select_ = NEWGAME;
+		if (key.GetInfo(KEY_TYPE::MOVE_UP).down) { select_ = NEWGAME; }
 
-		if (downKeyDecision) {
+		if (key.GetInfo(KEY_TYPE::ENTER).down) {
 			SoundManager::GetIns().PauseInfoDelete();
 			scene_.JumpScene(SceneManager::SCENE_ID::TITLE);
 			SoundManager::GetIns().Play(SoundManager::SOUND::HIBIODOSI, true);
@@ -105,12 +89,6 @@ void Pause::Update(void)
 	{
 		dispPos[ii].x = startPos_.x + obj_[ii].pos_.x + Application::SCREEN_SIZE_X / 2;
 		dispPos[ii].y = move_.y + (startPos_.y + obj_[ii].pos_.y + Application::SCREEN_SIZE_Y / 2 + ii * DISTANCE);
-	}
-
-	if (CheckHitKey(KEY_INPUT_1) == 1 &&
-		CheckHitKey(KEY_INPUT_5) == 1 &&
-		CheckHitKey(KEY_INPUT_0) == 1) {
-		Score::GetIns().RankingReset(BOSS_KINDS::MAX);
 	}
 }
 
@@ -153,43 +131,4 @@ void Pause::Release(void)
 	}
 
 	Camera::DeleteInstance();
-}
-
-void Pause::SetPauseState(STATE state)
-{
-	pauseState_ = state;
-	if (state == STATE::E_PAUSE) {
-		SoundManager::GetIns().AllStop();
-	}
-	else if (state==STATE::E_UPDATE)
-	{
-		SoundManager::GetIns().PausePlay();
-	}
-}
-
-void Pause::KeyInput(void)
-{
-	int input = GetJoypadInputState(DX_INPUT_PAD1);
-
-	prevDecision = nowDecision;
-	nowDecision = ((CheckHitKey(KEY_INPUT_SPACE) == 0) &&
-		(CheckHitKey(KEY_INPUT_RETURN) == 0) &&
-		((input & 0x40) == 0) && ((input & 0x20) == 0)) ? false : true;
-	upKeyDecision = (prevDecision && !nowDecision);
-	downKeyDecision = (!prevDecision && nowDecision);
-
-	prevUp = nowUp;
-	nowUp = ((CheckHitKey(KEY_INPUT_W) == 0) &&
-		(CheckHitKey(KEY_INPUT_UP) == 0) &&
-		((input & PAD_INPUT_UP) == 0)) ? false : true;
-	upKeyUp = (prevUp && !nowUp);
-	downKeyUp = (!prevUp && nowUp);
-
-	prevDown = nowDown;
-	nowDown = ((CheckHitKey(KEY_INPUT_S) == 0) &&
-		(CheckHitKey(KEY_INPUT_DOWN) == 0) &&
-		((input & PAD_INPUT_DOWN) == 0)) ? false : true;
-	upKeyDown = (prevDown && !nowDown);
-	downKeyDown = (!prevDown && nowDown);
-
 }

@@ -3,33 +3,31 @@
 #include<DxLib.h>
 
 
-#include"../Manager/SceneManager.h"
-#include"../Manager/Collision.h"
-#include"../Manager/Camera.h"
-#include"../Manager/Decoration/BlastEffect/BlastEffectManager.h"
-#include"../Manager/Decoration/BlastEffect/BamBlastEffect.h"
-#include"../Manager/Score/Score.h"
-#include"../Manager/SoundManager.h"
-#include"../Manager/KeyManager.h"
+#include"../../Manager/SceneManager.h"
+#include"../../Manager/Collision.h"
+#include"../../Manager/Camera.h"
+#include"../../Manager/Decoration/BlastEffect/BlastEffectManager.h"
+#include"../../Manager/Decoration/BlastEffect/BamBlastEffect.h"
+#include"../../Manager/Score/Score.h"
+#include"../../Manager/SoundManager.h"
+#include"../../Manager/KeyManager.h"
 
-#include"Pause.h"
+#include"../../Object/Player/Player.h"
+#include"../../Object/Bamboo/BambooManager.h"
 
-#include"../Object/Player/Player.h"
-#include"../Object/Bamboo/BambooManager.h"
+#include"../../Object/Boss/Tutorial/BossTutorial.h"
+#include"../../Object/Stage/Tutorial/TutorialStage.h"
 
-#include"../Object/Boss/Tutorial/BossTutorial.h"
-#include"../Object/Stage/Tutorial/TutorialStage.h"
+#include"../../Object/Boss/BigBoss/Runboo/Runboo.h"
+#include"../../Object/Stage/BossStage/Stage1.h"
 
-#include"../Object/Boss/BigBoss/Runboo/Runboo.h"
-#include"../Object/Stage/BossStage/Stage1.h"
+#include"../../Object/Boss/BigBoss/Bammoon/Bammoon.h"
+#include"../../Object/Stage/BossStage/BammoonStage.h"
 
-#include"../Object/Boss/BigBoss/Bammoon/Bammoon.h"
-#include"../Object/Stage/BossStage/BammoonStage.h"
-
-#include"../Object/Stage/BossStage/NokoPyStage.h"
-#include"../Object/Boss/BigBoss/Nokopy/Nokopy.h"
-#include"../Object/Boss/BigBoss/Runboo/Weakness.h"
-#include"../Object/Boss/BigBoss/Runboo/Attack/WeakBullet.h"
+#include"../../Object/Stage/BossStage/NokoPyStage.h"
+#include"../../Object/Boss/BigBoss/Nokopy/Nokopy.h"
+#include"../../Object/Boss/BigBoss/Runboo/Weakness.h"
+#include"../../Object/Boss/BigBoss/Runboo/Attack/WeakBullet.h"
 
 
 BattledomeScene::BattledomeScene() :
@@ -129,6 +127,11 @@ void BattledomeScene::Init(void)
 
 void BattledomeScene::Update(void)
 {
+	if (KEY::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+		SceneManager::GetIns().PushScene(std::make_shared<Pause>());
+		return;
+	}
+
 	using M = SceneManager;
 	auto& sMng = M::GetIns();
 
@@ -189,12 +192,18 @@ void BattledomeScene::Update(void)
 	Scroll();
 
 
-	if (KEY::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
-		SceneManager::GetIns().PushScene(std::make_shared<Pause>());
-		return;
+	bool timeCount = true;
+	switch (sMng.GetNowBoss())
+	{
+	case M::BOSS_KINDS::TUTORIAL:
+	case M::BOSS_KINDS::NOKOPY:
+	case M::BOSS_KINDS::RUNBOO:
+		break;
+	case M::BOSS_KINDS::BAMMOON:
+		if (bammoon_->GetState() == BossBase::STATE::DEATH) { timeCount = false; }
+		break;
 	}
-
-	time_ += sMng.GetDeltaTime();
+	if (timeCount) { time_ += sMng.GetDeltaTime(); }
 }
 
 void BattledomeScene::Draw(void)

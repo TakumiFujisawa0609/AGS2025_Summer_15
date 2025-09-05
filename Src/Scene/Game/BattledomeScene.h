@@ -1,8 +1,10 @@
 #pragma once
 
-#include"SceneBase.h"
+#include"../SceneBase.h"
 
-#include"../Object/Boss/BigBoss/BossBase.h"
+#include"../../Object/Boss/BigBoss/BossBase.h"
+
+#include"Pause.h"
 
 class StageBase;
 class Player;

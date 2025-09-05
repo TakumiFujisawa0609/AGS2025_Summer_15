@@ -51,7 +51,7 @@
     <ClCompile Include="Src\Scene\SceneBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Scene\TitleScene.cpp">
+    <ClCompile Include="Src\Scene\Title\TitleScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\AsoUtility.cpp">
@@ -114,7 +114,7 @@
     <ClCompile Include="Src\Object\Bamboo\BambooManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Scene\BattledomeScene.cpp">
+    <ClCompile Include="Src\Scene\Game\BattledomeScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Stage\StageBase.cpp">
@@ -129,7 +129,7 @@
     <ClCompile Include="Src\Scene\BossSelect.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Scene\Pause.cpp">
+    <ClCompile Include="Src\Scene\Game\Pause.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Boss\BigBoss\Bammoon\Bammoon.cpp">
@@ -261,6 +261,9 @@
     <ClCompile Include="Src\Scene\Tutorial\Object\TutorialMaster\Attack\TutorialMasterAttack.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Scene\Title\End\EndScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application.h">
@@ -362,7 +365,7 @@
     <ClInclude Include="Src\Object\Bamboo\BambooManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Scene\BattledomeScene.h">
+    <ClInclude Include="Src\Scene\Game\BattledomeScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Stage\StageBase.h">
@@ -377,7 +380,7 @@
     <ClInclude Include="Src\Scene\BossSelect.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Scene\Pause.h">
+    <ClInclude Include="Src\Scene\Game\Pause.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Boss\BigBoss\Bammoon\Bammoon.h">
@@ -464,7 +467,7 @@
     <ClInclude Include="Src\Manager\SoundManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Scene\TitleScene.h">
+    <ClInclude Include="Src\Scene\Title\TitleScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Manager\FPS\FPS.h">
@@ -516,6 +519,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Scene\Tutorial\Object\TutorialMaster\Attack\TutorialMasterAttack.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Scene\Title\End\EndScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -45,6 +45,8 @@ public:
 
 	virtual void DrawHp(void) {};
 
+	const STATE GetState(void) { return state_; }
+
 protected:
 	//ó‘Ô‚²‚Æ‚ÌŠÖ”‚ğŒÄ‚Ô‚½‚ß‚ÌŠÖ”ƒ|ƒCƒ“ƒ^
 	void(BossBase::*stateFuncPtr)(void);

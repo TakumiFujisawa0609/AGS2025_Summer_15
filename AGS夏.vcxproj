@@ -177,9 +177,10 @@
     <ClCompile Include="Src\Object\Stage\SelectStage\SelectStage.cpp" />
     <ClCompile Include="Src\Object\Stage\StageBase.cpp" />
     <ClCompile Include="Src\Object\Stage\BossStage\Stage1.cpp" />
-    <ClCompile Include="Src\Scene\BattledomeScene.cpp" />
+    <ClCompile Include="Src\Scene\Game\BattledomeScene.cpp" />
     <ClCompile Include="Src\Scene\BossSelect.cpp" />
-    <ClCompile Include="Src\Scene\Pause.cpp" />
+    <ClCompile Include="Src\Scene\Game\Pause.cpp" />
+    <ClCompile Include="Src\Scene\Title\End\EndScene.cpp" />
     <ClCompile Include="Src\Scene\Tutorial\Object\TutorialMaster\Attack\TutorialMasterAttack.cpp" />
     <ClCompile Include="Src\Scene\Tutorial\Object\TutorialMaster\TutorialMaster.cpp" />
     <ClCompile Include="Src\Scene\Tutorial\Object\TutorialPlayer\TutorialPlayer.cpp" />
@@ -209,7 +210,7 @@
     <ClCompile Include="Src\Scene\GameClear.cpp" />
     <ClCompile Include="Src\Scene\GameOverScene.cpp" />
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
-    <ClCompile Include="Src\Scene\TitleScene.cpp" />
+    <ClCompile Include="Src\Scene\Title\TitleScene.cpp" />
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
     <ClCompile Include="Src\Object\Stage\Tutorial\TutorialStage.cpp" />
     <ClCompile Include="Src\Object\Boss\BigBoss\Nokopy\Attack\Wavemboo.cpp" />
@@ -260,10 +261,11 @@
     <ClInclude Include="Src\Object\Stage\SelectStage\SelectStage.h" />
     <ClInclude Include="Src\Object\Stage\StageBase.h" />
     <ClInclude Include="Src\Object\Stage\BossStage\Stage1.h" />
-    <ClInclude Include="Src\Scene\BattledomeScene.h" />
+    <ClInclude Include="Src\Scene\Game\BattledomeScene.h" />
     <ClInclude Include="Src\Scene\BossSelect.h" />
-    <ClInclude Include="Src\Scene\Pause.h" />
-    <ClInclude Include="Src\Scene\TitleScene.h" />
+    <ClInclude Include="Src\Scene\Game\Pause.h" />
+    <ClInclude Include="Src\Scene\Title\End\EndScene.h" />
+    <ClInclude Include="Src\Scene\Title\TitleScene.h" />
     <ClInclude Include="Src\Scene\Tutorial\Object\TutorialMaster\Attack\TutorialMasterAttack.h" />
     <ClInclude Include="Src\Scene\Tutorial\Object\TutorialMaster\TutorialMaster.h" />
     <ClInclude Include="Src\Scene\Tutorial\Object\TutorialPlayer\TutorialPlayer.h" />

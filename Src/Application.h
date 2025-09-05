@@ -44,6 +44,8 @@ public:
 	// 解放成功／失敗の判定
 	bool IsReleaseFail(void) const;
 
+	void GameEnd(void) { gameEnd_ = true; }
+
 private:
 
 	// 静的インスタンス
@@ -68,4 +70,6 @@ private:
 	~Application(void) = default;
 	//えふぇくしあの初期化
 	void InitEffekseer(void);
+
+	bool gameEnd_;
 };

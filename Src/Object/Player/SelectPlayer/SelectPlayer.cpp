@@ -4,6 +4,7 @@
 
 #include"../../../Application.h"
 #include"../../../Manager/InputManager.h"
+#include"../../../Manager/KeyManager.h"
 #include"../../../Manager/SoundManager.h"
 #include"../../../Manager/Score/Score.h"
 
@@ -33,7 +34,7 @@ void SelectPlayer::Init()
 
 	arrowAnime_ = 0;
 
-	nowSelect_ = BOSS::BAMMOON; 
+	nowSelect_ = BOSS::TUTORIAL;
 
 	using S = SoundManager;
 	auto& sound = S::GetIns();
@@ -53,47 +54,23 @@ void SelectPlayer::Update()
 	}
 
 	if (haveB_) {
-		auto& ins = InputManager::GetInstance();
-		JoyPadInputManager();
+		auto& key = KEY::GetIns();
 
 		switch (nowSelect_)
 		{
 		case SceneManager::BOSS_KINDS::TUTORIAL:
-			if ((ins.IsTrgDown(KEY_INPUT_LEFT)) || (ins.IsTrgDown(KEY_INPUT_A)) ||
-				(downLeftKey_)) {
-				nowSelect_ = BOSS::BAMMOON;
-			}
-			if ((ins.IsTrgDown(KEY_INPUT_RIGHT)) || (ins.IsTrgDown(KEY_INPUT_D)) ||
-				(ins.IsTrgDown(KEY_INPUT_DOWN)) || (ins.IsTrgDown(KEY_INPUT_S)) ||
-				(downRightKey_) || (downDownKey_)) {
-				nowSelect_ = BOSS::NOKOPY;
-			}
+			if (key.GetInfo(KEY_TYPE::MOVE_LEFT).down) { nowSelect_ = BOSS::BAMMOON; }
+			if (key.GetInfo(KEY_TYPE::MOVE_RIGHT).down || key.GetInfo(KEY_TYPE::MOVE_DOWN).down) { nowSelect_ = BOSS::NOKOPY; }
 			break;
 		case SceneManager::BOSS_KINDS::NOKOPY:
-			if ((ins.IsTrgDown(KEY_INPUT_LEFT)) || (ins.IsTrgDown(KEY_INPUT_A)) ||
-				(ins.IsTrgDown(KEY_INPUT_UP)) || (ins.IsTrgDown(KEY_INPUT_W)) ||
-				(downLeftKey_) || (downUpKey_)) {
-				nowSelect_ = BOSS::TUTORIAL;
-			}
+			if (key.GetInfo(KEY_TYPE::MOVE_LEFT).down || key.GetInfo(KEY_TYPE::MOVE_UP).down) { nowSelect_ = BOSS::TUTORIAL; }
 			break;
 		case SceneManager::BOSS_KINDS::BAMMOON:
-			if ((ins.IsTrgDown(KEY_INPUT_LEFT)) || (ins.IsTrgDown(KEY_INPUT_A)) ||
-				(ins.IsTrgDown(KEY_INPUT_DOWN)) || (ins.IsTrgDown(KEY_INPUT_S)) ||
-				(downLeftKey_) || (downDownKey_)) {
-				nowSelect_ = BOSS::RUNBOO;
-			}
-			if ((ins.IsTrgDown(KEY_INPUT_RIGHT)) || (ins.IsTrgDown(KEY_INPUT_D)) ||
-				(downRightKey_)) {
-				nowSelect_ = BOSS::TUTORIAL;
-			}
-
+			if (key.GetInfo(KEY_TYPE::MOVE_LEFT).down || key.GetInfo(KEY_TYPE::MOVE_DOWN).down) { nowSelect_ = BOSS::RUNBOO; }
+			if (key.GetInfo(KEY_TYPE::MOVE_RIGHT).down) { nowSelect_ = BOSS::TUTORIAL; }
 			break;
 		case SceneManager::BOSS_KINDS::RUNBOO:
-			if ((ins.IsTrgDown(KEY_INPUT_RIGHT)) || (ins.IsTrgDown(KEY_INPUT_D)) ||
-				(ins.IsTrgDown(KEY_INPUT_UP)) || (ins.IsTrgDown(KEY_INPUT_W)) ||
-				(downRightKey_) || (downUpKey_)) {
-				nowSelect_ = BOSS::BAMMOON;
-			}
+			if (key.GetInfo(KEY_TYPE::MOVE_RIGHT).down || key.GetInfo(KEY_TYPE::MOVE_UP).down) { nowSelect_ = BOSS::BAMMOON; }
 			break;
 		}
 
@@ -101,8 +78,7 @@ void SelectPlayer::Update()
 		bamboo_.pos_.y -= 50.0f;
 
 		if (nowSelect_ != BOSS::RUNBOO) {
-			if ((ins.IsTrgDown(KEY_INPUT_SPACE)) || (ins.IsTrgDown(KEY_INPUT_RETURN)) ||
-				(ins.IsTrgDown(KEY_INPUT_J)) || (nowAttackKey_)) {
+			if (key.GetInfo(KEY_TYPE::ENTER).down) {
 				haveB_ = false;
 				SoundManager::GetIns().Play(SoundManager::SOUND::BPTHROW, true);
 			}
@@ -145,31 +121,4 @@ void SelectPlayer::SetVec(Vector2F target)
 	float size = sqrtf(vec.x * vec.x + vec.y * vec.y);
 	this->vec_ = vec / size;
 	this->vec_ *= BAMBOO_SPEED;
-}
-
-void SelectPlayer::JoyPadInputManager()
-{
-	int input = GetJoypadInputState(DX_INPUT_PAD1);
-
-	prevUpKey_ = nowUpKey_;
-	nowUpKey_ = ((input & PAD_INPUT_UP) == 0) ? false : true;
-	downUpKey_ = (!prevUpKey_ && nowUpKey_);
-	upUpKey_ = (prevUpKey_ && !nowUpKey_);
-
-	prevDownKey_ = nowDownKey_;
-	nowDownKey_ = ((input & PAD_INPUT_DOWN) == 0) ? false : true;
-	downDownKey_ = (!prevDownKey_ && nowDownKey_);
-	upDownKey_ = (prevDownKey_ && !nowDownKey_);
-
-	prevLeftKey_ = nowLeftKey_;
-	nowLeftKey_ = ((input & PAD_INPUT_LEFT) == 0) ? false : true;
-	downLeftKey_ = (!prevLeftKey_ && nowLeftKey_);
-	upLeftKey_ = (prevLeftKey_ && !nowLeftKey_);
-
-	prevRightKey_ = nowRightKey_;
-	nowRightKey_ = ((input & PAD_INPUT_RIGHT) == 0) ? false : true;
-	downRightKey_ = (!prevRightKey_ && nowRightKey_);
-	upRightKey_ = (prevRightKey_ && !nowRightKey_);
-
-	nowAttackKey_ = (((input & 0x40) == 0) && ((input & 0x20) == 0)) ? false : true;
 }

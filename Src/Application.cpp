@@ -18,6 +18,13 @@ const std::string Application::PATH_MODEL = "Data/Model/";
 const std::string Application::PATH_EFFECT = "Data/Effect/";
 const std::string Application::PATH_PLAYER = "Data/Image/Player/";
 
+Application::Application(void):
+	gameEnd_(false)
+{
+	isInitFail_ = false;
+	isReleaseFail_ = false;
+}
+
 void Application::CreateInstance(void)
 {
 	if (instance_ == nullptr)
@@ -72,7 +79,7 @@ void Application::Init(void)
 
 	Score::CreateInstance();
 
-
+	gameEnd_ = false;
 }
 
 void Application::Run(void)
@@ -81,10 +88,8 @@ void Application::Run(void)
 	auto& inputManager = InputManager::GetInstance();
 	auto& sceneManager = SceneManager::GetIns();
 	// ゲームループ
-	while (ProcessMessage() == 0)
+	while (ProcessMessage() == 0 && !gameEnd_)
 	{
-		// フレームレート更新
-		// 1/60秒経過していないなら再ループさせる
 		if (!fps_->UpdateFrameRate()) continue;
 
 		inputManager.Update();
@@ -93,10 +98,8 @@ void Application::Run(void)
 		fps_->CalcFrameRate();	// フレームレート計算
 
 		sceneManager.Draw();
-		//fps_->DrawFrameRate();	// フレームレート描画
 
 		ScreenFlip();
-
 	}
 
 }
@@ -132,11 +135,7 @@ bool Application::IsReleaseFail(void) const
 	return isReleaseFail_;
 }
 
-Application::Application(void)
-{
-	isInitFail_ = false;
-	isReleaseFail_ = false;
-}
+
 
 void Application::InitEffekseer(void)
 {

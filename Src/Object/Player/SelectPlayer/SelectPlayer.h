@@ -55,12 +55,5 @@ private:
 	int arrowAnime_;
 
 	Base bamboo_;
-
-	void JoyPadInputManager(void);
-	bool nowUpKey_, prevUpKey_, downUpKey_, upUpKey_;
-	bool nowDownKey_, prevDownKey_, downDownKey_, upDownKey_;
-	bool nowLeftKey_, prevLeftKey_, downLeftKey_, upLeftKey_;
-	bool nowRightKey_, prevRightKey_, downRightKey_, upRightKey_;
-	bool nowAttackKey_;
 };
 
