@@ -7,9 +7,6 @@
 
 void Pause::Load(void)
 {
-	Camera::CreateInstance();
-	
-
 	std::string PATH = "Data/Image/MenuButton/";
 
 	image_[SELECT::CONTINUE] = LoadGraph((PATH + "ÉQÅ[ÉÄÇ…Ç‡Ç«ÇÈ.png").c_str());
@@ -129,6 +126,4 @@ void Pause::Release(void)
 	{
 		DeleteGraph(image_[ii]);
 	}
-
-	Camera::DeleteInstance();
 }

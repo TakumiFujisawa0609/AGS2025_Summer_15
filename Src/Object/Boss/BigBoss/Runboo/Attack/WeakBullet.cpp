@@ -98,6 +98,8 @@ void WeakBullet::Update(Vector2F boss)
         bullets_[i].disppos_ = bullets_[i].pos_;
     }
 
+    arrayIndex_++;
+
 	if (arrayIndex_ >= NUM_MAX - 1) {
 		arrayIndex_ = 0;
 	}
@@ -111,7 +113,7 @@ void WeakBullet::Update() {}
 
 void WeakBullet::Draw(void)
 {
-    arrayIndex_++;
+
 
     for (int i = 0; i < BULLET_NUM; i++) {
         

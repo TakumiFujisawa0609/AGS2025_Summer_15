@@ -35,7 +35,7 @@ void StageBase::Draw(void)
 
 	for (int yy = 0; yy < mapData_.size(); yy++) {
 		for (int xx = start; xx < end; xx++) {
-			int chip = mapData_[yy][xx];
+			int chip = mapData_[yy][xx % mapData_.at(yy).size()];
 			if (chip == -1)continue;
 
 			int dx = STAGE_CHIP_SIZE * xx - Camera::GetInstance().GetPos().x;

@@ -3,6 +3,7 @@
 #include<DxLib.h>
 
 #include"../Application.h"
+#include "../Manager/SceneManager.h"
 
 Collision* Collision::instance = nullptr;
 
@@ -58,17 +59,35 @@ const float Collision::GetStageLine(const Vector2F& pos, const Vector2F& size , 
 	int step = (dir == UP || dir == LEFT) ? -1 : 1;
 	bool bre = false;
 
+	int loopCount = 0;
+
 	while (true) {
 		for (int i = 0; i < searchRange; ++i) {
 			int x = (dir == UP || dir == DOWN) ? pX + i : line;
 			int y = (dir == LEFT || dir == RIGHT) ? pY + i : line;
 
-			if (x < 0 || x >= mapData.at(0).size() || y < 0 || y >= mapData.size()) {
-				if (x < 0 || x >= mapData.at(0).size() || y < 0 || y >= mapData.size() + 5)bre = true;
-				break;
+			if (SceneManager::GetIns().GetNowBoss() == BOSS_KINDS::RUNBOO)
+			{
+				if (y < 0 || y >= mapData.size()) {
+					if (y < 0 || y >= mapData.size() + 5)bre = true;
+					break;
+				}
+
+				if (loopCount > 40) {
+					bre = true;
+					break;
+				}
+			}
+			else
+			{
+				if (x < 0 || x >= mapData.at(0).size() || y < 0 || y >= mapData.size()) {
+				if (x < 0 || x >= mapData.at(0).size() || y < 0 || y >= mapData.size() + 5)
+					bre = true;
+					break;
+				}
 			}
 
-			if (mapData.at(y).at(x) != -1) {
+			if (mapData.at(y).at(x % mapData.at(y).size()) != -1) {
 				bre = true;
 				break;
 			}
@@ -84,6 +103,8 @@ const float Collision::GetStageLine(const Vector2F& pos, const Vector2F& size , 
 
 		// 到達していなかったら1つ先をチェックしにいく
 		line += step;
+
+		loopCount++;
 	}
 
 	// 1つ手前に戻る（UP/LEFT時）(ただし、ステージの端に到達していた場合戻らない)

@@ -368,7 +368,7 @@ void BattledomeScene::Scroll(void)
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
 	{
-		camera.Follow(Camera::X, Runboo::MOVE_SPEED);
+		camera.Follow(Camera::X, 10);
 	}
 		break;
 	case SceneManager::BOSS_KINDS::NOKOPY:
@@ -635,7 +635,7 @@ void BattledomeScene::PlayerToBoss(void)
 	case SceneManager::BOSS_KINDS::RUNBOO:
 		if (ins.CircleAndRect(player_->GetUnit(), runboo_->GetUnit()))
 		{
-			player_->Hit(10, runboo_->GetUnit().pos_);
+			player_->Hit(5, runboo_->GetUnit().pos_);
 		}
 
 		//プレイヤーと弱点の当たり判定
@@ -643,7 +643,7 @@ void BattledomeScene::PlayerToBoss(void)
 		{
 			if (ins.Circle(player_->GetUnit(), weak->GetUnit()))
 			{
-				player_->Hit(5.0f, weak->GetUnit().pos_);
+				player_->Hit(5, weak->GetUnit().pos_);
 			}
 		}
 		break;
@@ -707,7 +707,7 @@ void BattledomeScene::PlayerToBossAttack(void)
 			for (auto& weakObj : weak->GetObj()) {
 				if (ins.CircleAndRect(player_->GetUnit(), weakObj))
 				{
-					player_->Hit(5.0f, weakObj.pos_);
+					player_->Hit(2, weakObj.pos_);
 				}
 			}
 
@@ -715,7 +715,7 @@ void BattledomeScene::PlayerToBossAttack(void)
 			{
 				if (ins.Circle(player_->GetUnit(), weakBull))
 				{
-					player_->Hit(5.0f, weakBull.pos_);
+					player_->Hit(2, weakBull.pos_);
 				}
 			}
 		}
