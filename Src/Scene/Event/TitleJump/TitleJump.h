@@ -1,10 +1,11 @@
 #pragma once
 #include"../../SceneBase.h"
-class EndScene : public SceneBase
+
+class TitleJump : public SceneBase
 {
 public:
-	EndScene();
-	~EndScene();
+	TitleJump();
+	~TitleJump();
 
 	void Load(void)override;
 	void Init(void) override;
@@ -13,10 +14,8 @@ public:
 	void Release(void) override;
 
 private:
-
 	enum class SELECT { YES, NO, MAX };
 	SELECT nowSelect_;
-
 	int img_[(int)SELECT::MAX];
 };
 

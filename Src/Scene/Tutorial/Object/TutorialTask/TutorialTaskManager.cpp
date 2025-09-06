@@ -3,6 +3,9 @@
 #include"../../../../Utility/AsoUtility.h"
 #include"../../../../Manager/KeyManager.h"
 
+#include"../../../../Manager/SceneManager.h"
+#include"../../../Event/TitleJump/TitleJump.h"
+
 TutorialTaskManager::TutorialTaskManager():
 	nowTask_(TASK::START),
 	taskIns_(),
@@ -154,7 +157,7 @@ bool TutorialTaskManager::NextTask(void)
 
 	if ((int)nowTask_ >= (int)TASK::MAX) {
 		nowTask_ = (TASK)((int)nowTask_ - 1);
-		SceneManager::GetIns().ChangeScene(SCENE_ID::TITLE);
+		SceneManager::GetIns().PushScene(std::make_shared<TitleJump>());
 		return true;
 	}
 

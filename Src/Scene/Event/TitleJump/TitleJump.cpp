@@ -1,59 +1,58 @@
-#include"EndScene.h"
-
-#include<DxLib.h>
+#include"TitleJump.h"
 
 #include"../../../Utility/AsoUtility.h"
-
-#include"../../../Application.h"
-#include"../../../Manager/SceneManager.h"
 #include"../../../Manager/KeyManager.h"
 #include"../../../Manager/SoundManager.h"
 
-EndScene::EndScene()
+#include"../../../Application.h"
+#include"../../../Manager/SceneManager.h"
+
+TitleJump::TitleJump():
+	nowSelect_(SELECT::NO),
+	img_()
 {
 }
 
-EndScene::~EndScene()
+TitleJump::~TitleJump()
 {
 }
 
-void EndScene::Load(void)
+void TitleJump::Load(void)
 {
-	img_[(int)SELECT::YES] = AsoUtility::LoadImg("Data/Image/Title/End/Yes.png");
-	img_[(int)SELECT::NO] = AsoUtility::LoadImg("Data/Image/Title/End/No.png");
+	img_[(int)SELECT::YES] = AsoUtility::LoadImg("Data/Image/TitleJump/Yes.png");
+	img_[(int)SELECT::NO] = AsoUtility::LoadImg("Data/Image/TitleJump/No.png");
 }
 
-void EndScene::Init(void) 
+void TitleJump::Init(void)
 {
-	nowSelect_ = SELECT::YES;
+	nowSelect_ = SELECT::NO;
 
 	SoundManager::GetIns().AllStop();
 }
 
-void EndScene::Update(void) 
+void TitleJump::Update(void)
 {
 	switch (nowSelect_)
 	{
-	case EndScene::SELECT::YES:
-		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_DOWN).down) { nowSelect_ = EndScene::SELECT::NO; }
+	case SELECT::YES:
 		if (KEY::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 			SoundManager::GetIns().PauseInfoDelete();
-			Application::GetInstance().GameEnd();
+			SceneManager::GetIns().JumpScene(SCENE_ID::TITLE);
 			return;
 		}
+		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_DOWN).down) { nowSelect_ = SELECT::NO; }
 		break;
-	case EndScene::SELECT::NO:
-		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_UP).down) { nowSelect_ = EndScene::SELECT::YES; }
+	case SELECT::NO:
 		if (KEY::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 			SoundManager::GetIns().PausePlay();
 			SceneManager::GetIns().PopScene();
-			return;
 		}
+		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_UP).down) { nowSelect_ = SELECT::YES; }
 		break;
 	}
 }
 
-void EndScene::Draw(void) 
+void TitleJump::Draw(void)
 {
 	int xx = Application::SCREEN_SIZE_X;
 	int yy = Application::SCREEN_SIZE_Y;
@@ -67,7 +66,7 @@ void EndScene::Draw(void)
 	DrawRotaGraph(x, y, 1, 0, img_[(int)nowSelect_], true);
 }
 
-void EndScene::Release(void) 
+void TitleJump::Release(void)
 {
 	for (auto& id : img_) { DeleteGraph(id); }
 }

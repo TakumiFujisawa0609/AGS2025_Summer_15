@@ -10,6 +10,7 @@
 #include "../../Manager/Camera.h"
 #include "../../Manager/SoundManager.h"
 
+#include"Play/PlayScene.h"
 #include"End/EndScene.h"
 
 TitleScene::TitleScene(void):
@@ -53,15 +54,13 @@ void TitleScene::Update(void)
 	{
 	case TitleScene::SELECT::PLAY:
 		if (key.GetInfo(KEY_TYPE::MOVE_RIGHT).down) { nowSelect_ = TitleScene::SELECT::EXIT; }
-		if(key.GetInfo(KEY_TYPE::ENTER).down){ scnM.ChangeScene(SceneManager::SCENE_ID::BOSSSELECT); }
+		if (key.GetInfo(KEY_TYPE::ENTER).down) { scnM.PushScene(std::make_shared<PlayScene>()); return; }
 		break;
 	case TitleScene::SELECT::EXIT:
 		if (key.GetInfo(KEY_TYPE::MOVE_LEFT).down) { nowSelect_ = TitleScene::SELECT::PLAY; }
-		if (key.GetInfo(KEY_TYPE::ENTER).down) { SceneManager::GetIns().PushScene(std::make_shared<EndScene>()); }
+		if (key.GetInfo(KEY_TYPE::ENTER).down) { SceneManager::GetIns().PushScene(std::make_shared<EndScene>()); return; }
 		break;
 	}
-
-	if (CheckHitKey(KEY_INPUT_0)) { scnM.ChangeScene(SceneManager::SCENE_ID::TUTORIAL); return; }
 }
 
 void TitleScene::Draw(void)

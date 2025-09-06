@@ -15,6 +15,8 @@
 
 #include"Object/TutorialTask/TutorialTaskManager.h"
 
+#include"../Event/TitleJump/TitleJump.h"
+
 TutorialScene::TutorialScene():
 	player_(nullptr),
 	master_(nullptr),
@@ -71,7 +73,8 @@ void TutorialScene::Update(void)
 	bamboo_->Update();
 
 	if (KeyManager::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
-		SceneManager::GetIns().ChangeScene(SceneManager::SCENE_ID::TITLE);
+		SceneManager::GetIns().PushScene(std::make_shared<TitleJump>());
+		return;
 	}
 }
 
