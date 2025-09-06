@@ -16,7 +16,7 @@ Stage1::~Stage1()
 
 void Stage1::BackDraw(void)
 {
-	int num = (STAGE_CHIP_SIZE * mapData_[0].size()) / HAIKEI_SIZE_X + 1;
+	int num = (STAGE_CHIP_SIZE * mapData_[0].size() * 5) / HAIKEI_SIZE_X + 1;
 
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < num; j++) {

@@ -99,7 +99,7 @@ const float Collision::GetStageLine(const Vector2F& pos, const Vector2F& size , 
 		if (step == -1 && line <= 0) break;
 
 		int limit = (dir == UP || dir == DOWN) ? mapData.size() + 5 : mapData.at(0).size();
-		if (step == 1 && line >= limit) break;
+		if (step == 1 && line >= limit && SceneManager::GetIns().GetNowBoss() != BOSS_KINDS::RUNBOO) break;
 
 		// 到達していなかったら1つ先をチェックしにいく
 		line += step;
