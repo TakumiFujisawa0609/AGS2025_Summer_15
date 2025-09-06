@@ -22,8 +22,6 @@ void Runboo::Init()
 	image_ = LoadGraph((Application::PATH_IMAGE + "Boss/Runboo/Runboo.png").c_str());
 	moveSpeed_ = MOVE_SPEED;
 
-
-
 	unit_.nextpos_ = { HALF_X, HALF_Y };
 	unit_.pos_ = unit_.nextpos_;
 	ChangeDispPos();
@@ -108,10 +106,12 @@ void Runboo::Draw()
 
 void Runboo::Release()
 {
-	for (int ii = 0; ii < WEAK_MAX; ii++)
+	for (auto& w : weak_)
 	{
-		weak_[ii]->Release();
-		delete weak_[ii];
+		if (!w)continue;
+		w->Release();
+		delete w;
+		w = nullptr;
 	}
 	weak_.clear();
 

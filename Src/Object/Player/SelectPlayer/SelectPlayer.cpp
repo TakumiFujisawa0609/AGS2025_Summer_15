@@ -77,12 +77,12 @@ void SelectPlayer::Update()
 		bamboo_.pos_ = pos_;
 		bamboo_.pos_.y -= 50.0f;
 
-		if (nowSelect_ != BOSS::RUNBOO) {
-			if (key.GetInfo(KEY_TYPE::ENTER).down) {
-				haveB_ = false;
-				SoundManager::GetIns().Play(SoundManager::SOUND::BPTHROW, true);
-			}
+		//if (nowSelect_ != BOSS::RUNBOO) {
+		if (key.GetInfo(KEY_TYPE::ENTER).down) {
+			haveB_ = false;
+			SoundManager::GetIns().Play(SoundManager::SOUND::BPTHROW, true);
 		}
+		//}
 	}
 	else {
 		bamboo_.pos_ += vec_;

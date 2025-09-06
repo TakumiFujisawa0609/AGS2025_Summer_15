@@ -95,7 +95,7 @@ void KeyManager::Update(void)
 			XINPUT_STATE state = {};
 			if (GetJoypadXInputState(DX_INPUT_PAD1, &state) != 0) { state = {}; }
 
-			if (state.Buttons[i] != 0) { b = true; }
+			if (state.Buttons[input] != 0) { b = true; }
 		}
 		for (CONTROLLER_OTHERS input : controllerOthersFormat[i]) {
 			if (b) { break; }
@@ -125,37 +125,39 @@ bool KeyManager::ControllerOthersInput(const CONTROLLER_OTHERS& input)
 	switch (input)
 	{
 	case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_UP:
-		if (state.ThumbLY < 0) { return true; }
+		if (state.ThumbLY > 10000) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_DOWN:
-		if (state.ThumbLY > 0) { return true; }
+		if (state.ThumbLY < -10000) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_RIGHT:
-		if (state.ThumbLX > 0) { return true; }
+		if (state.ThumbLX > 10000) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_LEFT:
-		if (state.ThumbLX < 0) { return true; }
+		if (state.ThumbLX < -10000) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_UP:
-		if (state.ThumbRY < 0) { return true; }
+		if (state.ThumbRY <10000) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_DOWN:
-		if (state.ThumbRY > 0) { return true; }
+		if (state.ThumbRY > 10000) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_RIGHT:
-		if (state.ThumbRX > 0) { return true; }
+		if (state.ThumbRX > 10000) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_LEFT:
-		if (state.ThumbRX < 0) { return true; }
+		if (state.ThumbRX < 10000) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::LEFT_TRIGGER:
-		if (state.LeftTrigger > 0) { return true; }
+		if (state.LeftTrigger > 10000) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::RIGHT_TRIGGER:
-		if (state.RightTrigger > 0) { return true; }
+		if (state.RightTrigger > 10000) { return true; }
 		break;
 	default:
 		return false;
 		break;
 	}
+
+	return false;
 }

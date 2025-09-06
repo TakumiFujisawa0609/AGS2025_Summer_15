@@ -185,6 +185,8 @@ void BattledomeScene::Update(void)
 	if (player_->GetUnit().hp_ <= 0) {
 		SceneManager::GetIns().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 		SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
+
+		return;
 	}
 
 	UnitCollision();

@@ -127,9 +127,6 @@ void BossSelect::Draw()
 
 		if (now == boss.type_) {
 			DrawRotaGraph(515, 420, 1, 0, boss.thum_, true);
-			if (boss.type_ == BOSS::RUNBOO) {
-				DrawRotaGraph(a::SCREEN_SIZE_X / 2, a::SCREEN_SIZE_Y / 2 + 30, 1, AsoUtility::Deg2RadF(-15.0f), comingSoon_, true);
-			}
 		}
 	}
 
