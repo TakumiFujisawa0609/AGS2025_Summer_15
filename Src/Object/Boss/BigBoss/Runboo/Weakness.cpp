@@ -105,12 +105,17 @@ void Weakness::Update()
 
 void Weakness::Draw()
 {
-	DrawRotaGraph(
+	DrawRotaGraph3(
 		unit_.disppos_.x,
 		unit_.disppos_.y,
-		1.0f, 0.0f,
+		180,170,
+		1.0f,1.0f, 0.0f,
 		image_, true
 	);
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+	DrawCircleAA(unit_.disppos_.x, unit_.disppos_.y, unit_.radius_, 30, 0xffffff);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	if (!unit_.isAlive_)return;
 

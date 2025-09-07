@@ -368,7 +368,7 @@ void BattledomeScene::Scroll(void)
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
 	{
-		camera.Follow(Camera::X, 10);
+		camera.Follow(Camera::X, 1);
 	}
 		break;
 	case SceneManager::BOSS_KINDS::NOKOPY:

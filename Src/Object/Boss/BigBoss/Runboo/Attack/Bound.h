@@ -12,7 +12,9 @@ public:
 	static constexpr float RADIUS_SIZE = 128.0f;
 	static constexpr float MOVE_SPEED = 10.0f;
 
-	Bound();
+	static constexpr int BOUND_BALL_MAX = 3;
+
+	Bound(float moveSpeed);
 	~Bound();
 
 	void Init(const Vector2F* pos)override;
@@ -21,5 +23,8 @@ public:
 	void Release(void)override;
 
 private:
+	std::vector<Base> obj_;
+
 	int image_;
+	int moveSpeed_;
 };
