@@ -486,6 +486,8 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 				i++;
 			}
 
+			i = 0;
+
 			for (auto& weakBull : weak->GetBulletObj())
 			{
 				if (ins.Circle(player_->DefaultAtt(), weakBull))
@@ -688,7 +690,6 @@ void BattledomeScene::PlayerToBoss(void)
 		}
 		break;
 	}
-
 }
 
 void BattledomeScene::PlayerToBossAttack(void)
