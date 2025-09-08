@@ -8,6 +8,8 @@
 class WeakBullet;
 class Laser;
 class Pillar;
+class Bound;
+class Spiral;
 
 class Weakness : public BossBase
 {
@@ -22,13 +24,15 @@ public:
 	static constexpr int HP_POS_X = 10;
 	static constexpr int HP_POS_Y = 15;
 
-	static constexpr int INVI_COUNTER = 180;
+	static constexpr int INVI_COUNTER = 30;
 
 	enum ATTACK
 	{
 		NON,
 		LASER,
 		PILLAR,
+		BOUND,
+		SPIRAL,
 		MAX,
 	};
 
@@ -37,14 +41,18 @@ public:
 
 	void Init(Vector2F disppos, float moveSpeed);
 	void Init(void)override;
-	void Update(Vector2F boss);
+	void Update(Vector2F boss, float moveSpeed);
 	void Update(void)override;
 	void Draw(void)override;
 	void Release(void)override;
 
 	AttackBase* GetAttackIns(void)override;
 	std::vector<Base>GetObj(void)override;
+
 	std::vector<Base> GetBulletObj(void);
+
+	void BulltHit(int i);
+
 
 	void ObjHit(int i);
 	void SetDamage(int dmg)override;
@@ -53,6 +61,8 @@ public:
 		attack_ = attack;
 	}
 
+	ATTACK GetAttack(void) { return attack_; }
+
 	int GetCnt(void) { return cnt_; }
 
 private:
@@ -60,6 +70,8 @@ private:
 	WeakBullet* bullet_;
 	Laser* laser_;
 	Pillar* pillar_;
+	Bound* bound_;
+	Spiral* spiral_;
 
 	ATTACK attack_;
 

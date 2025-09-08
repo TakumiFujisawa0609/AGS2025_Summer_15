@@ -4,11 +4,15 @@
 #include"Attack/WeakBullet.h"
 #include"Attack/Laser.h"
 #include"Attack/Pillar.h"
+#include"Attack/Bound.h"
+#include"Attack/Spiral.h"
 
 Weakness::Weakness()
 {
 	bullet_ = nullptr;
 	laser_ = nullptr;
+	bound_ = nullptr;
+	spiral_ = nullptr;
 }
 
 Weakness::~Weakness()
@@ -55,6 +59,10 @@ void Weakness::Init(Vector2F disppos, float moveSpeed)
 	pillar_ = new Pillar(moveSpeed_);
 	//pillar_->Init(&unit_.pos_);
 
+	bound_ = new Bound(moveSpeed_);
+
+	spiral_ = new Spiral(moveSpeed_);
+
 	laser_->SetTarget(playerPosPtr_);
 	pillar_->SetTarget(playerPosPtr_);
 
@@ -62,10 +70,11 @@ void Weakness::Init(Vector2F disppos, float moveSpeed)
 
 void Weakness::Init(void) {}
 
-void Weakness::Update(Vector2F boss)
+void Weakness::Update(Vector2F boss, float moveSpeed)
 {
 	if (!unit_.isAlive_)return;
 	unit_.nextpos_.x = boss.x;
+	moveSpeed_ = moveSpeed;
 }
 
 void Weakness::Update() 
@@ -76,9 +85,10 @@ void Weakness::Update()
 
 	// ランダムにゆらゆら動く
 	const float noiseY = (GetRand(200) - 100) / 500.0f;
+	const float noiseX = (GetRand(200) - 100) / 500.0f;
 
 	// 元の位置から縦にゆらゆら動かす
-	//unit_.nextpos_.x += sinf(cnt_) * AMPLITUDE + noiseX;
+	unit_.nextpos_.x += sinf(cnt_) * AMPLITUDE + noiseX;
 	unit_.nextpos_.y += cosf(cnt_ * 0.8f) * AMPLITUDE + noiseY;
 
 	if (unit_.inviCounter_ > 0)
@@ -88,48 +98,64 @@ void Weakness::Update()
 
 	if (unit_.hp_ <= 0)
 	{
-		bullet_->SetIsAlive(false);
 		if (unit_.hp_ <= 0) {
 			unit_.isAlive_ = false;
 		}
 
 		ChangeState(STATE::DEATH);
 	}
-	bullet_->Update(unit_.pos_);
+	bullet_->Update(unit_.pos_, moveSpeed_);
 
 	AttackManager();
 	BossBase::Update();
 
+	if (CheckHitKey(KEY_INPUT_0))unit_.hp_--;
 
 }
 
 void Weakness::Draw()
 {
-	DrawRotaGraph3(
-		unit_.disppos_.x,
-		unit_.disppos_.y,
-		180,170,
-		1.0f,1.0f, 0.0f,
-		image_, true
-	);
+	//DrawRotaGraph3(
+	//	unit_.disppos_.x,
+	//	unit_.disppos_.y,
+	//	180,170,
+	//	1.0f,1.0f, 0.0f,
+	//	image_, true
+	//);
 
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-	DrawCircleAA(unit_.disppos_.x, unit_.disppos_.y, unit_.radius_, 30, 0xffffff);
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	if (unit_.inviCounter_ > 0) {
+		// 点滅（5フレームごとに表示・非表示）
+		if ((unit_.inviCounter_ / 5) % 2 == 0) {
+			// 赤く光る
+			SetDrawBlendMode(DX_BLENDMODE_ADD, 180);
+			DrawRotaGraph3(
+				unit_.disppos_.x,
+				unit_.disppos_.y,
+				180, 170,
+				1.0f, 1.0f, 0.0f,
+				image_, true
+			);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		}
+	}
+	else {
+		// 通常描画
+		DrawRotaGraph3(
+			unit_.disppos_.x,
+			unit_.disppos_.y,
+			180, 170,
+			1.0f, 1.0f, 0.0f,
+			image_, true
+		);
+	}
 
 	if (!unit_.isAlive_)return;
-
-	//DrawBar(
-	//	unit_.disppos_.x - SIZE_X / 2 - 50,
-	//	unit_.disppos_.y - SIZE_Y / 2,
-	//	unit_.disppos_.x + SIZE_X / 2 + 50,
-	//	unit_.disppos_.y - SIZE_Y / 2 + 16,
-	//	unit_.hp_, HP_MAX, RGB(0, 0, 255)
-	//);
 
 	bullet_->Draw();
 	laser_->Draw();
 	pillar_->Draw();
+	bound_->Draw();
+	spiral_->Draw();
 }
 
 void Weakness::Release()
@@ -145,6 +171,14 @@ void Weakness::Release()
 	pillar_->Release();
 	delete pillar_;
 	pillar_ = nullptr;
+
+	bound_->Release();
+	delete bound_;
+	bound_ = nullptr;
+
+	spiral_->Release();
+	delete spiral_;
+	spiral_ = nullptr;
 
 	DeleteGraph(image_);
 
@@ -162,15 +196,21 @@ std::vector<Base> Weakness::GetObj(void)
 
 	switch (attack_)
 	{
-	case Weakness::NON:
+	case ATTACK::NON:
 		break;
-	case Weakness::LASER:
+	case ATTACK::LASER:
 		ret = laser_->Get();
 		break;
-	case Weakness::PILLAR:
+	case ATTACK::PILLAR:
 		ret = pillar_->Get();
 		break;
-	case Weakness::MAX:
+	case ATTACK::BOUND:
+		ret = bound_->Get();
+		break;
+	case ATTACK::SPIRAL:
+		ret = spiral_->Get();
+		break;
+	case ATTACK::MAX:
 		break;
 	}
 
@@ -182,23 +222,32 @@ std::vector<Base> Weakness::GetBulletObj(void)
 	return bullet_->Get();
 }
 
+void Weakness::BulltHit(int i)
+{
+	bullet_->Hit(i); 
+}
+
 void Weakness::ObjHit(int i)
 {
 	//bullet_->Hit();
 
 	switch (attack_)
 	{
-	case Weakness::NON:
+	case ATTACK::NON:
 		break;
-	case Weakness::LASER:
+	case ATTACK::LASER:
 		laser_->Hit(i);
 		break;
-	case Weakness::PILLAR:
+	case ATTACK::PILLAR:
 		pillar_->Hit(i);
 		break;
-	case Weakness::MAX:
+	case ATTACK::BOUND:
+		bound_->Hit(i);
 		break;
-	default:
+	case ATTACK::SPIRAL:
+		spiral_->Hit(i);
+		break;
+	case ATTACK::MAX:
 		break;
 	}
 }
@@ -262,6 +311,36 @@ void Weakness::Attack(void)
 		pillar_->Update(unit_.pos_);
 
 		if (pillar_->End())
+		{
+			attack_ = ATTACK::NON;
+			attackCounter_ = 0;
+		}
+		break;
+	case Weakness::ATTACK::BOUND:
+ 		attackCounter_++;
+		if (attackCounter_ <= 1)
+		{
+			bound_->Init(&unit_.pos_);
+		}
+
+		bound_->Update(unit_.pos_);
+
+		if (bound_->End())
+		{
+			attack_ = ATTACK::NON;
+			attackCounter_ = 0;
+		}
+		break;
+	case ATTACK::SPIRAL:
+		attackCounter_++;
+		if (attackCounter_ <= 1)
+		{
+			spiral_->Init(&unit_.pos_);
+		}
+
+		spiral_->Update(unit_.pos_);
+
+		if (spiral_->End())
 		{
 			attack_ = ATTACK::NON;
 			attackCounter_ = 0;

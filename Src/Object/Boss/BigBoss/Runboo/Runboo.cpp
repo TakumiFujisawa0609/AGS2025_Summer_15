@@ -48,11 +48,31 @@ void Runboo::Init()
 	}
 
 	maxHp_ = unit_.hp_;
+
 }
 
 void Runboo::Update()
 {
-	unit_.nextpos_.x += moveSpeed_;
+	int deadCount = 0;
+	for (const auto& w : weak_)
+	{
+		if (!w->GetUnit().isAlive_) // Ž€‚ñ‚Å‚¢‚é‚È‚ç
+		{
+			deadCount++;
+		}
+	}
+
+	switch (deadCount)
+	{
+	case 0:
+		break;
+	case 1:
+		moveSpeed_ = 3;
+		break;
+	case 2:
+		moveSpeed_ = 5;
+		break;
+	}
 
 	BossBase::Update();
 
@@ -63,24 +83,29 @@ void Runboo::Update()
 
 	for (auto& w : weak_)
 	{ 
-		w->Update(unit_.pos_);
+		w->Update(unit_.pos_, moveSpeed_);
 		w->Update();
 
 		totalHP += w->GetUnit().hp_;
 	}
 
+	static int cnt = 0;;
+
 	unit_.hp_ = totalHP;
 
-	if (unit_.inviCounter_ > 0)
+	if (unit_.hp_ <= 0)
 	{
-		unit_.inviCounter_--;
-	}
+		cnt++;
 
-	if (unit_.inviCounter_ <= 0 && unit_.hp_ <= 0)
-	{
-		//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
-		ChangeState(STATE::DEATH);
+		moveSpeed_ = 0;
+
+		if (cnt > 180)
+		{
+			SceneManager::GetIns().Shake();
+			ChangeState(STATE::DEATH);
+		}
 	}
+	unit_.nextpos_.x += moveSpeed_;
 }
 
 void Runboo::Draw()
@@ -90,16 +115,6 @@ void Runboo::Draw()
 		unit_.disppos_.y - 16,
 		1.5f, 0.0f, image_,
 		true, true
-	);
-
-	for (int ii = 0; ii < WEAK_MAX; ii++)weak_[ii]->Draw();
-
-	DrawBar(
-		100,
-		Application::SCREEN_SIZE_Y - 80,
-		Application::SCREEN_SIZE_X - 100,
-		Application::SCREEN_SIZE_Y - 30,
-		unit_.hp_, maxHp_, RGB(100, 100, 200)
 	);
 
 }
@@ -117,6 +132,19 @@ void Runboo::Release()
 
 	DeleteGraph(image_);
 
+}
+
+void Runboo::DrawHp()
+{
+	for (int ii = 0; ii < WEAK_MAX; ii++)weak_[ii]->Draw();
+
+	DrawBar(
+		100,
+		Application::SCREEN_SIZE_Y - 80,
+		Application::SCREEN_SIZE_X - 100,
+		Application::SCREEN_SIZE_Y - 30,
+		unit_.hp_, maxHp_, RGB(100, 100, 200)
+	);
 }
 
 AttackBase* Runboo::GetAttackIns(void)
@@ -142,16 +170,6 @@ void Runboo::ObjHit(int i)
 
 void Runboo::SetDamage(int dmg)
 {
-	unit_.hp_ -= dmg;
-	unit_.inviCounter_ = INVI_COUNTER;
-}
-
-bool Runboo::GetWeakAllDeath(void)
-{
-	return (weak_[0]->GetUnit().isAlive_ == false &&
-			weak_[1]->GetUnit().isAlive_ == false &&
-			weak_[2]->GetUnit().isAlive_ == false);
-
 }
 
 //std::vector<Base*> Runboo::GetObj(void)

@@ -130,6 +130,13 @@ void Pillar::Draw(void)
 				true
 			);
 		}
+
+		//SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+		//DrawBox(pil.disppos_.x - pil.size_.x / 2, pil.disppos_.y - pil.size_.y / 2,
+		//	pil.disppos_.x + pil.size_.x / 2, pil.disppos_.y + pil.size_.y / 2,
+		//	0xffffff, true);
+		//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
 	}
 }
 
