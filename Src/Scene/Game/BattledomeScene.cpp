@@ -844,20 +844,13 @@ void BattledomeScene::CreateBamBlastEffect(Vector2F pos, int bp)
 
 void BattledomeScene::LoadBamBlastImg(void)
 {
-	img_[0] = LoadGraph("Data/Image/Effect/BambooBlast1.png");
-	img_[1] = LoadGraph("Data/Image/Effect/BambooBlast2.png");
-	img_[2] = LoadGraph("Data/Image/Effect/BambooBlast3.png");
-	img_[3] = LoadGraph("Data/Image/Effect/BambooBlast4.png");
-	img_[4] = LoadGraph("Data/Image/Effect/BambooBlast5.png");
-	img_[5] = LoadGraph("Data/Image/Effect/BambooBlast6.png");
+	for (int i = 0; i < 6; i++) {
+		std::string path = "Data/Image/Effect/BambooBlast" + std::to_string(i + 1) + ".png";
+		img_[i] = LoadGraph(path.c_str());
+	}
 }
 
 void BattledomeScene::DeleteBamBlastImg(void)
 {
-	DeleteGraph(img_[0]);
-	DeleteGraph(img_[1]);
-	DeleteGraph(img_[2]);
-	DeleteGraph(img_[3]);
-	DeleteGraph(img_[4]);
-	DeleteGraph(img_[4]);
+	for (auto& id : img_) { DeleteGraph(id); }
 }

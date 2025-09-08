@@ -59,7 +59,7 @@ private:
 	void CreateBamBlastEffect(Vector2F pos,int bp);
 	void LoadBamBlastImg(void);
 	void DeleteBamBlastImg(void);
-	int img_[5];
+	int img_[6];
 
 
 
