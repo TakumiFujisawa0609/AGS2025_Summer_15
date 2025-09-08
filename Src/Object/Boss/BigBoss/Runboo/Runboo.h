@@ -29,6 +29,8 @@ public:
 	void Draw()override;
 	void Release()override;
 
+	void DrawHp();
+
 	//std::vector<Base*>GetObj(void)override;
 
 	AttackBase* GetAttackIns(void)override;
@@ -38,7 +40,6 @@ public:
 	bool IsInvici(void) { return unit_.inviCounter_ > 0; }
 
 	float GetMoveSpeed(void) { return moveSpeed_; }
-	bool GetWeakAllDeath(void);
 
 	std::vector<Weakness*> GetWeakness(void) { return weak_; }
 

@@ -10,7 +10,7 @@ class WeakBullet : public AttackBase
 {
 public:
 	static constexpr int BULLET_NUM = 10;
-	static constexpr float MOVE_SPEED = 5.0f;
+	static constexpr float BULLET_SPEED = 6.0f;
 
 	static constexpr float SIZE_X = 32.0f;
 	static constexpr float SIZE_Y = 32.0f;
@@ -29,14 +29,14 @@ public:
 	~WeakBullet();
 
 	void Init(const Vector2F* pos)override;
-	void Update(Vector2F boss);
+	void Update(Vector2F boss, float moveSpeed);
 	void Update(void)override;
 	void Draw(void)override;
 	void Release(void)override;
 
 	const std::vector<Base> Get() const override;
 
-	void Hit(void);
+	void Hit(int i);
 
 	bool End(void);
 
@@ -44,7 +44,9 @@ public:
 
 private:
 
-	Base bullets_[BULLET_NUM];
+	std::vector<Base> obj_;
+
+	//Base bullets_[BULLET_NUM];
 	int endCnt_;
 
 	int imageArray[NUM_MAX];

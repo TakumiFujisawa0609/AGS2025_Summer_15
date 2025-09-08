@@ -37,5 +37,7 @@ private:
 	Vector2F warnPos_;
 
 	void ChangeDispPos() override;
+
+	
 };
 

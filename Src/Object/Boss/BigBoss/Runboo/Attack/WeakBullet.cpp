@@ -1,7 +1,6 @@
 #include "WeakBullet.h"
 #include"../../../../../Manager/Camera.h"
 #include"../../../../../Application.h"
-#include"../../../../../Manager/Camera.h"
 
 WeakBullet::WeakBullet(float moveSpeed)
 {
@@ -14,165 +13,133 @@ WeakBullet::~WeakBullet()
 
 void WeakBullet::Init(const Vector2F* pos)
 {
-	LoadDivGraph(
+    LoadDivGraph(
         (Application::PATH_IMAGE + "Boss/Runboo/Bullet.png").c_str(),
-		NUM_MAX, NUM_X, NUM_Y,
-		IMAGE_SIZE_X, IMAGE_SIZE_Y,
-		imageArray
-	);
-
+        NUM_MAX, NUM_X, NUM_Y,
+        IMAGE_SIZE_X, IMAGE_SIZE_Y,
+        imageArray
+    );
 
     shotTimer_ = 0;
     canShot_ = true;
-
-    obj_.pos_ = *pos;
     rotate_ = 0;
-
-    for (int i = 0; i < BULLET_NUM; i++) {
-        bullets_[i].isAlive_ = false;
-        bullets_[i].isDraw_ = false;
-        bullets_[i].pos_ = *pos;
-        bullets_[i].radius_ = 30;
-        bullets_[i].size_ = {SIZE_X, SIZE_Y};
-    }
-	arrayIndex_ = 0;
-
+    arrayIndex_ = 0;
     endCnt_ = 0;
+
+    obj_.clear();
+    obj_.resize(BULLET_NUM); // ★固定長で確保
+
+    for (auto& b : obj_) {
+        b.isAlive_ = false;
+        b.isDraw_ = false;
+    }
 }
 
-void WeakBullet::Update(Vector2F boss)
+void WeakBullet::Update(Vector2F boss, float moveSpeed)
 {
-    obj_.pos_.x = boss.x;
-
+    moveSpeed_ = moveSpeed;
     rotate_ += 0.05f;
 
     if (!canShot_) {
-		// 発射できなかったらタイマーを減らす
         if (shotTimer_ > 0) {
             shotTimer_--;
         }
         else {
-            // タイマー切れたら発射できるようにする
             canShot_ = true;
         }
     }
 
     if (canShot_) {
-        // 発射処理（すべての弾がfalseなら発射）
-        bool allDead = true;
+        // ここで弾を一斉に発射（新規生成）
         for (int i = 0; i < BULLET_NUM; i++) {
-            if (bullets_[i].isAlive_) {
-                allDead = false;
-                break;
-            }
+            obj_[i].isAlive_ = true;
+            obj_[i].isDraw_ = true;
+            obj_[i].pos_ = boss;
+            obj_[i].radius_ = 30;
+            obj_[i].size_ = { SIZE_X, SIZE_Y };
+            obj_[i].xAccel_ = BULLET_SPEED;
+            obj_[i].yAccel_ = (i - BULLET_NUM / 2) * 0.2f;
         }
-
-        if (allDead) {
-            // 弾を初期位置にセットして発射する
-            for (int i = 0; i < BULLET_NUM; i++) {
-                bullets_[i].pos_ = obj_.pos_;
-                bullets_[i].isAlive_ = true;
-                bullets_[i].isDraw_ = true;
-                bullets_[i].xAccel_ = MOVE_SPEED;
-                bullets_[i].yAccel_ = (i - BULLET_NUM / 2) * 0.2f; 
-            }
-            // 発射後はタイマー開始、発射不可にする
-            shotTimer_ = SHOT_INTERVAL;
-            canShot_ = false;
-            endCnt_++;
-        }
+        shotTimer_ = SHOT_INTERVAL;
+        canShot_ = false;
+        endCnt_++;
     }
 
-    // 弾の移動処理
-    for (int i = 0; i < BULLET_NUM; i++) {
-        if (!bullets_[i].isAlive_) continue;
+    // 弾の移動
+    for (auto& b : obj_) {
+        if (!b.isAlive_) continue;
 
-        bullets_[i].pos_.x += bullets_[i].xAccel_;
-        bullets_[i].pos_.y += bullets_[i].yAccel_;
+        b.pos_.x += b.xAccel_ * ((moveSpeed_ == 5) ? 2 : 1);
+        b.pos_.y += b.yAccel_ * 2;
 
-        if (bullets_[i].pos_.x > Camera::GetInstance().GetPos().x + Application::SCREEN_SIZE_X || bullets_[i].pos_.y < 0 || bullets_[i].pos_.y > 720) {
-            bullets_[i].isAlive_ = false;
-            bullets_[i].isDraw_ = false;
+        if (b.pos_.x > Camera::GetInstance().GetPos().x + Application::SCREEN_SIZE_X ||
+            b.pos_.y < 0 || b.pos_.y > Application::SCREEN_SIZE_Y)
+        {
+            b.isAlive_ = false;
+            b.isDraw_ = false;
         }
 
-        bullets_[i].disppos_ = bullets_[i].pos_;
+        b.disppos_ = b.pos_ - Camera::GetInstance().GetPos();
     }
 
     arrayIndex_++;
-
-	if (arrayIndex_ >= NUM_MAX - 1) {
-		arrayIndex_ = 0;
-	}
-
-    ChangeDispPos();
-
-    //AttackBase::Update();
+    if (arrayIndex_ >= NUM_MAX - 1) arrayIndex_ = 0;
 }
 
 void WeakBullet::Update() {}
 
 void WeakBullet::Draw(void)
 {
-
-
-    for (int i = 0; i < BULLET_NUM; i++) {
-        
-        if (!bullets_[i].isAlive_) continue;
-
-
-		DrawRotaGraph(
-			bullets_[i].disppos_.x,
-			bullets_[i].disppos_.y,
+    for (auto& b : obj_) {
+        if (!b.isAlive_) continue;
+        DrawRotaGraph(
+            b.disppos_.x,
+            b.disppos_.y,
             IMAGE_BIG_RATE, 0.0f,
-			imageArray[arrayIndex_],
-			true
-		);
-
+            imageArray[arrayIndex_],
+            true
+        );
     }
 }
 
 void WeakBullet::Release(void)
 {
-	for (int i = 0; i < NUM_MAX; i++) {
+    for (int i = 0; i < NUM_MAX; i++) {
         DeleteGraph(imageArray[i]);
-	}
+    }
+    obj_.clear();
 }
 
 const std::vector<Base> WeakBullet::Get() const
 {
-    std::vector<Base> ret;
-    for (int i = 0; i < BULLET_NUM; i++) {
-        ret.emplace_back(bullets_[i]);
-    }
-    return ret;
+    return obj_;
 }
 
-void WeakBullet::Hit(void)
+void WeakBullet::Hit(int i)
 {
-
+    if (i < 0 || i >= obj_.size()) return;
+    obj_[i].isAlive_ = false;
+    obj_[i].isDraw_ = false;
 }
 
 bool WeakBullet::End(void)
 {
-    if (endCnt_ >= 3)
-    {
-        return true;
-    }
-    return false;
+    return (endCnt_ >= 3);
 }
 
 void WeakBullet::SetIsAlive(bool isAlive)
 {
-	for (int i = 0; i < BULLET_NUM; i++) {
-		bullets_[i].isAlive_ = isAlive;
-	}
-	endCnt_ = 0;
+    for (auto& b : obj_) {
+        b.isAlive_ = isAlive;
+        b.isDraw_ = isAlive;
+    }
+    endCnt_ = 0;
 }
 
 void WeakBullet::ChangeDispPos()
 {
     auto& camera = Camera::GetInstance();
-    for (int i = 0; i < BULLET_NUM; i++) {
-        bullets_[i].disppos_ = bullets_[i].pos_ - camera.GetPos();
+    for (auto& b : obj_) {
+        b.disppos_ = b.pos_ - camera.GetPos();
     }
 }

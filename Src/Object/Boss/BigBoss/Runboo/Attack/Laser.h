@@ -12,7 +12,7 @@ public:
 
 	static constexpr float SIZE_X = 64.0f;
 	static constexpr float SIZE_Y = 64.0f;
-	static constexpr float BIG_RATE = 1.0f;
+	static constexpr float BIG_RATE = 0.5f;
 
 	// ’e‚Ì‰Šú‘¬“xi‚È‚È‚ßj
 	static constexpr float LASER_SPEED = 10.0f;
@@ -46,6 +46,7 @@ private:
 	Vector2F attackStartPos_;
 	const Vector2F* target_;
 	int cnt_;
+	int imageRota_;
 
 	int shootTimer_ = 0;
 	int nextIndex_ = 0;

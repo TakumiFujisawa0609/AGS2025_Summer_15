@@ -16,7 +16,7 @@ void Laser::Init(const Vector2F* pos)
     attackStartPos_ = *pos;
     end_ = false;
 
-    image_ = LoadGraph("Data/Image/Boss/Runboo/Laser.png");
+    image_ = LoadGraph("Data/Image/Boss/Runboo/a.png");
 
     obj_.resize(MAX_NUM);
 
@@ -33,6 +33,8 @@ void Laser::Init(const Vector2F* pos)
     shootTimer_ = 0;
     nextIndex_ = 0;
     fireCount_ = 0;
+    imageRota_ = 0;
+
     end_ = false;  // ‰Šú‰»
 }
 
@@ -78,11 +80,13 @@ void Laser::Update(Vector2F boss)
         {
             laser.pos_.y = UPPER_BOUND;
             laser.yAccel_ *= -1;
+            cnt_++;
         }
         else if (laser.pos_.y > LOWER_BOUND)
         {
             laser.pos_.y = LOWER_BOUND;
             laser.yAccel_ *= -1;
+            cnt_++;
         }
 
         if (laser.pos_.x > Camera::GetInstance().GetPos().x + Application::SCREEN_SIZE_X)
@@ -118,34 +122,27 @@ void Laser::Update(Vector2F boss)
         nextIndex_ = 0;
     }
 
-    ChangeDispPos();
+    if (imageRota_ > 60)imageRota_ = 0;
+    imageRota_++;
 
-    
+    ChangeDispPos();
 }
 
 void Laser::Update(void) {}
 
 void Laser::Draw(void)
 {
+
+    if (end_)return;
+
 	for (auto& laser : obj_)
 	{
 		if (laser.isAlive_)
 		{
-		/*	DrawFormatString(0, 0, GetColor(255, 255, 255), "x: %.1f y: %.1f", laser.disppos_.x, laser.disppos_.y);
-			DrawBox(
-				laser.disppos_.x - SIZE_X / 2,
-				laser.disppos_.y - SIZE_Y / 2,
-				laser.disppos_.x + SIZE_X / 2,
-				laser.disppos_.y + SIZE_Y / 2,
-				RGB(255, 0, 0), true
-			);*/
-
-            if (end_)return;
-
             DrawRotaGraph(
                 laser.disppos_.x,
                 laser.disppos_.y,
-                BIG_RATE, 0.0f, image_,
+                BIG_RATE, imageRota_, image_,
                 true
             );
 		}

@@ -226,6 +226,7 @@ void BattledomeScene::Draw(void)
 		nokopy_->Draw();
 		break;
 	case M::BOSS_KINDS::RUNBOO:
+		runboo_->Draw();
 		break;
 	case M::BOSS_KINDS::BAMMOON:
 		bammoon_->Draw();
@@ -250,7 +251,13 @@ void BattledomeScene::Draw(void)
 		nokopy_->DrawHp();
 		break;
 	case M::BOSS_KINDS::RUNBOO:
-		runboo_->Draw();
+		runboo_->DrawHp();
+		bamboo_->Draw();
+		for (auto& bm : bmBlast_)
+		{
+			bm->Draw();
+		}
+		player_->Draw();
 		break;
 	case M::BOSS_KINDS::BAMMOON:
 		bammoon_->DrawHp();
@@ -368,7 +375,7 @@ void BattledomeScene::Scroll(void)
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
 	{
-		camera.Follow(Camera::X, 1);
+		camera.Follow(Camera::X, runboo_->GetMoveSpeed());
 	}
 		break;
 	case SceneManager::BOSS_KINDS::NOKOPY:
@@ -464,6 +471,33 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
+
+		for (auto& weak : runboo_->GetWeakness())
+		{
+			int i = 0;
+
+			//プレイヤーの通常攻撃と弱点の攻撃当たり判定
+			for (auto& weakObj : weak->GetObj()) {
+				if (ins.Rect(player_->DefaultAtt(), weakObj))
+				{
+					weak->ObjHit(i);
+					bamboo_->Create(weakObj.pos_, 1, 50);
+				}
+				i++;
+			}
+
+			for (auto& weakBull : weak->GetBulletObj())
+			{
+				if (ins.Circle(player_->DefaultAtt(), weakBull))
+				{
+					weak->BulltHit(i);
+					bamboo_->Create(weakBull.pos_, 1, 10);
+				}
+				i++;
+			}
+
+		}
+
 		break;
 	case SceneManager::BOSS_KINDS::BAMMOON:
 		int i = 0;
@@ -543,9 +577,11 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
+
+
+
 		for (auto& weak : runboo_->GetWeakness())
 		{
-			int i = 0;
 			//プレイヤーの通常攻撃と弱点の当たり判定
 			//if (ins.Circle(player_->DefaultAtt(), weak->GetUnit()))
 			//{
@@ -553,23 +589,21 @@ void BattledomeScene::PlayerAttackToBoss(void)
 			//	bamboo_->Create(player_->GetUnit().pos_, 1, 30);
 			//}
 
-			//プレイヤーと弱点の攻撃当たり判定
-			for (auto& weakObj : weak->GetObj()) {
-				if (ins.Rect(player_->DefaultAtt(), weakObj))
-				{
-					weak->ObjHit(i);
-					bamboo_->Create(weakObj.pos_, 1, 50);
-				}
-				i++;
-			}
-
 			//プレイヤーの特殊攻撃と弱点の当たり判定
+
 			for (auto& bpAtc : player_->GetBpAtt()) {
 				if (ins.CircleAndRect(weak->GetUnit(), bpAtc->GetObj())) {
 					if (bpAtc->GetPower() >= 4)mana.Shake();
 					bpAtc->Off();
 					mana.HitStop();
 					weak->SetDamage(bpAtc->GetDamage());
+					SoundManager::GetIns().Play(SoundManager::SOUND::BPHIT, true, 200);
+
+					if (bpAtc->GetPower() >= 3) { mana.Shake(); }
+					if (bpAtc->GetPower() >= 5) { mana.ZoomPos(bpAtc->GetObj().disppos_); mana.ZoomScale(2.0f); mana.HitStop(20); }
+					bpAtc->Off();
+					CreateBamBlastEffect(bpAtc->GetObj().disppos_, bpAtc->GetPower());
+
 				}
 			}
 		}
@@ -578,6 +612,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 		if (ins.CircleAndRect(player_->DefaultAtt(), runboo_->GetUnit())) {
 			bamboo_->Create(player_->GetUnit().pos_, 1 , 50);
 		}
+
 		break;
 	case M::BOSS_KINDS::BAMMOON:
 		if (ins.CircleAndRect(player_->DefaultAtt(), bammoon_->GetUnit())) {
@@ -633,9 +668,9 @@ void BattledomeScene::PlayerToBoss(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
-		if (ins.CircleAndRect(player_->GetUnit(), runboo_->GetUnit()))
+		if (ins.CircleAndRect(player_->GetUnit(), runboo_->GetUnit()) || player_->GetUnit().disppos_.x < 0)
 		{
-			player_->Hit(5, runboo_->GetUnit().pos_);
+			player_->Hit(10, runboo_->GetUnit().pos_);
 		}
 
 		//プレイヤーと弱点の当たり判定
@@ -718,6 +753,7 @@ void BattledomeScene::PlayerToBossAttack(void)
 					player_->Hit(2, weakBull.pos_);
 				}
 			}
+			
 		}
 	}
 	break;
