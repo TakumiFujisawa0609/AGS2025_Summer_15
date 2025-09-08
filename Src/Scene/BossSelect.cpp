@@ -76,7 +76,7 @@ void BossSelect::Load()
 
 void BossSelect::Init()
 {
-	SoundManager::GetIns().Play(SoundManager::SOUND::SELECT, false, 150, true);
+	SoundManager::GetIns().Play(SoundManager::SOUND::SELECT, false, 100, true);
 }
 
 void BossSelect::Update()

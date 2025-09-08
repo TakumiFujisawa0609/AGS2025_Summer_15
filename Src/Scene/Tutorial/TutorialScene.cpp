@@ -5,6 +5,7 @@
 #include"../../Manager/SceneManager.h"
 #include"../../Manager/Collision.h"
 #include"../../Manager/KeyManager.h"
+#include"../../Manager/SoundManager.h"
 
 #include"../../Manager/Decoration/BlastEffect/BlastEffectManager.h"
 
@@ -51,6 +52,8 @@ void TutorialScene::Load(void)
 
 	bamboo_ = new BambooManager();
 	bamboo_->Init();
+
+	Smng::GetIns().Load(SOUND::SE_SYSTEM_CHARA);
 }
 
 void TutorialScene::Init(void)
@@ -100,6 +103,9 @@ void TutorialScene::Draw(void)
 
 void TutorialScene::Release(void)
 {
+	Smng::GetIns().Delete(SOUND::SE_SYSTEM_CHARA);
+
+
 	if (player_) {
 		player_->Release();
 		delete player_;
@@ -184,6 +190,8 @@ void TutorialScene::Collision(void)
 
 					blastEffect_->On(bp->GetObj().pos_);
 
+					Smng::GetIns().Play(SOUND::BPHIT, true);
+
 					bp->Off();
 
 					sMng.HitStop();
@@ -217,6 +225,7 @@ void TutorialScene::Collision(void)
 						bp->Off();
 
 						blastEffect_->On(obj->GetUnit().pos_);
+						Smng::GetIns().Play(SOUND::BPHIT, true);
 
 						sMng.HitStop();
 					}

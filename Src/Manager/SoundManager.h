@@ -55,6 +55,10 @@ public:
 
 		BGM1,
 
+		SE_SYSTEM_SELECT,
+		SE_SYSTEM_BUTTON,
+		SE_SYSTEM_CHARA,
+
 		MAX,
 	};
 
@@ -72,7 +76,7 @@ public:
 	/// <param name="volume">音量</param>
 	/// <param name="loop">ループ再生</param>
 	/// <param name="topPlay">最初から再生するか</param>
-	void Play(SOUND s, bool over = false, int volume = 255, bool loop = false, bool topPlay = true);
+	void Play(SOUND s, bool over = false, int volume = 150, bool loop = false, bool topPlay = true);
 
 	/// <summary>
 	/// 指定したサウンドを停止
@@ -121,3 +125,6 @@ private:
 	void Init(void);
 	void Release(void);
 };
+
+using Smng = SoundManager;
+using SOUND = Smng::SOUND;

@@ -3,6 +3,8 @@
 #include"../../../../Utility/AsoUtility.h"
 #include"../../../../Manager/KeyManager.h"
 
+#include"../../../../Manager/SoundManager.h"
+
 #include"../../../../Manager/SceneManager.h"
 #include"../../../Event/TitleJump/TitleJump.h"
 
@@ -95,7 +97,11 @@ bool TutorialTaskManager::Update(void)
 
 		if (++linesInterval_ >= LINES_INTERVAL) {
 			linesInterval_ = 0;
-			if (++linesCount_ >= (int)END_LINES_TABLE[(int)nowTask_].size()) { linesCount_ = (int)(END_LINES_TABLE[(int)nowTask_].size()); }
+			if (++linesCount_ >= (int)END_LINES_TABLE[(int)nowTask_].size()) {
+				linesCount_ = (int)(END_LINES_TABLE[(int)nowTask_].size());
+				Smng::GetIns().Stop(SOUND::SE_SYSTEM_CHARA);
+			}
+			else { Smng::GetIns().Play(SOUND::SE_SYSTEM_CHARA, false); }
 		}
 
 	}
@@ -104,7 +110,11 @@ bool TutorialTaskManager::Update(void)
 
 		if (++linesInterval_ >= LINES_INTERVAL) {
 			linesInterval_ = 0;
-			if (++linesCount_ >= (int)START_LINES_TABLE[(int)nowTask_].size()) { linesCount_ = (int)(START_LINES_TABLE[(int)nowTask_].size()); }
+			if (++linesCount_ >= (int)START_LINES_TABLE[(int)nowTask_].size()) {
+				linesCount_ = (int)(START_LINES_TABLE[(int)nowTask_].size()); 
+				Smng::GetIns().Stop(SOUND::SE_SYSTEM_CHARA);
+			}
+			else { Smng::GetIns().Play(SOUND::SE_SYSTEM_CHARA, false); }
 		}
 	}
 
@@ -153,6 +163,8 @@ void TutorialTaskManager::Release(void)
 
 bool TutorialTaskManager::NextTask(void)
 {
+	Smng::GetIns().Play(SOUND::SE_SYSTEM_BUTTON, true);
+
 	nowTask_ = (TASK)((int)nowTask_ + 1);
 
 	if ((int)nowTask_ >= (int)TASK::MAX) {

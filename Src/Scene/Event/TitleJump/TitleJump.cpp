@@ -36,18 +36,20 @@ void TitleJump::Update(void)
 	{
 	case SELECT::YES:
 		if (KEY::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
-			SoundManager::GetIns().PauseInfoDelete();
+			Smng::GetIns().PauseInfoDelete();
+			Smng::GetIns().Play(SOUND::SE_SYSTEM_BUTTON, true);
 			SceneManager::GetIns().JumpScene(SCENE_ID::TITLE);
 			return;
 		}
-		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_DOWN).down) { nowSelect_ = SELECT::NO; }
+		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_DOWN).down) { nowSelect_ = SELECT::NO; Smng::GetIns().Play(SOUND::SE_SYSTEM_SELECT, true); }
 		break;
 	case SELECT::NO:
 		if (KEY::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 			SoundManager::GetIns().PausePlay();
+			Smng::GetIns().Play(SOUND::SE_SYSTEM_BUTTON, true);
 			SceneManager::GetIns().PopScene();
 		}
-		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_UP).down) { nowSelect_ = SELECT::YES; }
+		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_UP).down) { nowSelect_ = SELECT::YES; Smng::GetIns().Play(SOUND::SE_SYSTEM_SELECT, true); }
 		break;
 	}
 }

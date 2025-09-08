@@ -2,6 +2,8 @@
 
 #include"../../../../../Utility/AsoUtility.h"
 
+#include"../../../../../Manager/SoundManager.h"
+
 TutorialMasterAttack::TutorialMasterAttack(const Vector2F& pos):
 	masterPos_(pos),
 	img_(),
@@ -20,6 +22,8 @@ void TutorialMasterAttack::Load(void)
 	AsoUtility::LoadArrayImg("Data/Image/Tutorial/Master/Attack/SlashAnim.png", ANIME_NUM, ANIME_NUM, 1, LOAD_SIZE_X, LOAD_SIZE_Y, img_);
 
 	obj_.size_ = { SIZE_X,SIZE_Y };
+
+	Smng::GetIns().Load(SOUND::SLASH);
 }
 
 void TutorialMasterAttack::Init(void)
@@ -50,6 +54,8 @@ void TutorialMasterAttack::Draw(void)
 
 void TutorialMasterAttack::Release(void)
 {
+	Smng::GetIns().Delete(SOUND::SLASH);
+
 	for (auto& id : img_) { DeleteGraph(id); }
 }
 
@@ -63,4 +69,5 @@ void TutorialMasterAttack::On(void)
 
 	obj_.isAlive_ = true;
 	
+	Smng::GetIns().Play(SOUND::SLASH, true);
 }

@@ -38,9 +38,12 @@ void SceneManager::Init(void)
 	Loading::GetInstance()->Init();
 	Loading::GetInstance()->Load();
 
-	SoundManager::GetIns().Load(SoundManager::HIBIODOSI);
-	SoundManager::GetIns().Load(SoundManager::SISIODOSI);
-	SoundManager::GetIns().Load(SoundManager::BPHIT);
+	Smng::GetIns().Load(SOUND::HIBIODOSI);
+	Smng::GetIns().Load(SOUND::SISIODOSI);
+	Smng::GetIns().Load(SOUND::BPHIT);
+
+	Smng::GetIns().Load(SOUND::SE_SYSTEM_SELECT);
+	Smng::GetIns().Load(SOUND::SE_SYSTEM_BUTTON);
 
 	// ÉJÉÅÉâ
 	Camera::CreateInstance();
@@ -154,9 +157,11 @@ void SceneManager::Destroy(void)
 	for (auto& scene : scenes_) { scene->Release(); }
 	scenes_.clear();
 
-	SoundManager::GetIns().Delete(SoundManager::SOUND::SISIODOSI);
-	SoundManager::GetIns().Delete(SoundManager::SOUND::HIBIODOSI);
-	SoundManager::GetIns().Delete(SoundManager::SOUND::BPHIT);
+	Smng::GetIns().Delete(SOUND::SISIODOSI);
+	Smng::GetIns().Delete(SOUND::HIBIODOSI);
+	Smng::GetIns().Delete(SOUND::BPHIT);
+	Smng::GetIns().Delete(SOUND::SE_SYSTEM_SELECT);
+	Smng::GetIns().Delete(SOUND::SE_SYSTEM_BUTTON);
 	DeleteGraph(mainScreen_);
 
 	// ÉçÅ[ÉhâÊñ ÇÃçÌèú

@@ -35,17 +35,19 @@ void EndScene::Update(void)
 	switch (nowSelect_)
 	{
 	case EndScene::SELECT::YES:
-		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_DOWN).down) { nowSelect_ = EndScene::SELECT::NO; }
+		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_DOWN).down) { nowSelect_ = EndScene::SELECT::NO; Smng::GetIns().Play(SOUND::SE_SYSTEM_SELECT, true); }
 		if (KEY::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 			SoundManager::GetIns().PauseInfoDelete();
+			Smng::GetIns().Play(SOUND::SE_SYSTEM_BUTTON, true);
 			Application::GetInstance().GameEnd();
 			return;
 		}
 		break;
 	case EndScene::SELECT::NO:
-		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_UP).down) { nowSelect_ = EndScene::SELECT::YES; }
+		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_UP).down) { nowSelect_ = EndScene::SELECT::YES; Smng::GetIns().Play(SOUND::SE_SYSTEM_SELECT, true); }
 		if (KEY::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 			SoundManager::GetIns().PausePlay();
+			Smng::GetIns().Play(SOUND::SE_SYSTEM_BUTTON, true);
 			SceneManager::GetIns().PopScene();
 			return;
 		}

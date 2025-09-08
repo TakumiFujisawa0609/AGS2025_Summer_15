@@ -53,12 +53,12 @@ void TitleScene::Update(void)
 	switch (nowSelect_)
 	{
 	case TitleScene::SELECT::PLAY:
-		if (key.GetInfo(KEY_TYPE::MOVE_RIGHT).down) { nowSelect_ = TitleScene::SELECT::EXIT; }
-		if (key.GetInfo(KEY_TYPE::ENTER).down) { scnM.PushScene(std::make_shared<PlayScene>()); return; }
+		if (key.GetInfo(KEY_TYPE::MOVE_RIGHT).down) { nowSelect_ = TitleScene::SELECT::EXIT; Smng::GetIns().Play(SOUND::SE_SYSTEM_SELECT, true); }
+		if (key.GetInfo(KEY_TYPE::ENTER).down) { scnM.PushScene(std::make_shared<PlayScene>()); Smng::GetIns().Play(SOUND::SE_SYSTEM_BUTTON, true); return; }
 		break;
 	case TitleScene::SELECT::EXIT:
-		if (key.GetInfo(KEY_TYPE::MOVE_LEFT).down) { nowSelect_ = TitleScene::SELECT::PLAY; }
-		if (key.GetInfo(KEY_TYPE::ENTER).down) { SceneManager::GetIns().PushScene(std::make_shared<EndScene>()); return; }
+		if (key.GetInfo(KEY_TYPE::MOVE_LEFT).down) { nowSelect_ = TitleScene::SELECT::PLAY; Smng::GetIns().Play(SOUND::SE_SYSTEM_SELECT, true); }
+		if (key.GetInfo(KEY_TYPE::ENTER).down) { SceneManager::GetIns().PushScene(std::make_shared<EndScene>()); Smng::GetIns().Play(SOUND::SE_SYSTEM_BUTTON, true); return; }
 		break;
 	}
 }

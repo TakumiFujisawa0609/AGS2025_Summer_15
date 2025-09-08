@@ -142,6 +142,10 @@ void SoundManager::Init(void)
  	sounds_[SOUND::CLERA].path_ = "ƒNƒŠƒA.mp3";
 
 	sounds_[SOUND::BGM1].path_ = "BGMŒó•â‚P.mp3";
+
+	sounds_[SOUND::SE_SYSTEM_SELECT].path_ = "SE/System/Select.mp3";
+	sounds_[SOUND::SE_SYSTEM_BUTTON].path_ = "SE/System/Button.mp3";
+	sounds_[SOUND::SE_SYSTEM_CHARA].path_ = "SE/System/‰ï˜b‰¹.mp3";
 }
 
 void SoundManager:: Release(void)

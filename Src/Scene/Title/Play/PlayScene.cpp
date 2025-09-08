@@ -38,41 +38,49 @@ void PlayScene::Init(void)
 
 void PlayScene::Update(void) 
 {
+	bool select = false;
+	
 	switch (nowSelect_)
 	{
 	case SELECT::BATTLE:
 		if (KEY::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 			SoundManager::GetIns().PauseInfoDelete();
+			Smng::GetIns().Play(SOUND::SE_SYSTEM_BUTTON, true);
 			SceneManager::GetIns().JumpScene(SCENE_ID::BOSSSELECT);
 			return;
 		}
-		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_RIGHT).down) { nowSelect_ = SELECT::TUTORIAL; }
-		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_DOWN).down) { prevSelect_ = nowSelect_; nowSelect_ = SELECT::EXIT; }
+		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_RIGHT).down) { nowSelect_ = SELECT::TUTORIAL; select = true; }
+		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_DOWN).down) { prevSelect_ = nowSelect_; nowSelect_ = SELECT::EXIT; select = true; }
 		break;
 	case SELECT::TUTORIAL:
 		if (KEY::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 			SoundManager::GetIns().PauseInfoDelete();
+			Smng::GetIns().Play(SOUND::SE_SYSTEM_BUTTON, true);
 			SceneManager::GetIns().JumpScene(SCENE_ID::TUTORIAL);
 			return;
 		}
-		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_LEFT).down) { nowSelect_ = SELECT::BATTLE; }
-		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_DOWN).down) { prevSelect_ = nowSelect_; nowSelect_ = SELECT::EXIT; }
+		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_LEFT).down) { nowSelect_ = SELECT::BATTLE; select = true; }
+		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_DOWN).down) { prevSelect_ = nowSelect_; nowSelect_ = SELECT::EXIT; select = true; }
 		break;
 	case SELECT::EXIT:
 		if (KEY::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 			SoundManager::GetIns().PausePlay();
+			Smng::GetIns().Play(SOUND::SE_SYSTEM_BUTTON, true);
 			SceneManager::GetIns().PopScene();
 			return;
 		}
-		
-		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_RIGHT).down) { nowSelect_ = SELECT::TUTORIAL; }
-		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_LEFT).down) { nowSelect_ = SELECT::BATTLE; }
-		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_UP).down) { nowSelect_ = prevSelect_; }
+
+		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_RIGHT).down) { nowSelect_ = SELECT::TUTORIAL; select = true; }
+		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_LEFT).down) { nowSelect_ = SELECT::BATTLE; select = true; }
+		if (KEY::GetIns().GetInfo(KEY_TYPE::MOVE_UP).down) { nowSelect_ = prevSelect_; select = true; }
 		break;
 	}
 
+	if (select) { Smng::GetIns().Play(SOUND::SE_SYSTEM_SELECT, true); }
+
 	if (KEY::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
 		SoundManager::GetIns().PausePlay();
+		Smng::GetIns().Play(SOUND::SE_SYSTEM_BUTTON, true);
 		SceneManager::GetIns().PopScene();
 		return;
 	}
