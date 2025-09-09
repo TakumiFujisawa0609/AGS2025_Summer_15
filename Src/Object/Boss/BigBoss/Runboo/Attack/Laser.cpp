@@ -89,7 +89,8 @@ void Laser::Update(Vector2F boss)
             cnt_++;
         }
 
-        if (laser.pos_.x > Camera::GetInstance().GetPos().x + Application::SCREEN_SIZE_X)
+        if (laser.pos_.x > Camera::GetInstance().GetPos().x + Application::SCREEN_SIZE_X ||
+            laser.pos_.x < Camera::GetInstance().GetPos().x)
         {
             laser.isAlive_ = false;
             if (fireCount_ >= 2)

@@ -108,9 +108,8 @@ void Weakness::Update()
 
 	if (unit_.hp_ <= 0)
 	{
-		if (unit_.hp_ <= 0) {
-			unit_.isAlive_ = false;
-		}
+		unit_.isAlive_ = false;
+		unit_.hp_ = 0;
 
 		ChangeState(STATE::DEATH);
 	}

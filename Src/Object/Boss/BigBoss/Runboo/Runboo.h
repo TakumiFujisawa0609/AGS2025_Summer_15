@@ -16,6 +16,12 @@ public:
 	static constexpr float MOVE_SPEED = 1.0f;
 	static constexpr int INVI_COUNTER = 60;
 
+	static constexpr int SMOKE_IMAGE_NUM = 8;
+	static constexpr int SMOKE_IMAGE_NUM_X = 3;
+	static constexpr int SMOKE_IMAGE_NUM_Y = 3;
+	static constexpr int SMOKE_IMAGE_SIZE_X = 3072 / 3;
+	static constexpr int SMOKE_IMAGE_SIZE_Y = 3072 / 3;
+
 	static constexpr int HALF_X = 70;
 	static constexpr int HALF_Y = Application::SCREEN_SIZE_Y / 2;
 
@@ -52,8 +58,11 @@ private:
 	float moveSpeed_;
 
 	int image_;
+	int smokeImg_[SMOKE_IMAGE_NUM];
 
 	int maxHp_;
+
+	float smokeAnimIndex_;
 	
 	//ë“ã@èÛë‘
 	void Idle(void) override;
