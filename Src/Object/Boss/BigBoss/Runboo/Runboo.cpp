@@ -71,6 +71,10 @@ void Runboo::Update()
 		break;
 	case 2:
 		moveSpeed_ = 5;
+		for (const auto& w : weak_)
+		{
+			w->SetHardMode();
+		}
 		break;
 	}
 
@@ -94,7 +98,10 @@ void Runboo::Update()
 
 	unit_.hp_ = totalHP;
 
-	if (unit_.hp_ <= 0)
+	if (unit_.hp_ <= 0 &&
+		!weak_[0]->GetUnit().isAlive_ &&
+		!weak_[1]->GetUnit().isAlive_ &&
+		!weak_[2]->GetUnit().isAlive_)
 	{
 		cnt++;
 
@@ -102,10 +109,12 @@ void Runboo::Update()
 
 		if (cnt > 180)
 		{
-			SceneManager::GetIns().Shake();
+			//SceneManager::GetIns().Shake();
 			ChangeState(STATE::DEATH);
 		}
 	}
+
+
 	unit_.nextpos_.x += moveSpeed_;
 }
 

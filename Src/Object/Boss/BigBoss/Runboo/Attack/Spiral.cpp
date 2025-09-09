@@ -33,14 +33,14 @@ void Spiral::Init(const Vector2F* pos)
         sp.isAlive_ = false;
         sp.isDraw_ = false;
         sp.size_ = { SIZE_X, SIZE_Y };
-        sp.radius_ = 16.0f;
+        sp.radius_ = RADIUS_SIZE;
         sp.pos_ = startPos_;
     }
 
     end_ = false;
 }
 
-void Spiral::Update(Vector2F boss)
+void Spiral::Update(Vector2F boss, float moveSpeed)
 {
     if (end_) return;
 
@@ -59,8 +59,8 @@ void Spiral::Update(Vector2F boss)
                 sp.pos_ = boss;
 
                 float angle = (2.0f * DX_PI_F / BULLET_NUM) * i + angleOffset_;
-                sp.xAccel_ = cosf(angle) * BULLET_SPEED;
-                sp.yAccel_ = sinf(angle) * BULLET_SPEED;
+                sp.xAccel_ = cosf(angle);
+                sp.yAccel_ = sinf(angle);
 
                 fireCount_++;
                 shootTimer_ = 0;
@@ -76,8 +76,8 @@ void Spiral::Update(Vector2F boss)
     {
         if (!sp.isAlive_) continue;
 
-        sp.pos_.x += sp.xAccel_;
-        sp.pos_.y += sp.yAccel_;
+        sp.pos_.x += sp.xAccel_ * BULLET_SPEED * ((moveSpeed == 5) ? 2 : 1);
+        sp.pos_.y += sp.yAccel_ * BULLET_SPEED * ((moveSpeed == 5) ? 2 : 1);
 
         // 画面外チェック
         if (sp.pos_.x < Camera::GetInstance().GetPos().x || sp.pos_.x > Camera::GetInstance().GetPos().x + Application::SCREEN_SIZE_X ||

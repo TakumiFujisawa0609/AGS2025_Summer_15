@@ -25,6 +25,8 @@ void Weakness::Init(Vector2F disppos, float moveSpeed)
 	BossBase::Init();
 	moveSpeed_ = moveSpeed;
 
+	mode_ = MODE::NORMAL;
+
 	Camera::CreateInstance();
 
 	//画像の読み込み
@@ -38,9 +40,12 @@ void Weakness::Init(Vector2F disppos, float moveSpeed)
 	unit_.hp_ = HP_MAX;
 	unit_.isAlive_ = true;
 	unit_.size_ = { SIZE_X,SIZE_Y };
-	unit_.radius_ = 64.0f;
+	unit_.radius_ = RADIUS_SIZE;
 	unit_.nextpos_ = disppos;
 	unit_.pos_ = unit_.nextpos_;
+
+	exRateX_ = IMAGE_EX_RATE_X;
+	exRateY_ = IMAGE_EX_RATE_Y;
 	ChangeDispPos();
 
 	ChangeState(STATE::ATTACK);
@@ -75,6 +80,11 @@ void Weakness::Update(Vector2F boss, float moveSpeed)
 	if (!unit_.isAlive_)return;
 	unit_.nextpos_.x = boss.x;
 	moveSpeed_ = moveSpeed;
+
+	if (mode_ == HARD)
+	{
+		unit_.nextpos_.y = boss.y;
+	}
 }
 
 void Weakness::Update() 
@@ -88,7 +98,7 @@ void Weakness::Update()
 	const float noiseX = (GetRand(200) - 100) / 500.0f;
 
 	// 元の位置から縦にゆらゆら動かす
-	unit_.nextpos_.x += sinf(cnt_) * AMPLITUDE + noiseX;
+	unit_.nextpos_.x += sinf(cnt_ * 0.5) * AMPLITUDE + noiseX;
 	unit_.nextpos_.y += cosf(cnt_ * 0.8f) * AMPLITUDE + noiseY;
 
 	if (unit_.inviCounter_ > 0)
@@ -131,7 +141,7 @@ void Weakness::Draw()
 				unit_.disppos_.x,
 				unit_.disppos_.y,
 				180, 170,
-				1.0f, 1.0f, 0.0f,
+				exRateX_, exRateY_, 0.0f,
 				image_, true
 			);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
@@ -143,7 +153,7 @@ void Weakness::Draw()
 			unit_.disppos_.x,
 			unit_.disppos_.y,
 			180, 170,
-			1.0f, 1.0f, 0.0f,
+			exRateX_, exRateY_, 0.0f,
 			image_, true
 		);
 	}
@@ -167,21 +177,21 @@ void Weakness::Release()
 	delete laser_;
 	laser_ = nullptr;
 
-pillar_->Release();
-delete pillar_;
-pillar_ = nullptr;
-
-bound_->Release();
-delete bound_;
-bound_ = nullptr;
-
-spiral_->Release();
-delete spiral_;
-spiral_ = nullptr;
-
-DeleteGraph(image_);
-
-Camera::DeleteInstance();
+	pillar_->Release();
+	delete pillar_;
+	pillar_ = nullptr;
+	
+	bound_->Release();
+	delete bound_;
+	bound_ = nullptr;
+	
+	spiral_->Release();
+	delete spiral_;
+	spiral_ = nullptr;
+	
+	DeleteGraph(image_);
+	
+	Camera::DeleteInstance();
 }
 
 AttackBase* Weakness::GetAttackIns(void)
@@ -226,6 +236,15 @@ void Weakness::BulltHit(int i)
 	bullet_->Hit(i);
 }
 
+void Weakness::SetHardMode()
+{
+	unit_.radius_ = RADIUS_SIZE * 2;
+	exRateX_ = IMAGE_EX_RATE_X * 2;
+	exRateY_ = IMAGE_EX_RATE_Y * 2;
+
+	mode_ = MODE::HARD;
+}
+
 void Weakness::ObjHit(int i)
 {
 	//bullet_->Hit();
@@ -262,21 +281,18 @@ void Weakness::SetDamage(int dmg)
 
 void Weakness::AttackManager(bool isHard)
 {
-
-
 	if (attack_ == ATTACK::NON)
 	{
-		if ((isHard) ? attackCounter_ > 120 : attackCounter_ > 320)
+		if ((isHard) ? attackCounter_ > 60 : attackCounter_ > 320)
 		{
 			if (!isHard)
 			{
-				//ノーマルモード
+				//残りの目玉三つ
 				attack_ = (GetRand(100) < 40) ? ATTACK::SPIRAL : (ATTACK)GetRand((int)ATTACK::MAX - 2);
-
 			}
 			else
 			{
-				//ハードモード
+				//残りの目玉二つ以下
 				attack_ = (ATTACK)GetRand((int)(ATTACK::MAX)-1);
 			}
 			attackCounter_ = 0;
@@ -307,7 +323,7 @@ void Weakness::Attack(void)
 			spiral_->Init(&unit_.pos_);
 		}
 
-		spiral_->Update(unit_.pos_);
+		spiral_->Update(unit_.pos_, moveSpeed_);
 
 		if (spiral_->End())
 		{
@@ -363,6 +379,7 @@ void Weakness::Attack(void)
 		}
 		break;
 	}
+
 }
 
 void Weakness::Damage(void)
