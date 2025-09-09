@@ -141,10 +141,10 @@ void Runboo::DrawHp()
 
 	DrawBar(
 		100,
-		Application::SCREEN_SIZE_Y - 80,
+		Application::SCREEN_SIZE_Y - 100,
 		Application::SCREEN_SIZE_X - 100,
-		Application::SCREEN_SIZE_Y - 30,
-		unit_.hp_, maxHp_, RGB(100, 100, 200)
+		Application::SCREEN_SIZE_Y - 50,
+		unit_.hp_, maxHp_, RGB(0, 0, 255)
 	);
 }
 

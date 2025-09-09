@@ -189,47 +189,19 @@ const float UnitBase::GetDis(const Vector2F _start, const Vector2F _goal) const
 	return dis;
 }
 
-/// <summary>
-/// HPバーの表示
-/// </summary>
-/// <param name="x1">左上X座標</param>
-/// <param name="y1">左上Y座標</param>
-/// <param name="x2">右下X座標</param>
-/// <param name="y2">右下Y座標</param>
-/// <param name="hp">現在のHP/MP</param>
-/// <param name="maxHp">最大HP/MP</param>
-/// <param name="color">バーの色</param>
-/// <param name="frameColor"></param>
-/// <param name="backColor"></param>
-void UnitBase::DrawBar(
-	int x1, int y1,               
-	int x2, int y2,               
-	int hp, int maxHp,            
-	COLORREF color,               
-	COLORREF frameColor,
-	COLORREF backColor)
+void UnitBase::DrawBar(float sX, float sY, float eX, float eY, int hp, int maxHp, COLORREF color, COLORREF frameColor, COLORREF backColor, float frameSize)
 {
-	int barX = x2 - x1;
-	int barY = y2 - y1;
+	DrawBoxAA(sX, sY, eX, eY, frameColor, true);
 
-	if (maxHp <= 0) return; 
+	sX += frameSize;
+	sY += frameSize;
+	eX -= frameSize;
+	eY -= frameSize;
 
-	float block = static_cast<float>(barX) / maxHp;
+	DrawBoxAA(sX, sY, eX, eY, backColor, true);
 
-	//外枠を描画
-	DrawBox(x1 - 1, y1 - 1, x2 + 1, y2 + 1, frameColor, false);
+	float oneSize = ((float)(eX - sX) / (float)maxHp);
 
-	//背景バー（空HP）
-	for (int i = 0; i < maxHp; ++i) {
-		int left = static_cast<int>(x1 + block * i);
-		int right = static_cast<int>(x1 + block * (i + 1));
-		DrawBox(left, y1, right - 1, y2, backColor, true);
-	}
-
-	//現在HPの表示
-	for (int i = 0; i < hp; ++i) {
-		int left = static_cast<int>(x1 + block * i);
-		int right = static_cast<int>(x1 + block * (i + 1));
-		DrawBox(left, y1, right - 1, y2, color, true);
-	}
+	DrawBoxAA(sX, sY, sX + (oneSize * hp), eY, color, true);
 }
+

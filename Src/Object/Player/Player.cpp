@@ -154,7 +154,7 @@ void Player::Draw()
 			Vector2F start, end;
 			start = { unit_.disppos_.x - LOAD_SIZE_X / 3,(unit_.disppos_.y - SIZE_Y / 2) - 5 };
 			end = { unit_.disppos_.x + LOAD_SIZE_X / 3,unit_.disppos_.y - SIZE_Y / 2 };
-			DrawBar(start.x, start.y, end.x, end.y, evasionCoolTime_, EVASION_COOL_TIME, RGB(255, 0, 0), RGB(255, 255, 255, RGB(0, 0, 0)));
+			DrawBar(start.x, start.y, end.x, end.y, evasionCoolTime_, EVASION_COOL_TIME, RGB(255, 0, 0), RGB(255, 255, 255), RGB(0, 0, 0), 0.5f);
 		}
 		
 		
