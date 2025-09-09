@@ -265,10 +265,10 @@ void BattledomeScene::Draw(void)
 	}
 	player_->DrawHp();
 
-	int fontSize = 50;
+	int fontSize = 30;
 	SetFontSize(fontSize);
-	DrawFormatString(0 - 2, (Application::SCREEN_SIZE_Y - fontSize) - 2, RGB(0, 0, 0), "TIME::%.2fs", time_);
-	DrawFormatString(0, Application::SCREEN_SIZE_Y - fontSize, RGB(255, 255, 255), "TIME::%.2fs", time_);
+	DrawFormatString(Application::SCREEN_SIZE_X - (fontSize * 8) - 2, -2, RGB(0, 0, 0), "TIME::%.2fs", time_);
+	DrawFormatString(Application::SCREEN_SIZE_X - (fontSize * 8), 0, RGB(255, 255, 255), "TIME::%.2fs", time_);
 	SetFontSize(16);
 }
 

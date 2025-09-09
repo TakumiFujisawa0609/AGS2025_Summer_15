@@ -148,12 +148,14 @@ void Runboo::DrawHp()
 {
 	for (int ii = 0; ii < WEAK_MAX; ii++)weak_[ii]->Draw();
 
+	float hpSize = (Application::SCREEN_SIZE_X * 0.7) / 2;
+	float xCenter = Application::SCREEN_SIZE_X / 2;
 	DrawBar(
-		100,
+		xCenter-hpSize,
 		Application::SCREEN_SIZE_Y - 100,
-		Application::SCREEN_SIZE_X - 100,
-		Application::SCREEN_SIZE_Y - 50,
-		unit_.hp_, maxHp_, RGB(0, 0, 255)
+		xCenter + hpSize,
+		Application::SCREEN_SIZE_Y - 40,
+		unit_.hp_, maxHp_, RGB(0, 0, 150)
 	);
 }
 
