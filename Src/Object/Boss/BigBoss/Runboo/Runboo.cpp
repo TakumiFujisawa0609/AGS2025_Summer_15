@@ -35,7 +35,7 @@ void Runboo::Init()
 
 	for (int ii = 0; ii < WEAK_MAX; ii++)
 	{
-		Vector2F weakPos = { unit_.pos_.x, (float)(Application::SCREEN_SIZE_Y / 5.0f) * (ii + 1) };
+		Vector2F weakPos = { unit_.pos_.x, (unit_.pos_.y + 200 * ii) - 200 };
 
 		weak_.emplace_back(new Weakness());
 		weak_[weak_.size() - 1]->SetPlayerPosPtr(playerPosPtr_);
@@ -71,6 +71,10 @@ void Runboo::Update()
 		break;
 	case 2:
 		moveSpeed_ = 5;
+		for (const auto& w : weak_)
+		{
+			w->SetHardMode();
+		}
 		break;
 	}
 
@@ -83,7 +87,7 @@ void Runboo::Update()
 
 	for (auto& w : weak_)
 	{ 
-		w->AttackManager(deadCount == 0);
+		w->AttackManager(deadCount != 0);
 		w->Update(unit_.pos_, moveSpeed_);
 		w->Update();
 
@@ -94,7 +98,10 @@ void Runboo::Update()
 
 	unit_.hp_ = totalHP;
 
-	if (unit_.hp_ <= 0)
+	if (unit_.hp_ <= 0 &&
+		!weak_[0]->GetUnit().isAlive_ &&
+		!weak_[1]->GetUnit().isAlive_ &&
+		!weak_[2]->GetUnit().isAlive_)
 	{
 		cnt++;
 
@@ -102,10 +109,12 @@ void Runboo::Update()
 
 		if (cnt > 180)
 		{
-			SceneManager::GetIns().Shake();
+			//SceneManager::GetIns().Shake();
 			ChangeState(STATE::DEATH);
 		}
 	}
+
+
 	unit_.nextpos_.x += moveSpeed_;
 }
 

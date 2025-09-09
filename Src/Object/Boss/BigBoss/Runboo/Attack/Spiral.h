@@ -9,8 +9,9 @@ class Spiral : public AttackBase
 public:
     static constexpr int BULLET_NUM = 20;      // 1âÒÇÃîgÇÃíeêî
     static constexpr float BULLET_SPEED = 5.0f;
-    static constexpr float SIZE_X = 32.0f;
-    static constexpr float SIZE_Y = 32.0f;
+    static constexpr float RADIUS_SIZE = 32.0f;
+    static constexpr float SIZE_X = RADIUS_SIZE * 2;
+    static constexpr float SIZE_Y = RADIUS_SIZE * 2;
 
     static constexpr int IMAGE_NUM = 8;
     static constexpr float IMAGE_BIG_RATE = 2.0f;
@@ -19,7 +20,7 @@ public:
     ~Spiral();
 
     void Init(const Vector2F* pos) override;
-    void Update(Vector2F boss);
+    void Update(Vector2F boss, float moveSpeed);
     void Update() override {}
     void Draw() override;
     void Release() override;
@@ -28,7 +29,7 @@ public:
 
     void Hit(int i);
 
-    bool End() { return end_; } // èÌÇ… falseÅAïKóvÇ…âûÇ∂Çƒägí£
+    bool End() { return end_; } 
     void SetIsAlive(bool isAlive);
 
 private:

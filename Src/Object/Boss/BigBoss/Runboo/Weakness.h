@@ -19,21 +19,31 @@ public:
 
 	static constexpr float AMPLITUDE = 1.0f;          
 	static constexpr float MOVE_Y_SPEED = 0.05f;
+	static constexpr float RADIUS_SIZE = 64.0f;
 
-	static constexpr int HP_MAX = 400;
+	static constexpr int HP_MAX = 300;
 	static constexpr int HP_POS_X = 10;
 	static constexpr int HP_POS_Y = 15;
+
+	static constexpr int IMAGE_EX_RATE_X = 1.0f;
+	static constexpr int IMAGE_EX_RATE_Y = 1.0f;
 
 	static constexpr int INVI_COUNTER = 30;
 
 	enum ATTACK
 	{
 		NON,
-		LASER,
+		SPIRAL,
 		PILLAR,
 		BOUND,
-		SPIRAL,
+		LASER,
 		MAX,
+	};
+
+	enum MODE
+	{
+		NORMAL,
+		HARD,
 	};
 
 	Weakness();
@@ -52,7 +62,7 @@ public:
 	std::vector<Base> GetBulletObj(void);
 
 	void BulltHit(int i);
-
+	void SetHardMode();
 
 	void ObjHit(int i);
 	void SetDamage(int dmg)override;
@@ -77,11 +87,15 @@ private:
 	Spiral* spiral_;
 
 	ATTACK attack_;
+	MODE mode_;
 
 	float moveSpeed_;
 
 	float cnt_;
 	Vector2F start_;
+
+	int exRateX_;
+	int exRateY_;
 
 	int image_;
 	int attackCounter_;
