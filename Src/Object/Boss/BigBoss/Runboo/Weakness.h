@@ -29,10 +29,10 @@ public:
 	enum ATTACK
 	{
 		NON,
-		LASER,
+		SPIRAL,
 		PILLAR,
 		BOUND,
-		SPIRAL,
+		LASER,
 		MAX,
 	};
 

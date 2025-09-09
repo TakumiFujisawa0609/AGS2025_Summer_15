@@ -35,7 +35,7 @@ void Runboo::Init()
 
 	for (int ii = 0; ii < WEAK_MAX; ii++)
 	{
-		Vector2F weakPos = { unit_.pos_.x, (float)(Application::SCREEN_SIZE_Y / 5.0f) * (ii + 1) };
+		Vector2F weakPos = { unit_.pos_.x, (unit_.pos_.y + 200 * ii) - 200 };
 
 		weak_.emplace_back(new Weakness());
 		weak_[weak_.size() - 1]->SetPlayerPosPtr(playerPosPtr_);
@@ -83,7 +83,7 @@ void Runboo::Update()
 
 	for (auto& w : weak_)
 	{ 
-		w->AttackManager(deadCount == 0);
+		w->AttackManager(deadCount != 0);
 		w->Update(unit_.pos_, moveSpeed_);
 		w->Update();
 

@@ -167,21 +167,21 @@ void Weakness::Release()
 	delete laser_;
 	laser_ = nullptr;
 
-	pillar_->Release();
-	delete pillar_;
-	pillar_ = nullptr;
+pillar_->Release();
+delete pillar_;
+pillar_ = nullptr;
 
-	bound_->Release();
-	delete bound_;
-	bound_ = nullptr;
+bound_->Release();
+delete bound_;
+bound_ = nullptr;
 
-	spiral_->Release();
-	delete spiral_;
-	spiral_ = nullptr;
+spiral_->Release();
+delete spiral_;
+spiral_ = nullptr;
 
-	DeleteGraph(image_);
+DeleteGraph(image_);
 
-	Camera::DeleteInstance();
+Camera::DeleteInstance();
 }
 
 AttackBase* Weakness::GetAttackIns(void)
@@ -223,19 +223,20 @@ std::vector<Base> Weakness::GetBulletObj(void)
 
 void Weakness::BulltHit(int i)
 {
-	bullet_->Hit(i); 
+	bullet_->Hit(i);
 }
 
 void Weakness::ObjHit(int i)
 {
 	//bullet_->Hit();
 
+
 	switch (attack_)
 	{
 	case ATTACK::NON:
 		break;
-	case ATTACK::LASER:
-		laser_->Hit(i);
+	case ATTACK::SPIRAL:
+		spiral_->Hit(i);
 		break;
 	case ATTACK::PILLAR:
 		pillar_->Hit(i);
@@ -243,8 +244,8 @@ void Weakness::ObjHit(int i)
 	case ATTACK::BOUND:
 		bound_->Hit(i);
 		break;
-	case ATTACK::SPIRAL:
-		spiral_->Hit(i);
+	case ATTACK::LASER:
+		laser_->Hit(i);
 		break;
 	case ATTACK::MAX:
 		break;
@@ -263,10 +264,23 @@ void Weakness::AttackManager(bool isHard)
 {
 
 
-	if (attack_ == ATTACK::NON && ((isHard) ? attackCounter_ > 320 : attackCounter_ > 120))
+	if (attack_ == ATTACK::NON)
 	{
-		attack_ = (ATTACK)GetRand((int)(ATTACK::MAX) - 1);
-		attackCounter_ = 0;
+		if ((isHard) ? attackCounter_ > 120 : attackCounter_ > 320)
+		{
+			if (!isHard)
+			{
+				//ノーマルモード
+				attack_ = (GetRand(100) < 40) ? ATTACK::SPIRAL : (ATTACK)GetRand((int)ATTACK::MAX - 2);
+
+			}
+			else
+			{
+				//ハードモード
+				attack_ = (ATTACK)GetRand((int)(ATTACK::MAX)-1);
+			}
+			attackCounter_ = 0;
+		}
 	}
 }
 
@@ -286,23 +300,22 @@ void Weakness::Attack(void)
 	case Weakness::NON:
 		attackCounter_++;
 		break;
-	case Weakness::LASER:
-
+	case ATTACK::SPIRAL:
 		attackCounter_++;
-
 		if (attackCounter_ <= 1)
 		{
-			laser_->Init(&unit_.pos_);
+			spiral_->Init(&unit_.pos_);
 		}
-		
-		laser_->Update(unit_.pos_);
 
-		if (laser_->End() == true)
+		spiral_->Update(unit_.pos_);
+
+		if (spiral_->End())
 		{
-			attack_= ATTACK::NON;
+			attack_ = ATTACK::NON;
 			attackCounter_ = 0;
 		}
 		break;
+	
 	case Weakness::ATTACK::PILLAR:
 		attackCounter_++;
 		if (attackCounter_ <= 1)
@@ -332,16 +345,18 @@ void Weakness::Attack(void)
 			attackCounter_ = 0;
 		}
 		break;
-	case ATTACK::SPIRAL:
+	case Weakness::LASER:
+
 		attackCounter_++;
+
 		if (attackCounter_ <= 1)
 		{
-			spiral_->Init(&unit_.pos_);
+			laser_->Init(&unit_.pos_);
 		}
 
-		spiral_->Update(unit_.pos_);
+		laser_->Update(unit_.pos_);
 
-		if (spiral_->End())
+		if (laser_->End() == true)
 		{
 			attack_ = ATTACK::NON;
 			attackCounter_ = 0;
