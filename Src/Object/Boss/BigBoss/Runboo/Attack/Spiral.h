@@ -28,7 +28,7 @@ public:
 
     void Hit(int i);
 
-    bool End() { return false; } // 常に false、必要に応じて拡張
+    bool End() { return end_; } // 常に false、必要に応じて拡張
     void SetIsAlive(bool isAlive);
 
 private:

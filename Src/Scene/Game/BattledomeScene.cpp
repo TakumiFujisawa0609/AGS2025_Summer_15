@@ -754,8 +754,10 @@ void BattledomeScene::PlayerToBossAttack(void)
 					player_->Hit(2, weakBull.pos_);
 				}
 			}
-			
+
 		}
+
+		if (player_->GetUnit().disppos_.y > Application::SCREEN_SIZE_Y)player_->Hit(100, {0,0});
 	}
 	break;
 	case M::BOSS_KINDS::BAMMOON:
@@ -821,6 +823,7 @@ void BattledomeScene::PlayerToBamboo(void)
 			b->Parry(player_->GetUnit().pos_);
 		}
 	}
+
 }
 
 

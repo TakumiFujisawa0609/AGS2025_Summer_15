@@ -16,6 +16,7 @@ void Spiral::Init(const Vector2F* pos)
     startPos_ = *pos;
     arrayIndex_ = 0;
     angleOffset_ = 0;
+    fireCount_ = 0;
 
     //LoadDivGraph(
     //    (Application::PATH_IMAGE + "Boss/Runboo/Bullet.png").c_str(),
@@ -63,7 +64,7 @@ void Spiral::Update(Vector2F boss)
 
                 fireCount_++;
                 shootTimer_ = 0;
-                break; // 1”­‚¸‚Â”­ŽË
+                break;
             }
         }
     }

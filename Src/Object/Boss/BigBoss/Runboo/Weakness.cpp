@@ -106,7 +106,6 @@ void Weakness::Update()
 	}
 	bullet_->Update(unit_.pos_, moveSpeed_);
 
-	AttackManager();
 	BossBase::Update();
 
 	if (CheckHitKey(KEY_INPUT_0))unit_.hp_--;
@@ -260,9 +259,11 @@ void Weakness::SetDamage(int dmg)
 	unit_.inviCounter_ = INVI_COUNTER;
 }
 
-void Weakness::AttackManager(void)
+void Weakness::AttackManager(bool isHard)
 {
-	if (attack_ == ATTACK::NON && attackCounter_ > 320)
+
+
+	if (attack_ == ATTACK::NON && ((isHard) ? attackCounter_ > 320 : attackCounter_ > 120))
 	{
 		attack_ = (ATTACK)GetRand((int)(ATTACK::MAX) - 1);
 		attackCounter_ = 0;

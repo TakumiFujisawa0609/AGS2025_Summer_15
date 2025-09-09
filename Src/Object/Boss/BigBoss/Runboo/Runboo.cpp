@@ -83,6 +83,7 @@ void Runboo::Update()
 
 	for (auto& w : weak_)
 	{ 
+		w->AttackManager(deadCount == 0);
 		w->Update(unit_.pos_, moveSpeed_);
 		w->Update();
 

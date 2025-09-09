@@ -65,6 +65,9 @@ public:
 
 	int GetCnt(void) { return cnt_; }
 
+	void AttackManager(bool isHard);
+
+
 private:
 
 	WeakBullet* bullet_;
@@ -84,7 +87,6 @@ private:
 	int attackCounter_;
 
 
-	void AttackManager(void);
 
 	//‘Ò‹@ó‘Ô
 	void Idle(void)override;
