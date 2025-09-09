@@ -652,20 +652,20 @@ void BattledomeScene::PlayerToBoss(void)
 	{
 	case M::BOSS_KINDS::TUTORIAL:
 		if (ins.Rect(player_->GetUnit(), tutorial_->GetUnit())) {
-			player_->Hit(5, tutorial_->GetUnit().pos_);
+			player_->Hit(2, tutorial_->GetUnit().pos_);
 		}
 		break;
 	case M::BOSS_KINDS::NOKOPY:
 		if (nokopy_->GetUnit().isCircle_) {
 			if (ins.CircleAndRect(nokopy_->GetUnit(), player_->GetUnit())) {
-				player_->Hit(5, nokopy_->GetUnit().pos_);
+				player_->Hit(2, nokopy_->GetUnit().pos_);
 
 			}
 		}
 		else {
 
 			if (ins.Rect(player_->GetUnit(), nokopy_->GetUnit())) {
-				player_->Hit(5, nokopy_->GetUnit().pos_);
+				player_->Hit(2, nokopy_->GetUnit().pos_);
 			}
 		}
 		break;
@@ -704,7 +704,7 @@ void BattledomeScene::PlayerToBossAttack(void)
 		int i = 0;
 		for (auto& at : tutorial_->GetAttackObj()) {
 			if (ins.CircleAndRect(at, player_->GetUnit())) {
-				player_->Hit(5, at.pos_);
+				player_->Hit(2, at.pos_);
 				tutorial_->ObjHit(i);
 			}
 			i++;
@@ -722,7 +722,7 @@ void BattledomeScene::PlayerToBossAttack(void)
 			//}
 			if (nokopy_->GetObj()[i].isCircle_) {
 				if (ins.CircleAndRect(nokopy_->GetObj()[i], player_->GetUnit())) {
-					player_->Hit(5, nokopy_->GetObj()[i].pos_);
+					player_->Hit(2, nokopy_->GetObj()[i].pos_);
 					nokopy_->ObjHit(i);
 				}
 			}
