@@ -13,8 +13,8 @@ public:
     static constexpr float SIZE_X = RADIUS_SIZE * 2;
     static constexpr float SIZE_Y = RADIUS_SIZE * 2;
 
-    static constexpr int IMAGE_NUM = 8;
-    static constexpr float IMAGE_BIG_RATE = 2.0f;
+
+    static constexpr float IMAGE_BIG_RATE = 1.0f;
 
     Spiral(float moveSpeed);
     ~Spiral();
@@ -36,7 +36,7 @@ private:
     std::vector<Base> obj_;
     Vector2F startPos_;
     float angleOffset_;
-    int imageArray_[IMAGE_NUM];
+    int image_;
     int arrayIndex_;
     int shootTimer_;
     int fireCount_;

@@ -21,9 +21,9 @@ void Runboo::Init()
 
 	image_ = LoadGraph((Application::PATH_IMAGE + "Boss/Runboo/Runboo.png").c_str());
 	
-	LoadDivGraph((Application::PATH_IMAGE + "Boss/Runboo/smoke.png").c_str(),
-		SMOKE_IMAGE_NUM, SMOKE_IMAGE_NUM_X, SMOKE_IMAGE_NUM_Y,
-		SMOKE_IMAGE_SIZE_X, SMOKE_IMAGE_SIZE_Y, smokeImg_);
+	//LoadDivGraph((Application::PATH_IMAGE + "Boss/Runboo/smoke.png").c_str(),
+	//	SMOKE_IMAGE_NUM, SMOKE_IMAGE_NUM_X, SMOKE_IMAGE_NUM_Y,
+	//	SMOKE_IMAGE_SIZE_X, SMOKE_IMAGE_SIZE_Y, smokeImg_);
 
 	moveSpeed_ = MOVE_SPEED;
 
@@ -153,17 +153,14 @@ void Runboo::Draw()
 	float randX = baseX + cosf(angle) * dist;
 	float randY = baseY + sinf(angle) * dist;
 
-	for (int i = 0; i < 3; i++)
-	{
-		// •`‰æ
-		DrawRotaGraph(
-			(int)randX,
-			(int)randY,
-			0.2f, 0.0f,
-			smokeImg_[(int)smokeAnimIndex_],
-			true
-		);
-	}
+		//// •`‰æ
+		//DrawRotaGraph(
+		//	(int)randX,
+		//	(int)randY,
+		//	0.2f, 0.0f,
+		//	smokeImg_[(int)smokeAnimIndex_],
+		//	true
+		//);
 
 }
 
@@ -180,10 +177,10 @@ void Runboo::Release()
 
 	DeleteGraph(image_);
 
-	for (int i = 0; i < SMOKE_IMAGE_NUM; i++)
-	{
-		DeleteGraph(smokeImg_[i]);
-	}
+	//for (int i = 0; i < SMOKE_IMAGE_NUM; i++)
+	//{
+	//	DeleteGraph(smokeImg_[i]);
+	//}
 
 }
 

@@ -18,12 +18,7 @@ void Spiral::Init(const Vector2F* pos)
     angleOffset_ = 0;
     fireCount_ = 0;
 
-    //LoadDivGraph(
-    //    (Application::PATH_IMAGE + "Boss/Runboo/Bullet.png").c_str(),
-    //    IMAGE_NUM, IMAGE_NUM, 1,
-    //    SIZE_X, SIZE_Y,
-    //    imageArray_
-    //);
+    image_ = LoadGraph("Data/Image/Boss/Runboo/EyeBall.png");
 
     obj_.clear();
     obj_.resize(BULLET_NUM);
@@ -105,22 +100,21 @@ void Spiral::Draw()
     {
         if (!sp.isAlive_) continue;
 
-        //DrawRotaGraph(
-        //    b.disppos_.x,
-        //    b.disppos_.y,
-        //    IMAGE_BIG_RATE, 0.0f,
-        //    imageArray_[arrayIndex_],
-        //    TRUE
-        //);
+        DrawRotaGraph(
+            sp.disppos_.x,
+            sp.disppos_.y,
+            IMAGE_BIG_RATE, 0.0f,
+            image_,
+            TRUE
+        );
 
-        DrawCircle(sp.disppos_.x, sp.disppos_.y,sp.radius_, 0xffffff, true);
+        //DrawCircle(sp.disppos_.x, sp.disppos_.y,sp.radius_, 0xffffff, true);
     }
 }
 
 void Spiral::Release()
 {
-    for (int i = 0; i < IMAGE_NUM; i++)
-        DeleteGraph(imageArray_[i]);
+    DeleteGraph(image_);
 
     obj_.clear();
 }
