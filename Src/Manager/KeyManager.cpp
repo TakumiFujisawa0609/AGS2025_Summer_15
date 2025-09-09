@@ -50,12 +50,14 @@ void KeyManager::Init(void)
 	SET_KEYBOARD(KEY_TYPE::ATTACK, KEY_INPUT_J);
 	SET_KEYBOARD(KEY_TYPE::ATTACK, KEY_INPUT_RETURN);
 	SET_C_BUTTON(KEY_TYPE::ATTACK, XINPUT_BUTTON_X);
+	SET_C_BUTTON(KEY_TYPE::ATTACK, XINPUT_BUTTON_RIGHT_SHOULDER);
 	SET_C_OTHERS(KEY_TYPE::ATTACK, CONTROLLER_OTHERS::RIGHT_TRIGGER);
 
 
 	SET_KEYBOARD(KEY_TYPE::EVASION, KEY_INPUT_K);
 	SET_KEYBOARD(KEY_TYPE::EVASION, KEY_INPUT_LSHIFT);
 	SET_C_BUTTON(KEY_TYPE::EVASION, XINPUT_BUTTON_B);
+	SET_C_BUTTON(KEY_TYPE::EVASION, XINPUT_BUTTON_LEFT_SHOULDER);
 	SET_C_OTHERS(KEY_TYPE::EVASION, CONTROLLER_OTHERS::LEFT_TRIGGER);
 
 	SET_KEYBOARD(KEY_TYPE::PAUSE, KEY_INPUT_ESCAPE);
@@ -149,10 +151,10 @@ bool KeyManager::ControllerOthersInput(const CONTROLLER_OTHERS& input)
 		if (state.ThumbRX < 10000) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::LEFT_TRIGGER:
-		if (state.LeftTrigger > 10000) { return true; }
+		if (state.LeftTrigger > 0) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::RIGHT_TRIGGER:
-		if (state.RightTrigger > 10000) { return true; }
+		if (state.RightTrigger > 0) { return true; }
 		break;
 	default:
 		return false;

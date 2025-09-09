@@ -68,13 +68,12 @@ const float Collision::GetStageLine(const Vector2F& pos, const Vector2F& size , 
 
 			if (SceneManager::GetIns().GetNowBoss() == BOSS_KINDS::RUNBOO)
 			{
-				if (y < 0 || y >= mapData.size()) {
-					if (y < 0 || y >= mapData.size() + 5)bre = true;
-					break;
-				}
-
 				if (loopCount > 40) {
 					bre = true;
+					break;
+				}
+				if (y < 0 || y >= mapData.size()) {
+					if (y < 0 || y >= mapData.size() + 5)bre = true;
 					break;
 				}
 			}

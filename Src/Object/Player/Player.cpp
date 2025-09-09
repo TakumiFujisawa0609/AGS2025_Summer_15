@@ -5,6 +5,7 @@
 #include"../../Application.h"
 
 #include"../../Manager/InputManager.h"
+#include"../../Manager/KeyManager.h"
 #include"../../Manager/Camera.h"
 #include"../../Manager/Collision.h"
 #include"../../Manager/SceneManager.h"
@@ -105,16 +106,14 @@ void Player::Update()
 {
 	if (unit_.inviCounter_ > 0) { unit_.inviCounter_--;}
 	else { evaConpFlg_ = false; }
-	JoyPadInputManager();
 
-	auto& ins = InputManager::GetInstance();
-
+	auto& ins = KEY::GetIns();
 	vec_ = {};
 
-	if ((ins.IsNew(KEY_INPUT_W)) || (nowUpKey_))vec_.y--;
-	if ((ins.IsNew(KEY_INPUT_S)) || (nowDownKey_))vec_.y++;
-	if ((ins.IsNew(KEY_INPUT_A)) || (nowLeftKey_))vec_.x--;
-	if ((ins.IsNew(KEY_INPUT_D)) || (nowRightKey_))vec_.x++;
+	if (ins.GetInfo(KEY_TYPE::MOVE_UP).now)		{ vec_.y--; }
+	if (ins.GetInfo(KEY_TYPE::MOVE_DOWN).now)	{ vec_.y++; }
+	if (ins.GetInfo(KEY_TYPE::MOVE_LEFT).now)	{ vec_.x--; }
+	if (ins.GetInfo(KEY_TYPE::MOVE_RIGHT).now)	{ vec_.x++; }
 
 	if (vec_.x == 0.0f && vec_.y == 0.0f)vec_.x = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? -1.0f : 1.0f;
 
@@ -237,38 +236,24 @@ void Player::StateManager(void)
 //移動状態
 void Player::DoStateMove()
 {
-	auto& ins = InputManager::GetInstance();
+	auto& ins = KEY::GetIns();
 
-
-	if (ins.IsTrgDown(KEY_INPUT_W) ||
-		ins.IsTrgDown(KEY_INPUT_A) ||
-		ins.IsTrgDown(KEY_INPUT_S) ||
-		ins.IsTrgDown(KEY_INPUT_D) ||
-		ins.IsTrgDown(KEY_INPUT_SPACE)) {
-
+	if (ins.GetInfo(KEY_TYPE::MOVE_UP).down ||
+		ins.GetInfo(KEY_TYPE::MOVE_DOWN).down ||
+		ins.GetInfo(KEY_TYPE::MOVE_LEFT).down ||
+		ins.GetInfo(KEY_TYPE::MOVE_RIGHT).down) {
 		ChangeState(Player::STATE::MOVE);
 		return;
 	}
-
-	if ((!prevLeftKey_ && nowLeftKey_) ||
-		(!prevRightKey_ && nowRightKey_) ||
-		(!prevJumpKey_ && nowJumpKey_)) {
-		ChangeState(Player::STATE::MOVE);
-		return;
-	}
-
 }
 
 // 攻撃状態
 void Player::DoStateAttack()
 {
-	auto& ins = InputManager::GetInstance();
-	int input = GetJoypadInputState(DX_INPUT_PAD1);
-
-
+	auto& ins = KEY::GetIns();
 
 	if (haveB_) {
-		if (ins.IsNew(KEY_INPUT_J) || (nowAttackKey_)) {
+		if (ins.GetInfo(KEY_TYPE::ATTACK).now) {
 			ChangeState(Player::STATE::BP_ATTACK);
 			SoundManager::GetIns().Stop(SoundManager::SOUND::RUN);
 			SoundManager::GetIns().Play(SoundManager::SOUND::BPTHROW, true, 200);
@@ -276,8 +261,7 @@ void Player::DoStateAttack()
 		}
 	}
 	else {
-
-		if (!(ins.IsTrgDown(KEY_INPUT_J)) && !(!prevAttackKey_ && nowAttackKey_)) return;
+		if (!ins.GetInfo(KEY_TYPE::ATTACK).down) { return; }
 
 		// 攻撃状態に遷移する
 		ChangeState(Player::STATE::ATTACK);
@@ -312,9 +296,9 @@ void Player::DoStateEvasion()
 {
 	if (--evasionCoolTime_ > 0)return;
 
-	auto& ins = InputManager::GetInstance();
+	auto& ins = KEY::GetIns();
 
-	if ((ins.IsTrgDown(KEY_INPUT_K) || (nowEvasionKey_ && !prevEvasionKey_)) && evasionPossiFlg_) {
+	if (ins.GetInfo(KEY_TYPE::EVASION).down && evasionPossiFlg_) {
 		ChangeState(Player::STATE::EVASION);
 		SoundManager::GetIns().Play(SoundManager::EVASION, true);
 		evasionPossiFlg_ = false;
@@ -399,9 +383,9 @@ void Player::Attack()
 // 特殊攻撃状態
 void Player::BambooAttack(void)
 {
-	auto& ins = InputManager::GetInstance();
+	auto& ins = KEY::GetIns();
 
-	if (ins.IsTrgUp(KEY_INPUT_J) || (prevAttackKey_ && !nowAttackKey_)) {
+	if (ins.GetInfo(KEY_TYPE::ATTACK).up) {
 
 		haveB_ = false;
 
@@ -477,16 +461,16 @@ void Player::Damage(void)
 //移動処理関係----------------------------------------------------------------------
 void Player::Run()
 {
-	auto& ins = InputManager::GetInstance();
+	auto& ins = KEY::GetIns();
 
 	bool isMove = false;
 
-	if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_LEFT) || nowLeftKey_) {
+	if (ins.GetInfo(KEY_TYPE::MOVE_LEFT).now) {
 		unit_.nextpos_.x -= RUN_SPEED;
 		dir_ = AsoUtility::DIRECTION::E_DIR_LEFT;
 		isMove = true;
 	}
-	if (ins.IsNew(KEY_INPUT_D) || ins.IsNew(KEY_INPUT_RIGHT) || nowRightKey_) {
+	if (ins.GetInfo(KEY_TYPE::MOVE_RIGHT).now) {
 		unit_.nextpos_.x += RUN_SPEED;
 		dir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
 		isMove = true;
@@ -507,13 +491,13 @@ void Player::Run()
 
 void Player::Jump()
 {
-	auto& ins = InputManager::GetInstance();
+	auto& ins = KEY::GetIns();
 
 
 	for (int i = 0; i < JUMP_NUM; i++) {
 
 		// ダウントリガーでジャンプ開始
-		if ((ins.IsTrgDown(KEY_INPUT_SPACE)) || (!prevJumpKey_ && nowJumpKey_)) {
+		if (ins.GetInfo(KEY_TYPE::JUMP).down) {
 			isJump_[i] = true;
 			SoundManager::GetIns().Play(SoundManager::EVASION, true);
 		}
@@ -521,11 +505,10 @@ void Player::Jump()
 		if (!isJump_[i])break;
 
 		//ジャンプキーを離したら、ジャンプキー入力判定を終了
-		if ((isJump_[i] && ins.IsTrgUp(KEY_INPUT_SPACE)) ||
-			(prevJumpKey_ && !nowJumpKey_))jumpKeyCounter_[i] = INPUT_JUMPKEY_FRAME;
+		if (isJump_[i] && ins.GetInfo(KEY_TYPE::JUMP).up) { jumpKeyCounter_[i] = INPUT_JUMPKEY_FRAME; }
 
 		//入力時間に応じてジャンプ量を変更する
-		if (isJump_[i] && (ins.IsNew(KEY_INPUT_SPACE) || nowJumpKey_) && jumpKeyCounter_[i] < INPUT_JUMPKEY_FRAME) {
+		if (isJump_[i] && ins.GetInfo(KEY_TYPE::JUMP).now && jumpKeyCounter_[i] < INPUT_JUMPKEY_FRAME) {
 			//ジャンプキーの入力カウンターを増やす
 			jumpKeyCounter_[i]++;
 
@@ -798,37 +781,6 @@ void Player::DrawPlayer(void)
 	//DrawCircle(unit_.disppos_.x, unit_.disppos_.y,unit_.radius_, 0xff0000, true);
 	if (invic && !evaConpFlg_)SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
-
-void Player::JoyPadInputManager(void)
-{
-	int input = GetJoypadInputState(DX_INPUT_PAD1);
-
-	prevJumpKey_ = nowJumpKey_;
-	nowJumpKey_ = ((input & PAD_INPUT_A) == 0) ? false : true;
-
-	prevLeftKey_ = nowLeftKey_;
-	nowLeftKey_ = ((input & PAD_INPUT_LEFT) == 0) ? false : true;
-
-	prevRightKey_ = nowRightKey_;
-	nowRightKey_ = ((input & PAD_INPUT_RIGHT) == 0) ? false : true;
-
-	prevUpKey_ = nowUpKey_;
-	nowUpKey_ = ((input & PAD_INPUT_UP) == 0) ? false : true;
-
-	prevDownKey_ = nowDownKey_;
-	nowDownKey_ = ((input & PAD_INPUT_DOWN) == 0) ? false : true;
-
-	prevAttackKey_ = nowAttackKey_;
-	nowAttackKey_ = ((input & 0x40) == 0) ? false : true;
-
-	prevBambooKey_ = nowBambooKey_;
-	nowBambooKey_ = (((input & 0x200) == 0) && ((input & 0x80) == 0)) ? false : true;
-
-	prevEvasionKey_ = nowEvasionKey_;
-	nowEvasionKey_ = (((input & 0x100) == 0) && ((input & 0x20) == 0)) ? false : true;
-}
-
-
 
 void Player::Hit(int damage, Vector2F bPos)
 {

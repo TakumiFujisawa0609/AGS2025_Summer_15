@@ -73,7 +73,6 @@ void TitleScene::Draw(void)
 	DrawRotaGraph(SELECT_POS[(int)SELECT::EXIT].x, SELECT_POS[(int)SELECT::EXIT].y, scale, 0, exitImg_, true);
 	DrawRotaGraph(SELECT_POS[(int)nowSelect_].x, SELECT_POS[(int)nowSelect_].y, scale, 0, selectFrameImg_, true);
 
-	
 }
 
 void TitleScene::Release(void)
