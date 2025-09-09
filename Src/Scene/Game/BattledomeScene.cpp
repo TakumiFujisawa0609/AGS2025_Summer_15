@@ -226,7 +226,6 @@ void BattledomeScene::Draw(void)
 		nokopy_->Draw();
 		break;
 	case M::BOSS_KINDS::RUNBOO:
-		runboo_->Draw();
 		break;
 	case M::BOSS_KINDS::BAMMOON:
 		bammoon_->Draw();
@@ -251,6 +250,7 @@ void BattledomeScene::Draw(void)
 		nokopy_->DrawHp();
 		break;
 	case M::BOSS_KINDS::RUNBOO:
+		runboo_->Draw();
 		runboo_->DrawHp();
 		bamboo_->Draw();
 		for (auto& bm : bmBlast_)
@@ -481,7 +481,7 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 				if (ins.Rect(player_->DefaultAtt(), weakObj))
 				{
 					weak->ObjHit(i);
-					bamboo_->Create(weakObj.pos_, 1, 50);
+					bamboo_->Create(weakObj.pos_, 1, 60);
 				}
 				i++;
 			}
@@ -493,7 +493,7 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 				if (ins.Circle(player_->DefaultAtt(), weakBull))
 				{
 					weak->BulltHit(i);
-					bamboo_->Create(weakBull.pos_, 1, 10);
+					bamboo_->Create(weakBull.pos_, 1, 20);
 				}
 				i++;
 			}

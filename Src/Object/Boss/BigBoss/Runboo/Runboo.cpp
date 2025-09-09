@@ -20,6 +20,11 @@ void Runboo::Init()
 	this->Release();
 
 	image_ = LoadGraph((Application::PATH_IMAGE + "Boss/Runboo/Runboo.png").c_str());
+	
+	LoadDivGraph((Application::PATH_IMAGE + "Boss/Runboo/smoke.png").c_str(),
+		SMOKE_IMAGE_NUM, SMOKE_IMAGE_NUM_X, SMOKE_IMAGE_NUM_Y,
+		SMOKE_IMAGE_SIZE_X, SMOKE_IMAGE_SIZE_Y, smokeImg_);
+
 	moveSpeed_ = MOVE_SPEED;
 
 	unit_.nextpos_ = { HALF_X, HALF_Y };
@@ -47,12 +52,18 @@ void Runboo::Init()
 		unit_.hp_ += weak->GetUnit().hp_;
 	}
 
-	maxHp_ = unit_.hp_;
-
+	smokeAnimIndex_ = 0.0f;
 }
 
 void Runboo::Update()
 {
+	
+	smokeAnimIndex_ += 0.5f;
+	if (smokeAnimIndex_ > SMOKE_IMAGE_NUM)
+	{
+		smokeAnimIndex_ = 0.0f;
+	}
+
 	int deadCount = 0;
 	for (const auto& w : weak_)
 	{
@@ -120,12 +131,39 @@ void Runboo::Update()
 
 void Runboo::Draw()
 {
+	Vector2F disp = { unit_.disppos_.x - 600.0f, unit_.disppos_.y - 16 };
+
 	DrawRotaGraph(
-		unit_.disppos_.x - 600.0f,
-		unit_.disppos_.y - 16,
+		disp.x,
+		disp.y,
 		1.5f, 0.0f, image_,
 		true, true
 	);
+
+	// ‹N“_À•W
+	float baseX = unit_.disppos_.x;
+	float baseY = unit_.disppos_.y + 300;
+
+	// ƒ‰ƒ“ƒ_ƒ€”¼Œa‚ÆŠp“x‚ğ‹‚ß‚é
+	float radius = 100.0f; // ”¼Œa
+	float angle = GetRand(359) * DX_PI_F / 180.0f;
+	float dist = (float)GetRand((int)radius); // 0`”¼Œa‚Ü‚Å‚Ìƒ‰ƒ“ƒ_ƒ€‹——£
+
+	// ‰~“à‚Ìƒ‰ƒ“ƒ_ƒ€À•W‚ğZo
+	float randX = baseX + cosf(angle) * dist;
+	float randY = baseY + sinf(angle) * dist;
+
+	for (int i = 0; i < 3; i++)
+	{
+		// •`‰æ
+		DrawRotaGraph(
+			(int)randX,
+			(int)randY,
+			0.2f, 0.0f,
+			smokeImg_[(int)smokeAnimIndex_],
+			true
+		);
+	}
 
 }
 
@@ -142,21 +180,45 @@ void Runboo::Release()
 
 	DeleteGraph(image_);
 
+	for (int i = 0; i < SMOKE_IMAGE_NUM; i++)
+	{
+		DeleteGraph(smokeImg_[i]);
+	}
+
 }
 
 void Runboo::DrawHp()
 {
 	for (int ii = 0; ii < WEAK_MAX; ii++)weak_[ii]->Draw();
 
-	float hpSize = (Application::SCREEN_SIZE_X * 0.7) / 2;
+	float hpSize = (Application::SCREEN_SIZE_X * 0.3f) / 2;
 	float xCenter = Application::SCREEN_SIZE_X / 2;
+
 	DrawBar(
 		xCenter-hpSize,
 		Application::SCREEN_SIZE_Y - 100,
 		xCenter + hpSize,
 		Application::SCREEN_SIZE_Y - 40,
-		unit_.hp_, maxHp_, RGB(0, 0, 150)
+		weak_[1]->GetUnit().hp_, Weakness::HP_MAX, RGB(0, 0, 150)
 	);
+
+	DrawBar(
+		(xCenter - hpSize) - hpSize * 2,
+		Application::SCREEN_SIZE_Y - 100,
+		(xCenter + hpSize) - hpSize * 2,
+		Application::SCREEN_SIZE_Y - 40,
+		weak_[0]->GetUnit().hp_, Weakness::HP_MAX, RGB(0, 0, 150)
+	);
+
+	DrawBar(
+		(xCenter - hpSize) + hpSize * 2,
+		Application::SCREEN_SIZE_Y - 100,
+		(xCenter + hpSize) + hpSize * 2,
+		Application::SCREEN_SIZE_Y - 40,
+		weak_[2]->GetUnit().hp_, Weakness::HP_MAX, RGB(0, 0, 150)
+	);
+
+
 }
 
 AttackBase* Runboo::GetAttackIns(void)
