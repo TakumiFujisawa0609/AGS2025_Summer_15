@@ -46,7 +46,7 @@ void Spiral::Update(Vector2F boss)
 
     shootTimer_++;
     // ”­ŽËŠÔŠui•K—v‚È‚ç’è” INTERVAL ‚ðì‚éj
-    if (shootTimer_ >= 30 && fireCount_ < BULLET_NUM)
+    if (shootTimer_ >= 10 && fireCount_ < BULLET_NUM)
     {
         // ‹ó‚¢‚Ä‚¢‚é’e‚ð”­ŽË
         for (int i = 0; i < BULLET_NUM; i++)
