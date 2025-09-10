@@ -98,6 +98,8 @@ public:
 
 	DRAWPAT GetDrawpat(void) { return DrawPat_; }
 
+	bool GetEndFlg(void) { return endFlg; }
+
 private:
 
 	//‰æ‘œ

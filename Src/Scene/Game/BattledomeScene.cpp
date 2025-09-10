@@ -140,9 +140,11 @@ void BattledomeScene::Update(void)
 	case M::BOSS_KINDS::TUTORIAL:
 		tutorial_->Update();
 		if (!tutorial_->GetUnit().isAlive_) {
-			Score::GetIns().SetScore(time_);
-			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
-			sMng.ChangeScene(M::SCENE_ID::CLEAR);
+			if (tutorial_->GetEndFlg()) {
+				Score::GetIns().SetScore(time_);
+				SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
+				sMng.ChangeScene(M::SCENE_ID::CLEAR);
+			}
 			return;
 		}
 		break;
