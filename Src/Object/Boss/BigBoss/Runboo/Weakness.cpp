@@ -117,7 +117,6 @@ void Weakness::Update()
 
 	BossBase::Update();
 
-	if (CheckHitKey(KEY_INPUT_0))unit_.hp_--;
 
 }
 

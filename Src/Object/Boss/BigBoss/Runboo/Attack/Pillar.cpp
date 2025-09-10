@@ -79,10 +79,10 @@ void Pillar::Update(Vector2F boss)
 			// ’…’eŒã‚Ì‘Ò‹@
 			if (cnt_ > 180) {
 				end_ = true;
+				pil.isAlive_ = false;
 			}
 		}
 
-		if (end_)pil.isAlive_ = false;
 	}
 
 	ChangeDispPos();

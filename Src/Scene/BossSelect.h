@@ -37,6 +37,8 @@ private:
 		Vector2F pos_;
 	};
 
+	int runbooEyeImg_;
+
 	INFO bossInfo_[(int)SceneManager::BOSS_KINDS::MAX];
 
 	int nowSelectImage_;

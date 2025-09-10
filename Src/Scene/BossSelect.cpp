@@ -50,6 +50,8 @@ void BossSelect::Load()
 
 	comingSoon_ = LoadGraph("Data/Image/ComingSoon.png");
 
+	runbooEyeImg_ = LoadGraph((Application::PATH_IMAGE + "Boss/Runboo/Weakness.png").c_str());
+
 	bossInfo_[(int)BOSS::TUTORIAL].type_ = BOSS::TUTORIAL;
 	bossInfo_[(int)BOSS::TUTORIAL].image_ = LoadGraph("Data/Image/Stage/Select/SelectTutorial.png");
 	bossInfo_[(int)BOSS::TUTORIAL].thum_ = LoadGraph("Data/Image/Stage/Select/ThumTutorial.png");
@@ -132,6 +134,14 @@ void BossSelect::Draw()
 
 	nowSelectPos_ = bossInfo_[(int)now].pos_;
 	DrawRotaGraphF(nowSelectPos_.x, nowSelectPos_.y-20 + (sin(nowSelectCount_) * 10), 1, 0, nowSelectImage_, true);
+
+	DrawRotaGraph3(
+		100,
+		Application::SCREEN_SIZE_Y / 2,
+		180, 170,
+		1.0f, 1.0f, 0.0f,
+		runbooEyeImg_, true
+	);
 
 	player_->Draw();
 
