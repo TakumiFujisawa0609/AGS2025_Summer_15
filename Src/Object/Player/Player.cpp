@@ -110,7 +110,7 @@ void Player::Update()
 	else { evaConpFlg_ = false; }
 
 	auto& ins = KEY::GetIns();
-	Vector2F workVec = ins.GetRightStickVec();
+	Vector2F workVec = ins.GetRightStickVec() /*{}*/;
 
 	if (workVec == 0.0f) {
 		if (ins.GetInfo(KEY_TYPE::MOVE_UP).now) { workVec.y--; }
@@ -124,6 +124,8 @@ void Player::Update()
 	else {
 		vec_ = workVec;
 	}
+
+	//if (workVec != 0.0f) { vec_ = workVec; }
 
 
 	if (isJump_) {
