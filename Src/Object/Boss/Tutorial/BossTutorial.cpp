@@ -719,7 +719,7 @@ void BossTutorial::Death()
 	auto& scene_ = SceneManager::GetIns();
 
 	diedCounter++;
-	unit_.isGravity_ = false;
+	/*unit_.isGravity_ = false;*/
 
 	DrawPat_ = DRAWPAT::E_DAMAGE;
 
