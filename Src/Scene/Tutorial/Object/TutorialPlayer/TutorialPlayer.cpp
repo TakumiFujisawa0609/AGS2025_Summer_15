@@ -96,16 +96,21 @@ void TutorialPlayer::Update()
 	if (unit_.inviCounter_ > 0) { unit_.inviCounter_--; }
 	else { evaConpFlg_ = false; }
 
-	auto& key = KEY::GetIns();
+	auto& ins = KEY::GetIns();
+	Vector2F workVec = ins.GetRightStickVec();
 
-	vec_ = {};
-
-	if (key.GetInfo(KEY_TYPE::MOVE_UP).now)vec_.y--;
-	if (key.GetInfo(KEY_TYPE::MOVE_DOWN).now)vec_.y++;
-	if (key.GetInfo(KEY_TYPE::MOVE_LEFT).now)vec_.x--;
-	if (key.GetInfo(KEY_TYPE::MOVE_RIGHT).now)vec_.x++;
-
-	if (vec_.x == 0.0f && vec_.y == 0.0f)vec_.x = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? -1.0f : 1.0f;
+	if (workVec == 0.0f) {
+		if (ins.GetInfo(KEY_TYPE::MOVE_UP).now) { workVec.y--; }
+		if (ins.GetInfo(KEY_TYPE::MOVE_DOWN).now) { workVec.y++; }
+		if (ins.GetInfo(KEY_TYPE::MOVE_LEFT).now) { workVec.x--; }
+		if (ins.GetInfo(KEY_TYPE::MOVE_RIGHT).now) { workVec.x++; }
+		if (workVec != 0.0f) {
+			vec_ = workVec / sqrtf(workVec.x * workVec.x + workVec.y * workVec.y);
+		}
+	}
+	else {
+		vec_ = workVec;
+	}
 
 	if (isJump_) {
 		jumpAnim_ -= 0.5;

@@ -37,7 +37,7 @@ void Loading::Init(void)
 // 読み込み
 void Loading::Load(void)
 {
-	LoadDivGraph("Data/Image/Player/まぼ.png", 7, 7, 1, 42, 66, handle_);
+	LoadDivGraph("Data/Image/Player/Run.png", 8, 8, 1, 128, 64, handle_);
 }
 
 // 更新
@@ -57,7 +57,7 @@ void Loading::Update(void)
 		// ロード画面を動作させるならここに記述
 		if (++animInterval_ >= 5) {
 			animInterval_ = 0;
-			if (++animCounter_ >= 7) {
+			if (++animCounter_ >= 8) {
 				animCounter_ = 0;
 			}
 		}
@@ -69,10 +69,11 @@ void Loading::Draw(void)
 {
 	DrawRotaGraph(
 		posX_, posY_,				// 座標
-		1.0f,						// 拡大値
+		2.0f,						// 拡大値
 		0.0f,						// 回転値
 		handle_[animCounter_],		// ハンドル
-		true						// 透過フラグ
+		true,						// 透過フラグ
+		true
 	);
 }
 

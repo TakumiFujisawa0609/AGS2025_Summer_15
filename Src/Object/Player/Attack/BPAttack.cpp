@@ -88,6 +88,9 @@ void BPAttack::Parry(Vector2F pos)
 	if (power_ < POWER_MAX) power_++;
 
 	Vector2F v = obj_.pos_ - pos;
+	if (v.x == 0.0f && v.y == 0.0f) {
+		return; 
+	}
 	float size = sqrtf(v.x * v.x + v.y * v.y);
 	v /= size;
 	vec_ = v * DEFAULT_SPEED;

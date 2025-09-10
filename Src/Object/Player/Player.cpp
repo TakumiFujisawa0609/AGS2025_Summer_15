@@ -46,6 +46,8 @@ void Player::Init()
 	animeCounter_ = 0;
 	animeInterval_ = 0;
 
+	deathEnd_ = false;
+	endCounter_ = 0;
 
 	// å¸Ç´
 	dir_ = AsoUtility::DIRECTION::E_DIR_RIGHT;
@@ -108,14 +110,21 @@ void Player::Update()
 	else { evaConpFlg_ = false; }
 
 	auto& ins = KEY::GetIns();
-	vec_ = {};
+	Vector2F workVec = ins.GetRightStickVec();
 
-	if (ins.GetInfo(KEY_TYPE::MOVE_UP).now)		{ vec_.y--; }
-	if (ins.GetInfo(KEY_TYPE::MOVE_DOWN).now)	{ vec_.y++; }
-	if (ins.GetInfo(KEY_TYPE::MOVE_LEFT).now)	{ vec_.x--; }
-	if (ins.GetInfo(KEY_TYPE::MOVE_RIGHT).now)	{ vec_.x++; }
+	if (workVec == 0.0f) {
+		if (ins.GetInfo(KEY_TYPE::MOVE_UP).now) { workVec.y--; }
+		if (ins.GetInfo(KEY_TYPE::MOVE_DOWN).now) { workVec.y++; }
+		if (ins.GetInfo(KEY_TYPE::MOVE_LEFT).now) { workVec.x--; }
+		if (ins.GetInfo(KEY_TYPE::MOVE_RIGHT).now) { workVec.x++; }
+		if (workVec != 0.0f) {
+			vec_ = workVec / sqrtf(workVec.x * workVec.x + workVec.y * workVec.y);
+		}
+	}
+	else {
+		vec_ = workVec;
+	}
 
-	if (vec_.x == 0.0f && vec_.y == 0.0f)vec_.x = (dir_ == AsoUtility::DIRECTION::E_DIR_LEFT) ? -1.0f : 1.0f;
 
 	if (isJump_) {
 		jumpAnim_ -= 0.5;
@@ -224,6 +233,8 @@ void Player::StateManager(void)
 	case Player::STATE::EVASION:
 		break;
 	case Player::STATE::DAMAGE:
+		break;
+	case Player::STATE::DEATH:
 		break;
 	}
 
@@ -336,6 +347,10 @@ void Player::ChangeState(STATE st)
 		state_ = Player::STATE::DAMAGE;
 		stateFuncPtr = &Player::Damage;
 		break;
+	case Player::STATE::DEATH:
+		state_ = Player::STATE::DEATH;
+		stateFuncPtr = &Player::Death;
+		break;
 	}
 }
 
@@ -434,7 +449,10 @@ void Player::Evasion()
 // É_ÉÅÅ[ÉWèàóù
 void Player::Damage(void)
 {
-	if (!knockBack_)ChangeState(Player::STATE::MOVE);
+	if (!knockBack_) {
+		if (unit_.hp_ <= 0) { ChangeState(Player::STATE::DEATH); }
+		else{ ChangeState(Player::STATE::MOVE); }
+	}
 
 	ChangeMotion(Player::MOTION::DAMAGE);
 
@@ -447,6 +465,18 @@ void Player::Damage(void)
 		unit_.nextpos_.x += KNOCK_SPEED;
 	}
 
+}
+
+void Player::Death(void)
+{
+	ChangeMotion(Player::MOTION::DEATH);
+
+	unit_.inviCounter_ = 2;
+ 
+	if (animeCounter_ >= image_[(int)motion_].size() - 1) {
+		animeCounter_ = image_[(int)motion_].size() - 2;
+		if (++endCounter_ >= DEATH_COUNT) { deathEnd_ = true; }
+	}
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -721,6 +751,18 @@ void Player::LoadPlayerImage(void)
 	image_[motion].insert(image_[motion].end(), DamageLoad, DamageLoad + DAMAGE_LOAD_NUM);
 	//-----------------------------------------------------------------------------
 
+	//éÄñSèÛë‘ÇÃâÊëúÇì«Ç›çûÇ›-----------------------------------------------
+	motion = (int)MOTION::DEATH;
+
+	int DeathLoad[DEATH_LOAD_NUM];
+
+	LoadDivGraph((basePath + "Death.png").c_str(),
+		DEATH_LOAD_NUM, DEATH_LOAD_NUM, 1,
+		LOAD_SIZE_X, LOAD_SIZE_Y, DeathLoad);
+
+	image_[motion].insert(image_[motion].end(), DeathLoad, DeathLoad + DEATH_LOAD_NUM);
+	//-----------------------------------------------------------------------------
+
 	//âÒîèÛë‘ÇÃâÊëúÇì«Ç›çûÇ›-----------------------------------------------
 	motion = (int)MOTION::EVASION;
 
@@ -794,7 +836,12 @@ void Player::Hit(int damage, Vector2F bPos)
 
 	unit_.hp_ -= damage;
 
-	if (unit_.hp_ <= 0)unit_.isAlive_ = false;
+	if (unit_.hp_ <= 0) {
+		unit_.hp_ = 0; 
+
+		SceneManager::GetIns().Slow(30, 10);
+		SceneManager::GetIns().Shake(ShakeKinds::WID, ShakeSize::BIG, 30);
+	}
 
 	unit_.inviCounter_ = 100;
 

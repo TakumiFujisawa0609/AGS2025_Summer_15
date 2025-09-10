@@ -81,4 +81,7 @@ public:
 	void operator*=(const float value);
 	Vector2F operator/(const float value)const;
 	void operator/=(const float value);
+
+	bool operator==(const float value)const;
+	bool operator!=(const float value)const;
 };

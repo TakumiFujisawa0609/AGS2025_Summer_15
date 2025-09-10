@@ -36,6 +36,7 @@ public:
 	static constexpr int THREE_ATTACK_LOAD_NUM = 6;
 	static constexpr int EVASION_LOAD_NUM = 7;
 	static constexpr int DAMAGE_LOAD_NUM = 4;
+	static constexpr int DEATH_LOAD_NUM = 9;
 
 
 	//何フレームに１回アニメーションを動かすか
@@ -53,6 +54,7 @@ public:
 		THREE_ATTACK,
 		SPECIAL_ATTACK,	//特殊攻撃
 		DAMAGE,			//被ダメージ
+		DEATH,			//死亡
 		EVASION,		//回避
 
 		MAX,			//モーション最大数
@@ -69,6 +71,7 @@ public:
 		BP_ATTACK,
 		EVASION,
 		DAMAGE,
+		DEATH,
 	};
 
 	const STATE GetState(void)const { return state_; }
@@ -124,6 +127,14 @@ public:
 	void Hit(int damage, Vector2F bPos);
 	//----------------------------------------------------------------------------------------------
 
+	// 死亡状態で使用する～～------------------------------------------------------
+	// 定数
+	static constexpr int DEATH_COUNT = 30;
+	// 関数
+	bool DeathEnd(void)const { return deathEnd_; }
+	//-----------------------------------------------------------------------------
+
+
 
 	void SetInvici(int time) { unit_.inviCounter_ = time; }
     bool IsInvici(void) { return unit_.inviCounter_ > 0; }
@@ -164,6 +175,7 @@ private:
 
 	//向き
 	AsoUtility::DIRECTION dir_;
+
 
 	//状態管理--------------------------------------------------------------------------------------
 	
@@ -216,6 +228,9 @@ private:
 
 	// ダメージ処理
 	void Damage(void);
+
+	// 死亡処理
+	void Death(void);
 
 	//---------------------------------------------
 
@@ -285,6 +300,13 @@ private:
 	bool knockBack_;
 	AsoUtility::DIRECTION knockBackDir_;
 	//--------------------------------------
+
+	// 死亡処理関係---------------------
+
+	// 変数
+	bool deathEnd_;
+	int endCounter_;
+	//----------------------------------
 
 
 	//穴に落ちた時の処理

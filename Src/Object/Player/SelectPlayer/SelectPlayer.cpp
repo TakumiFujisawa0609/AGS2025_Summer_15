@@ -77,22 +77,16 @@ void SelectPlayer::Update()
 		bamboo_.pos_ = pos_;
 		bamboo_.pos_.y -= 50.0f;
 
-		//if (nowSelect_ != BOSS::RUNBOO) {
 		if (key.GetInfo(KEY_TYPE::ENTER).down) {
 			haveB_ = false;
 			SoundManager::GetIns().Play(SoundManager::SOUND::BPTHROW, true);
 		}
-		//}
 	}
 	else {
 		bamboo_.pos_ += vec_;
 	}
 
-	if (CheckHitKey(KEY_INPUT_1) == 1 &&
-		CheckHitKey(KEY_INPUT_5) == 1 &&
-		CheckHitKey(KEY_INPUT_0) == 1) {
-		Score::GetIns().RankingReset(nowSelect_);
-	}
+	RankingReset();
 }
 
 void SelectPlayer::Draw()
@@ -121,4 +115,27 @@ void SelectPlayer::SetVec(Vector2F target)
 	float size = sqrtf(vec.x * vec.x + vec.y * vec.y);
 	this->vec_ = vec / size;
 	this->vec_ *= BAMBOO_SPEED;
+}
+
+void SelectPlayer::RankingReset(void)
+{
+	if (CheckHitKey(KEY_INPUT_0) == 0) { return; }
+
+	if (CheckHitKey(KEY_INPUT_6) && CheckHitKey(KEY_INPUT_8)) { Score::GetIns().RankingReset(nowSelect_); }
+
+	for (int i = 0; i < NUMBER_NAME::MAX; i++) {
+		numberKey_[i].prev = numberKey_[i].now;
+		numberKey_[i].now = (CheckHitKey(NUMBERS_KEY[i]) == 0) ? false : true;
+		numberKey_[i].down = (!numberKey_[i].prev && numberKey_[i].now);
+		numberKey_[i].up = (numberKey_[i].prev && !numberKey_[i].now);
+	}
+
+	size_t input_num = 0;
+	NUMBER_NAME num = {};
+	for (int i = 0; i < NUMBER_NAME::MAX; i++) {
+		if (numberKey_[i].down) { num = (NUMBER_NAME)i;	 input_num++; }
+	}
+	if (input_num == 1) {
+		Score::GetIns().RankingReset(nowSelect_, num + 1);
+	}
 }

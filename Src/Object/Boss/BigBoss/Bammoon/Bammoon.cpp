@@ -233,9 +233,13 @@ void Bammoon::Attack(void)
 
 			counter_ = 0;
 
-			if (pinch_) { pinchAttack--; }
-
-			idleTime_ = (!pinch_ || pinchAttack <= 0) ? 400 : 10;
+			if (pinch_) {
+				pinchAttack--;
+				idleTime_ = (pinchAttack <= 0) ? 500 : 10;
+			}
+			else {
+				idleTime_ = 400;
+			}
 			ChangeState(STATE::IDLE);
 			return;
 		}
@@ -248,8 +252,13 @@ void Bammoon::Attack(void)
 			counter_ = 0;
 			unit_.isGravity_ = true;
 			unit_.isXAttenu = true;
-			if (pinch_) { pinchAttack--; }
-			idleTime_ = (!pinch_||pinchAttack<=0) ? 300 : 10;
+			if (pinch_) {
+				pinchAttack--;
+				idleTime_ = (pinchAttack <= 0) ? 500 : 10;
+			}
+			else {
+				idleTime_ = 300;
+			}
 			ChangeState(STATE::IDLE);
 			return;
 		}
@@ -265,8 +274,13 @@ void Bammoon::Attack(void)
 			counter_ = 0;
 			unit_.isGravity_ = true;
 			unit_.isXAttenu = true;
-			if (pinch_) { pinchAttack--; }
-			idleTime_ = (!pinch_ || pinchAttack <= 0) ? 300 : 10;
+			if (pinch_) {
+				pinchAttack--;
+				idleTime_ = (pinchAttack <= 0) ? 500 : 10;
+			}
+			else {
+				idleTime_ = 300;
+			}
 			ChangeState(STATE::IDLE);
 			return;
 		}
@@ -280,8 +294,13 @@ void Bammoon::Attack(void)
 			counter_ = 0;
 			unit_.isGravity_ = true;
 			unit_.isXAttenu = true;
-			if (pinch_) { pinchAttack--; }
-			idleTime_ = (!pinch_ || pinchAttack <= 0) ? 300 :10;
+			if (pinch_) {
+				pinchAttack--;
+				idleTime_ = (pinchAttack <= 0) ? 500 : 10;
+			}
+			else {
+				idleTime_ = 300;
+			}
 			ChangeState(STATE::IDLE);
 			return;
 		}
@@ -298,8 +317,13 @@ void Bammoon::Attack(void)
 			counter_ = 0;
 			unit_.isGravity_ = true;
 			unit_.isXAttenu = true;
-			if (pinch_) { pinchAttack--; }
-			idleTime_ = (!pinch_ || pinchAttack <= 0) ? 300 : 10;
+			if (pinch_) {
+				pinchAttack--;
+				idleTime_ = (pinchAttack <= 0) ? 500 : 10;
+			}
+			else {
+				idleTime_ = 300;
+			}
 			ChangeState(STATE::IDLE);
 			return;
 		}
@@ -332,6 +356,7 @@ void Bammoon::Damage(void)
 
 void Bammoon::Death(void)
 {
+	unit_.inviCounter_ = 2;
 	if (--deathCou_ <= 0) {
 		unit_.isAlive_ = false;
 	}
@@ -398,6 +423,9 @@ void Bammoon::SetDamage(int dmg)
 		mana.HitStop(60);
 		mana.ZoomPos(unit_.pos_);
 		mana.ZoomScale(2.0f);
+
+		unit_.hp_ = 0;
+
 		SetDown(*playerPosPtr_);
 		deathCou_ = DEATH_DIRECTION_TIME;
 		ChangeState(STATE::DEATH);

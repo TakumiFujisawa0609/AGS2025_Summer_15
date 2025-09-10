@@ -2,6 +2,8 @@
 
 #include<vector>
 
+#include"../Common/Vector2.h"
+
 class KeyManager
 {
 private:
@@ -24,7 +26,14 @@ public:
 		MOVE_DOWN,
 		MOVE_RIGHT,
 		MOVE_LEFT,
+
 		ATTACK,
+
+		BP_ATTACK_VEC_UP,
+		BP_ATTACK_VEC_DOWN,
+		BP_ATTACK_VEC_RIGHT,
+		BP_ATTACK_VEC_LEFT,
+
 		JUMP,
 		EVASION,
 
@@ -39,6 +48,9 @@ public:
 	struct KEY_INFO { bool prev = false, now = false, up = false, down = false; };
 
 	const KEY_INFO GetInfo(KEY_TYPE k) { return keyInfo[(int)k]; }
+
+
+	const Vector2F& GetRightStickVec(void);
 
 private:
 	void Init(void);

@@ -55,5 +55,12 @@ private:
 	int arrowAnime_;
 
 	Base bamboo_;
+
+
+	enum NUMBER_NAME { ONE, TWO, THREE, FOUR, FIVE, MAX };
+	struct { bool prev = false, now = false, down = false, up = false; } numberKey_[NUMBER_NAME::MAX];
+	static constexpr int NUMBERS_KEY[NUMBER_NAME::MAX] = { 2,3,4,5,6 };
+
+	void RankingReset(void);
 };
 

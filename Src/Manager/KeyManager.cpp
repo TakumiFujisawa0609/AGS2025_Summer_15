@@ -11,6 +11,8 @@ KeyManager::KeyManager():
 {
 }
 
+
+
 void KeyManager::Init(void)
 {
 	// キーボードを割り振るとき
@@ -77,6 +79,13 @@ void KeyManager::Init(void)
 	SET_KEYBOARD(KEY_TYPE::TUTORIAL_NEXT, KEY_INPUT_G);
 	SET_KEYBOARD(KEY_TYPE::TUTORIAL_NEXT, KEY_INPUT_R);
 	SET_C_BUTTON(KEY_TYPE::TUTORIAL_NEXT, XINPUT_BUTTON_Y);
+
+
+	SET_C_OTHERS(KEY_TYPE::BP_ATTACK_VEC_UP, CONTROLLER_OTHERS::RIGHTSTICK_UP);
+	SET_C_OTHERS(KEY_TYPE::BP_ATTACK_VEC_DOWN, CONTROLLER_OTHERS::RIGHTSTICK_DOWN);
+	SET_C_OTHERS(KEY_TYPE::BP_ATTACK_VEC_RIGHT, CONTROLLER_OTHERS::RIGHTSTICK_RIGHT);
+	SET_C_OTHERS(KEY_TYPE::BP_ATTACK_VEC_LEFT, CONTROLLER_OTHERS::RIGHTSTICK_LEFT);
+
 }
 
 void KeyManager::Update(void)
@@ -124,32 +133,38 @@ bool KeyManager::ControllerOthersInput(const CONTROLLER_OTHERS& input)
 	XINPUT_STATE state = {};
 	if (GetJoypadXInputState(DX_INPUT_PAD1, &state) != 0) { state = {}; }
 
+	short lenge = 10000;
+
 	switch (input)
 	{
 	case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_UP:
-		if (state.ThumbLY > 10000) { return true; }
+		if (state.ThumbLY > lenge) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_DOWN:
-		if (state.ThumbLY < -10000) { return true; }
+		if (state.ThumbLY < -lenge) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_RIGHT:
-		if (state.ThumbLX > 10000) { return true; }
+		if (state.ThumbLX > lenge) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::LEFTSTICK_LEFT:
-		if (state.ThumbLX < -10000) { return true; }
+		if (state.ThumbLX < -lenge) { return true; }
 		break;
+
+
 	case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_UP:
-		if (state.ThumbRY <10000) { return true; }
+		if (state.ThumbRY > lenge) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_DOWN:
-		if (state.ThumbRY > 10000) { return true; }
+		if (state.ThumbRY < -lenge) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_RIGHT:
-		if (state.ThumbRX > 10000) { return true; }
+		if (state.ThumbRX > lenge) { return true; }
 		break;
 	case KeyManager::CONTROLLER_OTHERS::RIGHTSTICK_LEFT:
-		if (state.ThumbRX < 10000) { return true; }
+		if (state.ThumbRX < -lenge) { return true; }
 		break;
+
+
 	case KeyManager::CONTROLLER_OTHERS::LEFT_TRIGGER:
 		if (state.LeftTrigger > 0) { return true; }
 		break;
@@ -162,4 +177,16 @@ bool KeyManager::ControllerOthersInput(const CONTROLLER_OTHERS& input)
 	}
 
 	return false;
+}
+
+
+const Vector2F& KeyManager::GetRightStickVec(void)
+{
+	XINPUT_STATE state = {};
+	if (GetJoypadXInputState(DX_INPUT_PAD1, &state) != 0) { return { 0.0f,0.0f }; }
+	short lenge = 10000;
+
+	Vector2F vec = { (abs(state.ThumbRX) > lenge) ? (float)state.ThumbRX : 0.0f,(abs(state.ThumbRY) > lenge) ? (float)-state.ThumbRY : 0.0f };
+
+	return vec / sqrtf(vec.x * vec.x + vec.y * vec.y);
 }

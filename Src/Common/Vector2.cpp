@@ -166,3 +166,13 @@ void Vector2F::operator/=(const float value)
 	x = x / value;
 	y = y / value;
 }
+
+bool Vector2F::operator==(const float value) const
+{
+	return (x == value && y == value);
+}
+
+bool Vector2F::operator!=(const float value) const
+{
+	return (x != value || y != value);
+}

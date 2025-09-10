@@ -47,7 +47,7 @@ private:
 	static constexpr int MIN_LOAD_TIME = 60;	// 60fps(1•b) * x
 
 	// ‰æ‘œƒnƒ“ƒhƒ‹
-	int handle_[7];
+	int handle_[8];
 	int animCounter_;
 	int animInterval_;
 

@@ -33,6 +33,11 @@ public:
 	/// </summary>
 	/// <param name="k">リセットしたいランキングの種類(BOSS_KINDS::MAXを指定すると全てリセット)</param>
 	void RankingReset(BOSS_KINDS k);
+	void RankingReset(BOSS_KINDS k, int rank) {
+		if (rank < 1 || RANKING_NUM < rank) { return; }
+		for (int i = rank; i < RANKING_NUM; i++) { ranking_[(int)k][i - 1] = ranking_[(int)k][i]; ranking_[(int)k][i] = -1; }
+	}
+
 private:
 	static Score* ins_;
 
