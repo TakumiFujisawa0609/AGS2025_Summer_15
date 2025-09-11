@@ -671,19 +671,23 @@ void BattledomeScene::PlayerToBoss(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
-		if (ins.CircleAndRect(player_->GetUnit(), runboo_->GetUnit()) || player_->GetUnit().disppos_.x < 0)
+		if (runboo_->GetWeakAllAlive())
 		{
-			player_->Hit(10, runboo_->GetUnit().pos_);
-		}
-
-		//プレイヤーと弱点の当たり判定
-		for (auto& weak : runboo_->GetWeakness())
-		{
-			if (ins.Circle(player_->GetUnit(), weak->GetUnit()))
+			if (ins.CircleAndRect(player_->GetUnit(), runboo_->GetUnit()) || player_->GetUnit().disppos_.x < 0)
 			{
-				player_->Hit(5, weak->GetUnit().pos_);
+				player_->Hit(10, runboo_->GetUnit().pos_);
+			}
+
+			//プレイヤーと弱点の当たり判定
+			for (auto& weak : runboo_->GetWeakness())
+			{
+				if (ins.Circle(player_->GetUnit(), weak->GetUnit()))
+				{
+					player_->Hit(5, weak->GetUnit().pos_);
+				}
 			}
 		}
+
 		break;
 	case M::BOSS_KINDS::BAMMOON:
 		if (ins.Ellipse(player_->GetUnit(), bammoon_->GetUnit())) {

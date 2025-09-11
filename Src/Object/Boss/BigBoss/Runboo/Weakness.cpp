@@ -111,13 +111,19 @@ void Weakness::Update()
 		unit_.isAlive_ = false;
 		unit_.hp_ = 0;
 
+		bullet_->SetIsAlive(false);
+		laser_->SetIsAlive(false);
+		pillar_->SetIsAlive(false);
+		bound_->SetIsAlive(false);
+		spiral_->SetIsAlive(false);
+
 		ChangeState(STATE::DEATH);
 	}
 	bullet_->Update(unit_.pos_, moveSpeed_);
 
 	BossBase::Update();
 
-
+	if (CheckHitKey(KEY_INPUT_0))unit_.hp_ -= 10;
 }
 
 void Weakness::Draw()

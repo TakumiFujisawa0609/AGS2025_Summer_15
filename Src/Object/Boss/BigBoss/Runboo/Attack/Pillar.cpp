@@ -159,6 +159,14 @@ bool Pillar::End(void)
 	return end_;
 }
 
+void Pillar::SetIsAlive(bool isAlive)
+{
+	for (auto& pil : obj_)
+	{
+		pil.isAlive_ = false;
+	}
+}
+
 void Pillar::ChangeDispPos()
 {
 	auto& camera = Camera::GetInstance();

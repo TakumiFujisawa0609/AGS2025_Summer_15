@@ -117,6 +117,14 @@ bool Bound::End(void)
 	return end_;
 }
 
+void Bound::SetIsAlive(bool isAlive)
+{
+	for (auto& bound : obj_)
+	{
+		bound.isAlive_ = false;
+	}
+}
+
 void Bound::ChangeDispPos()
 {
 	auto& camera = Camera::GetInstance();
