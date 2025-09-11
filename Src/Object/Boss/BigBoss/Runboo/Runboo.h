@@ -46,6 +46,12 @@ public:
 	bool IsInvici(void) { return unit_.inviCounter_ > 0; }
 
 	float GetMoveSpeed(void) { return moveSpeed_; }
+	bool GetWeakAllAlive(void)
+	{
+		return (weak_[0]->GetUnit().isAlive_ &&
+			weak_[1]->GetUnit().isAlive_ &&
+			weak_[2]->GetUnit().isAlive_);
+	}
 
 	std::vector<Weakness*> GetWeakness(void) { return weak_; }
 

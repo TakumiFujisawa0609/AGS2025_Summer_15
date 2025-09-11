@@ -114,13 +114,14 @@ void Runboo::Update()
 		!weak_[1]->GetUnit().isAlive_ &&
 		!weak_[2]->GetUnit().isAlive_)
 	{
+		SceneManager::GetIns().Shake(SceneManager::DIAG,ShakeSize::BIG,20);
 		cnt++;
 
 		moveSpeed_ = 0;
 
 		if (cnt > 180)
 		{
-			//SceneManager::GetIns().Shake();
+			cnt = 0;
 			ChangeState(STATE::DEATH);
 		}
 	}
