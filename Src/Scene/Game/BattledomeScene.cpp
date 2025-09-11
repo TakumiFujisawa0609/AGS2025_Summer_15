@@ -377,6 +377,10 @@ void BattledomeScene::Scroll(void)
 	case SceneManager::BOSS_KINDS::RUNBOO:
 	{
 		camera.Follow(Camera::X, runboo_->GetMoveSpeed());
+		if (player_->GetUnit().pos_.x < camera.GetPos().x)
+		{
+			player_->Hit(10, { 0,0 });
+		}
 	}
 		break;
 	case SceneManager::BOSS_KINDS::NOKOPY:
@@ -494,7 +498,16 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 				if (ins.Circle(player_->DefaultAtt(), weakBull))
 				{
 					weak->BulltHit(i);
-					bamboo_->Create(weakBull.pos_, 1, 20);
+
+					if (weak->GetAttack() == Weakness::ATTACK::PILLAR)
+					{
+						bamboo_->Create(weakBull.pos_, 1, 10);
+					}
+					else
+					{
+						bamboo_->Create(weakBull.pos_, 1, 20);
+					}
+					
 				}
 				i++;
 			}
@@ -613,7 +626,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 
 		//–{‘Ìi•Çj‚Æ’ÊíUŒ‚‚Ì“–‚½‚è”»’è
 		if (ins.CircleAndRect(player_->DefaultAtt(), runboo_->GetUnit())) {
-			bamboo_->Create(player_->GetUnit().pos_, 1 , 50);
+			bamboo_->Create(player_->GetUnit().pos_, 1 , 10);
 		}
 
 		break;
@@ -818,6 +831,7 @@ void BattledomeScene::PlayerToBamboo(void)
 		if (ins.CircleAndRect(b->GetUnit(), player_->GetUnit(), false)) {
 			b->Collect();
 			player_->BpOptain();
+			break;
 		}
 	}
 

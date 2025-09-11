@@ -6,7 +6,7 @@
 class Laser : public AttackBase
 {
 public:
-	static constexpr int MAX_NUM = 3;
+	static constexpr int MAX_NUM = 4;
 	static constexpr float ATTACK_SPEED = 10.0f;
 	static constexpr int INTERVAL = 10;
 
