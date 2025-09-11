@@ -53,6 +53,8 @@ public:
 			weak_[2]->GetUnit().isAlive_);
 	}
 
+
+
 	std::vector<Weakness*> GetWeakness(void) { return weak_; }
 
 private:

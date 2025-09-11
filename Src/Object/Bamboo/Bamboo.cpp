@@ -34,7 +34,7 @@ void Bamboo::Set(Vector2F pos)
 	unit_.size_ = { unit_.radius_ * 2.0f,unit_.radius_ * 2.0f };
 
 	unit_.yAccel_ = -20.0f;
-	unit_.xAccel_ = (SceneManager::GetIns().GetNowBoss() == BOSS_KINDS::RUNBOO) ? (float)(GetRand(20) + 20) : (float)(GetRand(40) - 20);
+	unit_.xAccel_ = (SceneManager::GetIns().GetNowBoss() == BOSS_KINDS::RUNBOO) ? (float)(GetRand(10) + 20) : (float)(GetRand(40) - 20);
 
 	unit_.isGravity_ = true;
 

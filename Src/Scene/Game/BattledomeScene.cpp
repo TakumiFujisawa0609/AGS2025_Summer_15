@@ -377,10 +377,7 @@ void BattledomeScene::Scroll(void)
 	case SceneManager::BOSS_KINDS::RUNBOO:
 	{
 		camera.Follow(Camera::X, runboo_->GetMoveSpeed());
-		if (player_->GetUnit().pos_.x < camera.GetPos().x)
-		{
-			player_->Hit(10, { 0,0 });
-		}
+
 	}
 		break;
 	case SceneManager::BOSS_KINDS::NOKOPY:
@@ -684,11 +681,11 @@ void BattledomeScene::PlayerToBoss(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
-		if (runboo_->GetWeakAllAlive())
+		if (runboo_->GetState() != BossBase::STATE::DEATH)
 		{
-			if (ins.CircleAndRect(player_->GetUnit(), runboo_->GetUnit()) || player_->GetUnit().disppos_.x < 0)
+			if (ins.CircleAndRect(player_->GetUnit(), runboo_->GetUnit()) || (player_->GetUnit().disppos_.x < 0 && player_->GetUnit().inviCounter_ <= 0))
 			{
-				player_->Hit(10, runboo_->GetUnit().pos_);
+				player_->Hit(5, runboo_->GetUnit().pos_);
 			}
 
 			//プレイヤーと弱点の当たり判定
