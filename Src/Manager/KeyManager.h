@@ -50,7 +50,7 @@ public:
 	const KEY_INFO GetInfo(KEY_TYPE k) { return keyInfo[(int)k]; }
 
 
-	const Vector2F& GetRightStickVec(void);
+	const Vector2F GetRightStickVec(void);
 
 private:
 	void Init(void);
