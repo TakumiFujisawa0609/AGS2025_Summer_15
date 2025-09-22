@@ -14,6 +14,9 @@ TutorialTaskManager::TutorialTaskManager():
 	linesCount_(0),
 	linesInterval_(0),
 	hukidashiImg_(-1),
+	nextButtonImg_{ -1, -1 },
+	nextKeyImg_{ -1, -1 },
+	nextButtonCounter_(0),
 	taskConp_(true)
 {
 }
@@ -35,6 +38,8 @@ void TutorialTaskManager::Load(void)
 	AsoUtility::LoadImg(hukidashiImg_, "Data/Image/Tutorial/Task/‚«o‚µ.png");
 	AsoUtility::LoadImg(nextButtonImg_[0], "Data/Image/Tutorial/Task/Button/UnPushButton.png");
 	AsoUtility::LoadImg(nextButtonImg_[1], "Data/Image/Tutorial/Task/Button/PushButton.png");
+	AsoUtility::LoadImg(nextKeyImg_[0], "Data/Image/Tutorial/Task/Button/UnPush.png");
+	AsoUtility::LoadImg(nextKeyImg_[1], "Data/Image/Tutorial/Task/Button/Push.png");
 
 	for (auto& ins : taskIns_) {
 		if (!ins) { continue; }
@@ -106,12 +111,17 @@ bool TutorialTaskManager::Update(void)
 
 	}
 	else {
-		if (linesCount_ >= (int)(START_LINES_TABLE[(int)nowTask_].size())) { return false; }
+		int linesSize =
+			(KEY::GetIns().IsControllerConnected()) ?
+			(int)(START_LINES_TABLE_CONTROLER[(int)nowTask_].size()) :
+			(int)(START_LINES_TABLE_KEYBOARD[(int)nowTask_].size());
+
+		if (linesCount_ >= linesSize) { return false; }
 
 		if (++linesInterval_ >= LINES_INTERVAL) {
 			linesInterval_ = 0;
-			if (++linesCount_ >= (int)START_LINES_TABLE[(int)nowTask_].size()) {
-				linesCount_ = (int)(START_LINES_TABLE[(int)nowTask_].size()); 
+			if (++linesCount_ >= linesSize) {
+				linesCount_ = linesSize;
 				Smng::GetIns().Stop(SOUND::SE_SYSTEM_CHARA);
 			}
 			else { Smng::GetIns().Play(SOUND::SE_SYSTEM_CHARA, false); }
@@ -136,7 +146,9 @@ void TutorialTaskManager::DrawUI(void)
 		work = END_LINES_TABLE[(int)nowTask_].substr(0, linesCount_);
 	}
 	else {
-		work = START_LINES_TABLE[(int)nowTask_].substr(0, linesCount_);
+		work = (KEY::GetIns().IsControllerConnected()) ?
+			START_LINES_TABLE_CONTROLER[(int)nowTask_].substr(0, linesCount_) :
+			START_LINES_TABLE_KEYBOARD[(int)nowTask_].substr(0, linesCount_);
 	}
 
 	SetFontSize(23);
@@ -144,7 +156,7 @@ void TutorialTaskManager::DrawUI(void)
 	SetFontSize(16);
 
 	if (linesCount_ >= (int)END_LINES_TABLE[(int)nowTask_].size() && taskConp_) {
-		DrawRotaGraph(Application::SCREEN_SIZE_X - 150, Application::SCREEN_SIZE_Y - 35, 0.15, 0, nextButtonImg_[nextButtonCounter_ / 10 % 2], true);
+		DrawRotaGraph(Application::SCREEN_SIZE_X - 150, Application::SCREEN_SIZE_Y - 35, 0.15, 0, (KEY::GetIns().IsControllerConnected()) ? nextButtonImg_[nextButtonCounter_ / 10 % 2] : nextKeyImg_[nextButtonCounter_ / 10 % 2], true);
 	}
 }
 
@@ -152,6 +164,7 @@ void TutorialTaskManager::Release(void)
 {
 	DeleteGraph(hukidashiImg_);
 	for (auto& id : nextButtonImg_) { DeleteGraph(id); }
+	for (auto& id : nextKeyImg_) { DeleteGraph(id); }
 
 	for (auto& ins : taskIns_) {
 		if (!ins) { continue; }

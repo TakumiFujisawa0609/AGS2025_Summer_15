@@ -180,6 +180,14 @@ bool KeyManager::ControllerOthersInput(const CONTROLLER_OTHERS& input)
 }
 
 
+
+bool KeyManager::IsControllerConnected(void)
+{
+	XINPUT_STATE state = {};
+	if (GetJoypadXInputState(DX_INPUT_PAD1, &state) != 0) { return false; }
+	return true;
+}
+
 const Vector2F& KeyManager::GetRightStickVec(void)
 {
 	XINPUT_STATE state = {};

@@ -50,6 +50,9 @@ public:
 	const KEY_INFO GetInfo(KEY_TYPE k) { return keyInfo[(int)k]; }
 
 
+	// コントローラーが接続されているか
+	bool IsControllerConnected(void);
+
 	const Vector2F& GetRightStickVec(void);
 
 private:
