@@ -4,7 +4,14 @@
 #include "../../../../Manager/SceneManager.h"
 
 
-Runboo::Runboo()
+Runboo::Runboo():
+	image_(-1),
+	smokeImg_(),
+	moveSpeed_(0),
+	smokeAnimIndex_(0.0f),
+	maxHp_(0),
+	weak_(),
+	pillar_()
 {
 
 }

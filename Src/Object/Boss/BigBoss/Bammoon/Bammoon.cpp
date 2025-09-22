@@ -134,7 +134,7 @@ void Bammoon::DrawHp(void)
 	size = { 800,50 };
 	end = { Application::SCREEN_SIZE_X - 5,Application::SCREEN_SIZE_Y - 20 };
 	start = end - size;
-	DrawBar(start.x, start.y, end.x, end.y, unit_.hp_, HP_MAX, RGB(0, 255, 255));
+	DrawBar((float)start.x, (float)start.y, (float)end.x, (float)end.y, unit_.hp_, HP_MAX, 0x00ffff);
 }
 
 

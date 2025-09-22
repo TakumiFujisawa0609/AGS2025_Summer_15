@@ -37,7 +37,7 @@ void Kakashi::Draw(void)
 	if (!unit_.isAlive_) { return; }
 
 	if (unit_.inviCounter_ > 0) { SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150); }
-	DrawRotaGraph(unit_.pos_.x + sinf(unit_.inviCounter_), unit_.pos_.y - sinf(unit_.inviCounter_), 1, 0, image_, true);
+	DrawRotaGraphF(unit_.pos_.x + sinf(unit_.inviCounter_), unit_.pos_.y - sinf(unit_.inviCounter_), 1, 0, image_, true);
 	if (unit_.inviCounter_ > 0) { SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0); }
 
 	int sX = unit_.pos_.x - unit_.size_.x / 1.5f;

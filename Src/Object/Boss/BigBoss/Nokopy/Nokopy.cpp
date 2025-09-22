@@ -306,7 +306,7 @@ void Nokopy::DrawHp(void)
 	size = { 800,50 };
 	end = { Application::SCREEN_SIZE_X - 5,Application::SCREEN_SIZE_Y - 20 };
 	start = end - size;
-	DrawBar(start.x, start.y, end.x, end.y, unit_.hp_, BOSS_HP, RGB(0, 255, 255));
+	DrawBar((float)start.x, (float)start.y, (float)end.x, (float)end.y, unit_.hp_, BOSS_HP, 0x00ffff);
 }
 void Nokopy::Move(void)
 {
@@ -495,7 +495,7 @@ void Nokopy::UpdateRushoot(void)
 		unit_.nextpos_.y += (unit_.pos_.y <= Application::SCREEN_SIZE_Y) ? unit_.speed_ : 0;
 	}
 	else if (attackCounter_ < 31) {
-		unit_.nextpos_ = ShapesPosition::GetOnePositionCircle(centerPos.x, centerPos.y, Application::SCREEN_SIZE_X / 2, GetRand(AsoUtility::Deg2RadF(360)));
+		unit_.nextpos_ = ShapesPosition::GetOnePositionCircle(centerPos.x, centerPos.y, Application::SCREEN_SIZE_X / 2, (float)GetRand(AsoUtility::Deg2RadF(360)));
 		unit_.nextpos_ *= 1.5;
 		// targetPos‚ð‰„’·ã‚ÉL‚Î‚·
 		Vector2F playerPos = *playerPosPtr_;

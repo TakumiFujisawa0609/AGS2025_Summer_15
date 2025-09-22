@@ -7,7 +7,11 @@
 
 #include"../Player.h"
 
-BPAttack::BPAttack() : PlayerAttackBase()
+BPAttack::BPAttack() : PlayerAttackBase(),
+	aliveCounter_(0),
+	bounce_(0),
+	image_(0),
+	power_(0)
 {
 }
 
@@ -53,7 +57,7 @@ void BPAttack::Update(void)
 void BPAttack::Draw(void)
 {
 	if (!obj_.isAlive_)return;
-	DrawRotaGraph(obj_.disppos_.x, obj_.disppos_.y, 1.0f + power_ / 5.0f, atan2(vec_.y, vec_.x), image_, true);
+	DrawRotaGraphF(obj_.disppos_.x, obj_.disppos_.y, 1.0f + power_ / 5.0f, atan2(vec_.y, vec_.x), image_, true);
 }
 
 void BPAttack::Release(void)

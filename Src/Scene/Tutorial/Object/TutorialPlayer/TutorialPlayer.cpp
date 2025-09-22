@@ -4,7 +4,40 @@
 #include"../../../../Manager/InputManager.h"
 #include"../../../../Manager/KeyManager.h"
 
-TutorialPlayer::TutorialPlayer()
+TutorialPlayer::TutorialPlayer():
+	state_(STATE::MOVE),
+	stateFuncPtr(),
+
+	dir_(AsoUtility::DIRECTION::E_DIR_RIGHT),
+
+	jumpImg_(),
+	isJump_(),
+	jumpAnim_(0),
+	isJumpAnim_(),
+	jumpKeyCounter_(),
+
+	attack_(NON),
+	defaultAttack_(nullptr),
+	isAttack_{ false,false,false },
+	attackKeyCounter_(0),
+	haveB_(false),
+
+	evasionCounter_(0),
+	evaConpFlg_(false),
+	evasionPossiFlg_(true),
+	evasionCoolTime_(0),
+
+	knockBack_(false),
+	knockBackDir_(AsoUtility::DIRECTION::E_DIR_RIGHT),
+
+	motion_(MOTION::IDLE),
+	animeCounter_(0),
+	animeInterval_(0),
+	animeLoop_(true),
+
+	BambooImg_(-1),
+	arrowImg_{ -1,-1,-1,-1 },
+	arrowAnim_(0)
 {
 }
 
@@ -141,15 +174,15 @@ void TutorialPlayer::Draw()
 {
 	if (unit_.isAlive_) {
 
-		if (haveB_)DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y - 50, 1, 0, BambooImg_, true);
+		if (haveB_)DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y - 50, 1, 0, BambooImg_, true);
 		DrawPlayer();
-		if (haveB_)DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1, atan2(vec_.y, vec_.x), arrowImg_[arrowAnim_], true);
+		if (haveB_)DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y, 1, atan2f(vec_.y, vec_.x), arrowImg_[arrowAnim_], true);
 
 		if (evasionCoolTime_ > 0) {
 			Vector2F start, end;
 			start = { unit_.disppos_.x - LOAD_SIZE_X / 3,(unit_.disppos_.y - SIZE_Y / 2) - 5 };
 			end = { unit_.disppos_.x + LOAD_SIZE_X / 3,unit_.disppos_.y - SIZE_Y / 2 };
-			DrawBar(start.x, start.y, end.x, end.y, evasionCoolTime_, EVASION_COOL_TIME, RGB(255, 0, 0), RGB(255, 255, 255, RGB(0, 0, 0)));
+			DrawBar(start.x, start.y, end.x, end.y, evasionCoolTime_, EVASION_COOL_TIME, 0xff0000, 0xffffff, 0x000000);
 		}
 
 

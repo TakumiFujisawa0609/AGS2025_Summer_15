@@ -25,8 +25,8 @@ public:
 	static constexpr int HP_POS_X = 10;
 	static constexpr int HP_POS_Y = 15;
 
-	static constexpr int IMAGE_EX_RATE_X = 1.0f;
-	static constexpr int IMAGE_EX_RATE_Y = 1.0f;
+	static constexpr int IMAGE_EX_RATE_X = 1;
+	static constexpr int IMAGE_EX_RATE_Y = 1;
 
 	static constexpr int INVI_COUNTER = 30;
 
@@ -73,7 +73,7 @@ public:
 
 	ATTACK GetAttack(void) { return attack_; }
 
-	int GetCnt(void) { return cnt_; }
+	float GetCnt(void) { return cnt_; }
 
 	void AttackManager(bool isHard);
 

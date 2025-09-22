@@ -15,8 +15,36 @@
 
 
 
-Player::Player()
+Player::Player() :
+	BambooImg_(0),
+	animeCounter_(0),
+	animeInterval_(0),
+	animeLoop_(false),
+	arrowAnim_(0),
+	attackKeyCounter_(0),
+	attack_(NON),
+	deathEnd_(false),
+	defaultAttack_(nullptr),
+	dir_(AsoUtility::DIRECTION::E_DIR_RIGHT),
+	endCounter_(0),
+	evaConpFlg_(false),
+	evasionCoolTime_(0),
+	evasionCounter_(0),
+	evasionPossiFlg_(true),
+	haveB_(false),
+	jumpAnim_(0),
+	isJumpAnim_(),
+	knockBack_(false),
+	knockBackDir_(AsoUtility::DIRECTION::E_DIR_RIGHT),
+	motion_(MOTION::IDLE),
+	stateFuncPtr(nullptr),
+	state_(STATE::MOVE)
 {
+	std::fill(std::begin(arrowImg_), std::end(arrowImg_), -1);
+	std::fill(std::begin(isAttack_), std::end(isAttack_), false);
+	std::fill(std::begin(isJump_), std::end(isJump_), false);
+	std::fill(std::begin(jumpImg_), std::end(jumpImg_), -1);
+	std::fill(std::begin(jumpKeyCounter_), std::end(jumpKeyCounter_), -1);
 }
 
 Player::~Player()
@@ -157,9 +185,9 @@ void Player::Draw()
 {
 	if (unit_.isAlive_) {
 
-		if(haveB_)DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y - 50, 1, 0, BambooImg_, true);
+		if(haveB_)DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y - 50, 1, 0, BambooImg_, true);
 		DrawPlayer();
-		if (haveB_)DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1, atan2(vec_.y, vec_.x), arrowImg_[arrowAnim_], true);
+		if (haveB_)DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y, 1, atan2(vec_.y, vec_.x), arrowImg_[arrowAnim_], true);
 
 		if (evasionCoolTime_ > 0) {
 			Vector2F start, end;
@@ -475,8 +503,8 @@ void Player::Death(void)
 
 	unit_.inviCounter_ = 2;
  
-	if (animeCounter_ >= image_[(int)motion_].size() - 1) {
-		animeCounter_ = image_[(int)motion_].size() - 2;
+	if (animeCounter_ >= (int)(image_[(int)motion_].size()) - 1) {
+		animeCounter_ = (int)(image_[(int)motion_].size()) - 2;
 		if (++endCounter_ >= DEATH_COUNT) { deathEnd_ = true; }
 	}
 }

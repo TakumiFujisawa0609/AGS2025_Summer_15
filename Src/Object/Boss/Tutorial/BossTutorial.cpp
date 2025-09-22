@@ -8,8 +8,38 @@
 
 #include"../../Player/Player.h"
 
-BossTutorial::BossTutorial()
+BossTutorial::BossTutorial():
+    bossDir_(AttackBase::DIR::LEFT),
+    panVec_({ 0.0f, 0.0f }),
+    tDir_(Tackle::DIR::JUMP),
+    diedCounter(0),
+    dispHp_(0),
+    hpShakeTimer_(0),
+    prevHp_(-1),
+    flashInterval_(20),
+    frameCounter_(0),
+    hitTimer_(0),
+    slashCnt_(Slash::CHARGE),
+    state_(E_NON),
+    attackState_(NON),
+    attackCounter_(0),
+    targetIndex_(2),
+    encount_(false),
+    isHit_(false),
+    endFlg(false),
+    slash_(nullptr),
+    bullet_(nullptr),
+    blast_(nullptr),
+    tackle_(nullptr),
+    DrawPat_(NORMAL),
+    idolImg(0), // Assuming idolImg is an integer, initialize it to 0
+
+	player_(nullptr)
 {
+    // Initialize img_ array to nullptr or 0
+    for (int i = 0; i < DRAWPAT::DRAW_MAX; ++i) {
+        img_[i] = -1;
+    }
 }
 
 BossTutorial::~BossTutorial()
@@ -33,7 +63,7 @@ void BossTutorial::Init()
 	unit_.radius_ = unit_.size_.x / 2;
 	unit_.speed_ = 10.0f;
 	unit_.hp_ = BOSS_HP;
-	dispHp_ = 0.0f;
+	dispHp_ = 0;
 	hpShakeTimer_ = 0;  // 揺れ時間（フレーム数）
 	prevHp_ = -1;       // 直前のHP（変化検出用）
 	flashInterval_ = 20;
@@ -145,10 +175,10 @@ void BossTutorial::BossDraw()
 	{
 	case NORMAL:
 	case E_DAMAGE:
-		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, img_[DrawPat_], true, bossDir_);
+		DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, img_[DrawPat_], true, bossDir_);
 		break;
 	case E_SLASH_START:
-		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, img_[DrawPat_], true, bossDir_);
+		DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y, 1.0f, 0.0f, img_[DrawPat_], true, bossDir_);
 
 		DrawBar(
 			unit_.disppos_.x - 100,
@@ -162,7 +192,7 @@ void BossTutorial::BossDraw()
 
 		break;
 	case E_SLASH_END:
-		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y + 14, 1.0f, 0.0f, img_[DrawPat_], true, bossDir_);
+		DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y + 14, 1.0f, 0.0f, img_[DrawPat_], true, bossDir_);
 		break;
 	}
 
@@ -474,8 +504,8 @@ void BossTutorial::DrawHP()
 		start = end - size;
 
 		DrawBar(
-			start.x + shakeX, start.y + shakeY,
-			end.x + shakeX, end.y + shakeY,
+			(float)(start.x + shakeX), (float)(start.y + shakeY),
+			(float)(end.x + shakeX), (float)(end.y + shakeY),
 			dispHp_, BOSS_HP, RGB(100, 100, 255)
 		);
 	}

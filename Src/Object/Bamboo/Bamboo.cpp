@@ -4,7 +4,10 @@
 
 #include"../Player/Player.h"
 
-Bamboo::Bamboo()
+Bamboo::Bamboo() :
+	image_(0),
+    scale_(1.0f),
+    aliveTime_(0)
 {
 }
 
@@ -57,7 +60,7 @@ void Bamboo::Draw(void)
 {
 	if (unit_.isAlive_ &&
 		((aliveTime_ > (int)(ALIVE_TIME * 0.3f)) || ((aliveTime_ / 10) % 2 == 0))) {
-		DrawRotaGraph(unit_.disppos_.x, unit_.disppos_.y, scaleTb[(int)scale_], 0, image_, true);
+		DrawRotaGraphF(unit_.disppos_.x, unit_.disppos_.y, scaleTb[(int)scale_], 0, image_, true);
 	}
 }
 
