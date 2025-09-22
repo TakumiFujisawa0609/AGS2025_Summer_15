@@ -35,6 +35,8 @@ public:
 
 	void SetTarget(const Vector2F* target) { target_ = target; }
 
+	void SetIsAlive(bool isAlive);
+
 private:
 	std::vector<Base> obj_;
 

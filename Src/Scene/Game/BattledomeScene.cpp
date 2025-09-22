@@ -140,9 +140,11 @@ void BattledomeScene::Update(void)
 	case M::BOSS_KINDS::TUTORIAL:
 		tutorial_->Update();
 		if (!tutorial_->GetUnit().isAlive_) {
-			Score::GetIns().SetScore(time_);
-			SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
-			sMng.ChangeScene(M::SCENE_ID::CLEAR);
+			if (tutorial_->GetEndFlg()) {
+				Score::GetIns().SetScore(time_);
+				SoundManager::GetIns().Stop(SoundManager::SOUND::BATTLE);
+				sMng.ChangeScene(M::SCENE_ID::CLEAR);
+			}
 			return;
 		}
 		break;
@@ -375,6 +377,7 @@ void BattledomeScene::Scroll(void)
 	case SceneManager::BOSS_KINDS::RUNBOO:
 	{
 		camera.Follow(Camera::X, runboo_->GetMoveSpeed());
+
 	}
 		break;
 	case SceneManager::BOSS_KINDS::NOKOPY:
@@ -492,7 +495,16 @@ void BattledomeScene::PlayerAttackToBossAttack(void)
 				if (ins.Circle(player_->DefaultAtt(), weakBull))
 				{
 					weak->BulltHit(i);
-					bamboo_->Create(weakBull.pos_, 1, 20);
+
+					if (weak->GetAttack() == Weakness::ATTACK::PILLAR)
+					{
+						bamboo_->Create(weakBull.pos_, 1, 10);
+					}
+					else
+					{
+						bamboo_->Create(weakBull.pos_, 1, 20);
+					}
+					
 				}
 				i++;
 			}
@@ -611,7 +623,7 @@ void BattledomeScene::PlayerAttackToBoss(void)
 
 		//本体（壁）と通常攻撃の当たり判定
 		if (ins.CircleAndRect(player_->DefaultAtt(), runboo_->GetUnit())) {
-			bamboo_->Create(player_->GetUnit().pos_, 1 , 50);
+			bamboo_->Create(player_->GetUnit().pos_, 1 , 10);
 		}
 
 		break;
@@ -669,19 +681,23 @@ void BattledomeScene::PlayerToBoss(void)
 		}
 		break;
 	case SceneManager::BOSS_KINDS::RUNBOO:
-		if (ins.CircleAndRect(player_->GetUnit(), runboo_->GetUnit()) || player_->GetUnit().disppos_.x < 0)
+		if (runboo_->GetState() != BossBase::STATE::DEATH)
 		{
-			player_->Hit(10, runboo_->GetUnit().pos_);
-		}
-
-		//プレイヤーと弱点の当たり判定
-		for (auto& weak : runboo_->GetWeakness())
-		{
-			if (ins.Circle(player_->GetUnit(), weak->GetUnit()))
+			if (ins.CircleAndRect(player_->GetUnit(), runboo_->GetUnit()) || (player_->GetUnit().disppos_.x < 0 && player_->GetUnit().inviCounter_ <= 0))
 			{
-				player_->Hit(5, weak->GetUnit().pos_);
+				player_->Hit(5, runboo_->GetUnit().pos_);
+			}
+
+			//プレイヤーと弱点の当たり判定
+			for (auto& weak : runboo_->GetWeakness())
+			{
+				if (ins.Circle(player_->GetUnit(), weak->GetUnit()))
+				{
+					player_->Hit(5, weak->GetUnit().pos_);
+				}
 			}
 		}
+
 		break;
 	case M::BOSS_KINDS::BAMMOON:
 		if (ins.Ellipse(player_->GetUnit(), bammoon_->GetUnit())) {
@@ -812,6 +828,7 @@ void BattledomeScene::PlayerToBamboo(void)
 		if (ins.CircleAndRect(b->GetUnit(), player_->GetUnit(), false)) {
 			b->Collect();
 			player_->BpOptain();
+			break;
 		}
 	}
 

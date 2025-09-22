@@ -83,10 +83,10 @@ void BossTutorial::Update()
 	if (attackState_ != BossTutorial::TACKLE) unit_.isGravity_ = true;
 
 	if (EnCount())encount_ = true;
-
 	if (encount_) {
 		PattaernManager();
 	}
+
 
 	if (hitTimer_ > 0)
 	{
@@ -436,6 +436,8 @@ void BossTutorial::HpUpdate()
 		//ボスが死んだらHPバーが揺れ続ける（ただの演出用）
 		if (unit_.hp_ <= 0) {
 			hpShakeTimer_ = 10;
+			unit_.hp_ = 0;
+			unit_.isAlive_ = false;
 		}
 
 		//HPの変化を検出（減少時のみ揺らす）
@@ -717,7 +719,7 @@ void BossTutorial::Death()
 	auto& scene_ = SceneManager::GetIns();
 
 	diedCounter++;
-	unit_.isGravity_ = false;
+	/*unit_.isGravity_ = false;*/
 
 	DrawPat_ = DRAWPAT::E_DAMAGE;
 
@@ -727,7 +729,7 @@ void BossTutorial::Death()
 
 	endFlg = true;
 
-	if (endFlg) scene_.ChangeScene(SceneManager::SCENE_ID::CLEAR);
+	//if (endFlg) scene_.ChangeScene(SceneManager::SCENE_ID::CLEAR);
 }
 
 void BossTutorial::DiedDraw()

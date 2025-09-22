@@ -24,7 +24,7 @@ public:
 	void Hit(int i);
 	bool End(void);
 	void SetTarget(const Vector2F* target) { target_ = target; }
-
+	void SetIsAlive(bool isAlive);
 private:
 	std::vector<Base> obj_;
 	const Vector2F* target_;

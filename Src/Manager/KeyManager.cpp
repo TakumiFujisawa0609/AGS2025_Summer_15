@@ -196,5 +196,7 @@ const Vector2F& KeyManager::GetRightStickVec(void)
 
 	Vector2F vec = { (abs(state.ThumbRX) > lenge) ? (float)state.ThumbRX : 0.0f,(abs(state.ThumbRY) > lenge) ? (float)-state.ThumbRY : 0.0f };
 
+	if (vec == 0.0f) { return{ 0.0f,0.0f }; }
+
 	return vec / sqrtf(vec.x * vec.x + vec.y * vec.y);
 }
