@@ -17,8 +17,8 @@ public:
 
 	static constexpr float SCALE = 0.5f;
 
-	static constexpr int SIZE_X = (LOAD_SIZE_X * (int)SCALE) - 50;
-	static constexpr int SIZE_Y = (LOAD_SIZE_Y * (int)SCALE) - 30;
+	static constexpr int SIZE_X = (LOAD_SIZE_X * SCALE) - 50;
+	static constexpr int SIZE_Y = (LOAD_SIZE_Y * SCALE) - 30;
 
 	enum class MOTION
 	{
