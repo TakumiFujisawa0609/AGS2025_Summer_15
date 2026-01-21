@@ -188,7 +188,7 @@ bool KeyManager::IsControllerConnected(void)
 	return true;
 }
 
-const Vector2F& KeyManager::GetRightStickVec(void)
+const Vector2F KeyManager::GetRightStickVec(void)
 {
 	XINPUT_STATE state = {};
 	if (GetJoypadXInputState(DX_INPUT_PAD1, &state) != 0) { return { 0.0f,0.0f }; }

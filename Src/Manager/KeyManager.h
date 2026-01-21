@@ -53,7 +53,7 @@ public:
 	// コントローラーが接続されているか
 	bool IsControllerConnected(void);
 
-	const Vector2F& GetRightStickVec(void);
+	const Vector2F GetRightStickVec(void);
 
 private:
 	void Init(void);
